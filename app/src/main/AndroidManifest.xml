@@ -14,11 +14,13 @@
         <activity
             android:name="com.amazonaws.youruserpools.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name="com.amazonaws.youruserpools.UserActivity"
@@ -66,7 +68,18 @@
         <activity
             android:name="com.amazonaws.youruserpools.NewPassword"
             android:label="@string/title_activity_new_password"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.main.StoryExplorer"
+            android:label="@string/title_activity_story_explorer"
+            android:theme="@style/AppTheme.NoActionBar">
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+
+
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+        </activity>
     </application>
 
 </manifest>
