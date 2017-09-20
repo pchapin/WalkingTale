@@ -1,4 +1,4 @@
-package app.vtcseniorproject2018;
+package app.vtc_senior_project_2018;
 
 import org.junit.Test;
 

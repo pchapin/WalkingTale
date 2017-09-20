@@ -1,4 +1,4 @@
-package app.vtcseniorproject2018;
+package app.vtc_senior_project_2018;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("app.vtcseniorproject2018", appContext.getPackageName());
+        assertEquals("app.vtc_senior_project_2018", appContext.getPackageName());
     }
 }
