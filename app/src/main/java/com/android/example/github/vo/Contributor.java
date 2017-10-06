@@ -48,14 +48,6 @@ public class Contributor {
         this.avatarUrl = avatarUrl;
     }
 
-    public void setRepoName(String repoName) {
-        this.repoName = repoName;
-    }
-
-    public void setRepoOwner(String repoOwner) {
-        this.repoOwner = repoOwner;
-    }
-
     public String getLogin() {
         return login;
     }
@@ -72,7 +64,15 @@ public class Contributor {
         return repoName;
     }
 
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
+    }
+
     public String getRepoOwner() {
         return repoOwner;
+    }
+
+    public void setRepoOwner(String repoOwner) {
+        this.repoOwner = repoOwner;
     }
 }
