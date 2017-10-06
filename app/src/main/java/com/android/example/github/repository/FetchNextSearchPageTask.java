@@ -68,20 +68,20 @@ public class FetchNextSearchPageTask implements Runnable {
                 List<Integer> ids = new ArrayList<>();
                 ids.addAll(current.repoIds);
                 //noinspection ConstantConditions
-                ids.addAll(apiResponse.body.getRepoIds());
+                ids.addAll(apiResponse.getBody().getRepoIds());
                 RepoSearchResult merged = new RepoSearchResult(query, ids,
-                        apiResponse.body.getTotal(), apiResponse.getNextPage());
+                        apiResponse.getBody().getTotal(), apiResponse.getNextPage());
                 try {
                     db.beginTransaction();
                     db.repoDao().insert(merged);
-                    db.repoDao().insertRepos(apiResponse.body.getItems());
+                    db.repoDao().insertRepos(apiResponse.getBody().getItems());
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
                 }
                 liveData.postValue(Resource.success(apiResponse.getNextPage() != null));
             } else {
-                liveData.postValue(Resource.error(apiResponse.errorMessage, true));
+                liveData.postValue(Resource.error(apiResponse.getErrorMessage(), true));
             }
         } catch (IOException e) {
             liveData.postValue(Resource.error(e.getMessage(), true));

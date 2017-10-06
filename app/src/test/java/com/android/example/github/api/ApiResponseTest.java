@@ -39,18 +39,18 @@ public class ApiResponseTest {
     public void exception() {
         Exception exception = new Exception("foo");
         ApiResponse<String> apiResponse = new ApiResponse<>(exception);
-        assertThat(apiResponse.links, notNullValue());
-        assertThat(apiResponse.body, nullValue());
-        assertThat(apiResponse.code, is(500));
-        assertThat(apiResponse.errorMessage, is("foo"));
+        assertThat(apiResponse.getLinks(), notNullValue());
+        assertThat(apiResponse.getBody(), nullValue());
+        assertThat(apiResponse.getCode(), is(500));
+        assertThat(apiResponse.getErrorMessage(), is("foo"));
     }
 
     @Test
     public void success() {
         ApiResponse<String> apiResponse = new ApiResponse<>(Response.success("foo"));
-        assertThat(apiResponse.errorMessage, nullValue());
-        assertThat(apiResponse.code, is(200));
-        assertThat(apiResponse.body, is("foo"));
+        assertThat(apiResponse.getErrorMessage(), nullValue());
+        assertThat(apiResponse.getCode(), is(200));
+        assertThat(apiResponse.getBody(), is("foo"));
         assertThat(apiResponse.getNextPage(), is(nullValue()));
     }
 
@@ -83,7 +83,7 @@ public class ApiResponseTest {
     public void error() {
         ApiResponse<String> response = new ApiResponse<String>(Response.error(400,
                 ResponseBody.create(MediaType.parse("application/txt"), "blah")));
-        assertThat(response.code, is(400));
-        assertThat(response.errorMessage, is("blah"));
+        assertThat(response.getCode(), is(400));
+        assertThat(response.getErrorMessage(), is("blah"));
     }
 }

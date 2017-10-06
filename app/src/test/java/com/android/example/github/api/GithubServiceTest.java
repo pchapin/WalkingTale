@@ -79,7 +79,7 @@ public class GithubServiceTest {
     @Test
     public void getUser() throws IOException, InterruptedException {
         enqueueResponse("user-yigit.json");
-        User yigit = getValue(service.getUser("yigit")).body;
+        User yigit = getValue(service.getUser("yigit")).getBody();
 
         RecordedRequest request = mockWebServer.takeRequest();
         assertThat(request.getPath(), is("/users/yigit"));
@@ -93,7 +93,7 @@ public class GithubServiceTest {
     @Test
     public void getRepos() throws IOException, InterruptedException {
         enqueueResponse("repos-yigit.json");
-        List<Repo> repos = getValue(service.getRepos("yigit")).body;
+        List<Repo> repos = getValue(service.getRepos("yigit")).getBody();
 
         RecordedRequest request = mockWebServer.takeRequest();
         assertThat(request.getPath(), is("/users/yigit/repos"));
@@ -116,7 +116,7 @@ public class GithubServiceTest {
     public void getContributors() throws IOException, InterruptedException {
         enqueueResponse("contributors.json");
         List<Contributor> contributors = getValue(
-                service.getContributors("foo", "bar")).body;
+                service.getContributors("foo", "bar")).getBody();
         assertThat(contributors.size(), is(3));
         Contributor yigit = contributors.get(0);
         assertThat(yigit.getLogin(), is("yigit"));
@@ -137,9 +137,9 @@ public class GithubServiceTest {
                 service.searchRepos("foo"));
 
         assertThat(response, notNullValue());
-        assertThat(response.body.getTotal(), is(41));
-        assertThat(response.body.getItems().size(), is(30));
-        assertThat(response.links.get("next"),
+        assertThat(response.getBody().getTotal(), is(41));
+        assertThat(response.getBody().getItems().size(), is(30));
+        assertThat(response.getLinks().get("next"),
                 is("https://api.github.com/search/repositories?q=foo&page=2"));
         assertThat(response.getNextPage(), is(2));
     }
