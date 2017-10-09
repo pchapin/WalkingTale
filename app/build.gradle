@@ -86,6 +86,7 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:$timber_version"
 
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
     annotationProcessor "android.arch.persistence.room:compiler:$arch_version"
@@ -117,6 +118,7 @@ dependencies {
     })
     androidTestImplementation "org.mockito:mockito-android:$mockito_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-maps:11.4.2'
 }
 
 task fullCoverageReport(type: JacocoReport) {
@@ -148,3 +150,5 @@ task fullCoverageReport(type: JacocoReport) {
 repositories {
     mavenCentral()
 }
+
+apply plugin: 'kotlin-android-extensions'

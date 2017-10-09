@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,11 +12,16 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.example.github">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="@string/google_maps_key" />
+
     <application
         android:name=".GithubApp"
         android:allowBackup="false"
@@ -26,89 +31,98 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".testing.SingleFragmentActivity">
-        </activity>
+        <activity android:name=".testing.SingleFragmentActivity" />
+
+        <!-- android:allowBackup="true" -->
+        <!-- android:icon="@mipmap/ic_launcher" -->
+        <!-- android:label="@string/app_name" -->
+        <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
+        <!-- android:supportsRtl="true" -->
+        <!-- android:theme="@style/AppTheme"> -->
+        <!-- <activity android:name="com.android.example.github.MainActivity"> -->
+        <!-- &lt;!&ndash;<intent-filter>&ndash;&gt; -->
+        <!-- &lt;!&ndash;<action android:name="android.intent.action.MAIN" />&ndash;&gt; -->
 
 
-
-        <!--android:allowBackup="true"-->
-        <!--android:icon="@mipmap/ic_launcher"-->
-        <!--android:label="@string/app_name"-->
-        <!--android:roundIcon="@mipmap/ic_launcher_round"-->
-        <!--android:supportsRtl="true"-->
-        <!--android:theme="@style/AppTheme">-->
-        <!--<activity android:name="com.android.example.github.MainActivity">-->
-            <!--&lt;!&ndash;<intent-filter>&ndash;&gt;-->
-            <!--&lt;!&ndash;<action android:name="android.intent.action.MAIN" />&ndash;&gt;-->
-
-            <!--&lt;!&ndash;<category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
-            <!--&lt;!&ndash;</intent-filter>&ndash;&gt;-->
-        <!--</activity>-->
-
-
+        <!-- &lt;!&ndash;<category android:name="android.intent.category.LAUNCHER" />&ndash;&gt; -->
+        <!-- &lt;!&ndash;</intent-filter>&ndash;&gt; -->
+        <!-- </activity> -->
 
         <activity
-            android:name="com.android.example.github.youruserpools.MainActivity"
+            android:name=".youruserpools.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name="com.android.example.github.youruserpools.UserActivity"
+            android:name=".youruserpools.UserActivity"
             android:label="@string/title_activity_user"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.RegisterUser"
+            android:name=".youruserpools.RegisterUser"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.AboutApp"
+            android:name=".youruserpools.AboutApp"
             android:label="@string/title_activity_about_app"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.SignUpConfirm"
+            android:name=".youruserpools.SignUpConfirm"
             android:label="@string/title_activity_sign_up_confirm"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.MFAActivity"
+            android:name=".youruserpools.MFAActivity"
             android:label="@string/title_activity_mfa"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.ForgotPasswordActivity"
+            android:name=".youruserpools.ForgotPasswordActivity"
             android:label="@string/title_activity_forgot_password"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.SettingsActivity"
+            android:name=".youruserpools.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.ChangePasswordActivity"
+            android:name=".youruserpools.ChangePasswordActivity"
             android:label="@string/title_activity_change_password"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.VerifyActivity"
+            android:name=".youruserpools.VerifyActivity"
             android:label="@string/title_activity_verify"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.AddAttributeActivity"
+            android:name=".youruserpools.AddAttributeActivity"
             android:label="@string/title_activity_add_attribute"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.DeviceSettings"
+            android:name=".youruserpools.DeviceSettings"
             android:label="@string/title_activity_device_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.android.example.github.youruserpools.NewPassword"
+            android:name=".youruserpools.NewPassword"
             android:label="@string/title_activity_new_password"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".StoryCreator">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ChapterCreator" />
+        <activity android:name=".ExpositionCreator"></activity>
     </application>
 
 </manifest>
