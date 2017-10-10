@@ -1,14 +1,16 @@
-package com.android.example.github
+package com.android.example.github.walkingTale
 
 import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.provider.AlarmClock.EXTRA_MESSAGE
-import android.widget.EditText
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import com.android.example.github.R
+import android.arch.lifecycle.ViewModelProviders
+
+
 
 
 class StoryCreator : AppCompatActivity() {
@@ -17,6 +19,8 @@ class StoryCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_story_creator)
+        val mViewModel = ViewModelProviders.of(this).get(StoryCreatorViewModel::class.java)
+
     }
 
     fun createChapter(view: View) {

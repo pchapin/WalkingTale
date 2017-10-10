@@ -1,4 +1,4 @@
-package com.android.example.github
+package com.android.example.github.walkingTale
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import com.android.example.github.R
 import java.util.ArrayList
 
 class ChapterCreator : AppCompatActivity() {

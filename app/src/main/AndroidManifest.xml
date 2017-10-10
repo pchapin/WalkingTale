@@ -114,15 +114,15 @@
             android:name=".youruserpools.NewPassword"
             android:label="@string/title_activity_new_password"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".StoryCreator">
+        <activity android:name=".walkingTale.StoryCreator">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChapterCreator" />
-        <activity android:name=".ExpositionCreator"></activity>
+        <activity android:name=".walkingTale.ChapterCreator" />
+        <activity android:name=".walkingTale.ExpositionCreator"></activity>
     </application>
 
 </manifest>
