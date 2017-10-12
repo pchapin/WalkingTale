@@ -9,8 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import com.android.example.github.R
 import android.arch.lifecycle.ViewModelProviders
-
-
+import com.android.example.github.ui.storycreate.StoryCreateViewModel
 
 
 class StoryCreator : AppCompatActivity() {
@@ -19,7 +18,7 @@ class StoryCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_story_creator)
-        val mViewModel = ViewModelProviders.of(this).get(StoryCreatorViewModel::class.java)
+        val mViewModel = ViewModelProviders.of(this).get(StoryCreateViewModel::class.java)
 
     }
 

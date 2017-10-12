@@ -20,6 +20,7 @@ import com.android.example.github.MainActivity;
 import com.android.example.github.R;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
+import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.ui.user.UserFragment;
 
 import android.support.v4.app.FragmentManager;
@@ -62,4 +63,13 @@ public class NavigationController {
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
+
+    public void navigateToCreateStory() {
+        StoryCreateFragment testingFragment = new StoryCreateFragment();
+        fragmentManager.beginTransaction()
+                .replace(containerId, testingFragment)
+                .commitAllowingStateLoss();
+    }
+
+
 }

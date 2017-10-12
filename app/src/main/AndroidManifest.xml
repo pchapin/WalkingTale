@@ -29,12 +29,12 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
 
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".testing.SingleFragmentActivity" />
 
@@ -112,11 +112,11 @@
             android:label="@string/title_activity_new_password"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".walkingTale.StoryCreator">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".walkingTale.ChapterCreator" />
         <activity android:name=".walkingTale.ExpositionCreator"></activity>

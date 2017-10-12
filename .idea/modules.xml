@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\todd\AndroidStudioProjects\VTC-Senior-Project-2018\GithubBrowserSample.iml" filepath="C:\Users\todd\AndroidStudioProjects\VTC-Senior-Project-2018\GithubBrowserSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/VTC-Senior-Project-2018.iml" filepath="$PROJECT_DIR$/VTC-Senior-Project-2018.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
