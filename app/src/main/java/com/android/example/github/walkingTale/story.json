@@ -1,0 +1,30 @@
+{
+  "total_count": 1,
+  "incomplete_results": false,
+  "items": [
+    {
+      "id": 14975849,
+      "name": "cool story",
+      "full_name": "bob/cool story",
+      "owner": {
+        "login": "bob",
+        "url": "https://api.github.com/users/bob"
+      },
+      "description": "the coolest story",
+      "startLocation": "123,101",
+      "estimatedTime": 53.42,
+      "chapters": [
+        {
+          "name": "first chapter",
+          "location": "123,101",
+          "expositions": [
+            {
+              "type": "image",
+              "url": "https://i.imgur.com/u7PzQU6.jpg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

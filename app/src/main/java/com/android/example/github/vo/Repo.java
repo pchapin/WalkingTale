@@ -22,14 +22,14 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * Using name/owner_login as primary key instead of id since name/owner_login is always available
  * vs id is not.
  */
 @Entity(indices = {@Index("id"), @Index("owner_login")},
-    primaryKeys = {"name", "owner_login"})
+        primaryKeys = {"name", "owner_login"})
 public class Repo {
     public static final int UNKNOWN_ID = -1;
     public final int id;
@@ -87,6 +87,28 @@ public class Repo {
             int result = login != null ? login.hashCode() : 0;
             result = 31 * result + (url != null ? url.hashCode() : 0);
             return result;
+        }
+    }
+
+    public static class Chapter {
+        public final ArrayList<Exposition> expositions;
+        public final String location;
+        public final String name;
+
+        public Chapter(ArrayList<Exposition> expositions, String location, String name) {
+            this.expositions = expositions;
+            this.location = location;
+            this.name = name;
+        }
+    }
+
+    public static class Exposition {
+        public final String type;
+        public final String contentUrl;
+
+        public Exposition(String type, String url) {
+            this.type = type;
+            this.contentUrl = url;
         }
     }
 }
