@@ -21,6 +21,7 @@ import com.android.example.github.R;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
+import com.android.example.github.ui.storyfeed.StoryFeedFragment;
 import com.android.example.github.ui.user.UserFragment;
 
 import android.support.v4.app.FragmentManager;
@@ -71,5 +72,10 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-
+    public void navigateToStoryFeed() {
+        StoryFeedFragment testingFragment = new StoryFeedFragment();
+        fragmentManager.beginTransaction()
+                .replace(containerId, testingFragment)
+                .commitAllowingStateLoss();
+    }
 }

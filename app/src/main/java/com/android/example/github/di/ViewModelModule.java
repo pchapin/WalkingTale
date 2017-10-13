@@ -7,6 +7,7 @@ import com.android.example.github.ui.repo.RepoViewModel;
 import com.android.example.github.ui.search.SearchViewModel;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.ui.storycreate.StoryCreateViewModel;
+import com.android.example.github.ui.storyfeed.StoryFeedViewModel;
 import com.android.example.github.ui.user.UserViewModel;
 import com.android.example.github.viewmodel.GithubViewModelFactory;
 
@@ -35,6 +36,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(StoryCreateViewModel.class)
     abstract ViewModel bindStoryCreateViewModel(StoryCreateViewModel storyCreateViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(StoryFeedViewModel.class)
+    abstract ViewModel bindStoryFeedViewModel(StoryFeedViewModel storyFeedViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(GithubViewModelFactory factory);
