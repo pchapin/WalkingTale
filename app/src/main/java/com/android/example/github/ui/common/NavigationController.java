@@ -69,6 +69,7 @@ public class NavigationController {
         StoryCreateFragment testingFragment = new StoryCreateFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, testingFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 

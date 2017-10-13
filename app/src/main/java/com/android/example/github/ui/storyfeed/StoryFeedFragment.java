@@ -43,6 +43,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -85,7 +87,33 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
 
         initSearchInputListener();
 
+        playStoryButtonListener();
+
+        createStoryButtonListener();
+
         binding.get().setCallback(() -> StoryFeedViewModel.refresh());
+    }
+
+    private void playStoryButtonListener() {
+        Button playStoryBtn = getActivity().findViewById(R.id.play_story_btn);
+        playStoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "play button", Toast.LENGTH_LONG).show();
+//                navigationController
+            }
+        });
+    }
+
+    private void createStoryButtonListener() {
+        Button createStoryBtn = getActivity().findViewById(R.id.create_story_btn);
+        createStoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "create button", Toast.LENGTH_LONG).show();
+                navigationController.navigateToCreateStory();
+            }
+        });
     }
 
     private void initSearchInputListener() {
