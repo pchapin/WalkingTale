@@ -99,7 +99,7 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         playStoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                navigationController
+                navigationController.navigateToStoryPlay();
             }
         });
     }

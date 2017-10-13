@@ -23,6 +23,7 @@ import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.ui.storyfeed.StoryFeedFragment;
+import com.android.example.github.ui.storyreader.StoryPlayFragment;
 import com.android.example.github.ui.user.UserFragment;
 
 import android.support.v4.app.FragmentManager;
@@ -85,6 +86,14 @@ public class NavigationController {
         ChapterCreateFragment chapterCreateFragment = new ChapterCreateFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, chapterCreateFragment)
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+    }
+
+    public void navigateToStoryPlay() {
+        StoryPlayFragment storyPlayFragment = new StoryPlayFragment();
+        fragmentManager.beginTransaction()
+                .replace(containerId, storyPlayFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

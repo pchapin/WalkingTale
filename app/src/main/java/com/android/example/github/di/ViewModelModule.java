@@ -9,6 +9,7 @@ import com.android.example.github.ui.search.SearchViewModel;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.ui.storycreate.StoryCreateViewModel;
 import com.android.example.github.ui.storyfeed.StoryFeedViewModel;
+import com.android.example.github.ui.storyreader.StoryPlayViewModel;
 import com.android.example.github.ui.user.UserViewModel;
 import com.android.example.github.viewmodel.GithubViewModelFactory;
 
@@ -47,6 +48,12 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ChapterCreateViewModel.class)
     abstract ViewModel bindChapterCreateViewModel(ChapterCreateViewModel chapterCreateViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(StoryPlayViewModel.class)
+    abstract ViewModel bindStoryPlayViewModel(StoryPlayViewModel storyPlayViewModel);
+
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(GithubViewModelFactory factory);

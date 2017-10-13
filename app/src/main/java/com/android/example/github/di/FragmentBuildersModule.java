@@ -21,6 +21,7 @@ import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.ui.storyfeed.StoryFeedFragment;
+import com.android.example.github.ui.storyreader.StoryPlayFragment;
 import com.android.example.github.ui.user.UserFragment;
 
 import dagger.Module;
@@ -45,4 +46,7 @@ public abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract ChapterCreateFragment contributeChapterCreateFragment();
+
+    @ContributesAndroidInjector
+    abstract StoryPlayFragment contributeStoryPlayFragment();
 }
