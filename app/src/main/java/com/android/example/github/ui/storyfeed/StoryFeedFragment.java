@@ -99,7 +99,6 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         playStoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "play button", Toast.LENGTH_LONG).show();
 //                navigationController
             }
         });
@@ -110,7 +109,6 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         createStoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "create button", Toast.LENGTH_LONG).show();
                 navigationController.navigateToCreateStory();
             }
         });

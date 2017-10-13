@@ -18,6 +18,7 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
+import com.android.example.github.ui.chaptercreate.ChapterCreateFragment;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
@@ -66,17 +67,25 @@ public class NavigationController {
     }
 
     public void navigateToCreateStory() {
-        StoryCreateFragment testingFragment = new StoryCreateFragment();
+        StoryCreateFragment storyCreateFragment = new StoryCreateFragment();
         fragmentManager.beginTransaction()
-                .replace(containerId, testingFragment)
+                .replace(containerId, storyCreateFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
     public void navigateToStoryFeed() {
-        StoryFeedFragment testingFragment = new StoryFeedFragment();
+        StoryFeedFragment storyFeedFragment = new StoryFeedFragment();
         fragmentManager.beginTransaction()
-                .replace(containerId, testingFragment)
+                .replace(containerId, storyFeedFragment)
+                .commitAllowingStateLoss();
+    }
+
+    public void navigateToChapterCreate() {
+        ChapterCreateFragment chapterCreateFragment = new ChapterCreateFragment();
+        fragmentManager.beginTransaction()
+                .replace(containerId, chapterCreateFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 }

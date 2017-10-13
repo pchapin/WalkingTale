@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.storycreate;
+package com.android.example.github.ui.chaptercreate;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.CreateStoryFragmentBinding;
+import com.android.example.github.databinding.CreateChapterFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.repo.ContributorAdapter;
@@ -39,8 +39,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -49,7 +47,7 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying a Github Repo's information with its contributors.
  */
-public class StoryCreateFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class ChapterCreateFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 
@@ -62,12 +60,12 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<CreateStoryFragmentBinding> binding;
+    AutoClearedValue<CreateChapterFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
-    private StoryCreateViewModel StoryCreateViewModel;
+    private ChapterCreateViewModel ChapterCreateViewModel;
 
-    public static StoryCreateFragment create(String owner, String name) {
-        StoryCreateFragment repoFragment = new StoryCreateFragment();
+    public static ChapterCreateFragment create(String owner, String name) {
+        ChapterCreateFragment repoFragment = new ChapterCreateFragment();
         Bundle args = new Bundle();
         args.putString(REPO_OWNER_KEY, owner);
         args.putString(REPO_NAME_KEY, name);
@@ -83,42 +81,30 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        StoryCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryCreateViewModel.class);
+        ChapterCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(ChapterCreateViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_OWNER_KEY) &&
                 args.containsKey(REPO_NAME_KEY)) {
-            StoryCreateViewModel.setId(args.getString(REPO_OWNER_KEY),
+            ChapterCreateViewModel.setId(args.getString(REPO_OWNER_KEY),
                     args.getString(REPO_NAME_KEY));
         } else {
-            StoryCreateViewModel.setId(null, null);
+            ChapterCreateViewModel.setId(null, null);
         }
-        LiveData<Resource<Repo>> repo = StoryCreateViewModel.getRepo();
+        LiveData<Resource<Repo>> repo = ChapterCreateViewModel.getRepo();
         repo.observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
         });
 
-        chapterCreateButtonListener();
-
         ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
-        initContributorList(StoryCreateViewModel);
+        initContributorList(ChapterCreateViewModel);
     }
 
-    private void chapterCreateButtonListener() {
-        Button chapterCreateBtn = getActivity().findViewById(R.id.add_chapter_button);
-        chapterCreateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigationController.navigateToChapterCreate();
-            }
-        });
-    }
-
-    private void initContributorList(StoryCreateViewModel viewModel) {
+    private void initContributorList(ChapterCreateViewModel viewModel) {
         viewModel.getContributors().observe(this, listResource -> {
             // we don't need any null checks here for the adapter since LiveData guarantees that
             // it won't call us if fragment is stopped or not started.
@@ -135,9 +121,9 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        CreateStoryFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.create_story_fragment, container, false);
-        dataBinding.setRetryCallback(() -> StoryCreateViewModel.retry());
+        CreateChapterFragmentBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.create_chapter_fragment, container, false);
+        dataBinding.setRetryCallback(() -> ChapterCreateViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }
