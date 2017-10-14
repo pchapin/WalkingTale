@@ -57,16 +57,16 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <Button
-                android:id="@+id/add_exposition"
+                android:id="@+id/view_expositions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View Expositions" />
 
             <Button
-                android:id="@+id/finish_story"
+                android:id="@+id/view_map"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Finish Chapter" />
+                android:text="View Map" />
         </LinearLayout>
 
 

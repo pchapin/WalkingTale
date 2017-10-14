@@ -40,7 +40,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -99,22 +98,24 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
             binding.get().executePendingBindings();
         });
 
-        chapterCreateButtonListener();
-
         ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
+        initAddChapterListener();
+        initFinishStoryListener();
         initContributorList(StoryCreateViewModel);
     }
 
-    private void chapterCreateButtonListener() {
-        Button chapterCreateBtn = getActivity().findViewById(R.id.add_chapter_button);
-        chapterCreateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigationController.navigateToChapterCreate();
-            }
+    private void initAddChapterListener() {
+        binding.get().addChapterButton.setOnClickListener((v) -> {
+            navigationController.navigateToChapterCreate();
+        });
+    }
+
+    private void initFinishStoryListener() {
+        binding.get().finishStory.setOnClickListener((v) -> {
+            //Todo: If story info is valid, publish story
         });
     }
 

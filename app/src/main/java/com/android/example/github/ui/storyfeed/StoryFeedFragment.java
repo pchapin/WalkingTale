@@ -43,8 +43,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -86,31 +84,20 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         adapter = new AutoClearedValue<>(this, rvAdapter);
 
         initSearchInputListener();
-
-        playStoryButtonListener();
-
-        createStoryButtonListener();
-
+        initPlayStoryListener();
+        initCreateStoryListener();
         binding.get().setCallback(() -> StoryFeedViewModel.refresh());
     }
 
-    private void playStoryButtonListener() {
-        Button playStoryBtn = getActivity().findViewById(R.id.play_story_btn);
-        playStoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigationController.navigateToStoryPlay();
-            }
+    private void initPlayStoryListener() {
+        binding.get().playStoryBtn.setOnClickListener((v) -> {
+            navigationController.navigateToStoryPlay();
         });
     }
 
-    private void createStoryButtonListener() {
-        Button createStoryBtn = getActivity().findViewById(R.id.create_story_btn);
-        createStoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigationController.navigateToCreateStory();
-            }
+    private void initCreateStoryListener() {
+        binding.get().createStoryBtn.setOnClickListener((v) -> {
+            navigationController.navigateToCreateStory();
         });
     }
 

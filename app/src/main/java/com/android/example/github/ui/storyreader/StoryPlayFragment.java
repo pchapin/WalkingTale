@@ -101,7 +101,21 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
+        initViewExpositionsListener();
+        initViewMapListener();
         initContributorList(StoryPlayViewModel);
+    }
+
+    private void initViewExpositionsListener() {
+        binding.get().viewExpositions.setOnClickListener((v) -> {
+            //Todo: Show all expositions
+        });
+    }
+
+    private void initViewMapListener() {
+        binding.get().viewMap.setOnClickListener((v) -> {
+            //Todo: Open map
+        });
     }
 
     private void initContributorList(StoryPlayViewModel viewModel) {

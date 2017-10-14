@@ -36,9 +36,12 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -101,7 +104,14 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
+        initFinishChapterListener();
         initContributorList(ChapterCreateViewModel);
+    }
+
+    private void initFinishChapterListener() {
+        binding.get().finishChapter.setOnClickListener((v) -> {
+            //Todo: If chapter info is valid, add chapter to story
+        });
     }
 
     private void initContributorList(ChapterCreateViewModel viewModel) {
