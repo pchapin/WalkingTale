@@ -104,6 +104,7 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         initViewExpositionsListener();
         initViewMapListener();
         initContributorList(StoryPlayViewModel);
+        getActivity().setTitle("Play Story");
     }
 
     private void initViewExpositionsListener() {

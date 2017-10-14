@@ -87,6 +87,7 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         initPlayStoryListener();
         initCreateStoryListener();
         binding.get().setCallback(() -> StoryFeedViewModel.refresh());
+        getActivity().setTitle("Story Feed");
     }
 
     private void initPlayStoryListener() {

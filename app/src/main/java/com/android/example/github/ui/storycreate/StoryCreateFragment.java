@@ -105,6 +105,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         initAddChapterListener();
         initFinishStoryListener();
         initContributorList(StoryCreateViewModel);
+        getActivity().setTitle("Create Story");
     }
 
     private void initAddChapterListener() {

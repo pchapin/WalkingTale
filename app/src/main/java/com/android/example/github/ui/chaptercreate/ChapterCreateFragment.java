@@ -106,6 +106,7 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
         binding.get().contributorList.setAdapter(adapter);
         initFinishChapterListener();
         initContributorList(ChapterCreateViewModel);
+        getActivity().setTitle("Create Chapter");
     }
 
     private void initFinishChapterListener() {
