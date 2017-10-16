@@ -76,10 +76,22 @@
             app:layout_constraintTop_toBottomOf="@+id/name">
 
             <Button
-                android:id="@+id/add_exposition"
+                android:id="@+id/add_picture_exposition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Exposition" />
+                android:text="Picture" />
+
+            <Button
+                android:id="@+id/add_text_exposition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Text" />
+
+            <Button
+                android:id="@+id/add_audio_exposition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Audio" />
 
             <Button
                 android:id="@+id/finish_chapter"
@@ -96,7 +108,7 @@
             app:layout_constraintTop_toBottomOf="@+id/nav_buttons_create_story">
 
             <LinearLayout
-                android:id="@id/chapter_linear_layout"
+                android:id="@+id/chapter_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

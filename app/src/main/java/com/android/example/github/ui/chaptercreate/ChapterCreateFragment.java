@@ -26,21 +26,29 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 
+import android.app.Activity;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Collections;
@@ -57,6 +65,8 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
     private static final String REPO_NAME_KEY = "repo_name";
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+
+    ImageView mImageView;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -104,9 +114,26 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
+        initPictureExpositionListener();
+        initTextExpositionListener();
         initFinishChapterListener();
         initContributorList(ChapterCreateViewModel);
         getActivity().setTitle("Create Chapter");
+    }
+
+    private void initPictureExpositionListener() {
+        binding.get().addPictureExposition.setOnClickListener((v) -> {
+            //Todo: add picture exposition
+        });
+    }
+
+    private void initTextExpositionListener() {
+        binding.get().addTextExposition.setOnClickListener((v) -> {
+            TextView textView = new TextView(getActivity());
+            textView.setText("Some exposition text");
+            LinearLayout linearLayout = this.binding.get().chapterLinearLayout;
+            linearLayout.addView(textView);
+        });
     }
 
     private void initFinishChapterListener() {
