@@ -116,6 +116,7 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
         binding.get().contributorList.setAdapter(adapter);
         initPictureExpositionListener();
         initTextExpositionListener();
+        initAudioExpositionListener();
         initFinishChapterListener();
         initContributorList(ChapterCreateViewModel);
         getActivity().setTitle("Create Chapter");
@@ -133,6 +134,12 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
             textView.setText("Some exposition text");
             LinearLayout linearLayout = this.binding.get().chapterLinearLayout;
             linearLayout.addView(textView);
+        });
+    }
+
+    private void initAudioExpositionListener() {
+        binding.get().addAudioExposition.setOnClickListener((v) -> {
+            //Todo: add audio exposition
         });
     }
 
