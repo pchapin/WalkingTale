@@ -20,7 +20,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.location.Location;
 import android.support.annotation.VisibleForTesting;
+import android.text.Editable;
 
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
@@ -28,95 +30,32 @@ import com.android.example.github.util.Objects;
 import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.Exposition;
+import com.android.example.github.walkingTale.ExpositionType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 public class ChapterCreateViewModel extends ViewModel {
-    @VisibleForTesting
-    final MutableLiveData<RepoId> repoId;
-    private final LiveData<Resource<Repo>> repo;
-    private final LiveData<Resource<List<Contributor>>> contributors;
+
+    private ArrayList<Exposition> expositions = new ArrayList<>();
+    private Chapter chapter = new Chapter(expositions, "", new Location(""));
 
     @Inject
     public ChapterCreateViewModel(RepoRepository repository) {
-        this.repoId = new MutableLiveData<>();
-        repo = Transformations.switchMap(repoId, input -> {
-            if (input.isEmpty()) {
-                return AbsentLiveData.create();
-            }
-            return repository.loadRepo(input.owner, input.name);
-        });
-        contributors = Transformations.switchMap(repoId, input -> {
-            if (input.isEmpty()) {
-                return AbsentLiveData.create();
-            } else {
-                return repository.loadContributors(input.owner, input.name);
-            }
 
-        });
     }
 
-    public LiveData<Resource<Repo>> getRepo() {
-        return repo;
+
+    public void addTextExposition(Editable textExposition) {
+        expositions.add(new Exposition(ExpositionType.TEXT, textExposition.toString()));
     }
 
-    public LiveData<Resource<List<Contributor>>> getContributors() {
-        return contributors;
-    }
 
-    public void retry() {
-        RepoId current = repoId.getValue();
-        if (current != null && !current.isEmpty()) {
-            repoId.setValue(current);
-        }
-    }
-
-    void setId(String owner, String name) {
-        RepoId update = new RepoId(owner, name);
-        if (Objects.equals(repoId.getValue(), update)) {
-            return;
-        }
-        repoId.setValue(update);
-    }
-
-    @VisibleForTesting
-    static class RepoId {
-        public final String owner;
-        public final String name;
-
-        RepoId(String owner, String name) {
-            this.owner = owner == null ? null : owner.trim();
-            this.name = name == null ? null : name.trim();
-        }
-
-        boolean isEmpty() {
-            return owner == null || name == null || owner.length() == 0 || name.length() == 0;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            RepoId repoId = (RepoId) o;
-
-            if (owner != null ? !owner.equals(repoId.owner) : repoId.owner != null) {
-                return false;
-            }
-            return name != null ? name.equals(repoId.name) : repoId.name == null;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = owner != null ? owner.hashCode() : 0;
-            result = 31 * result + (name != null ? name.hashCode() : 0);
-            return result;
-        }
+    public Chapter getChapter() {
+        return chapter;
     }
 }

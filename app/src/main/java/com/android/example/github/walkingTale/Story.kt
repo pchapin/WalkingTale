@@ -8,28 +8,49 @@ import android.location.Location
 
 class StoryManager() {
 
-    val story = Story()
+    private val story = Story()
 
-    fun addChapter() {
+    fun addChapter(chapter: Chapter) {
+        story.chapters.add(chapter)
+    }
+
+    fun addExposition(exposition: Exposition) {
+        story.chapters.last().expositions.add(exposition)
+    }
+
+    fun addExposition(exposition: Exposition, chapter: Chapter) {
+        val index = story.chapters.indexOf(chapter)
+        story.chapters[index].expositions.add(exposition)
+    }
+
+    fun removeChapter(chapter: Chapter) {
+        story.chapters.remove(chapter)
+    }
+
+    fun removeExposition(exposition: Exposition) {
+        story.chapters.last().expositions.remove(exposition)
+    }
+
+    fun getChapter(nameOfChapter: String) {
 
     }
 
-    fun removeChapter() {}
-    fun addExposition() {}
-    fun removeExposition() {}
+    fun getExposition() {
+
+    }
 }
 
-class Story(val chapters: MutableList<Chapter> = mutableListOf(),
-            val title: String = "",
-            val description: String = "")
+data class Story(var chapters: MutableList<Chapter> = mutableListOf(),
+                 var title: String = "",
+                 var description: String = "")
 
-class Chapter(expositions: List<Exposition>,
-              name: String,
-              location: Location)
+data class Chapter(var expositions: MutableList<Exposition>,
+                   var name: String,
+                   var location: Location)
 
-class Exposition(type: ExpositionType,
-                 content: String)
+data class Exposition(var type: ExpositionType,
+                      var content: String)
 
 enum class ExpositionType {
-    TEXT
+    TEXT, AUDIO, PICTURE
 }

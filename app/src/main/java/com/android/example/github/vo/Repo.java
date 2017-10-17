@@ -90,25 +90,26 @@ public class Repo {
         }
     }
 
-    public static class Chapter {
-        public final ArrayList<Exposition> expositions;
-        public final String location;
-        public final String name;
-
-        public Chapter(ArrayList<Exposition> expositions, String location, String name) {
-            this.expositions = expositions;
-            this.location = location;
-            this.name = name;
-        }
-    }
-
-    public static class Exposition {
-        public final String type;
-        public final String contentUrl;
-
-        public Exposition(String type, String url) {
-            this.type = type;
-            this.contentUrl = url;
-        }
-    }
+    //Todo: add these to repo
+//    public static class Chapter {
+//        public final ArrayList<Exposition> expositions;
+//        public final String location;
+//        public final String name;
+//
+//        public Chapter(ArrayList<Exposition> expositions, String location, String name) {
+//            this.expositions = expositions;
+//            this.location = location;
+//            this.name = name;
+//        }
+//    }
+//
+//    public static class Exposition {
+//        public final String type;
+//        public final String contentUrl;
+//
+//        public Exposition(String type, String url) {
+//            this.type = type;
+//            this.contentUrl = url;
+//        }
+//    }
 }

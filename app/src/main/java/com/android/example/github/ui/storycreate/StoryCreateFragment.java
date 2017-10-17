@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -122,6 +123,16 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         });
     }
 
+    @Override
+    public void onResume() {
+        //todo: find better way to receive value than onResume
+        super.onResume();
+        try {
+            String value = getArguments().get("BOOLEAN_VALUE").toString();
+            Toast.makeText(getContext(), value, Toast.LENGTH_SHORT).show();
+        } catch (NullPointerException n) {
+        }
+    }
 
     @Nullable
     @Override

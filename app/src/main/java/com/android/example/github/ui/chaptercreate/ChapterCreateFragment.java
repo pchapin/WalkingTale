@@ -22,6 +22,7 @@ import com.android.example.github.databinding.CreateChapterFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.repo.ContributorAdapter;
+import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
@@ -40,6 +41,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -66,7 +69,6 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
-    ImageView mImageView;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -96,29 +98,15 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
         super.onActivityCreated(savedInstanceState);
         ChapterCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(ChapterCreateViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            ChapterCreateViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
-        } else {
-            ChapterCreateViewModel.setId(null, null);
-        }
-        LiveData<Resource<Repo>> repo = ChapterCreateViewModel.getRepo();
-        repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-        });
 
         ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().contributorList.setAdapter(adapter);
         initPictureExpositionListener();
         initTextExpositionListener();
         initFinishChapterListener();
-        initContributorList(ChapterCreateViewModel);
         getActivity().setTitle("Create Chapter");
+
     }
 
     private void initPictureExpositionListener() {
@@ -129,10 +117,21 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
 
     private void initTextExpositionListener() {
         binding.get().addTextExposition.setOnClickListener((v) -> {
-            TextView textView = new TextView(getActivity());
-            textView.setText("Some exposition text");
-            LinearLayout linearLayout = this.binding.get().chapterLinearLayout;
-            linearLayout.addView(textView);
+            Editable textExposition = binding.get().textExpositionEdittext.getText();
+
+            if (TextUtils.isEmpty(textExposition)) {
+                //Display error: text exposition cannot be empty
+                Toast.makeText(getActivity(), "Text exposition cannot be empty!", Toast.LENGTH_SHORT).show();
+            } else {
+                ChapterCreateViewModel.addTextExposition(textExposition);
+
+                Toast.makeText(getActivity(), ChapterCreateViewModel.getChapter().toString(), Toast.LENGTH_LONG).show();
+
+                TextView textView = new TextView(getActivity());
+                textView.setText(textExposition);
+                LinearLayout linearLayout = this.binding.get().chapterLinearLayout;
+                linearLayout.addView(textView);
+            }
         });
     }
 
@@ -142,18 +141,6 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
         });
     }
 
-    private void initContributorList(ChapterCreateViewModel viewModel) {
-        viewModel.getContributors().observe(this, listResource -> {
-            // we don't need any null checks here for the adapter since LiveData guarantees that
-            // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data);
-            } else {
-                //noinspection ConstantConditions
-                adapter.get().replace(Collections.emptyList());
-            }
-        });
-    }
 
     @Nullable
     @Override
@@ -161,7 +148,6 @@ public class ChapterCreateFragment extends Fragment implements LifecycleRegistry
                              @Nullable Bundle savedInstanceState) {
         CreateChapterFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.create_chapter_fragment, container, false);
-        dataBinding.setRetryCallback(() -> ChapterCreateViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }
