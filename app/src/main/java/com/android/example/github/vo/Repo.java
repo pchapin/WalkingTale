@@ -46,8 +46,16 @@ public class Repo {
     public final String chapters;
     @SerializedName("expositions")
     public final String expositions;
+    @SerializedName("genre")
+    public final String genre;
+    @SerializedName("tags")
+    public final String tags;
+    @SerializedName("duration")
+    public final Double duration;
+    @SerializedName("rating")
+    public final Double rating;
 
-    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions) {
+    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, Double duration, Double rating) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
@@ -56,6 +64,10 @@ public class Repo {
         this.stars = stars;
         this.chapters = chapters;
         this.expositions = expositions;
+        this.genre = genre;
+        this.tags = tags;
+        this.duration = duration;
+        this.rating = rating;
     }
 
     public static class Owner {
