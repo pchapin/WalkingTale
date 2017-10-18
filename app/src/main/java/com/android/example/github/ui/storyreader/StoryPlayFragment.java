@@ -39,6 +39,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -64,11 +65,10 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     AutoClearedValue<ContributorAdapter> adapter;
     private StoryPlayViewModel StoryPlayViewModel;
 
-    public static StoryPlayFragment create(String owner, String name) {
+    public static StoryPlayFragment create(String storyId) {
         StoryPlayFragment repoFragment = new StoryPlayFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+        args.putString("storyIdKey", storyId);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -83,6 +83,8 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         super.onActivityCreated(savedInstanceState);
         StoryPlayViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryPlayViewModel.class);
         Bundle args = getArguments();
+        // TODO: 10/18/2017 Use story id to get story from repository
+        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
         initViewExpositionsListener();
         initViewMapListener();
         getActivity().setTitle("Play Story");

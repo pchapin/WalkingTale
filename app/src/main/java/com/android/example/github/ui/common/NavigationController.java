@@ -92,7 +92,7 @@ public class NavigationController {
     }
 
     public void navigateToStoryPlay(String storyId) {
-        StoryPlayFragment storyPlayFragment = new StoryPlayFragment();
+        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(storyId);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment, storyId)
                 .addToBackStack(null)
