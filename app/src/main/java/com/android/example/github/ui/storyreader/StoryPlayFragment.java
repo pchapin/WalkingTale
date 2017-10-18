@@ -83,27 +83,8 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         super.onActivityCreated(savedInstanceState);
         StoryPlayViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryPlayViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            StoryPlayViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
-        } else {
-            StoryPlayViewModel.setId(null, null);
-        }
-        LiveData<Resource<Repo>> repo = StoryPlayViewModel.getRepo();
-        repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-        });
-
-        ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
-                contributor -> navigationController.navigateToUser(contributor.getLogin()));
-        this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().contributorList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
-        initContributorList(StoryPlayViewModel);
         getActivity().setTitle("Play Story");
     }
 
@@ -119,18 +100,6 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         });
     }
 
-    private void initContributorList(StoryPlayViewModel viewModel) {
-        viewModel.getContributors().observe(this, listResource -> {
-            // we don't need any null checks here for the adapter since LiveData guarantees that
-            // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data);
-            } else {
-                //noinspection ConstantConditions
-                adapter.get().replace(Collections.emptyList());
-            }
-        });
-    }
 
     @Nullable
     @Override
@@ -138,7 +107,6 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
                              @Nullable Bundle savedInstanceState) {
         StoryPlayFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.story_play_fragment, container, false);
-        dataBinding.setRetryCallback(() -> StoryPlayViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }

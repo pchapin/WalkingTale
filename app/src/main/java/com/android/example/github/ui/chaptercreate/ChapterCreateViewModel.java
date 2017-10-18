@@ -42,7 +42,7 @@ import javax.inject.Inject;
 public class ChapterCreateViewModel extends ViewModel {
 
     private ArrayList<Exposition> expositions = new ArrayList<>();
-    private Chapter chapter = new Chapter(expositions, "", new Location(""));
+    private Chapter chapter = new Chapter(expositions, ",", new Location(""), false, -1, -1);
 
     @Inject
     public ChapterCreateViewModel(RepoRepository repository) {
@@ -51,7 +51,7 @@ public class ChapterCreateViewModel extends ViewModel {
 
 
     public void addTextExposition(Editable textExposition) {
-        expositions.add(new Exposition(ExpositionType.TEXT, textExposition.toString()));
+        expositions.add(new Exposition(ExpositionType.TEXT, textExposition.toString(), false, -1));
     }
 
 

@@ -9,6 +9,11 @@ import android.location.Location
 class StoryManager() {
 
     private val story = Story()
+    lateinit var currentChapter: Chapter;
+
+    fun getNextChapter(): Chapter {
+        return story.chapters.get(currentChapter.id + 1)
+    }
 
     fun addChapter(chapter: Chapter) {
         story.chapters.add(chapter)
@@ -40,16 +45,23 @@ class StoryManager() {
     }
 }
 
-data class Story(var chapters: MutableList<Chapter> = mutableListOf(),
+data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
                  var title: String = "",
-                 var description: String = "")
+                 var description: String = "",
+                 var id: Int = -1,
+                 var chapterCount: Int = -1)
 
-data class Chapter(var expositions: MutableList<Exposition>,
+data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
                    var name: String,
-                   var location: Location)
+                   var location: Location,
+                   var visited: Boolean = false,
+                   var id: Int = -1,
+                   var expositionCount: Int = -1)
 
 data class Exposition(var type: ExpositionType,
-                      var content: String)
+                      var content: String,
+                      var viewed: Boolean = false,
+                      var id: Int = -1)
 
 enum class ExpositionType {
     TEXT, AUDIO, PICTURE
