@@ -131,6 +131,14 @@
             app:visibleGone="@{repo != null}"
             tools:text="duration" />
 
+        <Button
+            android:id="@+id/start_story_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Start Story"
+            app:layout_constraintTop_toBottomOf="@+id/duration" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/contributor_list"
             android:layout_width="0dp"
@@ -143,10 +151,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/duration"
+            app:layout_constraintTop_toBottomOf="@+id/start_story_button"
             tools:listitem="@layout/contributor_item" />
 
         <include
+            android:id="@+id/include2"
             layout="@layout/loading_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

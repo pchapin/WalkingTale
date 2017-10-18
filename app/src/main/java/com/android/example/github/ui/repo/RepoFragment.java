@@ -56,15 +56,21 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
-    private RepoViewModel repoViewModel;
-
     @Inject
     NavigationController navigationController;
-
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<RepoFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
+    private RepoViewModel repoViewModel;
+
+    public static RepoFragment create(String owner, String name) {
+        RepoFragment repoFragment = new RepoFragment();
+        Bundle args = new Bundle();
+        args.putString(REPO_OWNER_KEY, owner);
+        args.putString(REPO_NAME_KEY, name);
+        repoFragment.setArguments(args);
+        return repoFragment;
+    }
 
     @Override
     public LifecycleRegistry getLifecycle() {
@@ -94,7 +100,16 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
+        initStartStoryListener();
         initContributorList(repoViewModel);
+        getActivity().setTitle("Story Overview");
+    }
+
+    private void initStartStoryListener() {
+        binding.get().startStoryButton.setOnClickListener((v) -> {
+            String storyId = String.valueOf(repoViewModel.getRepo().getValue().data.id);
+            navigationController.navigateToStoryPlay(storyId);
+        });
     }
 
     private void initContributorList(RepoViewModel viewModel) {
@@ -119,14 +134,5 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
         dataBinding.setRetryCallback(() -> repoViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
-    }
-
-    public static RepoFragment create(String owner, String name) {
-        RepoFragment repoFragment = new RepoFragment();
-        Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
-        repoFragment.setArguments(args);
-        return repoFragment;
     }
 }

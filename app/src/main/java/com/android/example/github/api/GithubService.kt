@@ -47,5 +47,8 @@ interface GithubService {
     fun searchRepos(): LiveData<ApiResponse<RepoSearchResponse>>
 
     @GET("toddcooke/test/master/test.json")
+    fun searchRepos(@Query("q") query: String): LiveData<ApiResponse<RepoSearchResponse>>
+
+    @GET("toddcooke/test/master/test.json")
     fun searchRepos(@Query("q") query: String, @Query("page") page: Int): Call<RepoSearchResponse>
 }
