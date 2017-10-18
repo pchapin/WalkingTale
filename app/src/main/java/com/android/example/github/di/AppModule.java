@@ -36,8 +36,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 class AppModule {
     @Singleton @Provides
     GithubService provideGithubService() {
+        // was https://api.github.com/
         return new Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
+                .baseUrl("https://raw.githubusercontent.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .build()

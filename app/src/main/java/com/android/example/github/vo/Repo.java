@@ -22,8 +22,6 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 
-import java.util.ArrayList;
-
 /**
  * Using name/owner_login as primary key instead of id since name/owner_login is always available
  * vs id is not.
@@ -44,14 +42,20 @@ public class Repo {
     @SerializedName("owner")
     @Embedded(prefix = "owner_")
     public final Owner owner;
+    @SerializedName("chapters")
+    public final String chapters;
+    @SerializedName("expositions")
+    public final String expositions;
 
-    public Repo(int id, String name, String fullName, String description, Owner owner, int stars) {
+    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
         this.description = description;
         this.owner = owner;
         this.stars = stars;
+        this.chapters = chapters;
+        this.expositions = expositions;
     }
 
     public static class Owner {
