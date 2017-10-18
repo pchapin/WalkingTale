@@ -51,11 +51,11 @@ public class Repo {
     @SerializedName("tags")
     public final String tags;
     @SerializedName("duration")
-    public final Double duration;
+    public final String duration;
     @SerializedName("rating")
-    public final Double rating;
+    public final String rating;
 
-    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, Double duration, Double rating) {
+    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, String duration, String rating) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
