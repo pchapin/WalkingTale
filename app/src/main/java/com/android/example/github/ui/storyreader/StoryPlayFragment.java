@@ -65,10 +65,11 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     AutoClearedValue<ContributorAdapter> adapter;
     private StoryPlayViewModel storyPlayViewModel;
 
-    public static StoryPlayFragment create(String storyId) {
+    public static StoryPlayFragment create(String owner, String name) {
         StoryPlayFragment repoFragment = new StoryPlayFragment();
         Bundle args = new Bundle();
-        args.putString("storyIdKey", storyId);
+        args.putString(REPO_OWNER_KEY, owner);
+        args.putString(REPO_NAME_KEY, name);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -103,7 +104,8 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         binding.get().contributorList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
-        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
+        initContributorList(storyPlayViewModel);
+//        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
         getActivity().setTitle("Play Story");
     }
 
@@ -116,6 +118,19 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     private void initViewMapListener() {
         binding.get().viewMap.setOnClickListener((v) -> {
             //Todo: Open map
+        });
+    }
+
+    private void initContributorList(StoryPlayViewModel viewModel) {
+        viewModel.getContributors().observe(this, listResource -> {
+            // we don't need any null checks here for the adapter since LiveData guarantees that
+            // it won't call us if fragment is stopped or not started.
+            if (listResource != null && listResource.data != null) {
+                adapter.get().replace(listResource.data);
+            } else {
+                //noinspection ConstantConditions
+                adapter.get().replace(Collections.emptyList());
+            }
         });
     }
 

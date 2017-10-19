@@ -101,14 +101,16 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
         initStartStoryListener();
-        initContributorList(repoViewModel);
+//        initContributorList(repoViewModel);
         getActivity().setTitle("Story Overview");
     }
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-            String storyId = String.valueOf(repoViewModel.getRepo().getValue().data.id);
-            navigationController.navigateToStoryPlay(storyId);
+//            String storyId = String.valueOf(repoViewModel.getRepo().getValue().data.id);
+            String owner = repoViewModel.getRepo().getValue().data.owner.login;
+            String name = repoViewModel.getRepo().getValue().data.name;
+            navigationController.navigateToStoryPlay(owner, name);
         });
     }
 
@@ -128,7 +130,7 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         RepoFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.repo_fragment, container, false);
         dataBinding.setRetryCallback(() -> repoViewModel.retry());

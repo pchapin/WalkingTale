@@ -92,7 +92,7 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
 
     private void initPlayStoryListener() {
         binding.get().playStoryBtn.setOnClickListener((v) -> {
-            navigationController.navigateToStoryPlay("");
+            // TODO: 10/19/2017 should there be a dedicated play button?
         });
     }
 

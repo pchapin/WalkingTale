@@ -91,10 +91,11 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToStoryPlay(String storyId) {
-        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(storyId);
+    public void navigateToStoryPlay(String owner, String name) {
+        String tag = "repo" + "/" + owner + "/" + name;
+        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(owner, name);
         fragmentManager.beginTransaction()
-                .replace(containerId, storyPlayFragment, storyId)
+                .replace(containerId, storyPlayFragment, tag)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
