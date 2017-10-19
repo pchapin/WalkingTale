@@ -140,7 +140,7 @@ public class RepoRepository {
                 try {
                     repoDao.createRepoIfNotExists(new Repo(Repo.UNKNOWN_ID,
                             name, owner + "/" + name, "",
-                            new Repo.Owner(owner, null), 0, "", "", "", "", "", ""));
+                            new Repo.Owner(owner, null), 0, "", "", "", "", "", "", 0.0, 0.0));
                     repoDao.insertContributors(contributors);
                     db.setTransactionSuccessful();
                 } finally {

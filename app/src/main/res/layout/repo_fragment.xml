@@ -139,6 +139,14 @@
             android:text="Start Story"
             app:layout_constraintTop_toBottomOf="@+id/duration" />
 
+        <Button
+            android:id="@+id/story_location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Story Location"
+            app:layout_constraintTop_toBottomOf="@+id/start_story_button" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/contributor_list"
             android:layout_width="0dp"
@@ -151,7 +159,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/start_story_button"
+            app:layout_constraintTop_toBottomOf="@+id/story_location_button"
             tools:listitem="@layout/contributor_item" />
 
         <include

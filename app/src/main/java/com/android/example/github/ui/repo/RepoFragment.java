@@ -30,8 +30,10 @@ import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -101,6 +103,7 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
         initStartStoryListener();
+        initStoryLocationListener();
 //        initContributorList(repoViewModel);
         getActivity().setTitle("Story Overview");
     }
@@ -111,6 +114,16 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
             String owner = repoViewModel.getRepo().getValue().data.owner.login;
             String name = repoViewModel.getRepo().getValue().data.name;
             navigationController.navigateToStoryPlay(owner, name);
+        });
+    }
+
+    private void initStoryLocationListener() {
+        binding.get().storyLocationButton.setOnClickListener((v) -> {
+            String latitude = Double.toString(repoViewModel.getRepo().getValue().data.latitude);
+            String longitude = Double.toString(repoViewModel.getRepo().getValue().data.longitude);
+            String url = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s", latitude, longitude);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
         });
     }
 
