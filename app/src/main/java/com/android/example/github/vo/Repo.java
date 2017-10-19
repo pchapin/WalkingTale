@@ -22,8 +22,6 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 
-import java.util.ArrayList;
-
 /**
  * Using name/owner_login as primary key instead of id since name/owner_login is always available
  * vs id is not.
@@ -44,14 +42,32 @@ public class Repo {
     @SerializedName("owner")
     @Embedded(prefix = "owner_")
     public final Owner owner;
+    @SerializedName("chapters")
+    public final String chapters;
+    @SerializedName("expositions")
+    public final String expositions;
+    @SerializedName("genre")
+    public final String genre;
+    @SerializedName("tags")
+    public final String tags;
+    @SerializedName("duration")
+    public final String duration;
+    @SerializedName("rating")
+    public final String rating;
 
-    public Repo(int id, String name, String fullName, String description, Owner owner, int stars) {
+    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, String duration, String rating) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
         this.description = description;
         this.owner = owner;
         this.stars = stars;
+        this.chapters = chapters;
+        this.expositions = expositions;
+        this.genre = genre;
+        this.tags = tags;
+        this.duration = duration;
+        this.rating = rating;
     }
 
     public static class Owner {
@@ -90,25 +106,26 @@ public class Repo {
         }
     }
 
-    public static class Chapter {
-        public final ArrayList<Exposition> expositions;
-        public final String location;
-        public final String name;
-
-        public Chapter(ArrayList<Exposition> expositions, String location, String name) {
-            this.expositions = expositions;
-            this.location = location;
-            this.name = name;
-        }
-    }
-
-    public static class Exposition {
-        public final String type;
-        public final String contentUrl;
-
-        public Exposition(String type, String url) {
-            this.type = type;
-            this.contentUrl = url;
-        }
-    }
+    //Todo: add these to repo
+//    public static class Chapter {
+//        public final ArrayList<Exposition> expositions;
+//        public final String location;
+//        public final String name;
+//
+//        public Chapter(ArrayList<Exposition> expositions, String location, String name) {
+//            this.expositions = expositions;
+//            this.location = location;
+//            this.name = name;
+//        }
+//    }
+//
+//    public static class Exposition {
+//        public final String type;
+//        public final String contentUrl;
+//
+//        public Exposition(String type, String url) {
+//            this.type = type;
+//            this.contentUrl = url;
+//        }
+//    }
 }

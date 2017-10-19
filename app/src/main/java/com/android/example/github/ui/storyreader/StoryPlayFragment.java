@@ -39,6 +39,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -64,11 +65,10 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     AutoClearedValue<ContributorAdapter> adapter;
     private StoryPlayViewModel StoryPlayViewModel;
 
-    public static StoryPlayFragment create(String owner, String name) {
+    public static StoryPlayFragment create(String storyId) {
         StoryPlayFragment repoFragment = new StoryPlayFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+        args.putString("storyIdKey", storyId);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -83,27 +83,10 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         super.onActivityCreated(savedInstanceState);
         StoryPlayViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryPlayViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            StoryPlayViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
-        } else {
-            StoryPlayViewModel.setId(null, null);
-        }
-        LiveData<Resource<Repo>> repo = StoryPlayViewModel.getRepo();
-        repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-        });
-
-        ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
-                contributor -> navigationController.navigateToUser(contributor.getLogin()));
-        this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().contributorList.setAdapter(adapter);
+        // TODO: 10/18/2017 Use story id to get story from repository
+        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
         initViewExpositionsListener();
         initViewMapListener();
-        initContributorList(StoryPlayViewModel);
         getActivity().setTitle("Play Story");
     }
 
@@ -119,18 +102,6 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
         });
     }
 
-    private void initContributorList(StoryPlayViewModel viewModel) {
-        viewModel.getContributors().observe(this, listResource -> {
-            // we don't need any null checks here for the adapter since LiveData guarantees that
-            // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data);
-            } else {
-                //noinspection ConstantConditions
-                adapter.get().replace(Collections.emptyList());
-            }
-        });
-    }
 
     @Nullable
     @Override
@@ -138,7 +109,6 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
                              @Nullable Bundle savedInstanceState) {
         StoryPlayFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.story_play_fragment, container, false);
-        dataBinding.setRetryCallback(() -> StoryPlayViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }

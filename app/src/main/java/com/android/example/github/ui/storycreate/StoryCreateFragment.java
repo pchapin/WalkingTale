@@ -35,11 +35,17 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Collections;
 
@@ -84,19 +90,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         super.onActivityCreated(savedInstanceState);
         StoryCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryCreateViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            StoryCreateViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
-        } else {
-            StoryCreateViewModel.setId(null, null);
-        }
-        LiveData<Resource<Repo>> repo = StoryCreateViewModel.getRepo();
-        repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-        });
+
 
         ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
                 contributor -> navigationController.navigateToUser(contributor.getLogin()));
@@ -104,7 +98,6 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         binding.get().contributorList.setAdapter(adapter);
         initAddChapterListener();
         initFinishStoryListener();
-        initContributorList(StoryCreateViewModel);
         getActivity().setTitle("Create Story");
     }
 
@@ -116,21 +109,29 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
 
     private void initFinishStoryListener() {
         binding.get().finishStory.setOnClickListener((v) -> {
-            //Todo: If story info is valid, publish story
+            Editable storyNameEditText = binding.get().storyNameEditText.getText();
+            Editable storyDescriptionEditText = binding.get().storyDescriptionEditText.getText();
+
+            if (TextUtils.isEmpty(storyNameEditText) || TextUtils.isEmpty(storyDescriptionEditText)) {
+                // Name and or desc are not valid
+                TextInputLayout textInputEditText = binding.get().storyNameTextinputlayout;
+                textInputEditText.setError("Error message here");
+            } else {
+                // Name and desc are valid
+                //Todo: If story info is valid, publish story
+            }
         });
     }
 
-    private void initContributorList(StoryCreateViewModel viewModel) {
-        viewModel.getContributors().observe(this, listResource -> {
-            // we don't need any null checks here for the adapter since LiveData guarantees that
-            // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data);
-            } else {
-                //noinspection ConstantConditions
-                adapter.get().replace(Collections.emptyList());
-            }
-        });
+    @Override
+    public void onResume() {
+        //todo: find better way to receive value than onResume
+        super.onResume();
+        try {
+            String value = getArguments().get("BOOLEAN_VALUE").toString();
+            Toast.makeText(getContext(), value, Toast.LENGTH_SHORT).show();
+        } catch (NullPointerException n) {
+        }
     }
 
     @Nullable
@@ -139,7 +140,6 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
                              @Nullable Bundle savedInstanceState) {
         CreateStoryFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.create_story_fragment, container, false);
-        dataBinding.setRetryCallback(() -> StoryCreateViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }

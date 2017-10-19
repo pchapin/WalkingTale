@@ -92,7 +92,7 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
 
     private void initPlayStoryListener() {
         binding.get().playStoryBtn.setOnClickListener((v) -> {
-            navigationController.navigateToStoryPlay();
+            navigationController.navigateToStoryPlay("");
         });
     }
 

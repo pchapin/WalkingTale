@@ -36,6 +36,7 @@ import javax.inject.Inject;
 public class NavigationController {
     private final int containerId;
     private final FragmentManager fragmentManager;
+
     @Inject
     public NavigationController(MainActivity mainActivity) {
         this.containerId = R.id.container;
@@ -90,10 +91,10 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToStoryPlay() {
-        StoryPlayFragment storyPlayFragment = new StoryPlayFragment();
+    public void navigateToStoryPlay(String storyId) {
+        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(storyId);
         fragmentManager.beginTransaction()
-                .replace(containerId, storyPlayFragment)
+                .replace(containerId, storyPlayFragment, storyId)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
