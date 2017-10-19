@@ -25,6 +25,7 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 
+import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
@@ -48,7 +49,7 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying a Github Repo's information with its contributors.
  */
-public class RepoFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class RepoFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 

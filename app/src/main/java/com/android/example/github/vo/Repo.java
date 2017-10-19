@@ -58,8 +58,10 @@ public class Repo {
     public final Double latitude;
     @SerializedName("longitude")
     public final Double longitude;
+    @SerializedName("story_image")
+    public final String story_image;
 
-    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, String duration, String rating, Double latitude, Double longitude) {
+    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, String duration, String rating, Double latitude, Double longitude, String story_image) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
@@ -74,6 +76,7 @@ public class Repo {
         this.rating = rating;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.story_image = story_image;
     }
 
     public static class Owner {

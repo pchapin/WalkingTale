@@ -46,6 +46,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/story_image"
+            android:layout_width="@dimen/photo_size"
+            android:layout_height="@dimen/photo_size"
+            android:background="@mipmap/ic_launcher"
+            android:contentDescription="@string/a11y_user_photo"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{repo.story_image}"
+            app:layout_constraintTop_toBottomOf="parent"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp"
+
+            />
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" -->
+        <!--android:id="@+id/story_image"-->
+        <!--android:text="@{repo.story_image}"-->
+        <!--android:hint="fjfjff"/>-->
+
         <TextView
             android:id="@+id/name"
             style="@style/TextAppearance.AppCompat.Headline"
@@ -57,7 +78,7 @@
             android:layout_marginTop="8dp"
             android:text="@{repo.name}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/story_image"
             app:visibleGone="@{repo != null}"
             tools:text="name of the story" />
 
