@@ -164,7 +164,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<List<Contributor>>> createCall() {
-                return githubService.getContributors(owner, name);
+                return githubService.getContributors();
             }
         }.asLiveData();
     }
