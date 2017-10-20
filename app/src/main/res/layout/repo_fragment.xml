@@ -46,23 +46,48 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/story_image"
-            android:layout_width="@dimen/photo_size"
-            android:layout_height="@dimen/photo_size"
-            android:background="@mipmap/ic_launcher"
-            android:contentDescription="@string/a11y_user_photo"
-            android:scaleType="centerCrop"
-            app:imageUrl="@{repo.story_image}"
-            app:layout_constraintTop_toBottomOf="parent"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp"
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleGone="@{repo != null}"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="154dp">
 
-            />
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="@dimen/photo_size"
+                android:layout_height="@dimen/photo_size"
+                android:contentDescription="@string/a11y_user_photo"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{repo.story_image}"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp" />
+
+        </LinearLayout>
+
+
+        <!--<ImageView-->
+        <!--android:id="@+id/story_image"-->
+        <!--android:layout_width="@dimen/photo_size"-->
+        <!--android:layout_height="@dimen/photo_size"-->
+        <!--android:background="@mipmap/ic_launcher"-->
+        <!--android:contentDescription="@string/a11y_user_photo"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--app:imageUrl="@{repo.story_image}"-->
+        <!--app:layout_constraintLeft_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="parent"-->
+        <!--tools:layout_editor_absoluteX="8dp"-->
+        <!--tools:layout_editor_absoluteY="8dp"-->
+
+        <!--/>-->
 
         <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" -->
+        <!--android:layout_height="wrap_content"-->
         <!--android:id="@+id/story_image"-->
         <!--android:text="@{repo.story_image}"-->
         <!--android:hint="fjfjff"/>-->
@@ -78,7 +103,8 @@
             android:layout_marginTop="8dp"
             android:text="@{repo.name}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/story_image"
+            app:layout_constraintTop_toBottomOf="@id/header"
+
             app:visibleGone="@{repo != null}"
             tools:text="name of the story" />
 

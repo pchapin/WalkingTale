@@ -146,7 +146,7 @@ public class RepoFragment extends LifecycleFragment implements LifecycleRegistry
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         RepoFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.repo_fragment, container, false);
+                .inflate(inflater, R.layout.repo_fragment, container, false, dataBindingComponent);
         dataBinding.setRetryCallback(() -> repoViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
