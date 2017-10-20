@@ -65,32 +65,10 @@
                 android:scaleType="centerCrop"
                 app:imageUrl="@{repo.story_image}"
                 tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp" />
+                tools:layout_editor_absoluteY="8dp"
+                tools:src="@color/alert" />
 
         </LinearLayout>
-
-
-        <!--<ImageView-->
-        <!--android:id="@+id/story_image"-->
-        <!--android:layout_width="@dimen/photo_size"-->
-        <!--android:layout_height="@dimen/photo_size"-->
-        <!--android:background="@mipmap/ic_launcher"-->
-        <!--android:contentDescription="@string/a11y_user_photo"-->
-        <!--android:scaleType="centerCrop"-->
-        <!--app:imageUrl="@{repo.story_image}"-->
-        <!--app:layout_constraintLeft_toRightOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="parent"-->
-        <!--tools:layout_editor_absoluteX="8dp"-->
-        <!--tools:layout_editor_absoluteY="8dp"-->
-
-        <!--/>-->
-
-        <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/story_image"-->
-        <!--android:text="@{repo.story_image}"-->
-        <!--android:hint="fjfjff"/>-->
 
         <TextView
             android:id="@+id/name"
