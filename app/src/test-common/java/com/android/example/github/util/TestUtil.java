@@ -45,7 +45,7 @@ public class TestUtil {
 
     public static Repo createRepo(int id, String owner, String name, String description) {
         return new Repo(id, name, owner + "/" + name,
-                description, new Repo.Owner(owner, null), 3, "", "", "", "", "", "", 0.0, 0.0, story_image);
+                description, new Repo.Owner(owner, null), 3, "", "", "", "", "", "", 0.0, 0.0, "");
     }
 
     public static Contributor createContributor(Repo repo, String login, int contributions) {
