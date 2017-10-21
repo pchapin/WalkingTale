@@ -87,6 +87,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Exposition 1" />
+
+                <TextView
+                    android:id="@+id/textV123iew2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{repo.chapters}"
+                    tools:text="chapter" />
+                <!--todo: use gson to de/serialize story object
+                https://stackoverflow.com/questions/10930624/creating-json-objects-directly-from-model-classes-in-java
+                -->
+
             </LinearLayout>
         </ScrollView>
 
