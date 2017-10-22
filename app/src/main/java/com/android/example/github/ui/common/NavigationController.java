@@ -18,7 +18,6 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
-import com.android.example.github.ui.chaptercreate.ChapterCreateFragment;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
@@ -80,14 +79,6 @@ public class NavigationController {
         StoryFeedFragment storyFeedFragment = new StoryFeedFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyFeedFragment)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToChapterCreate() {
-        ChapterCreateFragment chapterCreateFragment = new ChapterCreateFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, chapterCreateFragment)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 

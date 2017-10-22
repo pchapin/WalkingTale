@@ -105,10 +105,43 @@
                 android:text="Add Chapter" />
 
             <Button
-                android:id="@+id/finish_story"
+                android:id="@+id/remove_chapter_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Finish Story" />
+                android:text="Remove Chapter" />
+
+            <EditText
+                android:id="@+id/chapter_name_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Chapter Name" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_buttons_create_exposition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/nav_buttons_create_story">
+
+            <Button
+                android:id="@+id/add_text_exposition_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Text" />
+
+            <Button
+                android:id="@+id/add_picture_exposition_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Picture" />
+
+            <Button
+                android:id="@+id/add_audio_exposition_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Audio" />
         </LinearLayout>
 
 
@@ -116,10 +149,10 @@
             android:id="@+id/chapter_scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/nav_buttons_create_story">
+            app:layout_constraintTop_toBottomOf="@+id/nav_buttons_create_exposition">
 
             <LinearLayout
-                android:id="@id/chapter_linear_layout"
+                android:id="@+id/chapter_list_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

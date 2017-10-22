@@ -25,6 +25,8 @@ import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.StoryCreateManager;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
@@ -33,6 +35,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -45,7 +48,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.Collections;
 
@@ -69,7 +76,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<CreateStoryFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
-    private StoryCreateViewModel StoryCreateViewModel;
+    private StoryCreateViewModel storyCreateViewModel;
 
     public static StoryCreateFragment create(String owner, String name) {
         StoryCreateFragment repoFragment = new StoryCreateFragment();
@@ -88,7 +95,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        StoryCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryCreateViewModel.class);
+        storyCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryCreateViewModel.class);
         Bundle args = getArguments();
 
 
@@ -97,41 +104,54 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
         initAddChapterListener();
+        initRemoveChapterListener();
         initFinishStoryListener();
         getActivity().setTitle("Create Story");
     }
 
+    private void updateChapterList() {
+        LinearLayout linearLayout = binding.get().chapterListLinearLayout;
+        linearLayout.removeAllViews();
+
+        for (Chapter chapter : storyCreateViewModel.storyManager.getAllChapters()) {
+            TextView textView = new TextView(getContext());
+            textView.setText(chapter.toString());
+            linearLayout.addView(textView);
+        }
+    }
+
     private void initAddChapterListener() {
         binding.get().addChapterButton.setOnClickListener((v) -> {
-            navigationController.navigateToChapterCreate();
+            storyCreateViewModel.storyManager.addChapter("Chapter name", new Location(""), 123.0);
+            updateChapterList();
+        });
+    }
+
+    private void initRemoveChapterListener() {
+        binding.get().removeChapterButton.setOnClickListener((v) -> {
+            try {
+                storyCreateViewModel.storyManager.removeChapter();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
+            }
+            updateChapterList();
         });
     }
 
     private void initFinishStoryListener() {
-        binding.get().finishStory.setOnClickListener((v) -> {
-            Editable storyNameEditText = binding.get().storyNameEditText.getText();
-            Editable storyDescriptionEditText = binding.get().storyDescriptionEditText.getText();
-
-            if (TextUtils.isEmpty(storyNameEditText) || TextUtils.isEmpty(storyDescriptionEditText)) {
-                // Name and or desc are not valid
-                TextInputLayout textInputEditText = binding.get().storyNameTextinputlayout;
-                textInputEditText.setError("Error message here");
-            } else {
-                // Name and desc are valid
-                //Todo: If story info is valid, publish story
-            }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        //todo: find better way to receive value than onResume
-        super.onResume();
-        try {
-            String value = getArguments().get("BOOLEAN_VALUE").toString();
-            Toast.makeText(getContext(), value, Toast.LENGTH_SHORT).show();
-        } catch (NullPointerException n) {
-        }
+//        binding.get().finishStory.setOnClickListener((v) -> {
+//            Editable storyNameEditText = binding.get().storyNameEditText.getText();
+//            Editable storyDescriptionEditText = binding.get().storyDescriptionEditText.getText();
+//
+//            if (TextUtils.isEmpty(storyNameEditText) || TextUtils.isEmpty(storyDescriptionEditText)) {
+//                // Name and or desc are not valid
+//                TextInputLayout textInputEditText = binding.get().storyNameTextinputlayout;
+//                textInputEditText.setError("Error message here");
+//            } else {
+//                // Name and desc are valid
+//                //Todo: If story info is valid, publish story
+//            }
+//        });
     }
 
     @Nullable
