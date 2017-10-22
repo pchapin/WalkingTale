@@ -26,6 +26,7 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.ExpositionType;
 import com.android.example.github.walkingTale.StoryCreateManager;
 
 import android.arch.lifecycle.LifecycleRegistry;
@@ -55,6 +56,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
@@ -105,7 +107,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         binding.get().contributorList.setAdapter(adapter);
         initAddChapterListener();
         initRemoveChapterListener();
-        initFinishStoryListener();
+        initAddTextListener();
         getActivity().setTitle("Create Story");
     }
 
@@ -138,20 +140,15 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         });
     }
 
-    private void initFinishStoryListener() {
-//        binding.get().finishStory.setOnClickListener((v) -> {
-//            Editable storyNameEditText = binding.get().storyNameEditText.getText();
-//            Editable storyDescriptionEditText = binding.get().storyDescriptionEditText.getText();
-//
-//            if (TextUtils.isEmpty(storyNameEditText) || TextUtils.isEmpty(storyDescriptionEditText)) {
-//                // Name and or desc are not valid
-//                TextInputLayout textInputEditText = binding.get().storyNameTextinputlayout;
-//                textInputEditText.setError("Error message here");
-//            } else {
-//                // Name and desc are valid
-//                //Todo: If story info is valid, publish story
-//            }
-//        });
+    private void initAddTextListener() {
+        binding.get().addTextExpositionButton.setOnClickListener((v) -> {
+            try {
+                storyCreateViewModel.storyManager.addExposition(ExpositionType.TEXT, "hello world");
+            } catch (NoSuchElementException e) {
+                Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
+            }
+            updateChapterList();
+        });
     }
 
     @Nullable
