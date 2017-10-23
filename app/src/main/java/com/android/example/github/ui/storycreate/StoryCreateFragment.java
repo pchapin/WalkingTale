@@ -25,12 +25,16 @@ import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 
+import android.Manifest;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -39,9 +43,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,19 +67,20 @@ import javax.inject.Inject;
 
 import static android.app.Activity.RESULT_OK;
 
+import com.google.android.gms.location.LocationServices;
+
+
 /**
  * The UI Controller for displaying a Github Repo's information with its contributors.
  */
-public class StoryCreateFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class StoryCreateFragment extends Fragment implements
+        LifecycleRegistryOwner, Injectable, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 
     private static final String REPO_NAME_KEY = "repo_name";
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-
-//    private ImageView mImageView;
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -80,6 +88,8 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<CreateStoryFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
     private StoryCreateViewModel storyCreateViewModel;
 
     public static StoryCreateFragment create(String owner, String name) {
@@ -115,6 +125,16 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         initRadiusIncrementListener();
         initRadiusDecrementListener();
         getActivity().setTitle("Create Story");
+
+
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
     private void updateChapterList() {
@@ -130,7 +150,13 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
 
     private void initAddChapterListener() {
         binding.get().addChapterButton.setOnClickListener((v) -> {
-            storyCreateViewModel.storyManager.addChapter("Chapter name", new Location(""), 1);
+            if (mLastLocation != null) {
+                storyCreateViewModel.storyManager.addChapter("Chapter name", mLastLocation, 1);
+            } else {
+                // TODO: 10/23/2017 Location is required, deal with lack of location updates
+                Toast.makeText(getContext(), "Location is null.", Toast.LENGTH_SHORT).show();
+                storyCreateViewModel.storyManager.addChapter("Chapter name", new Location(""), 1);
+            }
             updateChapterList();
         });
     }
@@ -226,5 +252,45 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
             storyCreateViewModel.storyManager.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
             updateChapterList();
         }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            Toast.makeText(getContext(), "Location permissions error.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 }
