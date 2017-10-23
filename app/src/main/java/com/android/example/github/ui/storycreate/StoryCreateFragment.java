@@ -30,22 +30,35 @@ import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * The UI Controller for displaying a Github Repo's information with its contributors.
@@ -57,6 +70,8 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
     private static final String REPO_NAME_KEY = "repo_name";
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+
+//    private ImageView mImageView;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -95,6 +110,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         initAddChapterListener();
         initRemoveChapterListener();
         initAddTextListener();
+        initAddPictureListener();
         initRadiusIncrementListener();
         initRadiusDecrementListener();
         getActivity().setTitle("Create Story");
@@ -140,6 +156,16 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         });
     }
 
+    private void initAddPictureListener() {
+        binding.get().addPictureExpositionButton.setOnClickListener((v) -> {
+            if (storyCreateViewModel.storyManager.getAllChapters().isEmpty()) {
+                Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
+            } else {
+                dispatchTakePictureIntent();
+            }
+        });
+    }
+
     private void initRadiusIncrementListener() {
         binding.get().radiusIncrementButton.setOnClickListener((v) -> {
             try {
@@ -170,5 +196,23 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
                 .inflate(inflater, R.layout.create_story_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
+    }
+
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, 1);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            storyCreateViewModel.storyManager.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
+            updateChapterList();
+        }
     }
 }

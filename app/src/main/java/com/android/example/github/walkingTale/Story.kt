@@ -9,11 +9,10 @@ import android.location.Location
 class StoryCreateManager() {
 
     private val story = Story()
-    private var chapterCount = 0
     private var expositionCount = 0
 
     fun addChapter(name: String, location: Location, radius: Int) {
-        val chapter = Chapter(ArrayList(), name, location, chapterCount++, radius)
+        val chapter = Chapter(ArrayList(), name, location, story.chapters.size, radius)
         story.chapters.add(chapter)
     }
 
