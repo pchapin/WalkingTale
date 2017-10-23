@@ -63,12 +63,13 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<StoryPlayFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
-    private StoryPlayViewModel StoryPlayViewModel;
+    private StoryPlayViewModel storyPlayViewModel;
 
-    public static StoryPlayFragment create(String storyId) {
+    public static StoryPlayFragment create(String owner, String name) {
         StoryPlayFragment repoFragment = new StoryPlayFragment();
         Bundle args = new Bundle();
-        args.putString("storyIdKey", storyId);
+        args.putString(REPO_OWNER_KEY, owner);
+        args.putString(REPO_NAME_KEY, name);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -81,12 +82,30 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        StoryPlayViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryPlayViewModel.class);
+        storyPlayViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryPlayViewModel.class);
         Bundle args = getArguments();
-        // TODO: 10/18/2017 Use story id to get story from repository
-        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
+        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
+                args.containsKey(REPO_NAME_KEY)) {
+            storyPlayViewModel.setId(args.getString(REPO_OWNER_KEY),
+                    args.getString(REPO_NAME_KEY));
+        } else {
+            storyPlayViewModel.setId(null, null);
+        }
+        LiveData<Resource<Repo>> repo = storyPlayViewModel.getRepo();
+        repo.observe(this, resource -> {
+            binding.get().setRepo(resource == null ? null : resource.data);
+            binding.get().setRepoResource(resource);
+            binding.get().executePendingBindings();
+        });
+
+        ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
+                contributor -> navigationController.navigateToUser(contributor.getLogin()));
+        this.adapter = new AutoClearedValue<>(this, adapter);
+        binding.get().contributorList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
+        initContributorList(storyPlayViewModel);
+//        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
         getActivity().setTitle("Play Story");
     }
 
@@ -99,6 +118,19 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     private void initViewMapListener() {
         binding.get().viewMap.setOnClickListener((v) -> {
             //Todo: Open map
+        });
+    }
+
+    private void initContributorList(StoryPlayViewModel viewModel) {
+        viewModel.getContributors().observe(this, listResource -> {
+            // we don't need any null checks here for the adapter since LiveData guarantees that
+            // it won't call us if fragment is stopped or not started.
+            if (listResource != null && listResource.data != null) {
+                adapter.get().replace(listResource.data);
+            } else {
+                //noinspection ConstantConditions
+                adapter.get().replace(Collections.emptyList());
+            }
         });
     }
 

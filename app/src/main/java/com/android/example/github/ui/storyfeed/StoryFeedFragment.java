@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -87,12 +88,16 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         initPlayStoryListener();
         initCreateStoryListener();
         binding.get().setCallback(() -> StoryFeedViewModel.refresh());
+        // temp: search on load to save time
+        TextView textView = new TextView(getContext());
+        textView.setText("ok");
+        doSearch(textView);
         getActivity().setTitle("Story Feed");
     }
 
     private void initPlayStoryListener() {
         binding.get().playStoryBtn.setOnClickListener((v) -> {
-            navigationController.navigateToStoryPlay("");
+            // TODO: 10/19/2017 should there be a dedicated play button?
         });
     }
 

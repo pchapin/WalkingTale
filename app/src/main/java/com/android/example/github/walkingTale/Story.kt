@@ -6,62 +6,52 @@ import android.location.Location
  * 10/9/2017.
  */
 
-class StoryManager() {
+class StoryCreateManager() {
 
     private val story = Story()
-    lateinit var currentChapter: Chapter;
+    private var expositionCount = 0
 
-    fun getNextChapter(): Chapter {
-        return story.chapters.get(currentChapter.id + 1)
-    }
-
-    fun addChapter(chapter: Chapter) {
+    fun addChapter(name: String, location: Location, radius: Int) {
+        val chapter = Chapter(ArrayList(), name, location, story.chapters.size, radius)
         story.chapters.add(chapter)
     }
 
-    fun addExposition(exposition: Exposition) {
+    fun addExposition(expositionType: ExpositionType, content: String) {
+        val exposition = Exposition(expositionType, content, expositionCount++)
         story.chapters.last().expositions.add(exposition)
     }
 
-    fun addExposition(exposition: Exposition, chapter: Chapter) {
-        val index = story.chapters.indexOf(chapter)
-        story.chapters[index].expositions.add(exposition)
+    fun getAllChapters(): ArrayList<Chapter> {
+        return story.chapters
     }
 
-    fun removeChapter(chapter: Chapter) {
-        story.chapters.remove(chapter)
+    fun removeChapter() {
+        story.chapters.removeAt(story.chapters.size - 1)
     }
 
-    fun removeExposition(exposition: Exposition) {
-        story.chapters.last().expositions.remove(exposition)
+    fun incrementRadius() {
+        story.chapters.last().radius++
     }
 
-    fun getChapter(nameOfChapter: String) {
-
-    }
-
-    fun getExposition() {
-
+    fun decrementRadius() {
+        story.chapters.last().radius--
     }
 }
 
 data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
                  var title: String = "",
                  var description: String = "",
-                 var id: Int = -1,
-                 var chapterCount: Int = -1)
+                 var id: Int = -1)
 
 data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
                    var name: String,
                    var location: Location,
-                   var visited: Boolean = false,
-                   var id: Int = -1,
-                   var expositionCount: Int = -1)
+                   var id: Int,
+                   var radius: Int)
 
 data class Exposition(var type: ExpositionType,
                       var content: String,
-                      var viewed: Boolean = false,
-                      var id: Int = -1)
+                      var id: Int)
 
 enum class ExpositionType {
     TEXT, AUDIO, PICTURE

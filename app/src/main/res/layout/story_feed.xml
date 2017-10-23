@@ -71,6 +71,7 @@
                 android:hint="@string/search_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="textNoSuggestions"
+                android:text="ok"
                 tools:text="google" />
         </android.support.design.widget.TextInputLayout>
 

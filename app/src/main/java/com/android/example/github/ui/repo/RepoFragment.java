@@ -25,13 +25,16 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 
+import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,7 +49,7 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying a Github Repo's information with its contributors.
  */
-public class RepoFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class RepoFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 
@@ -101,14 +104,27 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().contributorList.setAdapter(adapter);
         initStartStoryListener();
-        initContributorList(repoViewModel);
+        initStoryLocationListener();
+//        initContributorList(repoViewModel);
         getActivity().setTitle("Story Overview");
     }
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-            String storyId = String.valueOf(repoViewModel.getRepo().getValue().data.id);
-            navigationController.navigateToStoryPlay(storyId);
+//            String storyId = String.valueOf(repoViewModel.getRepo().getValue().data.id);
+            String owner = repoViewModel.getRepo().getValue().data.owner.login;
+            String name = repoViewModel.getRepo().getValue().data.name;
+            navigationController.navigateToStoryPlay(owner, name);
+        });
+    }
+
+    private void initStoryLocationListener() {
+        binding.get().storyLocationButton.setOnClickListener((v) -> {
+            String latitude = Double.toString(repoViewModel.getRepo().getValue().data.latitude);
+            String longitude = Double.toString(repoViewModel.getRepo().getValue().data.longitude);
+            String url = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s", latitude, longitude);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
         });
     }
 
@@ -128,9 +144,9 @@ public class RepoFragment extends Fragment implements LifecycleRegistryOwner, In
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         RepoFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.repo_fragment, container, false);
+                .inflate(inflater, R.layout.repo_fragment, container, false, dataBindingComponent);
         dataBinding.setRetryCallback(() -> repoViewModel.retry());
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();

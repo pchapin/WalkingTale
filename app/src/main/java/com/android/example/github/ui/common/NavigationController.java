@@ -18,7 +18,6 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
-import com.android.example.github.ui.chaptercreate.ChapterCreateFragment;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
@@ -83,18 +82,11 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToChapterCreate() {
-        ChapterCreateFragment chapterCreateFragment = new ChapterCreateFragment();
+    public void navigateToStoryPlay(String owner, String name) {
+        String tag = "repo" + "/" + owner + "/" + name;
+        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(owner, name);
         fragmentManager.beginTransaction()
-                .replace(containerId, chapterCreateFragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToStoryPlay(String storyId) {
-        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(storyId);
-        fragmentManager.beginTransaction()
-                .replace(containerId, storyPlayFragment, storyId)
+                .replace(containerId, storyPlayFragment, tag)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

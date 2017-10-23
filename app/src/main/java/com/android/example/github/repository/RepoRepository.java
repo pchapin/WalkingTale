@@ -140,7 +140,7 @@ public class RepoRepository {
                 try {
                     repoDao.createRepoIfNotExists(new Repo(Repo.UNKNOWN_ID,
                             name, owner + "/" + name, "",
-                            new Repo.Owner(owner, null), 0, "", "", "", "", "", ""));
+                            new Repo.Owner(owner, null), 0, "", "", "", "", "", "", 0.0, 0.0, ""));
                     repoDao.insertContributors(contributors);
                     db.setTransactionSuccessful();
                 } finally {
@@ -164,7 +164,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<List<Contributor>>> createCall() {
-                return githubService.getContributors(owner, name);
+                return githubService.getContributors();
             }
         }.asLiveData();
     }

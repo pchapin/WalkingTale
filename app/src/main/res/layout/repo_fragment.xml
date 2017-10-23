@@ -46,6 +46,30 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleGone="@{repo != null}"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="154dp">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="@dimen/photo_size"
+                android:layout_height="@dimen/photo_size"
+                android:contentDescription="@string/a11y_user_photo"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{repo.story_image}"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp"
+                tools:src="@color/alert" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/name"
             style="@style/TextAppearance.AppCompat.Headline"
@@ -55,11 +79,26 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{@string/repo_full_name(repo.owner.login, repo.name)}"
+            android:text="@{repo.name}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
+
             app:visibleGone="@{repo != null}"
-            tools:text="name of the user" />
+            tools:text="name of the story" />
+
+        <TextView
+            android:id="@+id/author"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@{repo.owner.login}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:visibleGone="@{repo != null}"
+            tools:text="author" />
 
         <TextView
             android:id="@+id/description"
@@ -71,7 +110,7 @@
             android:layout_marginTop="8dp"
             android:text="@{repo.description}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/author"
             app:visibleGone="@{repo != null}"
             tools:text="description of the story" />
 
@@ -139,6 +178,14 @@
             android:text="Start Story"
             app:layout_constraintTop_toBottomOf="@+id/duration" />
 
+        <Button
+            android:id="@+id/story_location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Story Location"
+            app:layout_constraintTop_toBottomOf="@+id/start_story_button" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/contributor_list"
             android:layout_width="0dp"
@@ -151,7 +198,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/start_story_button"
+            app:layout_constraintTop_toBottomOf="@+id/story_location_button"
             tools:listitem="@layout/contributor_item" />
 
         <include

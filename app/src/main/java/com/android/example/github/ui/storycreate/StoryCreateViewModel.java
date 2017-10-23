@@ -28,7 +28,7 @@ import com.android.example.github.util.Objects;
 import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.StoryManager;
+import com.android.example.github.walkingTale.StoryCreateManager;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ import javax.inject.Inject;
 public class StoryCreateViewModel extends ViewModel {
 
 
-    public StoryManager storyManager = new StoryManager();
+    public StoryCreateManager storyManager = new StoryCreateManager();
 
     @Inject
     public StoryCreateViewModel(RepoRepository repository) {
