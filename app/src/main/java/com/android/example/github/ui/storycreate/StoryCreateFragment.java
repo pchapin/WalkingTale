@@ -111,6 +111,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         initRemoveChapterListener();
         initAddTextListener();
         initAddPictureListener();
+        initAddAudioListener();
         initRadiusIncrementListener();
         initRadiusDecrementListener();
         getActivity().setTitle("Create Story");
@@ -162,6 +163,17 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
                 dispatchTakePictureIntent();
+            }
+        });
+    }
+
+    private void initAddAudioListener() {
+        binding.get().addAudioExpositionButton.setOnClickListener((v) -> {
+            if (storyCreateViewModel.storyManager.getAllChapters().isEmpty()) {
+                Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
+            } else {
+                // TODO: 10/23/2017 add buttons for audio, record, play, stop
+                // https://developer.android.com/guide/topics/media/mediarecorder.html
             }
         });
     }
