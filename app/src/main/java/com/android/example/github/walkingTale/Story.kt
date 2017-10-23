@@ -12,7 +12,7 @@ class StoryCreateManager() {
     private var chapterCount = 0
     private var expositionCount = 0
 
-    fun addChapter(name: String, location: Location, radius: Double) {
+    fun addChapter(name: String, location: Location, radius: Int) {
         val chapter = Chapter(ArrayList(), name, location, chapterCount++, radius)
         story.chapters.add(chapter)
     }
@@ -29,6 +29,14 @@ class StoryCreateManager() {
     fun removeChapter() {
         story.chapters.removeAt(story.chapters.size - 1)
     }
+
+    fun incrementRadius() {
+        story.chapters.last().radius++
+    }
+
+    fun decrementRadius() {
+        story.chapters.last().radius--
+    }
 }
 
 data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
@@ -40,7 +48,7 @@ data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
                    var name: String,
                    var location: Location,
                    var id: Int,
-                   var radius: Double)
+                   var radius: Int)
 
 data class Exposition(var type: ExpositionType,
                       var content: String,

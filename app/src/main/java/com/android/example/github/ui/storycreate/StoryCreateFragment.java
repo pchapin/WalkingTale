@@ -23,15 +23,11 @@ import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
-import com.android.example.github.walkingTale.StoryCreateManager;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
@@ -39,23 +35,14 @@ import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -108,6 +95,8 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
         initAddChapterListener();
         initRemoveChapterListener();
         initAddTextListener();
+        initRadiusIncrementListener();
+        initRadiusDecrementListener();
         getActivity().setTitle("Create Story");
     }
 
@@ -124,7 +113,7 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
 
     private void initAddChapterListener() {
         binding.get().addChapterButton.setOnClickListener((v) -> {
-            storyCreateViewModel.storyManager.addChapter("Chapter name", new Location(""), 123.0);
+            storyCreateViewModel.storyManager.addChapter("Chapter name", new Location(""), 1);
             updateChapterList();
         });
     }
@@ -146,6 +135,28 @@ public class StoryCreateFragment extends Fragment implements LifecycleRegistryOw
                 storyCreateViewModel.storyManager.addExposition(ExpositionType.TEXT, "hello world");
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
+            }
+            updateChapterList();
+        });
+    }
+
+    private void initRadiusIncrementListener() {
+        binding.get().radiusIncrementButton.setOnClickListener((v) -> {
+            try {
+                storyCreateViewModel.storyManager.incrementRadius();
+            } catch (NoSuchElementException e) {
+                Toast.makeText(getContext(), "No chapters to increment radius.", Toast.LENGTH_SHORT).show();
+            }
+            updateChapterList();
+        });
+    }
+
+    private void initRadiusDecrementListener() {
+        binding.get().radiusDecrementButton.setOnClickListener((v) -> {
+            try {
+                storyCreateViewModel.storyManager.decrementRadius();
+            } catch (NoSuchElementException e) {
+                Toast.makeText(getContext(), "No chapters to decrement radius.", Toast.LENGTH_SHORT).show();
             }
             updateChapterList();
         });
