@@ -10,6 +10,8 @@ class StoryCreateManager() {
 
     private val story = Story()
     private var expositionCount = 0
+    private val minRadius = 1
+    private val maxRadius = 10
 
     fun addChapter(name: String, location: Location, radius: Int) {
         val chapter = Chapter(ArrayList(), name, location, story.chapters.size, radius)
@@ -29,11 +31,19 @@ class StoryCreateManager() {
         story.chapters.removeAt(story.chapters.size - 1)
     }
 
+    @Throws(ArrayIndexOutOfBoundsException::class)
     fun incrementRadius() {
+        if (story.chapters.last().radius == maxRadius) {
+            throw ArrayIndexOutOfBoundsException("Max radius size is already " + maxRadius)
+        }
         story.chapters.last().radius++
     }
 
+    @Throws(ArrayIndexOutOfBoundsException::class)
     fun decrementRadius() {
+        if (story.chapters.last().radius == minRadius) {
+            throw ArrayIndexOutOfBoundsException("Min radius size is already " + minRadius)
+        }
         story.chapters.last().radius--
     }
 }

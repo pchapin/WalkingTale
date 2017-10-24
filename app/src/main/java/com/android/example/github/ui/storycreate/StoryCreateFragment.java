@@ -210,6 +210,8 @@ public class StoryCreateFragment extends Fragment implements
                 storyCreateViewModel.storyManager.incrementRadius();
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to increment radius.", Toast.LENGTH_SHORT).show();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Toast.makeText(getContext(), "Radius is already at max size.", Toast.LENGTH_SHORT).show();
             }
             updateChapterList();
         });
@@ -221,6 +223,8 @@ public class StoryCreateFragment extends Fragment implements
                 storyCreateViewModel.storyManager.decrementRadius();
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to decrement radius.", Toast.LENGTH_SHORT).show();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Toast.makeText(getContext(), "Radius is already at min size.", Toast.LENGTH_SHORT).show();
             }
             updateChapterList();
         });
