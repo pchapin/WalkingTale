@@ -200,6 +200,7 @@ public class StoryCreateFragment extends Fragment implements
             } else {
                 // TODO: 10/23/2017 add buttons for audio, record, play, stop
                 // https://developer.android.com/guide/topics/media/mediarecorder.html
+                navigationController.navigateToAudioRecord();
             }
         });
     }
