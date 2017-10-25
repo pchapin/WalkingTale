@@ -77,10 +77,14 @@ import com.google.android.gms.location.LocationServices;
 public class StoryCreateFragment extends Fragment implements
         LifecycleRegistryOwner, Injectable, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    // Constants
     private static final String REPO_OWNER_KEY = "repo_owner";
-
     private static final String REPO_NAME_KEY = "repo_name";
-
+    public static String AUDIO_KEY_CHAPTER = "AUDIO_KEY_CHAPTER";
+    public static String AUDIO_KEY_EXPOSITION = "AUDIO_KEY_EXPOSITION";
+    private final int RECORD_AUDIO_REQUEST_CODE = 123;
+    private final int TAKE_PICTURE_REQUEST_CODE = 1234;
+    private final int UPDATE_LOCATION_REQUEST_CODE = 12345;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -199,11 +203,14 @@ public class StoryCreateFragment extends Fragment implements
             if (storyCreateViewModel.storyManager.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
-                // TODO: 10/23/2017 add buttons for audio, record, play, stop
-                // https://developer.android.com/guide/topics/media/mediarecorder.html
                 Intent intent = new Intent(getActivity(), AudioRecordTest.class);
-                startActivity(intent);
-//                navigationController.navigateToAudioRecord();
+                intent.setType("audio/mpeg4-generic");
+                Chapter latestChapter = storyCreateViewModel.storyManager.getLatestChapter();
+                Bundle bundle = new Bundle();
+                bundle.putString(AUDIO_KEY_CHAPTER, String.valueOf(latestChapter.getId()));
+                bundle.putString(AUDIO_KEY_EXPOSITION, Integer.toString(latestChapter.getExpositions().size()));
+                intent.putExtras(bundle);
+                startActivityForResult(intent, RECORD_AUDIO_REQUEST_CODE);
             }
         });
     }
@@ -248,16 +255,20 @@ public class StoryCreateFragment extends Fragment implements
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, 1);
+            startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST_CODE);
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             storyCreateViewModel.storyManager.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
+            updateChapterList();
+        } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
+            Uri audioUri = data.getData();
+            storyCreateViewModel.storyManager.addExposition(ExpositionType.AUDIO, audioUri.toString());
             updateChapterList();
         }
     }
@@ -293,7 +304,7 @@ public class StoryCreateFragment extends Fragment implements
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, UPDATE_LOCATION_REQUEST_CODE);
         } else {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
@@ -302,7 +313,7 @@ public class StoryCreateFragment extends Fragment implements
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1: {
+            case UPDATE_LOCATION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     updateLocation();
                 } else {

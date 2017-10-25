@@ -27,6 +27,10 @@ class StoryCreateManager() {
         return story.chapters
     }
 
+    fun getLatestChapter(): Chapter {
+        return story.chapters.last()
+    }
+
     fun removeChapter() {
         story.chapters.removeAt(story.chapters.size - 1)
     }
