@@ -18,7 +18,6 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
-import com.android.example.github.ui.audiorecord.AudioRecordFragment;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
@@ -88,14 +87,6 @@ public class NavigationController {
         StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(owner, name);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment, tag)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToAudioRecord() {
-        AudioRecordFragment audioRecordFragment = new AudioRecordFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, audioRecordFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

@@ -3,11 +3,8 @@ package com.android.example.github.di;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.android.example.github.ui.audiorecord.AudioRecordFragment;
-import com.android.example.github.ui.audiorecord.AudioRecordViewModel;
 import com.android.example.github.ui.repo.RepoViewModel;
 import com.android.example.github.ui.search.SearchViewModel;
-import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import com.android.example.github.ui.storycreate.StoryCreateViewModel;
 import com.android.example.github.ui.storyfeed.StoryFeedViewModel;
 import com.android.example.github.ui.storyreader.StoryPlayViewModel;
@@ -49,11 +46,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(StoryPlayViewModel.class)
     abstract ViewModel bindStoryPlayViewModel(StoryPlayViewModel storyPlayViewModel);
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(AudioRecordViewModel.class)
-    abstract ViewModel bindAudioRecordViewModel(AudioRecordViewModel audioRecordViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(GithubViewModelFactory factory);

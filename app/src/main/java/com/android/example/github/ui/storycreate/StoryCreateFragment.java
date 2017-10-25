@@ -20,6 +20,7 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.CreateStoryFragmentBinding;
 import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.audiorecord.AudioRecordTest;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
@@ -200,7 +201,9 @@ public class StoryCreateFragment extends Fragment implements
             } else {
                 // TODO: 10/23/2017 add buttons for audio, record, play, stop
                 // https://developer.android.com/guide/topics/media/mediarecorder.html
-                navigationController.navigateToAudioRecord();
+                Intent intent = new Intent(getActivity(), AudioRecordTest.class);
+                startActivity(intent);
+//                navigationController.navigateToAudioRecord();
             }
         });
     }

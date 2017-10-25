@@ -16,7 +16,6 @@
 
 package com.android.example.github.di;
 
-import com.android.example.github.ui.audiorecord.AudioRecordFragment;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
@@ -46,7 +45,4 @@ public abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract StoryPlayFragment contributeStoryPlayFragment();
-
-    @ContributesAndroidInjector
-    abstract AudioRecordFragment contributeAudioRecordFragment();
 }
