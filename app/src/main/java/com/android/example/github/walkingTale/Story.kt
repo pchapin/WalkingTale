@@ -52,6 +52,27 @@ class StoryCreateManager() {
     }
 }
 
+class StoryPlayManager() {
+    private val story = Story()
+    private var currentChapter: Chapter = story.chapters.first()
+
+
+    fun getCurrentChapter(): Chapter {
+        return currentChapter
+    }
+
+    fun getAllExpositions(): List<Exposition> {
+        return story.chapters.map { it.expositions }.flatten()
+    }
+
+    fun goToNextChapter() {
+        if (currentChapter == story.chapters.last()) {
+            throw ArrayIndexOutOfBoundsException("Current chapter is already the last chapter.")
+        }
+        currentChapter = story.chapters[currentChapter.id + 1]
+    }
+}
+
 data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
                  var title: String = "",
                  var description: String = "",
