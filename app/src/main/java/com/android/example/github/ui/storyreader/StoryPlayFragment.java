@@ -20,8 +20,8 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.StoryPlayFragmentBinding;
 import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
@@ -39,14 +39,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.Collections;
 
 import javax.inject.Inject;
 
 /**
- * The UI Controller for displaying a Github Repo's information with its contributors.
+ * The UI Controller for displaying a Github Repo's information with its chapters.
  */
 public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
 
@@ -62,7 +61,7 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<StoryPlayFragmentBinding> binding;
-    AutoClearedValue<ContributorAdapter> adapter;
+    AutoClearedValue<ChapterAdapter> adapter;
     private StoryPlayViewModel storyPlayViewModel;
 
     public static StoryPlayFragment create(String owner, String name) {
@@ -98,10 +97,10 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
             binding.get().executePendingBindings();
         });
 
-        ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
-                contributor -> navigationController.navigateToUser(contributor.getLogin()));
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
+                chapter -> navigationController.navigateToSearch());
         this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().contributorList.setAdapter(adapter);
+        binding.get().chapterList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
         initContributorList(storyPlayViewModel);
@@ -122,16 +121,17 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     }
 
     private void initContributorList(StoryPlayViewModel viewModel) {
-        viewModel.getContributors().observe(this, listResource -> {
-            // we don't need any null checks here for the adapter since LiveData guarantees that
-            // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data);
-            } else {
-                //noinspection ConstantConditions
-                adapter.get().replace(Collections.emptyList());
-            }
-        });
+        adapter.get().replace(viewModel.getChapters());
+//        viewModel.getChapters().observe(this, listResource -> {
+//            // we don't need any null checks here for the adapter since LiveData guarantees that
+//            // it won't call us if fragment is stopped or not started.
+//            if (listResource != null && listResource.data != null) {
+//                adapter.get().replace(listResource.data);
+//            } else {
+//                //noinspection ConstantConditions
+//                adapter.get().replace(Collections.emptyList());
+//            }
+//        });
     }
 
 

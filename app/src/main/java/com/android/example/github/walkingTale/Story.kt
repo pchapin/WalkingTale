@@ -13,6 +13,10 @@ class StoryCreateManager() {
     private val minRadius = 1
     private val maxRadius = 10
 
+    fun getStory(): Story {
+        return story
+    }
+
     fun addChapter(name: String, location: Location, radius: Int) {
         val chapter = Chapter(ArrayList(), name, location, story.chapters.size, radius)
         story.chapters.add(chapter)
@@ -77,12 +81,6 @@ data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
                  var title: String = "",
                  var description: String = "",
                  var id: Int = -1)
-
-data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
-                   var name: String,
-                   var location: Location,
-                   var id: Int,
-                   var radius: Int)
 
 data class Exposition(var type: ExpositionType,
                       var content: String,

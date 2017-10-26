@@ -19,9 +19,11 @@ package com.android.example.github.ui.storyreader;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.ExampleStory;
+import com.android.example.github.walkingTale.Story;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -37,7 +39,9 @@ public class StoryPlayViewModel extends ViewModel {
     @VisibleForTesting
     final MutableLiveData<RepoId> repoId;
     private final LiveData<Resource<Repo>> repo;
-    private final LiveData<Resource<List<Contributor>>> contributors;
+    private final List<Chapter> contributors;
+    private ExampleStory exampleStory = new ExampleStory();
+    private Story story = exampleStory.getStory();
 
     @Inject
     public StoryPlayViewModel(RepoRepository repository) {
@@ -48,21 +52,15 @@ public class StoryPlayViewModel extends ViewModel {
             }
             return repository.loadRepo(input.owner, input.name);
         });
-        contributors = Transformations.switchMap(repoId, input -> {
-            if (input.isEmpty()) {
-                return AbsentLiveData.create();
-            } else {
-                return repository.loadContributors(input.owner, input.name);
-            }
-
-        });
+        ExampleStory exampleStory = new ExampleStory();
+        contributors = story.getChapters();
     }
 
     public LiveData<Resource<Repo>> getRepo() {
         return repo;
     }
 
-    public LiveData<Resource<List<Contributor>>> getContributors() {
+    public List<Chapter> getChapters() {
         return contributors;
     }
 
