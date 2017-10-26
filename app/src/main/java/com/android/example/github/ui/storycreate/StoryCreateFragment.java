@@ -69,13 +69,20 @@ import javax.inject.Inject;
 import static android.app.Activity.RESULT_OK;
 
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 
 /**
  * The UI Controller for displaying a Github Repo's information with its contributors.
  */
 public class StoryCreateFragment extends Fragment implements
-        LifecycleRegistryOwner, Injectable, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        LifecycleRegistryOwner,
+        Injectable,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        OnMapReadyCallback {
 
     // Constants
     private static final String REPO_OWNER_KEY = "repo_owner";
@@ -93,6 +100,7 @@ public class StoryCreateFragment extends Fragment implements
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<CreateStoryFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
+    private GoogleMap mMap;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private StoryCreateViewModel storyCreateViewModel;
@@ -248,6 +256,13 @@ public class StoryCreateFragment extends Fragment implements
         CreateStoryFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.create_story_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
+
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+
         return dataBinding.getRoot();
     }
 
@@ -322,5 +337,10 @@ public class StoryCreateFragment extends Fragment implements
                 }
             }
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
     }
 }

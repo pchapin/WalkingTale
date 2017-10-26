@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="google_maps_key">AIzaSyAeDmjyByogDPanB_VewCvFT-y0JzoUOxc</string>
+    <!--<string name="google_maps_key">AIzaSyAeDmjyByogDPanB_VewCvFT-y0JzoUOxc</string>-->
 
 
     <string name="app_name">Github</string>
