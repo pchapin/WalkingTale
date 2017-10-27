@@ -25,6 +25,10 @@ import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
@@ -34,6 +38,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -47,7 +52,12 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying a Github Repo's information with its chapters.
  */
-public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class StoryPlayFragment extends Fragment implements
+        LifecycleRegistryOwner,
+        Injectable,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        OnMapReadyCallback {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 
@@ -63,6 +73,8 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
     AutoClearedValue<StoryPlayFragmentBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
     private StoryPlayViewModel storyPlayViewModel;
+    private GoogleMap mMap;
+
 
     public static StoryPlayFragment create(String owner, String name) {
         StoryPlayFragment repoFragment = new StoryPlayFragment();
@@ -143,5 +155,25 @@ public class StoryPlayFragment extends Fragment implements LifecycleRegistryOwne
                 .inflate(inflater, R.layout.story_play_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
     }
 }
