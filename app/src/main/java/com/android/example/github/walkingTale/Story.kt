@@ -1,6 +1,7 @@
 package com.android.example.github.walkingTale
 
 import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 
 /**
  * 10/9/2017.
@@ -17,7 +18,7 @@ class StoryCreateManager() {
         return story
     }
 
-    fun addChapter(name: String, location: Location, radius: Int) {
+    fun addChapter(name: String, location: LatLng, radius: Int) {
         val chapter = Chapter(ArrayList(), name, location, story.chapters.size, radius)
         story.chapters.add(chapter)
     }

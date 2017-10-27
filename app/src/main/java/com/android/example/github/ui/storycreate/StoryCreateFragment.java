@@ -54,6 +54,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -61,9 +62,13 @@ import javax.inject.Inject;
 import static android.app.Activity.RESULT_OK;
 
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 /**
@@ -93,9 +98,10 @@ public class StoryCreateFragment extends Fragment implements
     AutoClearedValue<CreateStoryFragmentBinding> binding;
     AutoClearedValue<ContributorAdapter> adapter;
     private GoogleMap mMap;
-    private Location mLastLocation;
+    private LatLng mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private StoryCreateViewModel storyCreateViewModel;
+    private ArrayList<Marker> markerArrayList = new ArrayList<>();
 
     public static StoryCreateFragment create(String owner, String name) {
         StoryCreateFragment repoFragment = new StoryCreateFragment();
@@ -156,11 +162,24 @@ public class StoryCreateFragment extends Fragment implements
     private void initAddChapterListener() {
         binding.get().addChapterButton.setOnClickListener((v) -> {
             if (mLastLocation != null) {
-                storyCreateViewModel.storyManager.addChapter("Chapter name", mLastLocation, 1);
+                // TODO: 10/27/2017 get chapter name from the author
+                String chapterName = "Chapter Name";
+                storyCreateViewModel.storyManager.addChapter(chapterName, mLastLocation, 1);
+
+                // Add marker to map
+                LatLng chapterLocation = new LatLng(mLastLocation.latitude, mLastLocation.longitude);
+
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(chapterLocation)
+                        .title(chapterName));
+                markerArrayList.add(marker);
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(chapterLocation));
+
             } else {
                 // TODO: 10/23/2017 Location is required, deal with lack of location updates
                 Toast.makeText(getContext(), "Location is null.", Toast.LENGTH_SHORT).show();
-                storyCreateViewModel.storyManager.addChapter("Chapter name", new Location(""), 1);
+                storyCreateViewModel.storyManager.addChapter("Chapter name", new LatLng(1.1, 2.2), 1);
             }
             updateChapterList();
         });
@@ -170,6 +189,9 @@ public class StoryCreateFragment extends Fragment implements
         binding.get().removeChapterButton.setOnClickListener((v) -> {
             try {
                 storyCreateViewModel.storyManager.removeChapter();
+                // Remove marker from map and list
+                markerArrayList.get(markerArrayList.size() - 1).remove();
+                markerArrayList.remove(markerArrayList.size() - 1);
             } catch (ArrayIndexOutOfBoundsException e) {
                 Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
             }
@@ -313,7 +335,12 @@ public class StoryCreateFragment extends Fragment implements
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, UPDATE_LOCATION_REQUEST_CODE);
         } else {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location == null) {
+                mLastLocation = new LatLng(0.0, 0.0);
+            } else {
+                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
         }
     }
 
@@ -333,6 +360,8 @@ public class StoryCreateFragment extends Fragment implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
+
     }
 }

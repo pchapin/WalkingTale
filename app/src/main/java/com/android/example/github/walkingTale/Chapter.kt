@@ -1,9 +1,9 @@
 package com.android.example.github.walkingTale
 
-import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 
 data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
                    var name: String,
-                   var location: Location,
+                   var location: LatLng,
                    var id: Int,
                    var radius: Int)
