@@ -26,6 +26,7 @@ import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
+import com.android.example.github.walkingTale.Story;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -47,6 +48,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +71,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 
 /**
@@ -130,6 +133,7 @@ public class StoryCreateFragment extends Fragment implements
         binding.get().contributorList.setAdapter(adapter);
         initAddChapterListener();
         initRemoveChapterListener();
+        initFinishStoryListener();
         initAddTextListener();
         initAddPictureListener();
         initAddAudioListener();
@@ -196,6 +200,12 @@ public class StoryCreateFragment extends Fragment implements
                 Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
             }
             updateChapterList();
+        });
+    }
+
+    private void initFinishStoryListener() {
+        binding.get().finishStoryButton.setOnClickListener((v) -> {
+            storyCreateViewModel.finishStory();
         });
     }
 

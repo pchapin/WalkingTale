@@ -28,6 +28,8 @@ import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Story;
+import com.google.gson.Gson;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
@@ -44,7 +46,7 @@ import timber.log.Timber;
 
 /**
  * Repository that handles Repo instances.
- *
+ * <p>
  * unfortunate naming :/ .
  * Repo - value object name
  * Repository - type of this class.
@@ -64,11 +66,16 @@ public class RepoRepository {
 
     @Inject
     public RepoRepository(AppExecutors appExecutors, GithubDb db, RepoDao repoDao,
-            GithubService githubService) {
+                          GithubService githubService) {
         this.db = db;
         this.repoDao = repoDao;
         this.githubService = githubService;
         this.appExecutors = appExecutors;
+    }
+
+    public void publishStory(Story story) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(story, db, repoDao);
+        appExecutors.diskIO().execute(saveStoryTask);
     }
 
     public LiveData<Resource<List<Repo>>> loadRepos(String owner) {

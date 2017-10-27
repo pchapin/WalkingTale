@@ -38,11 +38,14 @@ public class StoryCreateViewModel extends ViewModel {
 
 
     public StoryCreateManager storyManager = new StoryCreateManager();
+    private RepoRepository repoRepository;
 
     @Inject
     public StoryCreateViewModel(RepoRepository repository) {
-
+        this.repoRepository = repository;
     }
 
-
+    void finishStory() {
+        repoRepository.publishStory(storyManager.getStory());
+    }
 }

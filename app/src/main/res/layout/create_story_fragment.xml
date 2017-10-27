@@ -79,11 +79,11 @@
                     android:layout_height="wrap_content"
                     android:text="Remove Chapter" />
 
-                <!--<EditText-->
-                <!--android:id="@+id/chapter_name_edit_text"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:hint="Chapter Name" />-->
+                <Button
+                    android:id="@+id/finish_story_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Finish" />
 
             </LinearLayout>
 
