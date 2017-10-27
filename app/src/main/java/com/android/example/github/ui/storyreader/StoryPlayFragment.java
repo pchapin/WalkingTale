@@ -56,7 +56,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * The UI Controller for displaying a Github Repo's information with its chapters.
+ * The UI Controller for displaying a Story being played by a reader.
  */
 public class StoryPlayFragment extends Fragment implements
         LifecycleRegistryOwner,
@@ -80,6 +80,7 @@ public class StoryPlayFragment extends Fragment implements
     AutoClearedValue<ChapterAdapter> adapter;
     private StoryPlayViewModel storyPlayViewModel;
     private GoogleMap mMap;
+    private Gson gson = new Gson();
 
 
     public static StoryPlayFragment create(String owner, String name) {
@@ -122,7 +123,6 @@ public class StoryPlayFragment extends Fragment implements
         initViewExpositionsListener();
         initViewMapListener();
         initContributorList(storyPlayViewModel);
-//        Toast.makeText(getContext(), "Story id = " + args.get("storyIdKey").toString(), Toast.LENGTH_SHORT).show();
         getActivity().setTitle("Play Story");
     }
 
@@ -139,19 +139,14 @@ public class StoryPlayFragment extends Fragment implements
     }
 
     private void initContributorList(StoryPlayViewModel viewModel) {
-//        adapter.get().replace(viewModel.getChapters());
         viewModel.getRepo().observe(this, listResource -> {
             // we don't need any null checks here for the adapter since LiveData guarantees that
             // it won't call us if fragment is stopped or not started.
             if (listResource != null && listResource.data != null) {
-                Gson gson = new Gson();
                 Type listType = new TypeToken<List<Chapter>>() {
                 }.getType();
 
                 List<Chapter> chapters = gson.fromJson(listResource.data.chapters, listType);
-
-                Log.i("chapters", chapters.toString());
-
                 adapter.get().replace(chapters);
             } else {
                 //noinspection ConstantConditions
