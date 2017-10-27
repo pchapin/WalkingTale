@@ -24,12 +24,14 @@ import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleStory;
 import com.android.example.github.walkingTale.Story;
+import com.google.gson.Gson;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 
 import java.util.List;
 
@@ -39,9 +41,7 @@ public class StoryPlayViewModel extends ViewModel {
     @VisibleForTesting
     final MutableLiveData<RepoId> repoId;
     private final LiveData<Resource<Repo>> repo;
-    private final List<Chapter> contributors;
-    private ExampleStory exampleStory = new ExampleStory();
-    private Story story = exampleStory.getStory();
+
 
     @Inject
     public StoryPlayViewModel(RepoRepository repository) {
@@ -52,16 +52,10 @@ public class StoryPlayViewModel extends ViewModel {
             }
             return repository.loadRepo(input.owner, input.name);
         });
-        ExampleStory exampleStory = new ExampleStory();
-        contributors = story.getChapters();
     }
 
     public LiveData<Resource<Repo>> getRepo() {
         return repo;
-    }
-
-    public List<Chapter> getChapters() {
-        return contributors;
     }
 
     public void retry() {

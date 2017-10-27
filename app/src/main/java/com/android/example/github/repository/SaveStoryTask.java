@@ -25,6 +25,8 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Story;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Type;
+
 /**
  * A task that reads the search result in the database and fetches the next page, if it has one.
  */
@@ -51,9 +53,19 @@ public class SaveStoryTask implements Runnable {
 
         try {
             db.beginTransaction();
-            db.repoDao().insert(new Repo(Repo.UNKNOWN_ID,
-                    name, owner + "/" + name, description, new Repo.Owner(owner, null), 0, gson.toJson(story.getChapters()),
-                    "", "", "", "", rating, story.getChapters().get(0).getLocation().latitude, story.getChapters().get(0).getLocation().longitude, ""));
+
+            Repo repo = (new Repo(Repo.UNKNOWN_ID,
+                    name, owner + "/" + name, description, new Repo.Owner(owner, null),
+                    0, gson.toJson(story.getChapters()), "", "", "",
+                    "", rating, story.getChapters().get(0).getLocation().latitude,
+                    story.getChapters().get(0).getLocation().longitude, ""));
+
+            String json = gson.toJson(repo);
+            Log.i("repo to json", json);
+            Repo repo1 = gson.fromJson(json, (java.lang.reflect.Type) Repo.class);
+            Log.i("json to repo", repo1.name);
+
+            db.repoDao().insert(repo);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

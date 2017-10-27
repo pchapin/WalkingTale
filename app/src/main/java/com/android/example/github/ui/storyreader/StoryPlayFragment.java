@@ -25,10 +25,13 @@ import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
@@ -41,11 +44,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -133,17 +139,25 @@ public class StoryPlayFragment extends Fragment implements
     }
 
     private void initContributorList(StoryPlayViewModel viewModel) {
-        adapter.get().replace(viewModel.getChapters());
-//        viewModel.getChapters().observe(this, listResource -> {
-//            // we don't need any null checks here for the adapter since LiveData guarantees that
-//            // it won't call us if fragment is stopped or not started.
-//            if (listResource != null && listResource.data != null) {
-//                adapter.get().replace(listResource.data);
-//            } else {
-//                //noinspection ConstantConditions
-//                adapter.get().replace(Collections.emptyList());
-//            }
-//        });
+//        adapter.get().replace(viewModel.getChapters());
+        viewModel.getRepo().observe(this, listResource -> {
+            // we don't need any null checks here for the adapter since LiveData guarantees that
+            // it won't call us if fragment is stopped or not started.
+            if (listResource != null && listResource.data != null) {
+                Gson gson = new Gson();
+                Type listType = new TypeToken<List<Chapter>>() {
+                }.getType();
+
+                List<Chapter> chapters = gson.fromJson(listResource.data.chapters, listType);
+
+                Log.i("chapters", chapters.toString());
+
+                adapter.get().replace(chapters);
+            } else {
+                //noinspection ConstantConditions
+                adapter.get().replace(Collections.emptyList());
+            }
+        });
     }
 
 

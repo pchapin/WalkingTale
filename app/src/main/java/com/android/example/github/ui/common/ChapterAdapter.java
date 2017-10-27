@@ -18,6 +18,7 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.R;
 import com.android.example.github.databinding.ChapterItemBinding;
+import com.android.example.github.util.Objects;
 import com.android.example.github.walkingTale.Chapter;
 
 import android.databinding.DataBindingComponent;
@@ -64,12 +65,12 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ChapterItemBin
 
     @Override
     protected boolean areItemsTheSame(Chapter oldItem, Chapter newItem) {
-        return oldItem.getId() == newItem.getId();
+        return Objects.equals(oldItem.getId(), newItem.getId());
     }
 
     @Override
     protected boolean areContentsTheSame(Chapter oldItem, Chapter newItem) {
-        return oldItem.getExpositions().equals(newItem.getExpositions());
+        return Objects.equals(oldItem.getId(), newItem.getId());
     }
 
 //    @Override
