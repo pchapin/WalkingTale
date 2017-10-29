@@ -205,7 +205,11 @@ public class StoryCreateFragment extends Fragment implements
 
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
-            storyCreateViewModel.finishStory();
+            if (storyCreateViewModel.storyManager.getAllChapters().size() < 2) {
+                Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
+            } else {
+                storyCreateViewModel.finishStory();
+            }
         });
     }
 
