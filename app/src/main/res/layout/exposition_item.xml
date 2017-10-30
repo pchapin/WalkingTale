@@ -68,31 +68,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/name"
                 tools:text="exposition id" />
 
-
-            <!--<TextView-->
-            <!--android:id="@+id/location"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:text="@{`location = `+exposition.location}"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/desc"-->
-            <!--tools:text="location = 123,123" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/expositions"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:text="@{`expositions = `+exposition.expositions}"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/location"-->
-            <!--tools:text="expositions = []" />-->
-
-
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </layout>

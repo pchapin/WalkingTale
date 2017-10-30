@@ -18,6 +18,7 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
+import com.android.example.github.ui.expositionviewer.ExpositionViewerFragment;
 import com.android.example.github.ui.repo.RepoFragment;
 import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.ui.storycreate.StoryCreateFragment;
@@ -87,6 +88,15 @@ public class NavigationController {
         StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(owner, name);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment, tag)
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+    }
+
+    public void navigateToExpositionViewer(String owner, String name) {
+        String tag = "repo" + "/" + owner + "/" + name;
+        ExpositionViewerFragment expositionViewerFragment = ExpositionViewerFragment.create(owner, name);
+        fragmentManager.beginTransaction()
+                .replace(containerId, expositionViewerFragment, tag)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
