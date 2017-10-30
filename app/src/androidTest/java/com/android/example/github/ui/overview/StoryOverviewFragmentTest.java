@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.repo;
+package com.android.example.github.ui.overview;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentBindingAdapters;
@@ -57,7 +57,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class RepoFragmentTest {
+public class StoryOverviewFragmentTest {
     @Rule
     public ActivityTestRule<SingleFragmentActivity> activityRule =
             new ActivityTestRule<>(SingleFragmentActivity.class, true, true);
@@ -66,8 +66,8 @@ public class RepoFragmentTest {
             new TaskExecutorWithIdlingResourceRule();
     private MutableLiveData<Resource<Repo>> repo = new MutableLiveData<>();
     private MutableLiveData<Resource<List<Contributor>>> contributors = new MutableLiveData<>();
-    private RepoFragment repoFragment;
-    private RepoViewModel viewModel;
+    private OverviewFragment repoFragment;
+    private OverviewViewModel viewModel;
 
     private FragmentBindingAdapters fragmentBindingAdapters;
     private NavigationController navigationController;
@@ -75,8 +75,8 @@ public class RepoFragmentTest {
 
     @Before
     public void init() {
-        repoFragment = RepoFragment.create("a", "b");
-        viewModel = mock(RepoViewModel.class);
+        repoFragment = OverviewFragment.create("a", "b");
+        viewModel = mock(OverviewViewModel.class);
         fragmentBindingAdapters = mock(FragmentBindingAdapters.class);
         navigationController = mock(NavigationController.class);
 

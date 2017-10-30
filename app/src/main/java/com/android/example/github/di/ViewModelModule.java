@@ -3,13 +3,11 @@ package com.android.example.github.di;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.android.example.github.ui.expositionviewer.ExpositionViewerViewModel;
-import com.android.example.github.ui.repo.RepoViewModel;
-import com.android.example.github.ui.search.SearchViewModel;
-import com.android.example.github.ui.storycreate.StoryCreateViewModel;
-import com.android.example.github.ui.storyfeed.StoryFeedViewModel;
-import com.android.example.github.ui.storyreader.StoryPlayViewModel;
-import com.android.example.github.ui.user.UserViewModel;
+import com.android.example.github.ui.album.AlbumViewModel;
+import com.android.example.github.ui.feed.FeedViewModel;
+import com.android.example.github.ui.overview.OverviewViewModel;
+import com.android.example.github.ui.play.PlayViewModel;
+import com.android.example.github.ui.create.CreateViewModel;
 import com.android.example.github.viewmodel.GithubViewModelFactory;
 
 import dagger.Binds;
@@ -20,38 +18,28 @@ import dagger.multibindings.IntoMap;
 abstract class ViewModelModule {
     @Binds
     @IntoMap
-    @ViewModelKey(UserViewModel.class)
-    abstract ViewModel bindUserViewModel(UserViewModel userViewModel);
+    @ViewModelKey(OverviewViewModel.class)
+    abstract ViewModel bindRepoViewModel(OverviewViewModel overviewViewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(SearchViewModel.class)
-    abstract ViewModel bindSearchViewModel(SearchViewModel searchViewModel);
+    @ViewModelKey(CreateViewModel.class)
+    abstract ViewModel bindStoryCreateViewModel(CreateViewModel createViewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(RepoViewModel.class)
-    abstract ViewModel bindRepoViewModel(RepoViewModel repoViewModel);
+    @ViewModelKey(FeedViewModel.class)
+    abstract ViewModel bindStoryFeedViewModel(FeedViewModel feedViewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(StoryCreateViewModel.class)
-    abstract ViewModel bindStoryCreateViewModel(StoryCreateViewModel storyCreateViewModel);
+    @ViewModelKey(PlayViewModel.class)
+    abstract ViewModel bindStoryPlayViewModel(PlayViewModel playViewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(StoryFeedViewModel.class)
-    abstract ViewModel bindStoryFeedViewModel(StoryFeedViewModel storyFeedViewModel);
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(StoryPlayViewModel.class)
-    abstract ViewModel bindStoryPlayViewModel(StoryPlayViewModel storyPlayViewModel);
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ExpositionViewerViewModel.class)
-    abstract ViewModel bindExpositionViewerViewModel(ExpositionViewerViewModel expositionViewerViewModel);
+    @ViewModelKey(AlbumViewModel.class)
+    abstract ViewModel bindExpositionViewerViewModel(AlbumViewModel albumViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(GithubViewModelFactory factory);

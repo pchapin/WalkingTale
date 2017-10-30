@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.storyreader;
+package com.android.example.github.ui.play;
 
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.Objects;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.ExampleStory;
-import com.android.example.github.walkingTale.Story;
-import com.google.gson.Gson;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
-public class StoryPlayViewModel extends ViewModel {
+public class PlayViewModel extends ViewModel {
     @VisibleForTesting
     final MutableLiveData<RepoId> repoId;
     private final LiveData<Resource<Repo>> repo;
 
 
     @Inject
-    public StoryPlayViewModel(RepoRepository repository) {
+    public PlayViewModel(RepoRepository repository) {
         this.repoId = new MutableLiveData<>();
         repo = Transformations.switchMap(repoId, input -> {
             if (input.isEmpty()) {

@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.storycreate;
+package com.android.example.github.ui.create;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.CreateStoryFragmentBinding;
+import com.android.example.github.databinding.CreateFragmentBinding;
 import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.audiorecord.AudioRecordTest;
+import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.repo.ContributorAdapter;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
-import com.android.example.github.walkingTale.Story;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -48,7 +46,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,16 +68,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
 
 
 /**
  * The UI Controller for creating a story.
  */
-public class StoryCreateFragment extends Fragment implements
+public class CreateFragment extends Fragment implements
         LifecycleRegistryOwner,
         Injectable,
         GoogleApiClient.ConnectionCallbacks,
@@ -101,16 +96,15 @@ public class StoryCreateFragment extends Fragment implements
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<CreateStoryFragmentBinding> binding;
-    AutoClearedValue<ContributorAdapter> adapter;
+    AutoClearedValue<CreateFragmentBinding> binding;
     private GoogleMap mMap;
     private LatLng mLastLocation;
     private GoogleApiClient mGoogleApiClient;
-    private StoryCreateViewModel storyCreateViewModel;
+    private CreateViewModel createViewModel;
     private ArrayList<Marker> markerArrayList = new ArrayList<>();
 
-    public static StoryCreateFragment create(String owner, String name) {
-        StoryCreateFragment repoFragment = new StoryCreateFragment();
+    public static CreateFragment create(String owner, String name) {
+        CreateFragment repoFragment = new CreateFragment();
         Bundle args = new Bundle();
         args.putString(REPO_OWNER_KEY, owner);
         args.putString(REPO_NAME_KEY, name);
@@ -126,14 +120,8 @@ public class StoryCreateFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        storyCreateViewModel = ViewModelProviders.of(this, viewModelFactory).get(StoryCreateViewModel.class);
+        createViewModel = ViewModelProviders.of(this, viewModelFactory).get(CreateViewModel.class);
         Bundle args = getArguments();
-
-
-        ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
-                contributor -> navigationController.navigateToUser(contributor.getLogin()));
-        this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().contributorList.setAdapter(adapter);
         initAddChapterListener();
         initRemoveChapterListener();
         initFinishStoryListener();
@@ -159,7 +147,7 @@ public class StoryCreateFragment extends Fragment implements
         LinearLayout linearLayout = binding.get().chapterListLinearLayout;
         linearLayout.removeAllViews();
 
-        for (Chapter chapter : storyCreateViewModel.storyManager.getAllChapters()) {
+        for (Chapter chapter : createViewModel.storyManager.getAllChapters()) {
             TextView textView = new TextView(getContext());
             textView.setText(chapter.toString());
             linearLayout.addView(textView);
@@ -171,7 +159,7 @@ public class StoryCreateFragment extends Fragment implements
             if (mLastLocation != null) {
                 // TODO: 10/27/2017 get chapter name from the author
                 String chapterName = "Chapter Name";
-                storyCreateViewModel.storyManager.addChapter(chapterName, mLastLocation, 1);
+                createViewModel.storyManager.addChapter(chapterName, mLastLocation, 1);
 
                 // Add marker to map
                 LatLng chapterLocation = new LatLng(mLastLocation.latitude, mLastLocation.longitude);
@@ -195,7 +183,7 @@ public class StoryCreateFragment extends Fragment implements
             } else {
                 // TODO: 10/23/2017 Location is required, deal with lack of location updates
                 Toast.makeText(getContext(), "Location is null.", Toast.LENGTH_SHORT).show();
-                storyCreateViewModel.storyManager.addChapter("Chapter name", new LatLng(1.1, 2.2), 1);
+                createViewModel.storyManager.addChapter("Chapter name", new LatLng(1.1, 2.2), 1);
             }
             updateChapterList();
         });
@@ -204,7 +192,7 @@ public class StoryCreateFragment extends Fragment implements
     private void initRemoveChapterListener() {
         binding.get().removeChapterButton.setOnClickListener((v) -> {
             try {
-                storyCreateViewModel.storyManager.removeChapter();
+                createViewModel.storyManager.removeChapter();
                 // Remove marker from map and list
                 markerArrayList.get(markerArrayList.size() - 1).remove();
                 markerArrayList.remove(markerArrayList.size() - 1);
@@ -217,10 +205,10 @@ public class StoryCreateFragment extends Fragment implements
 
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
-            if (storyCreateViewModel.storyManager.getAllChapters().size() < 2) {
+            if (createViewModel.storyManager.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
-                storyCreateViewModel.finishStory();
+                createViewModel.finishStory();
             }
         });
     }
@@ -228,7 +216,7 @@ public class StoryCreateFragment extends Fragment implements
     private void initAddTextListener() {
         binding.get().addTextExpositionButton.setOnClickListener((v) -> {
             try {
-                storyCreateViewModel.storyManager.addExposition(ExpositionType.TEXT, "hello world");
+                createViewModel.storyManager.addExposition(ExpositionType.TEXT, "hello world");
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             }
@@ -238,7 +226,7 @@ public class StoryCreateFragment extends Fragment implements
 
     private void initAddPictureListener() {
         binding.get().addPictureExpositionButton.setOnClickListener((v) -> {
-            if (storyCreateViewModel.storyManager.getAllChapters().isEmpty()) {
+            if (createViewModel.storyManager.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
                 dispatchTakePictureIntent();
@@ -248,12 +236,12 @@ public class StoryCreateFragment extends Fragment implements
 
     private void initAddAudioListener() {
         binding.get().addAudioExpositionButton.setOnClickListener((v) -> {
-            if (storyCreateViewModel.storyManager.getAllChapters().isEmpty()) {
+            if (createViewModel.storyManager.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
-                Intent intent = new Intent(getActivity(), AudioRecordTest.class);
+                Intent intent = new Intent(getActivity(), AudioRecordActivity.class);
                 intent.setType("audio/mpeg4-generic");
-                Chapter latestChapter = storyCreateViewModel.storyManager.getLatestChapter();
+                Chapter latestChapter = createViewModel.storyManager.getLatestChapter();
                 Bundle bundle = new Bundle();
                 bundle.putString(AUDIO_KEY_CHAPTER, String.valueOf(latestChapter.getId()));
                 bundle.putString(AUDIO_KEY_EXPOSITION, Integer.toString(latestChapter.getExpositions().size()));
@@ -266,7 +254,7 @@ public class StoryCreateFragment extends Fragment implements
     private void initRadiusIncrementListener() {
         binding.get().radiusIncrementButton.setOnClickListener((v) -> {
             try {
-                storyCreateViewModel.storyManager.incrementRadius();
+                createViewModel.storyManager.incrementRadius();
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to increment radius.", Toast.LENGTH_SHORT).show();
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -279,7 +267,7 @@ public class StoryCreateFragment extends Fragment implements
     private void initRadiusDecrementListener() {
         binding.get().radiusDecrementButton.setOnClickListener((v) -> {
             try {
-                storyCreateViewModel.storyManager.decrementRadius();
+                createViewModel.storyManager.decrementRadius();
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to decrement radius.", Toast.LENGTH_SHORT).show();
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -293,8 +281,8 @@ public class StoryCreateFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        CreateStoryFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.create_story_fragment, container, false);
+        CreateFragmentBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.create_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
 
 
@@ -319,11 +307,11 @@ public class StoryCreateFragment extends Fragment implements
         if (requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            storyCreateViewModel.storyManager.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
+            createViewModel.storyManager.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
             updateChapterList();
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri audioUri = data.getData();
-            storyCreateViewModel.storyManager.addExposition(ExpositionType.AUDIO, audioUri.toString());
+            createViewModel.storyManager.addExposition(ExpositionType.AUDIO, audioUri.toString());
             updateChapterList();
         }
     }

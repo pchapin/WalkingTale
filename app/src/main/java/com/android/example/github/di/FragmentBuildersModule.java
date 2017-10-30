@@ -16,13 +16,12 @@
 
 package com.android.example.github.di;
 
-import com.android.example.github.ui.expositionviewer.ExpositionViewerFragment;
-import com.android.example.github.ui.repo.RepoFragment;
-import com.android.example.github.ui.search.SearchFragment;
-import com.android.example.github.ui.storycreate.StoryCreateFragment;
-import com.android.example.github.ui.storyfeed.StoryFeedFragment;
-import com.android.example.github.ui.storyreader.StoryPlayFragment;
-import com.android.example.github.ui.user.UserFragment;
+import com.android.example.github.ui.album.AlbumFragment;
+import com.android.example.github.ui.create.CreateFragment;
+import com.android.example.github.ui.feed.FeedFragment;
+import com.android.example.github.ui.overview.OverviewFragment;
+import com.android.example.github.ui.play.PlayFragment;
+
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -30,23 +29,18 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
-    abstract RepoFragment contributeRepoFragment();
+    abstract OverviewFragment contributeRepoFragment();
+
 
     @ContributesAndroidInjector
-    abstract UserFragment contributeUserFragment();
+    abstract CreateFragment contributeStoryCreateFragment();
 
     @ContributesAndroidInjector
-    abstract SearchFragment contributeSearchFragment();
+    abstract FeedFragment contributeStoryFeedFragment();
 
     @ContributesAndroidInjector
-    abstract StoryCreateFragment contributeStoryCreateFragment();
+    abstract PlayFragment contributeStoryPlayFragment();
 
     @ContributesAndroidInjector
-    abstract StoryFeedFragment contributeStoryFeedFragment();
-
-    @ContributesAndroidInjector
-    abstract StoryPlayFragment contributeStoryPlayFragment();
-
-    @ContributesAndroidInjector
-    abstract ExpositionViewerFragment contributeExpositionViewerFragment();
+    abstract AlbumFragment contributeExpositionViewerFragment();
 }

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.search;
+package com.android.example.github.ui.feed;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.SearchFragmentBinding;
+import com.android.example.github.databinding.FeedFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.RepoListAdapter;
@@ -43,10 +43,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
-public class SearchFragment extends LifecycleFragment implements Injectable {
+/**
+ * The UI controller for the main screen of the app, the feed.
+ */
+public class FeedFragment extends LifecycleFragment implements Injectable {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -56,18 +60,18 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
 
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
 
-    AutoClearedValue<SearchFragmentBinding> binding;
+    AutoClearedValue<FeedFragmentBinding> binding;
 
     AutoClearedValue<RepoListAdapter> adapter;
 
-    private SearchViewModel searchViewModel;
+    private FeedViewModel FeedViewModel;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
-        SearchFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.search_fragment, container, false,
+                             @Nullable Bundle savedInstanceState) {
+        FeedFragmentBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.feed_fragment, container, false,
                         dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
@@ -76,7 +80,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel.class);
+        FeedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         initRecyclerView();
         RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
                 repo -> navigationController.navigateToRepo(repo.owner.login, repo.name));
@@ -84,8 +88,19 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
         adapter = new AutoClearedValue<>(this, rvAdapter);
 
         initSearchInputListener();
+        initCreateStoryListener();
+        binding.get().setCallback(() -> FeedViewModel.refresh());
+        // temp: search on load to save time
+        TextView textView = new TextView(getContext());
+        textView.setText("ok");
+        doSearch(textView);
+        getActivity().setTitle("Story Feed");
+    }
 
-        binding.get().setCallback(() -> searchViewModel.refresh());
+    private void initCreateStoryListener() {
+        binding.get().createStoryBtn.setOnClickListener((v) -> {
+            navigationController.navigateToCreateStory();
+        });
     }
 
     private void initSearchInputListener() {
@@ -111,7 +126,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
         // Dismiss keyboard
         dismissKeyboard(v.getWindowToken());
         binding.get().setQuery(query);
-        searchViewModel.setQuery(query);
+        FeedViewModel.setQuery(query);
     }
 
     private void initRecyclerView() {
@@ -124,11 +139,11 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
                 int lastPosition = layoutManager
                         .findLastVisibleItemPosition();
                 if (lastPosition == adapter.get().getItemCount() - 1) {
-                    searchViewModel.loadNextPage();
+                    FeedViewModel.loadNextPage();
                 }
             }
         });
-        searchViewModel.getResults().observe(this, result -> {
+        FeedViewModel.getResults().observe(this, result -> {
             binding.get().setSearchResource(result);
             binding.get().setResultCount((result == null || result.data == null)
                     ? 0 : result.data.size());
@@ -136,7 +151,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
             binding.get().executePendingBindings();
         });
 
-        searchViewModel.getLoadMoreStatus().observe(this, loadingMore -> {
+        FeedViewModel.getLoadMoreStatus().observe(this, loadingMore -> {
             if (loadingMore == null) {
                 binding.get().setLoadingMore(false);
             } else {

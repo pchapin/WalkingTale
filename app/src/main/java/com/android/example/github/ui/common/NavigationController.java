@@ -18,13 +18,11 @@ package com.android.example.github.ui.common;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
-import com.android.example.github.ui.expositionviewer.ExpositionViewerFragment;
-import com.android.example.github.ui.repo.RepoFragment;
-import com.android.example.github.ui.search.SearchFragment;
-import com.android.example.github.ui.storycreate.StoryCreateFragment;
-import com.android.example.github.ui.storyfeed.StoryFeedFragment;
-import com.android.example.github.ui.storyreader.StoryPlayFragment;
-import com.android.example.github.ui.user.UserFragment;
+import com.android.example.github.ui.album.AlbumFragment;
+import com.android.example.github.ui.create.CreateFragment;
+import com.android.example.github.ui.feed.FeedFragment;
+import com.android.example.github.ui.overview.OverviewFragment;
+import com.android.example.github.ui.play.PlayFragment;
 
 import android.support.v4.app.FragmentManager;
 
@@ -43,15 +41,8 @@ public class NavigationController {
         this.fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void navigateToSearch() {
-        SearchFragment searchFragment = new SearchFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, searchFragment)
-                .commitAllowingStateLoss();
-    }
-
     public void navigateToRepo(String owner, String name) {
-        RepoFragment fragment = RepoFragment.create(owner, name);
+        OverviewFragment fragment = OverviewFragment.create(owner, name);
         String tag = "repo" + "/" + owner + "/" + name;
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment, tag)
@@ -59,17 +50,8 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToUser(String login) {
-        String tag = "user" + "/" + login;
-        UserFragment userFragment = UserFragment.create(login);
-        fragmentManager.beginTransaction()
-                .replace(containerId, userFragment, tag)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
     public void navigateToCreateStory() {
-        StoryCreateFragment storyCreateFragment = new StoryCreateFragment();
+        CreateFragment storyCreateFragment = new CreateFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyCreateFragment)
                 .addToBackStack(null)
@@ -77,7 +59,7 @@ public class NavigationController {
     }
 
     public void navigateToStoryFeed() {
-        StoryFeedFragment storyFeedFragment = new StoryFeedFragment();
+        FeedFragment storyFeedFragment = new FeedFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyFeedFragment)
                 .commitAllowingStateLoss();
@@ -85,7 +67,7 @@ public class NavigationController {
 
     public void navigateToStoryPlay(String owner, String name) {
         String tag = "repo" + "/" + owner + "/" + name;
-        StoryPlayFragment storyPlayFragment = StoryPlayFragment.create(owner, name);
+        PlayFragment storyPlayFragment = PlayFragment.create(owner, name);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment, tag)
                 .addToBackStack(null)
@@ -94,7 +76,7 @@ public class NavigationController {
 
     public void navigateToExpositionViewer(String owner, String name) {
         String tag = "repo" + "/" + owner + "/" + name;
-        ExpositionViewerFragment expositionViewerFragment = ExpositionViewerFragment.create(owner, name);
+        AlbumFragment expositionViewerFragment = AlbumFragment.create(owner, name);
         fragmentManager.beginTransaction()
                 .replace(containerId, expositionViewerFragment, tag)
                 .addToBackStack(null)

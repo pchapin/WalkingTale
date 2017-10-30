@@ -10,17 +10,13 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.BuildConfig;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.android.example.github.ui.storycreate.StoryCreateFragment;
+import com.android.example.github.ui.create.CreateFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,9 +24,9 @@ import java.io.IOException;
 /**
  * Records an audio clip
  */
-public class AudioRecordTest extends AppCompatActivity {
+public class AudioRecordActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = "AudioRecordTest";
+    private static final String LOG_TAG = "AudioRecordActivity";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static String mFileName = null;
 
@@ -122,8 +118,8 @@ public class AudioRecordTest extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         // TODO: 10/25/2017 Uniquely identify each recording, maybe use room? Like a exposition repository...
-        chapterKey = (String) bundle.getString(StoryCreateFragment.AUDIO_KEY_CHAPTER);
-        expositionKey = (String) bundle.getString(StoryCreateFragment.AUDIO_KEY_EXPOSITION);
+        chapterKey = (String) bundle.getString(CreateFragment.AUDIO_KEY_CHAPTER);
+        expositionKey = (String) bundle.getString(CreateFragment.AUDIO_KEY_EXPOSITION);
         Log.i("chapterkey", chapterKey);
         Log.i("expositionKey", expositionKey);
 

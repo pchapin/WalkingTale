@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.search;
-
-import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
+package com.android.example.github.ui.feed;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -31,12 +25,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
+import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.util.AbsentLiveData;
+import com.android.example.github.util.Objects;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
+
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-public class SearchViewModel extends ViewModel {
+public class FeedViewModel extends ViewModel {
 
     private final MutableLiveData<String> query = new MutableLiveData<>();
 
@@ -45,7 +45,7 @@ public class SearchViewModel extends ViewModel {
     private final NextPageHandler nextPageHandler;
 
     @Inject
-    SearchViewModel(RepoRepository repoRepository) {
+    FeedViewModel(RepoRepository repoRepository) {
         nextPageHandler = new NextPageHandler(repoRepository);
         results = Transformations.switchMap(query, search -> {
             if (search == null || search.trim().length() == 0) {
@@ -116,13 +116,13 @@ public class SearchViewModel extends ViewModel {
 
     @VisibleForTesting
     static class NextPageHandler implements Observer<Resource<Boolean>> {
-        @Nullable
-        private LiveData<Resource<Boolean>> nextPageLiveData;
         private final MutableLiveData<LoadMoreState> loadMoreState = new MutableLiveData<>();
-        private String query;
         private final RepoRepository repository;
         @VisibleForTesting
         boolean hasMore;
+        @Nullable
+        private LiveData<Resource<Boolean>> nextPageLiveData;
+        private String query;
 
         @VisibleForTesting
         NextPageHandler(RepoRepository repository) {

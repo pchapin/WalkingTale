@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.expositionviewer;
+package com.android.example.github.ui.play;
+
+import com.android.example.github.R;
+import com.android.example.github.binding.FragmentDataBindingComponent;
+import com.android.example.github.databinding.PlayFragmentBinding;
+import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.common.ChapterAdapter;
+import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.util.AutoClearedValue;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
@@ -24,38 +41,28 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.example.github.R;
-import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.ExpositionViewerFragmentBinding;
-import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.common.ExpositionAdapter;
-import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.Exposition;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 /**
- * The UI Controller for displaying a list of expositions.
+ * The UI Controller for displaying a Story being played by a reader.
  */
-public class ExpositionViewerFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class PlayFragment extends Fragment implements
+        LifecycleRegistryOwner,
+        Injectable,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        OnMapReadyCallback {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 
@@ -68,18 +75,20 @@ public class ExpositionViewerFragment extends Fragment implements LifecycleRegis
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<ExpositionViewerFragmentBinding> binding;
-    AutoClearedValue<ExpositionAdapter> adapter;
-    Gson gson = new Gson();
-    private ExpositionViewerViewModel expositionViewerViewModel;
+    AutoClearedValue<PlayFragmentBinding> binding;
+    AutoClearedValue<ChapterAdapter> adapter;
+    private PlayViewModel playViewModel;
+    private GoogleMap mMap;
+    private Gson gson = new Gson();
 
-    public static ExpositionViewerFragment create(String owner, String name) {
-        ExpositionViewerFragment expositionViewerFragment = new ExpositionViewerFragment();
+
+    public static PlayFragment create(String owner, String name) {
+        PlayFragment repoFragment = new PlayFragment();
         Bundle args = new Bundle();
         args.putString(REPO_OWNER_KEY, owner);
         args.putString(REPO_NAME_KEY, name);
-        expositionViewerFragment.setArguments(args);
-        return expositionViewerFragment;
+        repoFragment.setArguments(args);
+        return repoFragment;
     }
 
     @Override
@@ -90,34 +99,45 @@ public class ExpositionViewerFragment extends Fragment implements LifecycleRegis
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        expositionViewerViewModel = ViewModelProviders.of(this, viewModelFactory).get(ExpositionViewerViewModel.class);
+        playViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_OWNER_KEY) &&
                 args.containsKey(REPO_NAME_KEY)) {
-            expositionViewerViewModel.setId(args.getString(REPO_OWNER_KEY),
+            playViewModel.setId(args.getString(REPO_OWNER_KEY),
                     args.getString(REPO_NAME_KEY));
         } else {
-            expositionViewerViewModel.setId(null, null);
+            playViewModel.setId(null, null);
         }
-        LiveData<Resource<Repo>> repo = expositionViewerViewModel.getRepo();
+        LiveData<Resource<Repo>> repo = playViewModel.getRepo();
         repo.observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
+            binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
         });
 
-        ExpositionAdapter adapter = new ExpositionAdapter(dataBindingComponent, false,
-                chapter -> {
-                    // TODO: 10/30/2017 Do something if user clicks an exposition, animation maybe?
-                });
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
+                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.owner.login, repo.getValue().data.name));
         this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().expositionList.setAdapter(adapter);
-
-        initContributorList(expositionViewerViewModel);
-        getActivity().setTitle("Exposition Viewer");
+        binding.get().chapterList.setAdapter(adapter);
+        initViewExpositionsListener();
+        initViewMapListener();
+        initContributorList(playViewModel);
+        getActivity().setTitle("Play Story");
     }
 
+    private void initViewExpositionsListener() {
+        binding.get().viewExpositions.setOnClickListener((v) -> {
+            //Todo: Show all expositions
+        });
+    }
 
-    private void initContributorList(ExpositionViewerViewModel viewModel) {
+    private void initViewMapListener() {
+        binding.get().viewMap.setOnClickListener((v) -> {
+            //Todo: Open map
+        });
+    }
+
+    private void initContributorList(PlayViewModel viewModel) {
         viewModel.getRepo().observe(this, listResource -> {
             // we don't need any null checks here for the adapter since LiveData guarantees that
             // it won't call us if fragment is stopped or not started.
@@ -126,11 +146,7 @@ public class ExpositionViewerFragment extends Fragment implements LifecycleRegis
                 }.getType();
 
                 List<Chapter> chapters = gson.fromJson(listResource.data.chapters, listType);
-                List<Exposition> expositions = new ArrayList<>();
-                for (Chapter chapter : chapters) {
-                    expositions.addAll(chapter.getExpositions());
-                }
-                adapter.get().replace(expositions);
+                adapter.get().replace(chapters);
             } else {
                 //noinspection ConstantConditions
                 adapter.get().replace(Collections.emptyList());
@@ -143,9 +159,29 @@ public class ExpositionViewerFragment extends Fragment implements LifecycleRegis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ExpositionViewerFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.exposition_viewer_fragment, container, false);
+        PlayFragmentBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.play_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
     }
 }

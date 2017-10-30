@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.repo;
+package com.android.example.github.ui.overview;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.RepoFragmentBinding;
+import com.android.example.github.databinding.OverviewFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
@@ -37,19 +37,16 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.Collections;
 
 import javax.inject.Inject;
 
 /**
  * The UI Controller for displaying the overview for a story.
  */
-public class RepoFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
+public class OverviewFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 
     private static final String REPO_OWNER_KEY = "repo_owner";
 
@@ -62,12 +59,11 @@ public class RepoFragment extends LifecycleFragment implements LifecycleRegistry
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<RepoFragmentBinding> binding;
-    AutoClearedValue<ContributorAdapter> adapter;
-    private RepoViewModel repoViewModel;
+    AutoClearedValue<OverviewFragmentBinding> binding;
+    private OverviewViewModel overviewViewModel;
 
-    public static RepoFragment create(String owner, String name) {
-        RepoFragment repoFragment = new RepoFragment();
+    public static OverviewFragment create(String owner, String name) {
+        OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
         args.putString(REPO_OWNER_KEY, owner);
         args.putString(REPO_NAME_KEY, name);
@@ -83,61 +79,42 @@ public class RepoFragment extends LifecycleFragment implements LifecycleRegistry
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        repoViewModel = ViewModelProviders.of(this, viewModelFactory).get(RepoViewModel.class);
+        overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_OWNER_KEY) &&
                 args.containsKey(REPO_NAME_KEY)) {
-            repoViewModel.setId(args.getString(REPO_OWNER_KEY),
+            overviewViewModel.setId(args.getString(REPO_OWNER_KEY),
                     args.getString(REPO_NAME_KEY));
         } else {
-            repoViewModel.setId(null, null);
+            overviewViewModel.setId(null, null);
         }
-        LiveData<Resource<Repo>> repo = repoViewModel.getRepo();
+        LiveData<Resource<Repo>> repo = overviewViewModel.getRepo();
         repo.observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
         });
 
-        ContributorAdapter adapter = new ContributorAdapter(dataBindingComponent,
-                contributor -> navigationController.navigateToUser(contributor.getLogin()));
-        this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().contributorList.setAdapter(adapter);
         initStartStoryListener();
         initStoryLocationListener();
-//        initContributorList(repoViewModel);
         getActivity().setTitle("Story Overview");
     }
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-//            String storyId = String.valueOf(repoViewModel.getRepo().getValue().data.id);
-            String owner = repoViewModel.getRepo().getValue().data.owner.login;
-            String name = repoViewModel.getRepo().getValue().data.name;
+            String owner = overviewViewModel.getRepo().getValue().data.owner.login;
+            String name = overviewViewModel.getRepo().getValue().data.name;
             navigationController.navigateToStoryPlay(owner, name);
         });
     }
 
     private void initStoryLocationListener() {
         binding.get().storyLocationButton.setOnClickListener((v) -> {
-            String latitude = Double.toString(repoViewModel.getRepo().getValue().data.latitude);
-            String longitude = Double.toString(repoViewModel.getRepo().getValue().data.longitude);
+            String latitude = Double.toString(overviewViewModel.getRepo().getValue().data.latitude);
+            String longitude = Double.toString(overviewViewModel.getRepo().getValue().data.longitude);
             String url = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s", latitude, longitude);
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
-        });
-    }
-
-    private void initContributorList(RepoViewModel viewModel) {
-        viewModel.getContributors().observe(this, listResource -> {
-            // we don't need any null checks here for the adapter since LiveData guarantees that
-            // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data);
-            } else {
-                //noinspection ConstantConditions
-                adapter.get().replace(Collections.emptyList());
-            }
         });
     }
 
@@ -145,9 +122,8 @@ public class RepoFragment extends LifecycleFragment implements LifecycleRegistry
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        RepoFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.repo_fragment, container, false, dataBindingComponent);
-        dataBinding.setRetryCallback(() -> repoViewModel.retry());
+        OverviewFragmentBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.overview_fragment, container, false, dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }

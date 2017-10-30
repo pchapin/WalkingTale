@@ -16,9 +16,7 @@
 
 package com.android.example.github.di;
 
-import com.android.example.github.ui.repo.RepoViewModel;
-import com.android.example.github.ui.search.SearchViewModel;
-import com.android.example.github.ui.user.UserViewModel;
+import com.android.example.github.ui.overview.OverviewViewModel;
 
 import dagger.Subcomponent;
 
@@ -29,11 +27,10 @@ import dagger.Subcomponent;
  */
 @Subcomponent
 public interface ViewModelSubComponent {
+    OverviewViewModel repoViewModel();
+
     @Subcomponent.Builder
     interface Builder {
         ViewModelSubComponent build();
     }
-    UserViewModel userViewModel();
-    SearchViewModel searchViewModel();
-    RepoViewModel repoViewModel();
 }

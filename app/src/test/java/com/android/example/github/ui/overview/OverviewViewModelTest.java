@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.repo;
+package com.android.example.github.ui.overview;
 
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.vo.Contributor;
@@ -46,31 +46,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(JUnit4.class)
-public class RepoViewModelTest {
+public class OverviewViewModelTest {
 
     @Rule
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
 
     private RepoRepository repository;
-    private RepoViewModel repoViewModel;
+    private OverviewViewModel overviewViewModel;
 
     @Before
     public void setup() {
         repository = mock(RepoRepository.class);
-        repoViewModel = new RepoViewModel(repository);
+        overviewViewModel = new OverviewViewModel(repository);
     }
 
 
     @Test
     public void testNull() {
-        assertThat(repoViewModel.getRepo(), notNullValue());
-        assertThat(repoViewModel.getContributors(), notNullValue());
+        assertThat(overviewViewModel.getRepo(), notNullValue());
+        assertThat(overviewViewModel.getContributors(), notNullValue());
         verify(repository, never()).loadRepo(anyString(), anyString());
     }
 
     @Test
     public void dontFetchWithoutObservers() {
-        repoViewModel.setId("a", "b");
+        overviewViewModel.setId("a", "b");
         verify(repository, never()).loadRepo(anyString(), anyString());
     }
 
@@ -79,8 +79,8 @@ public class RepoViewModelTest {
         ArgumentCaptor<String> owner = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
 
-        repoViewModel.setId("a", "b");
-        repoViewModel.getRepo().observeForever(mock(Observer.class));
+        overviewViewModel.setId("a", "b");
+        overviewViewModel.getRepo().observeForever(mock(Observer.class));
         verify(repository, times(1)).loadRepo(owner.capture(),
                 name.capture());
         assertThat(owner.getValue(), is("a"));
@@ -91,10 +91,10 @@ public class RepoViewModelTest {
     public void changeWhileObserved() {
         ArgumentCaptor<String> owner = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
-        repoViewModel.getRepo().observeForever(mock(Observer.class));
+        overviewViewModel.getRepo().observeForever(mock(Observer.class));
 
-        repoViewModel.setId("a", "b");
-        repoViewModel.setId("c", "d");
+        overviewViewModel.setId("a", "b");
+        overviewViewModel.setId("c", "d");
 
         verify(repository, times(2)).loadRepo(owner.capture(),
                 name.capture());
@@ -105,48 +105,48 @@ public class RepoViewModelTest {
     @Test
     public void contributors() {
         Observer<Resource<List<Contributor>>> observer = mock(Observer.class);
-        repoViewModel.getContributors().observeForever(observer);
+        overviewViewModel.getContributors().observeForever(observer);
         verifyNoMoreInteractions(observer);
         verifyNoMoreInteractions(repository);
-        repoViewModel.setId("foo", "bar");
+        overviewViewModel.setId("foo", "bar");
         verify(repository).loadContributors("foo", "bar");
     }
 
     @Test
     public void resetId() {
-        Observer<RepoViewModel.RepoId> observer = mock(Observer.class);
-        repoViewModel.repoId.observeForever(observer);
+        Observer<OverviewViewModel.RepoId> observer = mock(Observer.class);
+        overviewViewModel.repoId.observeForever(observer);
         verifyNoMoreInteractions(observer);
-        repoViewModel.setId("foo", "bar");
-        verify(observer).onChanged(new RepoViewModel.RepoId("foo", "bar"));
+        overviewViewModel.setId("foo", "bar");
+        verify(observer).onChanged(new OverviewViewModel.RepoId("foo", "bar"));
         reset(observer);
-        repoViewModel.setId("foo", "bar");
+        overviewViewModel.setId("foo", "bar");
         verifyNoMoreInteractions(observer);
-        repoViewModel.setId("a", "b");
-        verify(observer).onChanged(new RepoViewModel.RepoId("a", "b"));
+        overviewViewModel.setId("a", "b");
+        verify(observer).onChanged(new OverviewViewModel.RepoId("a", "b"));
     }
 
     @Test
     public void retry() {
-        repoViewModel.retry();
+        overviewViewModel.retry();
         verifyNoMoreInteractions(repository);
-        repoViewModel.setId("foo", "bar");
+        overviewViewModel.setId("foo", "bar");
         verifyNoMoreInteractions(repository);
         Observer<Resource<Repo>> observer = mock(Observer.class);
-        repoViewModel.getRepo().observeForever(observer);
+        overviewViewModel.getRepo().observeForever(observer);
         verify(repository).loadRepo("foo", "bar");
         reset(repository);
-        repoViewModel.retry();
+        overviewViewModel.retry();
         verify(repository).loadRepo("foo", "bar");
     }
 
     @Test
     public void nullRepoId() {
-        repoViewModel.setId(null, null);
+        overviewViewModel.setId(null, null);
         Observer<Resource<Repo>> observer1 = mock(Observer.class);
         Observer<Resource<List<Contributor>>> observer2 = mock(Observer.class);
-        repoViewModel.getRepo().observeForever(observer1);
-        repoViewModel.getContributors().observeForever(observer2);
+        overviewViewModel.getRepo().observeForever(observer1);
+        overviewViewModel.getContributors().observeForever(observer2);
         verify(observer1).onChanged(null);
         verify(observer2).onChanged(null);
     }

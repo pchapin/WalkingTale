@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.repo;
+package com.android.example.github.ui.common;
 
 import com.android.example.github.R;
 import com.android.example.github.databinding.ContributorItemBinding;
@@ -27,8 +27,7 @@ import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-public class ContributorAdapter
-        extends DataBoundListAdapter<Contributor, ContributorItemBinding> {
+public class ContributorAdapter extends DataBoundListAdapter<Contributor, ContributorItemBinding> {
 
     private final DataBindingComponent dataBindingComponent;
     private final ContributorClickCallback callback;

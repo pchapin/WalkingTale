@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.example.github.ui.expositionviewer;
+package com.android.example.github.ui.overview;
+
+import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.util.AbsentLiveData;
+import com.android.example.github.util.Objects;
+import com.android.example.github.vo.Contributor;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -22,22 +29,18 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
-import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
+import java.util.List;
 
 import javax.inject.Inject;
 
-public class ExpositionViewerViewModel extends ViewModel {
+public class OverviewViewModel extends ViewModel {
     @VisibleForTesting
     final MutableLiveData<RepoId> repoId;
     private final LiveData<Resource<Repo>> repo;
-
+    private final LiveData<Resource<List<Contributor>>> contributors;
 
     @Inject
-    public ExpositionViewerViewModel(RepoRepository repository) {
+    public OverviewViewModel(RepoRepository repository) {
         this.repoId = new MutableLiveData<>();
         repo = Transformations.switchMap(repoId, input -> {
             if (input.isEmpty()) {
@@ -45,10 +48,22 @@ public class ExpositionViewerViewModel extends ViewModel {
             }
             return repository.loadRepo(input.owner, input.name);
         });
+        contributors = Transformations.switchMap(repoId, input -> {
+            if (input.isEmpty()) {
+                return AbsentLiveData.create();
+            } else {
+                return repository.loadContributors(input.owner, input.name);
+            }
+
+        });
     }
 
     public LiveData<Resource<Repo>> getRepo() {
         return repo;
+    }
+
+    public LiveData<Resource<List<Contributor>>> getContributors() {
+        return contributors;
     }
 
     public void retry() {
