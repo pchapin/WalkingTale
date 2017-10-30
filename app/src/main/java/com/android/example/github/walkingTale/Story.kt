@@ -1,6 +1,5 @@
 package com.android.example.github.walkingTale
 
-import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 
 /**
@@ -82,10 +81,6 @@ data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
                  var title: String = "",
                  var description: String = "",
                  var id: Int = -1)
-
-data class Exposition(var type: ExpositionType,
-                      var content: String,
-                      var id: Int)
 
 enum class ExpositionType {
     TEXT, AUDIO, PICTURE
