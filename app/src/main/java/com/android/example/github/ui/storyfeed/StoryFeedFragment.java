@@ -85,7 +85,6 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         adapter = new AutoClearedValue<>(this, rvAdapter);
 
         initSearchInputListener();
-        initPlayStoryListener();
         initCreateStoryListener();
         binding.get().setCallback(() -> StoryFeedViewModel.refresh());
         // temp: search on load to save time
@@ -93,12 +92,6 @@ public class StoryFeedFragment extends LifecycleFragment implements Injectable {
         textView.setText("ok");
         doSearch(textView);
         getActivity().setTitle("Story Feed");
-    }
-
-    private void initPlayStoryListener() {
-        binding.get().playStoryBtn.setOnClickListener((v) -> {
-            // TODO: 10/19/2017 should there be a dedicated play button?
-        });
     }
 
     private void initCreateStoryListener() {
