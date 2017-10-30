@@ -176,14 +176,14 @@ public class StoryCreateFragment extends Fragment implements
                 // Add marker to map
                 LatLng chapterLocation = new LatLng(mLastLocation.latitude, mLastLocation.longitude);
 
-                Marker marker = mMap.addMarker(new MarkerOptions()
+                Marker newMarker = mMap.addMarker(new MarkerOptions()
                         .position(chapterLocation)
                         .title(chapterName));
-                markerArrayList.add(marker);
+                markerArrayList.add(newMarker);
 
                 // Get bounds of all markers
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Marker m : markerArrayList) {
+                for (Marker marker : markerArrayList) {
                     builder.include(marker.getPosition());
                 }
                 LatLngBounds bounds = builder.build();
