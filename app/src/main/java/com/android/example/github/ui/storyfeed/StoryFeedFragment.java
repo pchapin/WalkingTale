@@ -47,6 +47,9 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+/**
+ * The UI controller for the main screen of the app, the feed.
+ */
 public class StoryFeedFragment extends LifecycleFragment implements Injectable {
 
     @Inject

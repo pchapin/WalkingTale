@@ -47,7 +47,7 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 /**
- * The UI Controller for displaying a Github Repo's information with its contributors.
+ * The UI Controller for displaying the overview for a story.
  */
 public class RepoFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 

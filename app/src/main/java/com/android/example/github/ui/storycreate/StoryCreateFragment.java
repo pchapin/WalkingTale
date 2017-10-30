@@ -78,7 +78,7 @@ import com.google.gson.Gson;
 
 
 /**
- * The UI Controller for displaying a Github Repo's information with its contributors.
+ * The UI Controller for creating a story.
  */
 public class StoryCreateFragment extends Fragment implements
         LifecycleRegistryOwner,

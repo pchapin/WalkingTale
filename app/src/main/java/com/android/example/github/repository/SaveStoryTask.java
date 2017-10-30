@@ -28,7 +28,7 @@ import com.google.gson.Gson;
 import java.lang.reflect.Type;
 
 /**
- * A task that reads the search result in the database and fetches the next page, if it has one.
+ * A task that uploads a created story to a remote database.
  */
 public class SaveStoryTask implements Runnable {
     private final GithubDb db;

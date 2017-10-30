@@ -25,6 +25,9 @@ import com.android.example.github.ui.storycreate.StoryCreateFragment;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Records an audio clip
+ */
 public class AudioRecordTest extends AppCompatActivity {
 
     private static final String LOG_TAG = "AudioRecordTest";
