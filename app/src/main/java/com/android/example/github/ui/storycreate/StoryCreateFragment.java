@@ -64,11 +64,14 @@ import javax.inject.Inject;
 import static android.app.Activity.RESULT_OK;
 
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -178,7 +181,16 @@ public class StoryCreateFragment extends Fragment implements
                         .title(chapterName));
                 markerArrayList.add(marker);
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(chapterLocation));
+                // Get bounds of all markers
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker m : markerArrayList) {
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+
+                int padding = 0; // offset from edges of the map in pixels
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                mMap.animateCamera(cameraUpdate);
 
             } else {
                 // TODO: 10/23/2017 Location is required, deal with lack of location updates
@@ -374,8 +386,9 @@ public class StoryCreateFragment extends Fragment implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         mMap = googleMap;
-
+        // Set map preferences
+        mMap.setMinZoomPreference(10.0f);
+        mMap.setMaxZoomPreference(16.0f);
     }
 }
