@@ -44,9 +44,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -142,11 +144,7 @@ public class PlayFragment extends Fragment implements
             // we don't need any null checks here for the adapter since LiveData guarantees that
             // it won't call us if fragment is stopped or not started.
             if (listResource != null && listResource.data != null) {
-                Type listType = new TypeToken<List<Chapter>>() {
-                }.getType();
-
-                List<Chapter> chapters = gson.fromJson(listResource.data.chapters, listType);
-                adapter.get().replace(chapters);
+                adapter.get().replace(listResource.data.chapters);
             } else {
                 //noinspection ConstantConditions
                 adapter.get().replace(Collections.emptyList());

@@ -16,11 +16,16 @@
 
 package com.android.example.github.vo;
 
+import com.android.example.github.db.GithubTypeConverters;
+import com.android.example.github.walkingTale.Chapter;
 import com.google.gson.annotations.SerializedName;
 
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
+import android.arch.persistence.room.TypeConverters;
+
+import java.util.List;
 
 /**
  * Using name/owner_login as primary key instead of id since name/owner_login is always available
@@ -28,6 +33,7 @@ import android.arch.persistence.room.Index;
  */
 @Entity(indices = {@Index("id"), @Index("owner_login")},
         primaryKeys = {"name", "owner_login"})
+@TypeConverters(GithubTypeConverters.class)
 public class Repo {
     public static final int UNKNOWN_ID = -1;
     public final int id;
@@ -43,7 +49,7 @@ public class Repo {
     @Embedded(prefix = "owner_")
     public final Owner owner;
     @SerializedName("chapters")
-    public final String chapters;
+    public final List<Chapter> chapters;
     @SerializedName("expositions")
     public final String expositions;
     @SerializedName("genre")
@@ -61,7 +67,7 @@ public class Repo {
     @SerializedName("story_image")
     public final String story_image;
 
-    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, String chapters, String expositions, String genre, String tags, String duration, String rating, Double latitude, Double longitude, String story_image) {
+    public Repo(int id, String name, String fullName, String description, Owner owner, int stars, List<Chapter> chapters, String expositions, String genre, String tags, String duration, String rating, Double latitude, Double longitude, String story_image) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;

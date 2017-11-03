@@ -36,6 +36,7 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -147,7 +148,7 @@ public class RepoRepository {
                 try {
                     repoDao.createRepoIfNotExists(new Repo(Repo.UNKNOWN_ID,
                             name, owner + "/" + name, "",
-                            new Repo.Owner(owner, null), 0, "", "", "", "", "", "", 0.0, 0.0, ""));
+                            new Repo.Owner(owner, null), 0, new ArrayList<>(), "", "", "", "", "", 0.0, 0.0, ""));
                     repoDao.insertContributors(contributors);
                     db.setTransactionSuccessful();
                 } finally {

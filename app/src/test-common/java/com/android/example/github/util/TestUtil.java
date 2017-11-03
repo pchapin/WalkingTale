@@ -31,9 +31,9 @@ public class TestUtil {
     }
 
     public static List<Repo> createRepos(int count, String owner, String name,
-            String description) {
+                                         String description) {
         List<Repo> repos = new ArrayList<>();
-        for(int i = 0; i < count; i ++) {
+        for (int i = 0; i < count; i++) {
             repos.add(createRepo(owner + i, name + i, description + i));
         }
         return repos;
@@ -45,7 +45,7 @@ public class TestUtil {
 
     public static Repo createRepo(int id, String owner, String name, String description) {
         return new Repo(id, name, owner + "/" + name,
-                description, new Repo.Owner(owner, null), 3, "", "", "", "", "", "", 0.0, 0.0, "");
+                description, new Repo.Owner(owner, null), 3, new ArrayList<>(), "", "", "", "", "", 0.0, 0.0, "");
     }
 
     public static Contributor createContributor(Repo repo, String login, int contributions) {

@@ -120,13 +120,10 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         viewModel.getRepo().observe(this, listResource -> {
             // we don't need any null checks here for the adapter since LiveData guarantees that
             // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                Type listType = new TypeToken<List<Chapter>>() {
-                }.getType();
+            if (listResource != null && listResource.data != null && listResource.data.chapters != null) {
 
-                List<Chapter> chapters = gson.fromJson(listResource.data.chapters, listType);
                 List<Exposition> expositions = new ArrayList<>();
-                for (Chapter chapter : chapters) {
+                for (Chapter chapter : listResource.data.chapters) {
                     expositions.addAll(chapter.getExpositions());
                 }
                 adapter.get().replace(expositions);
