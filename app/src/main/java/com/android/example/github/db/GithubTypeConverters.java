@@ -54,8 +54,6 @@ public class GithubTypeConverters {
         Type listType = new TypeToken<List<Chapter>>() {
         }.getType();
 
-        Log.i("convert", gson.fromJson(data, listType).toString());
-
         return gson.fromJson(data, listType);
     }
 
