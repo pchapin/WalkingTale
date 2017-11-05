@@ -126,6 +126,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     private final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
     private static final String REPO_OWNER_KEY = "repo_owner";
     private static final String REPO_NAME_KEY = "repo_name";
+
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -134,6 +135,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<PlayFragmentBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
+
     /**
      * Provides access to the Fused Location Provider API.
      */
@@ -159,12 +161,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
-    // UI Widgets.
-    private Button mStartUpdatesButton;
-    private Button mStopUpdatesButton;
-    private TextView mLastUpdateTimeTextView;
-    private TextView mLatitudeTextView;
-    private TextView mLongitudeTextView;
+
     // Labels.
     private String mLatitudeLabel;
     private String mLongitudeLabel;
@@ -217,6 +214,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         binding.get().chapterList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
+        initStartUpdatesListener();
+        initStopUpdatesListener();
         initContributorList(playViewModel);
         getActivity().setTitle("Play Story");
 
@@ -227,12 +226,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
-        // Locate the UI widgets.
-        mStartUpdatesButton = (Button) getActivity().findViewById(R.id.start_updates_button);
-        mStopUpdatesButton = (Button) getActivity().findViewById(R.id.stop_updates_button);
-        mLatitudeTextView = (TextView) getActivity().findViewById(R.id.latitude_text);
-        mLongitudeTextView = (TextView) getActivity().findViewById(R.id.longitude_text);
-        mLastUpdateTimeTextView = (TextView) getActivity().findViewById(R.id.last_update_time_text);
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -273,6 +266,32 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
     private void initViewMapListener() {
         binding.get().viewMap.setOnClickListener((v) -> {
+        });
+    }
+
+    /**
+     * Handles the Start Updates button and requests start of location updates. Does nothing if
+     * updates have already been requested.
+     */
+    private void initStartUpdatesListener() {
+        binding.get().startUpdatesButton.setOnClickListener((v) -> {
+            if (!mRequestingLocationUpdates) {
+                mRequestingLocationUpdates = true;
+                setButtonsEnabledState();
+                startLocationUpdates();
+            }
+        });
+    }
+
+    /**
+     * Handles the Stop Updates button, and requests removal of location updates.
+     */
+    private void initStopUpdatesListener() {
+        binding.get().stopUpdatesButton.setOnClickListener((v) -> {
+            // It is a good practice to remove location requests when the activity is in a paused or
+            // stopped state. Doing so helps battery performance and is especially
+            // recommended in applications that request frequent location updates.
+            stopLocationUpdates();
         });
     }
 
@@ -395,27 +414,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         }
     }
 
-    /**
-     * Handles the Start Updates button and requests start of location updates. Does nothing if
-     * updates have already been requested.
-     */
-    public void startUpdatesButtonHandler(View view) {
-        if (!mRequestingLocationUpdates) {
-            mRequestingLocationUpdates = true;
-            setButtonsEnabledState();
-            startLocationUpdates();
-        }
-    }
-
-    /**
-     * Handles the Stop Updates button, and requests removal of location updates.
-     */
-    public void stopUpdatesButtonHandler(View view) {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        stopLocationUpdates();
-    }
 
     /**
      * Requests location updates from the FusedLocationApi. Note: we don't call this unless location
@@ -476,18 +474,18 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     }
 
     /**
-     * Disables both buttons when functionality is disabled due to insuffucient location settings.
+     * Disables both buttons when functionality is disabled due to insufficient location settings.
      * Otherwise ensures that only one button is enabled at any time. The Start Updates button is
      * enabled if the user is not requesting location updates. The Stop Updates button is enabled
      * if the user is requesting location updates.
      */
     private void setButtonsEnabledState() {
         if (mRequestingLocationUpdates) {
-            mStartUpdatesButton.setEnabled(false);
-            mStopUpdatesButton.setEnabled(true);
+            binding.get().startUpdatesButton.setEnabled(false);
+            binding.get().stopUpdatesButton.setEnabled(true);
         } else {
-            mStartUpdatesButton.setEnabled(true);
-            mStopUpdatesButton.setEnabled(false);
+            binding.get().startUpdatesButton.setEnabled(true);
+            binding.get().stopUpdatesButton.setEnabled(false);
         }
     }
 
@@ -496,11 +494,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      */
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
-            mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel,
+            binding.get().latitudeText.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel,
                     mCurrentLocation.getLatitude()));
-            mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
+            binding.get().longitudeText.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
                     mCurrentLocation.getLongitude()));
-            mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s",
+            binding.get().lastUpdateTimeText.setText(String.format(Locale.ENGLISH, "%s: %s",
                     mLastUpdateTimeLabel, mLastUpdateTime));
         }
     }
