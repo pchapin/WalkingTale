@@ -91,6 +91,10 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:$timber_version"
 
+    // https://mvnrepository.com/artifact/commons-logging/commons-logging
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+
+
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:support-v4:26.0.2'
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
