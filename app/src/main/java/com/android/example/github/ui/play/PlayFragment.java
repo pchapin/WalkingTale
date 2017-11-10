@@ -54,6 +54,7 @@ import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -64,6 +65,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -130,7 +132,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<PlayFragmentBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
-
+    StoryPlayManager storyPlayManager;
     /**
      * Provides access to the Fused Location Provider API.
      */
@@ -156,14 +158,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
-
     // Labels.
     private String mLatitudeLabel;
     private String mLongitudeLabel;
     private String mLastUpdateTimeLabel;
     private PlayViewModel playViewModel;
-
-
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -201,6 +200,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
+            if (storyPlayManager == null && resource != null && resource.data != null) {
+                storyPlayManager = new StoryPlayManager(resource.data);
+            }
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
@@ -214,13 +216,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         initContributorList(playViewModel);
         getActivity().setTitle("Play Story");
 
-
         // Location
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.main_activity);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -371,11 +368,56 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
 
-                mCurrentLocation = locationResult.getLastLocation();
+                nextChapterCheck(locationResult);
+
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 updateLocationUI();
             }
         };
+    }
+
+    /**
+     * Check if user is within next chapter radius
+     */
+    private void nextChapterCheck(LocationResult locationResult) {
+
+        mCurrentLocation = locationResult.getLastLocation();
+        LatLng latLng = storyPlayManager.getCurrentChapter().getLocation();
+        float[] distanceBetween = new float[1];
+
+        // Distance in meters from here to center of chapter radius
+        Location.distanceBetween(
+                mCurrentLocation.getLatitude(),
+                mCurrentLocation.getLongitude(),
+                latLng.latitude,
+                latLng.longitude,
+                distanceBetween);
+
+        if (distanceBetween[0] > storyPlayManager.getCurrentChapter().getRadius()) {
+            // Outside radius
+            Toast.makeText(getContext(), "distance from chapter:" + distanceBetween[0], Toast.LENGTH_SHORT).show();
+        } else {
+            // Inside radius
+            Toast.makeText(getContext(), "Inside radius", Toast.LENGTH_SHORT).show();
+
+            try {
+                storyPlayManager.goToNextChapter();
+                // Next chapter event
+                Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager.getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
+                nextChapterEvent();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // No more chapters
+                Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
+                finalChapterEvent();
+            }
+        }
+    }
+
+    private void nextChapterEvent() {
+
+    }
+
+    private void finalChapterEvent() {
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.android.example.github.walkingTale
 
+import com.android.example.github.vo.Repo
 import com.google.android.gms.maps.model.LatLng
 
 /**
@@ -56,9 +57,15 @@ class StoryCreateManager() {
     }
 }
 
-class StoryPlayManager() {
+class StoryPlayManager(repo: Repo) {
+
     private val story = Story()
-    private var currentChapter: Chapter = story.chapters.first()
+    private var currentChapter: Chapter
+
+    init {
+        story.chapters = repo.chapters as ArrayList<Chapter>
+        currentChapter = story.chapters[0]
+    }
 
 
     fun getCurrentChapter(): Chapter {
@@ -69,6 +76,7 @@ class StoryPlayManager() {
         return story.chapters.map { it.expositions }.flatten()
     }
 
+    @Throws(ArrayIndexOutOfBoundsException::class)
     fun goToNextChapter() {
         if (currentChapter == story.chapters.last()) {
             throw ArrayIndexOutOfBoundsException("Current chapter is already the last chapter.")

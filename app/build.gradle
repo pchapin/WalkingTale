@@ -76,12 +76,13 @@ dependencies {
     implementation 'com.github.piasy:AudioProcessor:1.5.2'
 
 //    aws
-    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
-    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.22'
     implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.3.2'
 
+    implementation 'com.amazonaws:aws-android-sdk-core:2.4.4'
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.4.4'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-document:2.4.4'
 
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.dagger:dagger-android:$dagger_version"
@@ -89,6 +90,10 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
+
+    // https://mvnrepository.com/artifact/commons-logging/commons-logging
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:support-v4:26.0.2'
