@@ -16,9 +16,16 @@
 
 package com.android.example.github.ui.create;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
 import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.util.LiveDataCallAdapter;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Status;
 import com.android.example.github.walkingTale.StoryCreateManager;
 
 import javax.inject.Inject;
@@ -28,10 +35,20 @@ public class CreateViewModel extends ViewModel {
 
     public StoryCreateManager storyManager = new StoryCreateManager();
     private RepoRepository repoRepository;
+    private MutableLiveData<Resource<Repo>> repo = null;
+
 
     @Inject
     public CreateViewModel(RepoRepository repository) {
         this.repoRepository = repository;
+    }
+
+
+    public LiveData<Resource<Repo>> getRepo() {
+        if (repo == null) {
+            repo = new MutableLiveData<>();
+        }
+        return repo;
     }
 
     void finishStory() {

@@ -22,11 +22,16 @@ import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.CreateFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.audiorecord.AudioRecordActivity;
+import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.play.PlayViewModel;
 import com.android.example.github.util.AutoClearedValue;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
+import com.android.example.github.walkingTale.StoryCreateManager;
+import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,6 +40,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -64,6 +70,7 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -146,6 +153,7 @@ public class CreateFragment extends Fragment implements
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<CreateFragmentBinding> binding;
+    AutoClearedValue<ChapterAdapter> adapter;
     /**
      * Provides access to the Fused Location Provider API.
      */
@@ -175,7 +183,6 @@ public class CreateFragment extends Fragment implements
     private String mLatitudeLabel;
     private String mLongitudeLabel;
     private String mLastUpdateTimeLabel;
-    private PlayViewModel playViewModel;
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -219,7 +226,23 @@ public class CreateFragment extends Fragment implements
         initRadiusDecrementListener();
         initStartUpdatesListener();
         initStopUpdatesListener();
+        initContributorList(createViewModel);
         getActivity().setTitle("Create Story");
+
+        LiveData<Resource<Repo>> repo = createViewModel.getRepo();
+        repo.observe(this, resource -> {
+            binding.get().setRepo(resource == null ? null : resource.data);
+            binding.get().setRepoResource(resource);
+            binding.get().executePendingBindings();
+            if (createViewModel.storyManager == null && resource != null && resource.data != null) {
+                createViewModel.storyManager = new StoryCreateManager();
+            }
+        });
+
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
+                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.owner.login, repo.getValue().data.name));
+        this.adapter = new AutoClearedValue<>(this, adapter);
+        binding.get().chapterList.setAdapter(adapter);
 
 
         // Create an instance of GoogleAPIClient.
@@ -415,6 +438,20 @@ public class CreateFragment extends Fragment implements
             stopLocationUpdates();
         });
     }
+
+    private void initContributorList(CreateViewModel viewModel) {
+        viewModel.getRepo().observe(this, listResource -> {
+            // we don't need any null checks here for the adapter since LiveData guarantees that
+            // it won't call us if fragment is stopped or not started.
+            if (listResource != null && listResource.data != null) {
+                adapter.get().replace(listResource.data.chapters);
+            } else {
+                //noinspection ConstantConditions
+                adapter.get().replace(Collections.emptyList());
+            }
+        });
+    }
+
 
     @Nullable
     @Override
