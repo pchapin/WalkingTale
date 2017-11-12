@@ -178,6 +178,8 @@ public class MainActivity extends AppCompatActivity {
         AppHelper.init(getApplicationContext());
         initApp();
         findCurrent();
+
+        autoLoginDebug();
     }
 
     @Override
@@ -287,6 +289,17 @@ public class MainActivity extends AppCompatActivity {
                     continueWithFirstTimeSignIn();
                 }
         }
+    }
+
+    // TODO: 11/12/17 DEBUG
+    private void autoLoginDebug() {
+        EditText username = findViewById(R.id.editTextUserId);
+        EditText password = findViewById(R.id.editTextUserPassword);
+
+        username.setText("toddcooke");
+        password.setText("Passw0rd!");
+
+        logIn(null);
     }
 
     // App methods
