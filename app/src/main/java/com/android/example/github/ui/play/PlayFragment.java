@@ -66,8 +66,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
 import java.util.Collections;
@@ -211,10 +209,13 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         binding.get().chapterList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
+        initNextChapterListener();
         initStartUpdatesListener();
         initStopUpdatesListener();
         initContributorList(playViewModel);
         getActivity().setTitle("Play Story");
+        // Disable next chapter button until user is in radius
+        binding.get().nextChapter.setEnabled(false);
 
         // Location
         super.onCreate(savedInstanceState);
@@ -258,6 +259,17 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
     private void initViewMapListener() {
         binding.get().viewMap.setOnClickListener((v) -> {
+        });
+    }
+
+    private void initNextChapterListener() {
+        binding.get().nextChapter.setOnClickListener((v) -> {
+            if (isUserInRadius()) {
+                nextChapterEvent();
+                binding.get().nextChapter.setEnabled(false);
+            } else {
+                Toast.makeText(getContext(), "You are not in the radius", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -376,12 +388,25 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         };
     }
 
-    /**
-     * Check if user is within next chapter radius
-     */
+
     private void nextChapterCheck(LocationResult locationResult) {
 
         mCurrentLocation = locationResult.getLastLocation();
+
+        if (!isUserInRadius()) {
+            // Outside radius
+            Toast.makeText(getContext(), "Outside radius", Toast.LENGTH_SHORT).show();
+        } else {
+            // Inside radius
+            Toast.makeText(getContext(), "Inside radius", Toast.LENGTH_SHORT).show();
+            binding.get().nextChapter.setEnabled(true);
+        }
+    }
+
+    /**
+     * Check if user is within next chapter radius
+     */
+    private boolean isUserInRadius() {
         LatLng latLng = storyPlayManager.getCurrentChapter().getLocation();
         float[] distanceBetween = new float[1];
 
@@ -393,28 +418,20 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 latLng.longitude,
                 distanceBetween);
 
-        if (distanceBetween[0] > storyPlayManager.getCurrentChapter().getRadius()) {
-            // Outside radius
-            Toast.makeText(getContext(), "distance from chapter:" + distanceBetween[0], Toast.LENGTH_SHORT).show();
-        } else {
-            // Inside radius
-            Toast.makeText(getContext(), "Inside radius", Toast.LENGTH_SHORT).show();
-
-            try {
-                storyPlayManager.goToNextChapter();
-                // Next chapter event
-                Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager.getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
-                nextChapterEvent();
-            } catch (ArrayIndexOutOfBoundsException e) {
-                // No more chapters
-                Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
-                finalChapterEvent();
-            }
-        }
+        return distanceBetween[0] < storyPlayManager.getCurrentChapter().getRadius();
     }
 
     private void nextChapterEvent() {
-
+        try {
+            storyPlayManager.goToNextChapter();
+            // Next chapter event
+            Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager.getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
+            nextChapterEvent();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // No more chapters
+            Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
+            finalChapterEvent();
+        }
     }
 
     private void finalChapterEvent() {
