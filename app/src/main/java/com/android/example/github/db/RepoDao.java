@@ -91,4 +91,7 @@ public abstract class RepoDao {
 
     @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
     public abstract RepoSearchResult findSearchResult(String query);
+
+    @Query("SELECT * FROM repo")
+    public abstract LiveData<List<Repo>> loadAll();
 }
