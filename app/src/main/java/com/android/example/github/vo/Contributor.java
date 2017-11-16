@@ -23,8 +23,8 @@ import android.arch.persistence.room.ForeignKey;
 
 @Entity(primaryKeys = {"repoName", "repoOwner", "login"},
         foreignKeys = @ForeignKey(entity = Repo.class,
-                parentColumns = {"name", "owner_login"},
-                childColumns = {"repoName", "repoOwner"},
+                parentColumns = {"name"},
+                childColumns = {"repoName"},
                 onUpdate = ForeignKey.CASCADE,
                 deferred = true))
 public class Contributor {

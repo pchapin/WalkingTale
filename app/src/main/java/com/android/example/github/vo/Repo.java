@@ -31,8 +31,8 @@ import java.util.List;
  * Using name/owner_login as primary key instead of id since name/owner_login is always available
  * vs id is not.
  */
-@Entity(indices = {@Index("id"), @Index("owner_login")},
-        primaryKeys = {"name", "owner_login"})
+@Entity(indices = {@Index("id")},
+        primaryKeys = {"name"})
 @TypeConverters(GithubTypeConverters.class)
 public class Repo {
     public static final int UNKNOWN_ID = -1;
