@@ -41,13 +41,16 @@ public class CreateViewModel extends ViewModel {
     @Inject
     public CreateViewModel(RepoRepository repository) {
         this.repoRepository = repository;
-    }
-
-
-    public LiveData<Resource<Repo>> getRepo() {
         if (repo == null) {
             repo = new MutableLiveData<>();
         }
+    }
+
+    private void updateRepo() {
+        repo.setValue(new Resource<>(Status.SUCCESS, null, ""));
+    }
+
+    public LiveData<Resource<Repo>> getRepo() {
         return repo;
     }
 
