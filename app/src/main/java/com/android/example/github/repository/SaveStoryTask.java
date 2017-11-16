@@ -18,14 +18,11 @@ package com.android.example.github.repository;
 
 import android.util.Log;
 
-import com.android.example.github.api.GithubService;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Story;
 import com.google.gson.Gson;
-
-import java.lang.reflect.Type;
 
 /**
  * A task that uploads a created story to a remote database.
@@ -55,8 +52,8 @@ public class SaveStoryTask implements Runnable {
             db.beginTransaction();
 
             Repo repo = (new Repo(Repo.UNKNOWN_ID,
-                    name, owner + "/" + name, description, new Repo.Owner(owner, null),
-                    0, story.getChapters(), "", "", "",
+                    name, description,
+                    story.getChapters(), "", "", "",
                     "", rating, story.getChapters().get(0).getLocation().latitude,
                     story.getChapters().get(0).getLocation().longitude, ""));
 

@@ -9,9 +9,9 @@ class ExampleRepo() {
     companion object {
         fun getRepo(): Repo {
             return Repo(
-                    1, "", "", "", Repo.Owner("", ""),
-                    1, mutableListOf(), "", "", "", "",
-                    "", 1.1, 1.1, ""
+                    1, "", "", mutableListOf(), "",
+                    "", "", "", "", 1.1, 1.1,
+                    ""
             )
         }
     }

@@ -29,7 +29,6 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Story;
-import com.google.gson.Gson;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
@@ -147,8 +146,8 @@ public class RepoRepository {
                 db.beginTransaction();
                 try {
                     repoDao.createRepoIfNotExists(new Repo(Repo.UNKNOWN_ID,
-                            name, owner + "/" + name, "",
-                            new Repo.Owner(owner, null), 0, new ArrayList<>(), "", "", "", "", "", 0.0, 0.0, ""));
+                            name, "",
+                            new ArrayList<>(), "", "", "", "", "", 0.0, 0.0, ""));
                     repoDao.insertContributors(contributors);
                     db.setTransactionSuccessful();
                 } finally {
