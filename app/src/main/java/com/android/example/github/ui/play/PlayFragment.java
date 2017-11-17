@@ -186,13 +186,12 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         super.onActivityCreated(savedInstanceState);
         playViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            playViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
+        if (args != null && args.containsKey(REPO_NAME_KEY)) {
+            playViewModel.setId(args.getInt(REPO_NAME_KEY));
         } else {
-            playViewModel.setId(null, null);
+            playViewModel.setId(null);
         }
+        Toast.makeText(getContext(), "id" + args.getInt(REPO_NAME_KEY), Toast.LENGTH_SHORT).show();
         LiveData<Resource<Repo>> repo = playViewModel.getRepo();
         repo.observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
@@ -426,7 +425,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             storyPlayManager.goToNextChapter();
             // Next chapter event
             Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager.getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
-            nextChapterEvent();
         } catch (ArrayIndexOutOfBoundsException e) {
             // No more chapters
             Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();

@@ -81,12 +81,10 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         super.onActivityCreated(savedInstanceState);
         overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            overviewViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
+        if (args != null && args.containsKey(REPO_NAME_KEY)) {
+            overviewViewModel.setId(args.getInt(REPO_NAME_KEY));
         } else {
-            overviewViewModel.setId(null, null);
+            overviewViewModel.setId(null);
         }
         LiveData<Resource<Repo>> repo = overviewViewModel.getRepo();
         repo.observe(this, resource -> {

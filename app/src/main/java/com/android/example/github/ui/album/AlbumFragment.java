@@ -91,12 +91,10 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         super.onActivityCreated(savedInstanceState);
         albumViewModel = ViewModelProviders.of(this, viewModelFactory).get(AlbumViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            albumViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
+        if (args != null && args.containsKey(REPO_NAME_KEY)) {
+            albumViewModel.setId(args.getInt(REPO_NAME_KEY));
         } else {
-            albumViewModel.setId(null, null);
+            albumViewModel.setId(null);
         }
         LiveData<Resource<Repo>> repo = albumViewModel.getRepo();
         repo.observe(this, resource -> {
