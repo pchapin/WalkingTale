@@ -17,7 +17,6 @@
 package com.android.example.github.db;
 
 
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.User;
@@ -28,7 +27,7 @@ import android.arch.persistence.room.RoomDatabase;
 /**
  * Main database description.
  */
-@Database(entities = {User.class, Repo.class, Contributor.class,
+@Database(entities = {User.class, Repo.class,
         RepoSearchResult.class}, version = 3)
 public abstract class GithubDb extends RoomDatabase {
 

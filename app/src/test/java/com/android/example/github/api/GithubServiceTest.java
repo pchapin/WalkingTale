@@ -17,7 +17,6 @@
 package com.android.example.github.api;
 
 import com.android.example.github.util.LiveDataCallAdapterFactory;
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.User;
 
@@ -110,20 +109,6 @@ public class GithubServiceTest {
 
         Repo repo2 = repos.get(1);
 //        assertThat(repo2.fullName, is("yigit/android-architecture"));
-    }
-
-    @Test
-    public void getContributors() throws IOException, InterruptedException {
-        enqueueResponse("contributors.json");
-        List<Contributor> contributors = getValue(
-                service.getContributors("foo", "bar")).getBody();
-        assertThat(contributors.size(), is(3));
-        Contributor yigit = contributors.get(0);
-        assertThat(yigit.getLogin(), is("yigit"));
-        assertThat(yigit.getAvatarUrl(), is("https://avatars3.githubusercontent.com/u/89202?v=3"));
-        assertThat(yigit.getContributions(), is(291));
-        assertThat(contributors.get(1).getLogin(), is("guavabot"));
-        assertThat(contributors.get(2).getLogin(), is("coltin"));
     }
 
     @Test

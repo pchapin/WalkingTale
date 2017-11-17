@@ -24,11 +24,9 @@ import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.RateLimiter;
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
 import com.android.example.github.walkingTale.Story;
 
@@ -37,7 +35,6 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -102,45 +99,6 @@ public class RepoRepository {
             @Override
             protected LiveData<ApiResponse<Repo>> createCall() {
                 return githubService.getRepo("", "");
-            }
-        }.asLiveData();
-    }
-
-    public LiveData<Resource<List<Contributor>>> loadContributors(String owner, String name) {
-        return new NetworkBoundResource<List<Contributor>, List<Contributor>>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull List<Contributor> contributors) {
-                for (Contributor contributor : contributors) {
-                    contributor.setRepoName(name);
-                    contributor.setRepoOwner(owner);
-                }
-                db.beginTransaction();
-                try {
-                    repoDao.createRepoIfNotExists(ExampleRepo.Companion.getRepo());
-                    repoDao.insertContributors(contributors);
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-                Timber.d("rece saved contributors to db");
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Contributor> data) {
-                Timber.d("rece contributor list from db: %s", data);
-                return data == null || data.isEmpty();
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Contributor>> loadFromDb() {
-                return repoDao.loadContributors("");
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<List<Contributor>>> createCall() {
-                return githubService.getContributors();
             }
         }.asLiveData();
     }

@@ -16,7 +16,6 @@
 
 package com.android.example.github.db;
 
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 
@@ -42,9 +41,6 @@ public abstract class RepoDao {
     public abstract void insert(Repo... repos);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertContributors(List<Contributor> contributors);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertRepos(List<Repo> repositories);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -52,11 +48,6 @@ public abstract class RepoDao {
 
     @Query("SELECT * FROM repo WHERE id = :id")
     public abstract LiveData<Repo> load(int id);
-
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT login, avatarUrl, contributions FROM contributor "
-            + "WHERE login = :login")
-    public abstract LiveData<List<Contributor>> loadContributors(String login);
 
     @Query("SELECT * FROM Repo "
             + "WHERE id = :id")

@@ -16,7 +16,6 @@
 
 package com.android.example.github.api
 
-import com.android.example.github.vo.Contributor
 import com.android.example.github.vo.Repo
 import com.android.example.github.vo.User
 
@@ -39,12 +38,6 @@ interface GithubService {
 
     @GET("repos/{owner}/{name}")
     fun getRepo(@Path("owner") owner: String, @Path("name") name: String): LiveData<ApiResponse<Repo>>
-
-    @GET("toddcooke/test/master/chapters.json")
-    fun getContributors(): LiveData<ApiResponse<List<Contributor>>>
-
-    @GET("toddcooke/test/master/chapters.json")
-    fun getContributors(@Path("owner") owner: String, @Path("name") name: String): LiveData<ApiResponse<List<Contributor>>>
 
     @GET("toddcooke/test/master/test.json")
     fun searchRepos(): LiveData<ApiResponse<RepoSearchResponse>>
