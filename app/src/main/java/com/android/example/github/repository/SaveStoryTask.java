@@ -54,7 +54,7 @@ public class SaveStoryTask implements Runnable {
             Repo repo = (new Repo(Repo.UNKNOWN_ID,
                     name, description,
                     story.getChapters(), "", "", "",
-                    "", rating, story.getChapters().get(0).getLocation().latitude,
+                    "", 1.1, story.getChapters().get(0).getLocation().latitude,
                     story.getChapters().get(0).getLocation().longitude, ""));
 
             String json = gson.toJson(repo);

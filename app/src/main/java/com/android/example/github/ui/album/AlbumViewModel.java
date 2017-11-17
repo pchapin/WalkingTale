@@ -43,7 +43,7 @@ public class AlbumViewModel extends ViewModel {
             if (input.isEmpty()) {
                 return AbsentLiveData.create();
             }
-            return repository.loadRepo(input.owner, input.name);
+            return repository.loadRepo(1);
         });
     }
 

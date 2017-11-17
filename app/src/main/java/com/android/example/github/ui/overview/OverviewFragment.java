@@ -62,11 +62,11 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     AutoClearedValue<OverviewFragmentBinding> binding;
     private OverviewViewModel overviewViewModel;
 
-    public static OverviewFragment create(String owner, String name) {
+    public static OverviewFragment create(int id) {
         OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+//        args.putString(REPO_OWNER_KEY, owner);
+        args.putInt(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -102,9 +102,9 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-            String owner = overviewViewModel.getRepo().getValue().data.owner.login;
-            String name = overviewViewModel.getRepo().getValue().data.name;
-            navigationController.navigateToStoryPlay(owner, name);
+//            String owner = overviewViewModel.getRepo().getValue().data.owner.login;
+            int name = overviewViewModel.getRepo().getValue().data.id;
+            navigationController.navigateToStoryPlay(name);
         });
     }
 

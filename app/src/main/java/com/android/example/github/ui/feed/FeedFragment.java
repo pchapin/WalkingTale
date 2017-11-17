@@ -87,7 +87,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         FeedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         initRecyclerView();
         RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
-                repo -> navigationController.navigateToRepo(repo.owner.login, repo.name));
+                repo -> navigationController.navigateToRepo(repo.id));
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
 

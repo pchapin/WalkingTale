@@ -50,19 +50,17 @@ public abstract class RepoDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long createRepoIfNotExists(Repo repo);
 
-    @Query("SELECT * FROM repo WHERE owner_login = :login AND name = :name")
-    public abstract LiveData<Repo> load(String login, String name);
+    @Query("SELECT * FROM repo WHERE id = :id")
+    public abstract LiveData<Repo> load(int id);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT login, avatarUrl, contributions FROM contributor "
-            + "WHERE repoName = :name AND repoOwner = :owner "
-            + "ORDER BY contributions DESC")
-    public abstract LiveData<List<Contributor>> loadContributors(String owner, String name);
+            + "WHERE login = :login")
+    public abstract LiveData<List<Contributor>> loadContributors(String login);
 
     @Query("SELECT * FROM Repo "
-            + "WHERE owner_login = :owner "
-            + "ORDER BY stars DESC")
-    public abstract LiveData<List<Repo>> loadRepositories(String owner);
+            + "WHERE id = :id")
+    public abstract LiveData<List<Repo>> loadRepositories(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(RepoSearchResult result);

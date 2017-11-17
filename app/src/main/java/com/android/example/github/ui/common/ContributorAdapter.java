@@ -16,16 +16,15 @@
 
 package com.android.example.github.ui.common;
 
-import com.android.example.github.R;
-import com.android.example.github.databinding.ContributorItemBinding;
-import com.android.example.github.ui.common.DataBoundListAdapter;
-import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Contributor;
-
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.android.example.github.R;
+import com.android.example.github.databinding.ContributorItemBinding;
+import com.android.example.github.util.Objects;
+import com.android.example.github.vo.Contributor;
 
 public class ContributorAdapter extends DataBoundListAdapter<Contributor, ContributorItemBinding> {
 

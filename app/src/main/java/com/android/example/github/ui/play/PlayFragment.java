@@ -172,11 +172,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      */
     private String mLastUpdateTime;
 
-    public static PlayFragment create(String owner, String name) {
+    public static PlayFragment create(int id) {
         PlayFragment repoFragment = new PlayFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+//        args.putString(REPO_OWNER_KEY, owner);
+        args.putInt(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -204,7 +204,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
-                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.owner.login, repo.getValue().data.name));
+                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().chapterList.setAdapter(adapter);
         initViewExpositionsListener();

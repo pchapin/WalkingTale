@@ -28,6 +28,8 @@ import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.ExampleRepo;
 import com.android.example.github.walkingTale.Story;
 
 import android.arch.lifecycle.LiveData;
@@ -78,38 +80,7 @@ public class RepoRepository {
         appExecutors.diskIO().execute(saveStoryTask);
     }
 
-    public LiveData<Resource<List<Repo>>> loadRepos(String owner) {
-        return new NetworkBoundResource<List<Repo>, List<Repo>>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull List<Repo> item) {
-                repoDao.insertRepos(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Repo> data) {
-                return data == null || data.isEmpty() || repoListRateLimit.shouldFetch(owner);
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Repo>> loadFromDb() {
-                return repoDao.loadRepositories(owner);
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<List<Repo>>> createCall() {
-                return githubService.getRepos(owner);
-            }
-
-            @Override
-            protected void onFetchFailed() {
-                repoListRateLimit.reset(owner);
-            }
-        }.asLiveData();
-    }
-
-    public LiveData<Resource<Repo>> loadRepo(String owner, String name) {
+    public LiveData<Resource<Repo>> loadRepo(int id) {
         return new NetworkBoundResource<Repo, Repo>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull Repo item) {
@@ -124,13 +95,13 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<Repo> loadFromDb() {
-                return repoDao.load(owner, name);
+                return repoDao.load(id);
             }
 
             @NonNull
             @Override
             protected LiveData<ApiResponse<Repo>> createCall() {
-                return githubService.getRepo(owner, name);
+                return githubService.getRepo("", "");
             }
         }.asLiveData();
     }
@@ -145,9 +116,7 @@ public class RepoRepository {
                 }
                 db.beginTransaction();
                 try {
-                    repoDao.createRepoIfNotExists(new Repo(Repo.UNKNOWN_ID,
-                            name, "",
-                            new ArrayList<>(), "", "", "", "", "", 0.0, 0.0, ""));
+                    repoDao.createRepoIfNotExists(ExampleRepo.Companion.getRepo());
                     repoDao.insertContributors(contributors);
                     db.setTransactionSuccessful();
                 } finally {
@@ -165,7 +134,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<List<Contributor>> loadFromDb() {
-                return repoDao.loadContributors(owner, name);
+                return repoDao.loadContributors("");
             }
 
             @NonNull

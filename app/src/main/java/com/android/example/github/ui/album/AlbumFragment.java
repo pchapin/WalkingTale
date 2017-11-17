@@ -72,11 +72,11 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
     Gson gson = new Gson();
     private AlbumViewModel albumViewModel;
 
-    public static AlbumFragment create(String owner, String name) {
+    public static AlbumFragment create(int id) {
         AlbumFragment expositionViewerFragment = new AlbumFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+//        args.putString(REPO_OWNER_KEY, owner);
+        args.putInt(REPO_NAME_KEY, id);
         expositionViewerFragment.setArguments(args);
         return expositionViewerFragment;
     }
