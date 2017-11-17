@@ -21,7 +21,6 @@ import android.util.Log;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.vo.Repo;
-import com.android.example.github.walkingTale.Story;
 import com.google.gson.Gson;
 
 /**
@@ -30,9 +29,9 @@ import com.google.gson.Gson;
 public class SaveStoryTask implements Runnable {
     private final GithubDb db;
     private final RepoDao repoDao;
-    private Story story;
+    private Repo story;
 
-    SaveStoryTask(Story story, GithubDb db, RepoDao repoDao) {
+    SaveStoryTask(Repo story, GithubDb db, RepoDao repoDao) {
         this.db = db;
         this.repoDao = repoDao;
         this.story = story;
@@ -53,9 +52,9 @@ public class SaveStoryTask implements Runnable {
 
             Repo repo = (new Repo(Repo.UNKNOWN_ID,
                     name, description,
-                    story.getChapters(), "", "", "",
-                    "", 1.1, story.getChapters().get(0).getLocation().latitude,
-                    story.getChapters().get(0).getLocation().longitude, ""));
+                    story.chapters, "", "", "",
+                    "", 1.1, story.chapters.get(0).getLocation().latitude,
+                    story.chapters.get(0).getLocation().longitude, ""));
 
             String json = gson.toJson(repo);
             Log.i("repo to json", json);

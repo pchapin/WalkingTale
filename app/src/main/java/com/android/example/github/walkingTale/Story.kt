@@ -9,12 +9,12 @@ import com.google.android.gms.maps.model.LatLng
 
 class StoryCreateManager() {
 
-    private val story = Story()
+    private val story = ExampleRepo.getRepo()
     private var expositionCount = 0
     private val minRadius = 1
     private val maxRadius = 10
 
-    fun getStory(): Story {
+    fun getStory(): Repo {
         return story
     }
 
@@ -28,7 +28,7 @@ class StoryCreateManager() {
         story.chapters.last().expositions.add(exposition)
     }
 
-    fun getAllChapters(): ArrayList<Chapter> {
+    fun getAllChapters(): MutableList<Chapter> {
         return story.chapters
     }
 
@@ -59,22 +59,10 @@ class StoryCreateManager() {
 
 class StoryPlayManager(repo: Repo) {
 
-    private val story = Story()
-    private var currentChapter: Chapter
+    private var story = repo
+    private var currentChapter = story.chapters[0]
 
-    init {
-        story.chapters = repo.chapters as ArrayList<Chapter>
-        currentChapter = story.chapters[0]
-    }
-
-
-    fun getCurrentChapter(): Chapter {
-        return currentChapter
-    }
-
-    fun getAllExpositions(): List<Exposition> {
-        return story.chapters.map { it.expositions }.flatten()
-    }
+    fun getCurrentChapter(): Chapter = currentChapter
 
     @Throws(ArrayIndexOutOfBoundsException::class)
     fun goToNextChapter() {
@@ -84,11 +72,6 @@ class StoryPlayManager(repo: Repo) {
         currentChapter = story.chapters[currentChapter.id + 1]
     }
 }
-
-data class Story(var chapters: ArrayList<Chapter> = ArrayList(),
-                 var title: String = "",
-                 var description: String = "",
-                 var id: Int = -1)
 
 enum class ExpositionType {
     TEXT, AUDIO, PICTURE

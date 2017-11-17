@@ -16,6 +16,11 @@
 
 package com.android.example.github.repository;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.android.example.github.AppExecutors;
 import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
@@ -27,21 +32,12 @@ import com.android.example.github.util.RateLimiter;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.ExampleRepo;
-import com.android.example.github.walkingTale.Story;
-
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import timber.log.Timber;
 
 /**
  * Repository that handles Repo instances.
@@ -72,8 +68,8 @@ public class RepoRepository {
         this.appExecutors = appExecutors;
     }
 
-    public void publishStory(Story story) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(story, db, repoDao);
+    public void publishStory(Repo repo) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(repo, db, repoDao);
         appExecutors.diskIO().execute(saveStoryTask);
     }
 
