@@ -191,7 +191,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         } else {
             playViewModel.setId(null);
         }
-        Toast.makeText(getContext(), "id" + args.getInt(REPO_NAME_KEY), Toast.LENGTH_SHORT).show();
         LiveData<Resource<Repo>> repo = playViewModel.getRepo();
         repo.observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
@@ -202,7 +201,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             }
         });
 
-        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
                 chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().chapterList.setAdapter(adapter);

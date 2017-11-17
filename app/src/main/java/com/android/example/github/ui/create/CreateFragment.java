@@ -239,7 +239,7 @@ public class CreateFragment extends Fragment implements
             }
         });
 
-        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
                 chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().chapterList.setAdapter(adapter);
