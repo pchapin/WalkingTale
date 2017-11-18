@@ -17,10 +17,15 @@
 package com.android.example.github.binding;
 
 import android.databinding.BindingAdapter;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -34,8 +39,24 @@ public class FragmentBindingAdapters {
     public FragmentBindingAdapters(Fragment fragment) {
         this.fragment = fragment;
     }
+
     @BindingAdapter("imageUrl")
     public void bindImage(ImageView imageView, String url) {
         Glide.with(fragment).load(url).into(imageView);
+    }
+
+    @BindingAdapter("audioUrl")
+    public void bindAudio(View view, String url) {
+        view.setOnClickListener(v -> {
+            MediaPlayer mp = new MediaPlayer();
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mp.setDataSource(url);
+                mp.prepare();
+                mp.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
