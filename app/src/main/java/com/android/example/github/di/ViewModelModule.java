@@ -4,10 +4,10 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import com.android.example.github.ui.album.AlbumViewModel;
+import com.android.example.github.ui.create.CreateViewModel;
 import com.android.example.github.ui.feed.FeedViewModel;
 import com.android.example.github.ui.overview.OverviewViewModel;
 import com.android.example.github.ui.play.PlayViewModel;
-import com.android.example.github.ui.create.CreateViewModel;
 import com.android.example.github.viewmodel.GithubViewModelFactory;
 
 import dagger.Binds;

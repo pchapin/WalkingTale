@@ -16,26 +16,6 @@
 
 package com.android.example.github.ui.create;
 
-import com.android.example.github.BuildConfig;
-import com.android.example.github.R;
-import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.CreateFragmentBinding;
-import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.audiorecord.AudioRecordActivity;
-import com.android.example.github.ui.common.ChapterAdapter;
-import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.play.PlayViewModel;
-import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.ExpositionType;
-import com.android.example.github.walkingTale.StoryCreateManager;
-import com.android.example.github.walkingTale.StoryPlayManager;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.LifecycleRegistry;
@@ -68,17 +48,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-
-import javax.inject.Inject;
-
-import static android.app.Activity.RESULT_OK;
-
+import com.android.example.github.BuildConfig;
+import com.android.example.github.R;
+import com.android.example.github.binding.FragmentDataBindingComponent;
+import com.android.example.github.databinding.CreateFragmentBinding;
+import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.audiorecord.AudioRecordActivity;
+import com.android.example.github.ui.common.ChapterAdapter;
+import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.util.AutoClearedValue;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.ExpositionType;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -97,6 +82,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+
+import javax.inject.Inject;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -234,9 +230,9 @@ public class CreateFragment extends Fragment implements
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
-            if (createViewModel.storyManager == null && resource != null && resource.data != null) {
-                createViewModel.storyManager = new StoryCreateManager();
-            }
+//            if (createViewModel == null && resource != null && resource.data != null) {
+//                createViewModel = new CreateViewModel(R);
+//            }
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
@@ -282,7 +278,7 @@ public class CreateFragment extends Fragment implements
         LinearLayout linearLayout = binding.get().chapterListLinearLayout;
         linearLayout.removeAllViews();
 
-        for (Chapter chapter : createViewModel.storyManager.getAllChapters()) {
+        for (Chapter chapter : createViewModel.getAllChapters()) {
             TextView textView = new TextView(getContext());
             textView.setText(chapter.toString());
             linearLayout.addView(textView);
@@ -294,7 +290,7 @@ public class CreateFragment extends Fragment implements
             if (mCurrentLocation != null) {
                 // TODO: 10/27/2017 get chapter name from the author
                 String chapterName = "Chapter Name";
-                createViewModel.storyManager.addChapter(chapterName,
+                createViewModel.addChapter(chapterName,
                         new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 1);
 
                 // Add marker to map
@@ -319,7 +315,7 @@ public class CreateFragment extends Fragment implements
             } else {
                 // TODO: 10/23/2017 Location is required, deal with lack of location updates
                 Toast.makeText(getContext(), "Location is null.", Toast.LENGTH_SHORT).show();
-                createViewModel.storyManager.addChapter("Chapter name", new LatLng(1.1, 2.2), 1);
+                createViewModel.addChapter("Chapter name", new LatLng(1.1, 2.2), 1);
             }
             updateChapterList();
         });
@@ -328,7 +324,7 @@ public class CreateFragment extends Fragment implements
     private void initRemoveChapterListener() {
         binding.get().removeChapterButton.setOnClickListener((v) -> {
             try {
-                createViewModel.storyManager.removeChapter();
+                createViewModel.removeChapter();
                 // Remove marker from map and list
                 markerArrayList.get(markerArrayList.size() - 1).remove();
                 markerArrayList.remove(markerArrayList.size() - 1);
@@ -341,7 +337,7 @@ public class CreateFragment extends Fragment implements
 
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
-            if (createViewModel.storyManager.getAllChapters().size() < 2) {
+            if (createViewModel.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
                 createViewModel.finishStory();
@@ -352,7 +348,7 @@ public class CreateFragment extends Fragment implements
     private void initAddTextListener() {
         binding.get().addTextExpositionButton.setOnClickListener((v) -> {
             try {
-                createViewModel.storyManager.addExposition(ExpositionType.TEXT, "hello world");
+                createViewModel.addExposition(ExpositionType.TEXT, "hello world");
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             }
@@ -362,7 +358,7 @@ public class CreateFragment extends Fragment implements
 
     private void initAddPictureListener() {
         binding.get().addPictureExpositionButton.setOnClickListener((v) -> {
-            if (createViewModel.storyManager.getAllChapters().isEmpty()) {
+            if (createViewModel.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
                 dispatchTakePictureIntent();
@@ -372,12 +368,12 @@ public class CreateFragment extends Fragment implements
 
     private void initAddAudioListener() {
         binding.get().addAudioExpositionButton.setOnClickListener((v) -> {
-            if (createViewModel.storyManager.getAllChapters().isEmpty()) {
+            if (createViewModel.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(getActivity(), AudioRecordActivity.class);
                 intent.setType("audio/mpeg4-generic");
-                Chapter latestChapter = createViewModel.storyManager.getLatestChapter();
+                Chapter latestChapter = createViewModel.getLatestChapter();
                 Bundle bundle = new Bundle();
                 bundle.putString(AUDIO_KEY_CHAPTER, String.valueOf(latestChapter.getId()));
                 bundle.putString(AUDIO_KEY_EXPOSITION, Integer.toString(latestChapter.getExpositions().size()));
@@ -390,7 +386,7 @@ public class CreateFragment extends Fragment implements
     private void initRadiusIncrementListener() {
         binding.get().radiusIncrementButton.setOnClickListener((v) -> {
             try {
-                createViewModel.storyManager.incrementRadius();
+                createViewModel.incrementRadius();
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to increment radius.", Toast.LENGTH_SHORT).show();
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -403,7 +399,7 @@ public class CreateFragment extends Fragment implements
     private void initRadiusDecrementListener() {
         binding.get().radiusDecrementButton.setOnClickListener((v) -> {
             try {
-                createViewModel.storyManager.decrementRadius();
+                createViewModel.decrementRadius();
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to decrement radius.", Toast.LENGTH_SHORT).show();
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -628,11 +624,11 @@ public class CreateFragment extends Fragment implements
         if (requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            createViewModel.storyManager.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
+            createViewModel.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
             updateChapterList();
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri audioUri = data.getData();
-            createViewModel.storyManager.addExposition(ExpositionType.AUDIO, audioUri.toString());
+            createViewModel.addExposition(ExpositionType.AUDIO, audioUri.toString());
             updateChapterList();
         }
     }
