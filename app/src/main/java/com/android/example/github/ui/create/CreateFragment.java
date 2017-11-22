@@ -304,7 +304,7 @@ public class CreateFragment extends Fragment implements
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             mMap.animateCamera(cameraUpdate);
 
-            adapter.get().notifyItemInserted(createViewModel.getAllChapters().size());
+            adapter.get().notifyItemInserted(createViewModel.getAllChapters().size() - 1);
         });
     }
 
@@ -315,7 +315,7 @@ public class CreateFragment extends Fragment implements
             // Remove marker from map and list
             markerArrayList.get(markerArrayList.size() - 1).remove();
             markerArrayList.remove(markerArrayList.size() - 1);
-            adapter.get().notifyItemRemoved(createViewModel.getAllChapters().size());
+            adapter.get().notifyItemRemoved(createViewModel.getAllChapters().size() - 1);
 //            } catch (ArrayIndexOutOfBoundsException e) {
 //                Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
 //            }
@@ -336,6 +336,7 @@ public class CreateFragment extends Fragment implements
         binding.get().addTextExpositionButton.setOnClickListener((v) -> {
             try {
                 createViewModel.addExposition(ExpositionType.TEXT, "hello world");
+                adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             }
@@ -373,6 +374,7 @@ public class CreateFragment extends Fragment implements
         binding.get().radiusIncrementButton.setOnClickListener((v) -> {
             try {
                 createViewModel.incrementRadius();
+                adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to increment radius.", Toast.LENGTH_SHORT).show();
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -385,6 +387,7 @@ public class CreateFragment extends Fragment implements
         binding.get().radiusDecrementButton.setOnClickListener((v) -> {
             try {
                 createViewModel.decrementRadius();
+                adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to decrement radius.", Toast.LENGTH_SHORT).show();
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -612,10 +615,13 @@ public class CreateFragment extends Fragment implements
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             createViewModel.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
+            adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
 
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri audioUri = data.getData();
             createViewModel.addExposition(ExpositionType.AUDIO, audioUri.toString());
+            adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
+
 
         }
     }

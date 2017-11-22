@@ -44,6 +44,7 @@ public class CreateViewModel extends ViewModel {
     private RepoRepository repoRepository;
     private MutableLiveData<Repo> story = null;
 
+    // TODO: 11/22/17 Limit the number of expositions a user can add
     private int expositionCount = 0;
     private int minRadius = 1;
     private int maxRadius = 10;
@@ -77,10 +78,14 @@ public class CreateViewModel extends ViewModel {
     public final void addExposition(@NotNull ExpositionType expositionType, @NotNull String content) {
         int var4 = this.expositionCount++;
         Exposition exposition = new Exposition(expositionType, content, var4);
-        (CollectionsKt.last(this.story.getValue().chapters)).getExpositions().add(exposition);
         Repo repo = story.getValue();
         Chapter chapter = CollectionsKt.last(this.story.getValue().chapters);
-
+        ArrayList<Exposition> expositions = chapter.getExpositions();
+        expositions.add(exposition);
+        chapter.setExpositions(expositions);
+        repo.chapters.remove(repo.chapters.size() - 1);
+        repo.chapters.add(chapter);
+        story.setValue(repo);
     }
 
     @NotNull
@@ -94,7 +99,6 @@ public class CreateViewModel extends ViewModel {
     }
 
     public final void removeChapter() throws ArrayIndexOutOfBoundsException {
-//        this.story.getValue().chapters.remove(this.story.getValue().chapters.size() - 1);
         Repo repo = story.getValue();
         repo.chapters.remove(repo.chapters.size() - 1);
         story.setValue(repo);
@@ -104,8 +108,12 @@ public class CreateViewModel extends ViewModel {
         if ((CollectionsKt.last(this.story.getValue().chapters)).getRadius() == this.maxRadius) {
             throw (new ArrayIndexOutOfBoundsException("Max radius size is already " + this.maxRadius));
         } else {
-            Chapter var10000 = CollectionsKt.last(this.story.getValue().chapters);
-            var10000.setRadius(var10000.getRadius() + 1);
+            Chapter chapter = CollectionsKt.last(this.story.getValue().chapters);
+            chapter.setRadius(chapter.getRadius() + 1);
+            Repo repo = story.getValue();
+            repo.chapters.remove(repo.chapters.size() - 1);
+            repo.chapters.add(chapter);
+            story.setValue(repo);
         }
     }
 
@@ -113,8 +121,12 @@ public class CreateViewModel extends ViewModel {
         if ((CollectionsKt.last(this.story.getValue().chapters)).getRadius() == this.minRadius) {
             throw (new ArrayIndexOutOfBoundsException("Min radius size is already " + this.minRadius));
         } else {
-            Chapter var10000 = CollectionsKt.last(this.story.getValue().chapters);
-            var10000.setRadius(var10000.getRadius() + -1);
+            Chapter chapter = CollectionsKt.last(this.story.getValue().chapters);
+            chapter.setRadius(chapter.getRadius() - 1);
+            Repo repo = story.getValue();
+            repo.chapters.remove(repo.chapters.size() - 1);
+            repo.chapters.add(chapter);
+            story.setValue(repo);
         }
     }
 }
