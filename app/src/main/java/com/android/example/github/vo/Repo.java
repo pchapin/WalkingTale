@@ -38,34 +38,31 @@ public class Repo {
     public static final int UNKNOWN_ID = -1;
     public final int id;
     @SerializedName("name")
-    public final String name;
+    public String name;
     @SerializedName("description")
-    public final String description;
+    public String description;
     @SerializedName("chapters")
-    public final List<Chapter> chapters;
-    @SerializedName("expositions")
-    public final String expositions;
+    public List<Chapter> chapters;
     @SerializedName("genre")
-    public final String genre;
+    public String genre;
     @SerializedName("tags")
-    public final String tags;
+    public String tags;
     @SerializedName("duration")
-    public final String duration;
+    public String duration;
     @SerializedName("rating")
-    public final Double rating;
+    public Double rating;
     @SerializedName("latitude")
-    public final Double latitude;
+    public Double latitude;
     @SerializedName("longitude")
-    public final Double longitude;
+    public Double longitude;
     @SerializedName("story_image")
-    public final String story_image;
+    public String story_image;
 
-    public Repo(int id, String name, String description, List<Chapter> chapters, String expositions, String genre, String tags, String duration, Double rating, Double latitude, Double longitude, String story_image) {
+    public Repo(int id, String name, String description, List<Chapter> chapters, String genre, String tags, String duration, Double rating, Double latitude, Double longitude, String story_image) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.chapters = chapters;
-        this.expositions = expositions;
         this.genre = genre;
         this.tags = tags;
         this.duration = duration;

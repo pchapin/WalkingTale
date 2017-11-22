@@ -10,7 +10,7 @@ class ExampleRepo() {
         fun getRepo(): Repo {
             return Repo(
                     1, "", "", mutableListOf(), "",
-                    "", "", "", 1.1, 1.1, 1.1,
+                    "", "", 1.1, 1.1, 1.1,
                     ""
             )
         }

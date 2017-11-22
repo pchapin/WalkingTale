@@ -100,7 +100,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-//            String owner = overviewViewModel.getRepo().getValue().data.owner.login;
+//            String owner = overviewViewModel.getStory().getValue().data.owner.login;
             int name = overviewViewModel.getRepo().getValue().data.id;
             navigationController.navigateToStoryPlay(name);
         });

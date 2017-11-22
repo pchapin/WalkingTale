@@ -52,7 +52,7 @@ public class SaveStoryTask implements Runnable {
 
             Repo repo = (new Repo(Repo.UNKNOWN_ID,
                     name, description,
-                    story.chapters, "", "", "",
+                    story.chapters, "", "",
                     "", 1.1, story.chapters.get(0).getLocation().latitude,
                     story.chapters.get(0).getLocation().longitude, ""));
 

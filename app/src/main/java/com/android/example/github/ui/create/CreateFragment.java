@@ -225,18 +225,14 @@ public class CreateFragment extends Fragment implements
         initContributorList(createViewModel);
         getActivity().setTitle("Create Story");
 
-        LiveData<Resource<Repo>> repo = createViewModel.getRepo();
+        LiveData<Repo> repo = createViewModel.getStory();
         repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
+            binding.get().setRepo(resource);
             binding.get().executePendingBindings();
-//            if (createViewModel == null && resource != null && resource.data != null) {
-//                createViewModel = new CreateViewModel(R);
-//            }
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
-                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
+                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().id));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().chapterList.setAdapter(adapter);
 
@@ -274,64 +270,55 @@ public class CreateFragment extends Fragment implements
         buildLocationSettingsRequest();
     }
 
-    private void updateChapterList() {
-        LinearLayout linearLayout = binding.get().chapterListLinearLayout;
-        linearLayout.removeAllViews();
-
-        for (Chapter chapter : createViewModel.getAllChapters()) {
-            TextView textView = new TextView(getContext());
-            textView.setText(chapter.toString());
-            linearLayout.addView(textView);
-        }
-    }
-
     private void initAddChapterListener() {
         binding.get().addChapterButton.setOnClickListener((v) -> {
-            if (mCurrentLocation != null) {
-                // TODO: 10/27/2017 get chapter name from the author
-                String chapterName = "Chapter Name";
-                createViewModel.addChapter(chapterName,
-                        new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 1);
 
-                // Add marker to map
-                LatLng chapterLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-
-                Marker newMarker = mMap.addMarker(new MarkerOptions()
-                        .position(chapterLocation)
-                        .title(chapterName));
-                markerArrayList.add(newMarker);
-
-                // Get bounds of all markers
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Marker marker : markerArrayList) {
-                    builder.include(marker.getPosition());
-                }
-                LatLngBounds bounds = builder.build();
-
-                int padding = 0; // offset from edges of the map in pixels
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                mMap.animateCamera(cameraUpdate);
-
-            } else {
-                // TODO: 10/23/2017 Location is required, deal with lack of location updates
-                Toast.makeText(getContext(), "Location is null.", Toast.LENGTH_SHORT).show();
-                createViewModel.addChapter("Chapter name", new LatLng(1.1, 2.2), 1);
+            // TODO: 11/22/17 DEBUG: if location is null, prevent user from using app. Location is required
+            if (mCurrentLocation == null) {
+                mCurrentLocation = new Location("");
+                mCurrentLocation.setLatitude(1.1);
+                mCurrentLocation.setLongitude(2.2);
             }
-            updateChapterList();
+
+            // TODO: 10/27/2017 get chapter name from the author
+            String chapterName = "Chapter Name";
+            createViewModel.addChapter(chapterName,
+                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 1);
+
+            // Add marker to map
+            LatLng chapterLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+            Marker newMarker = mMap.addMarker(new MarkerOptions()
+                    .position(chapterLocation)
+                    .title(chapterName));
+            markerArrayList.add(newMarker);
+
+            // Get bounds of all markers
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : markerArrayList) {
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+
+            int padding = 0; // offset from edges of the map in pixels
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            mMap.animateCamera(cameraUpdate);
+
+            adapter.get().notifyItemInserted(createViewModel.getAllChapters().size());
         });
     }
 
     private void initRemoveChapterListener() {
         binding.get().removeChapterButton.setOnClickListener((v) -> {
-            try {
-                createViewModel.removeChapter();
-                // Remove marker from map and list
-                markerArrayList.get(markerArrayList.size() - 1).remove();
-                markerArrayList.remove(markerArrayList.size() - 1);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
-            }
-            updateChapterList();
+//            try {
+            createViewModel.removeChapter();
+            // Remove marker from map and list
+            markerArrayList.get(markerArrayList.size() - 1).remove();
+            markerArrayList.remove(markerArrayList.size() - 1);
+            adapter.get().notifyItemRemoved(createViewModel.getAllChapters().size());
+//            } catch (ArrayIndexOutOfBoundsException e) {
+//                Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
+//            }
         });
     }
 
@@ -352,7 +339,6 @@ public class CreateFragment extends Fragment implements
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             }
-            updateChapterList();
         });
     }
 
@@ -392,7 +378,6 @@ public class CreateFragment extends Fragment implements
             } catch (ArrayIndexOutOfBoundsException e) {
                 Toast.makeText(getContext(), "Radius is already at max size.", Toast.LENGTH_SHORT).show();
             }
-            updateChapterList();
         });
     }
 
@@ -405,7 +390,6 @@ public class CreateFragment extends Fragment implements
             } catch (ArrayIndexOutOfBoundsException e) {
                 Toast.makeText(getContext(), "Radius is already at min size.", Toast.LENGTH_SHORT).show();
             }
-            updateChapterList();
         });
     }
 
@@ -436,11 +420,14 @@ public class CreateFragment extends Fragment implements
     }
 
     private void initContributorList(CreateViewModel viewModel) {
-        viewModel.getRepo().observe(this, listResource -> {
+        viewModel.getStory().observe(this, listResource -> {
             // we don't need any null checks here for the adapter since LiveData guarantees that
             // it won't call us if fragment is stopped or not started.
-            if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data.chapters);
+            if (listResource != null) {
+                adapter.get().replace(listResource.chapters);
+                Log.i("repo status", "" + listResource.chapters.toString());
+//                adapter.get().notifyItemRangeChanged(0, listResource.chapters.size());
+//                Toast.makeText(getContext(), listResource.chapters.toString(), Toast.LENGTH_SHORT).show();
             } else {
                 //noinspection ConstantConditions
                 adapter.get().replace(Collections.emptyList());
@@ -625,11 +612,11 @@ public class CreateFragment extends Fragment implements
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             createViewModel.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
-            updateChapterList();
+
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri audioUri = data.getData();
             createViewModel.addExposition(ExpositionType.AUDIO, audioUri.toString());
-            updateChapterList();
+
         }
     }
 

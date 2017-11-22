@@ -63,7 +63,7 @@
 //
 //    @Test
 //    public void testNull() {
-//        assertThat(overviewViewModel.getRepo(), notNullValue());
+//        assertThat(overviewViewModel.getStory(), notNullValue());
 ////        assertThat(overviewViewModel.getContributors(), notNullValue());
 ////        verify(repository, never()).loadRepo(anyString(), anyString());
 //    }
@@ -80,7 +80,7 @@
 //        ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
 //
 ////        overviewViewModel.setId("a", "b");
-//        overviewViewModel.getRepo().observeForever(mock(Observer.class));
+//        overviewViewModel.getStory().observeForever(mock(Observer.class));
 ////        verify(repository, times(1)).loadRepo(owner.capture(),
 ////                name.capture());
 //        assertThat(owner.getValue(), is("a"));
@@ -91,7 +91,7 @@
 //    public void changeWhileObserved() {
 //        ArgumentCaptor<String> owner = ArgumentCaptor.forClass(String.class);
 //        ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
-//        overviewViewModel.getRepo().observeForever(mock(Observer.class));
+//        overviewViewModel.getStory().observeForever(mock(Observer.class));
 //
 //        overviewViewModel.setId("a", "b");
 //        overviewViewModel.setId("c", "d");
@@ -133,7 +133,7 @@
 //        overviewViewModel.setId("foo", "bar");
 //        verifyNoMoreInteractions(repository);
 //        Observer<Resource<Repo>> observer = mock(Observer.class);
-//        overviewViewModel.getRepo().observeForever(observer);
+//        overviewViewModel.getStory().observeForever(observer);
 ////        verify(repository).loadRepo("foo", "bar");
 //        reset(repository);
 //        overviewViewModel.retry();
@@ -145,7 +145,7 @@
 //        overviewViewModel.setId(null, null);
 //        Observer<Resource<Repo>> observer1 = mock(Observer.class);
 //        Observer<Resource<List<Contributor>>> observer2 = mock(Observer.class);
-//        overviewViewModel.getRepo().observeForever(observer1);
+//        overviewViewModel.getStory().observeForever(observer1);
 //        overviewViewModel.getContributors().observeForever(observer2);
 //        verify(observer1).onChanged(null);
 //        verify(observer2).onChanged(null);
