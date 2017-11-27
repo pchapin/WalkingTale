@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -74,8 +75,8 @@ public class RepoRepository {
         this.appExecutors = appExecutors;
     }
 
-    public void publishStory(Story story) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(story, db, repoDao);
+    public void publishStory(Story story, Context context) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(story, db, repoDao, context);
         appExecutors.diskIO().execute(saveStoryTask);
     }
 

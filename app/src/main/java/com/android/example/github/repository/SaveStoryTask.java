@@ -16,8 +16,11 @@
 
 package com.android.example.github.repository;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
@@ -25,6 +28,8 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Story;
 import com.google.gson.Gson;
 
+
+import java.io.File;
 import java.lang.reflect.Type;
 
 /**
@@ -34,11 +39,13 @@ public class SaveStoryTask implements Runnable {
     private final GithubDb db;
     private final RepoDao repoDao;
     private Story story;
+    private TransferUtility transferUtility;
 
-    SaveStoryTask(Story story, GithubDb db, RepoDao repoDao) {
+    SaveStoryTask(Story story, GithubDb db, RepoDao repoDao, Context context) {
         this.db = db;
         this.repoDao = repoDao;
         this.story = story;
+        transferUtility = Util.getTransferUtility(context);
     }
 
     @Override
@@ -54,6 +61,9 @@ public class SaveStoryTask implements Runnable {
         try {
             db.beginTransaction();
 
+            File file = new File("blah");
+            TransferObserver observer = transferUtility.upload(Constants.BUCKET_NAME, file.getName(),
+                    file);
             Repo repo = (new Repo(Repo.UNKNOWN_ID,
                     name, owner + "/" + name, description, new Repo.Owner(owner, null),
                     0, story.getChapters(), "", "", "",

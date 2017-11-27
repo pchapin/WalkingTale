@@ -33,7 +33,7 @@ public class awsTest {
     @Test
     public void testDynamoDb() {
 
-        // TODO: 11/6/17 look at https://github.com/awslabs/aws-sdk-android-samples/tree/master/DynamoDB_DocumentAPI_Notes
+        // TODO: 11/6/17 look at https://github.com/awslabs/aws-sdk-android-samples/tree/master/DynamoDB_DocumentAPI_Notes also putitem
 
         AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         Table myTable = Table.loadTable(client, "MyTable");

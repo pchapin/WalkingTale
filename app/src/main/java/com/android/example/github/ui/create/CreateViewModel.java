@@ -17,6 +17,7 @@
 package com.android.example.github.ui.create;
 
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.walkingTale.StoryCreateManager;
@@ -34,7 +35,7 @@ public class CreateViewModel extends ViewModel {
         this.repoRepository = repository;
     }
 
-    void finishStory() {
-        repoRepository.publishStory(storyManager.getStory());
+    void finishStory(Context context) {
+        repoRepository.publishStory(storyManager.getStory(), context);
     }
 }

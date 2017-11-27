@@ -208,7 +208,7 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.storyManager.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
-                createViewModel.finishStory();
+                createViewModel.finishStory(getContext());
             }
         });
     }
