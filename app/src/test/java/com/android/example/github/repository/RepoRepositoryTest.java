@@ -24,7 +24,6 @@ import com.android.example.github.db.RepoDao;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.InstantAppExecutors;
 import com.android.example.github.util.TestUtil;
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
@@ -64,11 +63,12 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked")
 @RunWith(JUnit4.class)
 public class RepoRepositoryTest {
+    @Rule
+    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
     private RepoRepository repository;
     private RepoDao dao;
     private GithubService service;
-    @Rule
-    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
+
     @Before
     public void init() {
         dao = mock(RepoDao.class);
@@ -81,22 +81,22 @@ public class RepoRepositoryTest {
     @Test
     public void loadRepoFromNetwork() throws IOException {
         MutableLiveData<Repo> dbData = new MutableLiveData<>();
-        when(dao.load("foo", "bar")).thenReturn(dbData);
+//        when(dao.load("foo", "bar")).thenReturn(dbData);
 
         Repo repo = TestUtil.createRepo("foo", "bar", "desc");
         LiveData<ApiResponse<Repo>> call = successCall(repo);
         when(service.getRepo("foo", "bar")).thenReturn(call);
 
-        LiveData<Resource<Repo>> data = repository.loadRepo("foo", "bar");
-        verify(dao).load("foo", "bar");
+//        LiveData<Resource<Repo>> data = repository.loadRepo("foo", "bar");
+//        verify(dao).load("foo", "bar");
         verifyNoMoreInteractions(service);
 
         Observer observer = mock(Observer.class);
-        data.observeForever(observer);
+//        data.observeForever(observer);
         verifyNoMoreInteractions(service);
         verify(observer).onChanged(Resource.loading(null));
         MutableLiveData<Repo> updatedDbData = new MutableLiveData<>();
-        when(dao.load("foo", "bar")).thenReturn(updatedDbData);
+//        when(dao.load("foo", "bar")).thenReturn(updatedDbData);
 
         dbData.postValue(null);
         verify(service).getRepo("foo", "bar");
@@ -104,50 +104,6 @@ public class RepoRepositoryTest {
 
         updatedDbData.postValue(repo);
         verify(observer).onChanged(Resource.success(repo));
-    }
-
-    @Test
-    public void loadContributors() throws IOException {
-        MutableLiveData<List<Contributor>> dbData = new MutableLiveData<>();
-        when(dao.loadContributors("foo", "bar")).thenReturn(dbData);
-
-        LiveData<Resource<List<Contributor>>> data = repository.loadContributors("foo",
-                "bar");
-        verify(dao).loadContributors("foo", "bar");
-
-        verify(service, never()).getContributors(anyString(), anyString());
-
-        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
-        Contributor contributor = TestUtil.createContributor(repo, "log", 3);
-        // network does not send these
-        contributor.setRepoOwner(null);
-        contributor.setRepoName(null);
-        List<Contributor> contributors = Collections.singletonList(contributor);
-        LiveData<ApiResponse<List<Contributor>>> call = successCall(contributors);
-        when(service.getContributors("foo", "bar"))
-                .thenReturn(call);
-
-        Observer<Resource<List<Contributor>>> observer = mock(Observer.class);
-        data.observeForever(observer);
-
-        verify(observer).onChanged(Resource.loading( null));
-
-        MutableLiveData<List<Contributor>> updatedDbData = new MutableLiveData<>();
-        when(dao.loadContributors("foo", "bar")).thenReturn(updatedDbData);
-        dbData.setValue(Collections.emptyList());
-
-        verify(service).getContributors("foo", "bar");
-        ArgumentCaptor<List<Contributor>> inserted = ArgumentCaptor.forClass((Class) List.class);
-        verify(dao).insertContributors(inserted.capture());
-
-
-        assertThat(inserted.getValue().size(), is(1));
-        Contributor first = inserted.getValue().get(0);
-        assertThat(first.getRepoName(), is("bar"));
-        assertThat(first.getRepoOwner(), is("foo"));
-
-        updatedDbData.setValue(contributors);
-        verify(observer).onChanged(Resource.success(contributors));
     }
 
     @Test

@@ -35,7 +35,7 @@ public class RepoListAdapter extends DataBoundListAdapter<Repo, RepoItemBinding>
     private final boolean showFullName;
 
     public RepoListAdapter(DataBindingComponent dataBindingComponent, boolean showFullName,
-            RepoClickCallback repoClickCallback) {
+                           RepoClickCallback repoClickCallback) {
         this.dataBindingComponent = dataBindingComponent;
         this.repoClickCallback = repoClickCallback;
         this.showFullName = showFullName;
@@ -63,14 +63,12 @@ public class RepoListAdapter extends DataBoundListAdapter<Repo, RepoItemBinding>
 
     @Override
     protected boolean areItemsTheSame(Repo oldItem, Repo newItem) {
-        return Objects.equals(oldItem.owner, newItem.owner) &&
-                Objects.equals(oldItem.name, newItem.name);
+        return Objects.equals(oldItem, newItem);
     }
 
     @Override
     protected boolean areContentsTheSame(Repo oldItem, Repo newItem) {
-        return Objects.equals(oldItem.description, newItem.description) &&
-                oldItem.stars == newItem.stars;
+        return Objects.equals(oldItem.chapters, newItem.chapters);
     }
 
     public interface RepoClickCallback {

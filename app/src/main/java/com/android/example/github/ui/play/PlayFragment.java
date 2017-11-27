@@ -42,8 +42,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.example.github.BuildConfig;
@@ -56,6 +54,7 @@ import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -64,13 +63,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
 import java.util.Collections;
@@ -135,7 +130,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<PlayFragmentBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
-
+    StoryPlayManager storyPlayManager;
     /**
      * Provides access to the Fused Location Provider API.
      */
@@ -161,14 +156,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
-
     // Labels.
     private String mLatitudeLabel;
     private String mLongitudeLabel;
     private String mLastUpdateTimeLabel;
     private PlayViewModel playViewModel;
-
-
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -180,11 +172,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      */
     private String mLastUpdateTime;
 
-    public static PlayFragment create(String owner, String name) {
+    public static PlayFragment create(int id) {
         PlayFragment repoFragment = new PlayFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+//        args.putString(REPO_OWNER_KEY, owner);
+        args.putInt(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -194,38 +186,37 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         super.onActivityCreated(savedInstanceState);
         playViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            playViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
+        if (args != null && args.containsKey(REPO_NAME_KEY)) {
+            playViewModel.setId(args.getInt(REPO_NAME_KEY));
         } else {
-            playViewModel.setId(null, null);
+            playViewModel.setId(null);
         }
         LiveData<Resource<Repo>> repo = playViewModel.getRepo();
         repo.observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
+            if (storyPlayManager == null && resource != null && resource.data != null) {
+                storyPlayManager = new StoryPlayManager(resource.data);
+            }
         });
 
-        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent, false,
-                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.owner.login, repo.getValue().data.name));
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
+                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().chapterList.setAdapter(adapter);
         initViewExpositionsListener();
         initViewMapListener();
+        initNextChapterListener();
         initStartUpdatesListener();
         initStopUpdatesListener();
         initContributorList(playViewModel);
         getActivity().setTitle("Play Story");
-
+        // Disable next chapter button until user is in radius
+        binding.get().nextChapter.setEnabled(false);
 
         // Location
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.main_activity);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -266,6 +257,17 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
     private void initViewMapListener() {
         binding.get().viewMap.setOnClickListener((v) -> {
+        });
+    }
+
+    private void initNextChapterListener() {
+        binding.get().nextChapter.setOnClickListener((v) -> {
+            if (isUserInRadius()) {
+                nextChapterEvent();
+                binding.get().nextChapter.setEnabled(false);
+            } else {
+                Toast.makeText(getContext(), "You are not in the radius", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -376,11 +378,60 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
 
-                mCurrentLocation = locationResult.getLastLocation();
+                nextChapterCheck(locationResult);
+
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 updateLocationUI();
             }
         };
+    }
+
+
+    private void nextChapterCheck(LocationResult locationResult) {
+
+        mCurrentLocation = locationResult.getLastLocation();
+
+        if (!isUserInRadius()) {
+            // Outside radius
+            Toast.makeText(getContext(), "Outside radius", Toast.LENGTH_SHORT).show();
+        } else {
+            // Inside radius
+            Toast.makeText(getContext(), "Inside radius", Toast.LENGTH_SHORT).show();
+            binding.get().nextChapter.setEnabled(true);
+        }
+    }
+
+    /**
+     * Check if user is within next chapter radius
+     */
+    private boolean isUserInRadius() {
+        LatLng latLng = storyPlayManager.getCurrentChapter().getLocation();
+        float[] distanceBetween = new float[1];
+
+        // Distance in meters from here to center of chapter radius
+        Location.distanceBetween(
+                mCurrentLocation.getLatitude(),
+                mCurrentLocation.getLongitude(),
+                latLng.latitude,
+                latLng.longitude,
+                distanceBetween);
+
+        return distanceBetween[0] < storyPlayManager.getCurrentChapter().getRadius();
+    }
+
+    private void nextChapterEvent() {
+        try {
+            storyPlayManager.goToNextChapter();
+            // Next chapter event
+            Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager.getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // No more chapters
+            Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
+            finalChapterEvent();
+        }
+    }
+
+    private void finalChapterEvent() {
     }
 
     /**
@@ -423,45 +474,39 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     private void startLocationUpdates() {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
-                    @Override
-                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        Log.i(TAG, "All location settings are satisfied.");
+                .addOnSuccessListener(getActivity(), locationSettingsResponse -> {
+                    Log.i(TAG, "All location settings are satisfied.");
 
-                        //noinspection MissingPermission
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                mLocationCallback, Looper.myLooper());
+                    //noinspection MissingPermission
+                    mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                            mLocationCallback, Looper.myLooper());
 
-                        updateUI();
-                    }
+                    updateUI();
                 })
-                .addOnFailureListener(getActivity(), new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        int statusCode = ((ApiException) e).getStatusCode();
-                        switch (statusCode) {
-                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                        "location settings ");
-                                try {
-                                    // Show the dialog by calling startResolutionForResult(), and check the
-                                    // result in onActivityResult().
-                                    ResolvableApiException rae = (ResolvableApiException) e;
-                                    rae.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
-                                } catch (IntentSender.SendIntentException sie) {
-                                    Log.i(TAG, "PendingIntent unable to execute request.");
-                                }
-                                break;
-                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                String errorMessage = "Location settings are inadequate, and cannot be " +
-                                        "fixed here. Fix in Settings.";
-                                Log.e(TAG, errorMessage);
-                                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
-                                mRequestingLocationUpdates = false;
-                        }
-
-                        updateUI();
+                .addOnFailureListener(getActivity(), e -> {
+                    int statusCode = ((ApiException) e).getStatusCode();
+                    switch (statusCode) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
+                                    "location settings ");
+                            try {
+                                // Show the dialog by calling startResolutionForResult(), and check the
+                                // result in onActivityResult().
+                                ResolvableApiException rae = (ResolvableApiException) e;
+                                rae.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException sie) {
+                                Log.i(TAG, "PendingIntent unable to execute request.");
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            String errorMessage = "Location settings are inadequate, and cannot be " +
+                                    "fixed here. Fix in Settings.";
+                            Log.e(TAG, errorMessage);
+                            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                            mRequestingLocationUpdates = false;
                     }
+
+                    updateUI();
                 });
     }
 
@@ -516,12 +561,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
         mFusedLocationClient.removeLocationUpdates(mLocationCallback)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mRequestingLocationUpdates = false;
-                        setButtonsEnabledState();
-                    }
+                .addOnCompleteListener(getActivity(), task -> {
+                    mRequestingLocationUpdates = false;
+                    setButtonsEnabledState();
                 });
     }
 
@@ -592,14 +634,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
             showSnackbar(R.string.permission_rationale,
-                    android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            ActivityCompat.requestPermissions(getActivity(),
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    REQUEST_PERMISSIONS_REQUEST_CODE);
-                        }
+                    android.R.string.ok, view -> {
+                        // Request permission
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                REQUEST_PERMISSIONS_REQUEST_CODE);
                     });
         } else {
             Log.i(TAG, "Requesting permission");
@@ -642,19 +681,16 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 // when permissions are denied. Otherwise, your app could appear unresponsive to
                 // touches or interactions which have required permissions.
                 showSnackbar(R.string.permission_denied_explanation,
-                        R.string.settings, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                // Build intent that displays the App settings screen.
-                                Intent intent = new Intent();
-                                intent.setAction(
-                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                Uri uri = Uri.fromParts("package",
-                                        BuildConfig.APPLICATION_ID, null);
-                                intent.setData(uri);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
+                        R.string.settings, view -> {
+                            // Build intent that displays the App settings screen.
+                            Intent intent = new Intent();
+                            intent.setAction(
+                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package",
+                                    BuildConfig.APPLICATION_ID, null);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                         });
             }
         }

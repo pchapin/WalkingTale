@@ -16,7 +16,6 @@
 
 package com.android.example.github.db;
 
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 
@@ -42,27 +41,17 @@ public abstract class RepoDao {
     public abstract void insert(Repo... repos);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertContributors(List<Contributor> contributors);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertRepos(List<Repo> repositories);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long createRepoIfNotExists(Repo repo);
 
-    @Query("SELECT * FROM repo WHERE owner_login = :login AND name = :name")
-    public abstract LiveData<Repo> load(String login, String name);
-
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT login, avatarUrl, contributions FROM contributor "
-            + "WHERE repoName = :name AND repoOwner = :owner "
-            + "ORDER BY contributions DESC")
-    public abstract LiveData<List<Contributor>> loadContributors(String owner, String name);
+    @Query("SELECT * FROM repo WHERE id = :id")
+    public abstract LiveData<Repo> load(int id);
 
     @Query("SELECT * FROM Repo "
-            + "WHERE owner_login = :owner "
-            + "ORDER BY stars DESC")
-    public abstract LiveData<List<Repo>> loadRepositories(String owner);
+            + "WHERE id = :id")
+    public abstract LiveData<List<Repo>> loadRepositories(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(RepoSearchResult result);
@@ -91,4 +80,7 @@ public abstract class RepoDao {
 
     @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
     public abstract RepoSearchResult findSearchResult(String query);
+
+    @Query("SELECT * FROM repo")
+    public abstract LiveData<List<Repo>> loadAll();
 }

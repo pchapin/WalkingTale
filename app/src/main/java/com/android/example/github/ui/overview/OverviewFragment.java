@@ -62,11 +62,11 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     AutoClearedValue<OverviewFragmentBinding> binding;
     private OverviewViewModel overviewViewModel;
 
-    public static OverviewFragment create(String owner, String name) {
+    public static OverviewFragment create(int id) {
         OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+//        args.putString(REPO_OWNER_KEY, owner);
+        args.putInt(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -81,12 +81,10 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         super.onActivityCreated(savedInstanceState);
         overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            overviewViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
+        if (args != null && args.containsKey(REPO_NAME_KEY)) {
+            overviewViewModel.setId(args.getInt(REPO_NAME_KEY));
         } else {
-            overviewViewModel.setId(null, null);
+            overviewViewModel.setId(null);
         }
         LiveData<Resource<Repo>> repo = overviewViewModel.getRepo();
         repo.observe(this, resource -> {
@@ -102,9 +100,9 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-            String owner = overviewViewModel.getRepo().getValue().data.owner.login;
-            String name = overviewViewModel.getRepo().getValue().data.name;
-            navigationController.navigateToStoryPlay(owner, name);
+//            String owner = overviewViewModel.getStory().getValue().data.owner.login;
+            int name = overviewViewModel.getRepo().getValue().data.id;
+            navigationController.navigateToStoryPlay(name);
         });
     }
 

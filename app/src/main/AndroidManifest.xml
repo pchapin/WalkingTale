@@ -48,7 +48,7 @@
         <activity android:name=".ui.audiorecord.AudioRecordActivity" />
         <activity
             android:name=".youruserpools.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".youruserpools.UserActivity"
             android:label="@string/title_activity_user"

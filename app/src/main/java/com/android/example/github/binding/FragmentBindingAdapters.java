@@ -17,10 +17,17 @@
 package com.android.example.github.binding;
 
 import android.databinding.BindingAdapter;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -29,13 +36,36 @@ import javax.inject.Inject;
  */
 public class FragmentBindingAdapters {
     final Fragment fragment;
+    MediaPlayer mp = new MediaPlayer();
 
     @Inject
     public FragmentBindingAdapters(Fragment fragment) {
         this.fragment = fragment;
     }
+
     @BindingAdapter("imageUrl")
     public void bindImage(ImageView imageView, String url) {
         Glide.with(fragment).load(url).into(imageView);
+    }
+
+    @BindingAdapter("audioUrl")
+    public void bindAudio(View view, String url) {
+        view.setOnClickListener(v -> {
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            if (mp.isPlaying()) {
+                mp.stop();
+                mp.reset();
+            } else {
+                try {
+                    mp.setDataSource(url);
+                } catch (IOException e) {
+                    // Todo: the user should never have to see this, instead: check all urls before starting story
+                    Toast.makeText(view.getContext(), "Error: Invalid audio url", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mp.prepareAsync();
+                mp.setOnPreparedListener(MediaPlayer::start);
+            }
+        });
     }
 }

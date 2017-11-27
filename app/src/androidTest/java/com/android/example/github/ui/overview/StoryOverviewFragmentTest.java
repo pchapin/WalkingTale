@@ -80,7 +80,7 @@
 //        fragmentBindingAdapters = mock(FragmentBindingAdapters.class);
 //        navigationController = mock(NavigationController.class);
 //
-//        when(viewModel.getRepo()).thenReturn(repo);
+//        when(viewModel.getStory()).thenReturn(repo);
 //        when(viewModel.getContributors()).thenReturn(contributors);
 //
 //        repoFragment.viewModelFactory = ViewModelUtil.createFor(viewModel);

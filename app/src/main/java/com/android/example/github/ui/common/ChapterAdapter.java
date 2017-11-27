@@ -32,15 +32,12 @@ import android.view.ViewGroup;
 public class ChapterAdapter extends DataBoundListAdapter<Chapter, ChapterItemBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final ChapterClickBack chapterClickBack;
-    private final boolean showFullName;
 
     public ChapterAdapter(DataBindingComponent dataBindingComponent,
-                          boolean showFullName,
                           ChapterClickBack chapterClickBack
     ) {
         this.dataBindingComponent = dataBindingComponent;
         this.chapterClickBack = chapterClickBack;
-        this.showFullName = showFullName;
     }
 
     @Override
@@ -48,7 +45,6 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ChapterItemBin
         ChapterItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.chapter_item,
                         parent, false, dataBindingComponent);
-        binding.setShowFullName(showFullName);
         binding.getRoot().setOnClickListener(v -> {
             Chapter chapter = binding.getChapter();
             if (chapter != null && chapterClickBack != null) {

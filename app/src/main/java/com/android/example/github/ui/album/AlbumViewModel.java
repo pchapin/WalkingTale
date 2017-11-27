@@ -32,18 +32,17 @@ import javax.inject.Inject;
 
 public class AlbumViewModel extends ViewModel {
     @VisibleForTesting
-    final MutableLiveData<RepoId> repoId;
+    private final MutableLiveData<Integer> repoId;
     private final LiveData<Resource<Repo>> repo;
-
 
     @Inject
     public AlbumViewModel(RepoRepository repository) {
         this.repoId = new MutableLiveData<>();
         repo = Transformations.switchMap(repoId, input -> {
-            if (input.isEmpty()) {
+            if (input == null) {
                 return AbsentLiveData.create();
             }
-            return repository.loadRepo(input.owner, input.name);
+            return repository.loadRepo(input);
         });
     }
 
@@ -51,57 +50,7 @@ public class AlbumViewModel extends ViewModel {
         return repo;
     }
 
-    public void retry() {
-        RepoId current = repoId.getValue();
-        if (current != null && !current.isEmpty()) {
-            repoId.setValue(current);
-        }
-    }
-
-    void setId(String owner, String name) {
-        RepoId update = new RepoId(owner, name);
-        if (Objects.equals(repoId.getValue(), update)) {
-            return;
-        }
-        repoId.setValue(update);
-    }
-
-    @VisibleForTesting
-    static class RepoId {
-        public final String owner;
-        public final String name;
-
-        RepoId(String owner, String name) {
-            this.owner = owner == null ? null : owner.trim();
-            this.name = name == null ? null : name.trim();
-        }
-
-        boolean isEmpty() {
-            return owner == null || name == null || owner.length() == 0 || name.length() == 0;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            RepoId repoId = (RepoId) o;
-
-            if (owner != null ? !owner.equals(repoId.owner) : repoId.owner != null) {
-                return false;
-            }
-            return name != null ? name.equals(repoId.name) : repoId.name == null;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = owner != null ? owner.hashCode() : 0;
-            result = 31 * result + (name != null ? name.hashCode() : 0);
-            return result;
-        }
+    void setId(Integer id) {
+        repoId.setValue(id);
     }
 }

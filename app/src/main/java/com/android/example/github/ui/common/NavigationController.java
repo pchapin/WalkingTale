@@ -41,11 +41,11 @@ public class NavigationController {
         this.fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void navigateToRepo(String owner, String name) {
-        OverviewFragment fragment = OverviewFragment.create(owner, name);
-        String tag = "repo" + "/" + owner + "/" + name;
+    public void navigateToRepo(int id) {
+        OverviewFragment fragment = OverviewFragment.create(id);
+//        String tag = "repo" + "/" + owner + "/" + name;
         fragmentManager.beginTransaction()
-                .replace(containerId, fragment, tag)
+                .replace(containerId, fragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
@@ -65,20 +65,20 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToStoryPlay(String owner, String name) {
-        String tag = "repo" + "/" + owner + "/" + name;
-        PlayFragment storyPlayFragment = PlayFragment.create(owner, name);
+    public void navigateToStoryPlay(int id) {
+//        String tag = "repo" + "/" + owner + "/" + name;
+        PlayFragment storyPlayFragment = PlayFragment.create(id);
         fragmentManager.beginTransaction()
-                .replace(containerId, storyPlayFragment, tag)
+                .replace(containerId, storyPlayFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToExpositionViewer(String owner, String name) {
-        String tag = "repo" + "/" + owner + "/" + name;
-        AlbumFragment expositionViewerFragment = AlbumFragment.create(owner, name);
+    public void navigateToExpositionViewer(int id) {
+//        String tag = "repo" + "/" + owner + "/" + name;
+        AlbumFragment expositionViewerFragment = AlbumFragment.create(id);
         fragmentManager.beginTransaction()
-                .replace(containerId, expositionViewerFragment, tag)
+                .replace(containerId, expositionViewerFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

@@ -23,6 +23,8 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -44,6 +46,7 @@ import com.android.example.github.walkingTale.Exposition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,11 +75,11 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
     Gson gson = new Gson();
     private AlbumViewModel albumViewModel;
 
-    public static AlbumFragment create(String owner, String name) {
+    public static AlbumFragment create(int id) {
         AlbumFragment expositionViewerFragment = new AlbumFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_OWNER_KEY, owner);
-        args.putString(REPO_NAME_KEY, name);
+//        args.putString(REPO_OWNER_KEY, owner);
+        args.putInt(REPO_NAME_KEY, id);
         expositionViewerFragment.setArguments(args);
         return expositionViewerFragment;
     }
@@ -91,12 +94,10 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         super.onActivityCreated(savedInstanceState);
         albumViewModel = ViewModelProviders.of(this, viewModelFactory).get(AlbumViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_OWNER_KEY) &&
-                args.containsKey(REPO_NAME_KEY)) {
-            albumViewModel.setId(args.getString(REPO_OWNER_KEY),
-                    args.getString(REPO_NAME_KEY));
+        if (args != null && args.containsKey(REPO_NAME_KEY)) {
+            albumViewModel.setId(args.getInt(REPO_NAME_KEY));
         } else {
-            albumViewModel.setId(null, null);
+            albumViewModel.setId(null);
         }
         LiveData<Resource<Repo>> repo = albumViewModel.getRepo();
         repo.observe(this, resource -> {
@@ -107,6 +108,7 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         ExpositionAdapter adapter = new ExpositionAdapter(dataBindingComponent, false,
                 chapter -> {
                     // TODO: 10/30/2017 Do something if user clicks an exposition, animation maybe?
+
                 });
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().expositionList.setAdapter(adapter);
@@ -133,7 +135,6 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
             }
         });
     }
-
 
     @Nullable
     @Override

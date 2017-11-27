@@ -16,9 +16,9 @@
 
 package com.android.example.github.util;
 
-import com.android.example.github.vo.Contributor;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.User;
+import com.android.example.github.walkingTale.ExampleRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +44,6 @@ public class TestUtil {
     }
 
     public static Repo createRepo(int id, String owner, String name, String description) {
-        return new Repo(id, name, owner + "/" + name,
-                description, new Repo.Owner(owner, null), 3, new ArrayList<>(), "", "", "", "", "", 0.0, 0.0, "");
-    }
-
-    public static Contributor createContributor(Repo repo, String login, int contributions) {
-        Contributor contributor = new Contributor(login, contributions, null);
-        contributor.setRepoName(repo.name);
-        contributor.setRepoOwner(repo.owner.login);
-        return contributor;
+        return ExampleRepo.Companion.getRepo();
     }
 }

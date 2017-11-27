@@ -53,10 +53,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.android.example.github.R;
+import com.android.example.github.ui.feed.FeedFragment;
 
 public class UserActivity extends AppCompatActivity {
-    private final String TAG="MainActivity";
-
+    private final String TAG = "MainActivity";
+    // To track changes to user details
+    private final List<String> attributesToDelete = new ArrayList<>();
     private NavigationView nDrawer;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -64,17 +66,80 @@ public class UserActivity extends AppCompatActivity {
     private AlertDialog userDialog;
     private ProgressDialog waitDialog;
     private ListView attributesList;
-
     // Cognito user objects
     private CognitoUser user;
     private CognitoUserSession session;
     private CognitoUserDetails details;
-
     // User details
     private String username;
+    UpdateAttributesHandler updateHandler = new UpdateAttributesHandler() {
+        @Override
+        public void onSuccess(List<CognitoUserCodeDeliveryDetails> attributesVerificationList) {
+            // Update successful
+            if (attributesVerificationList.size() > 0) {
+                showDialogMessage("Updated", "The updated attributes has to be verified", false);
+            }
+            getDetails();
+        }
 
-    // To track changes to user details
-    private final List<String> attributesToDelete = new ArrayList<>();
+        @Override
+        public void onFailure(Exception exception) {
+            // Update failed
+            closeWaitDialog();
+            showDialogMessage("Update failed", AppHelper.formatException(exception), false);
+        }
+    };
+    GenericHandler deleteHandler = new GenericHandler() {
+        @Override
+        public void onSuccess() {
+            closeWaitDialog();
+            // Attribute was deleted
+            Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT);
+
+            // Fetch user details from the the service
+            getDetails();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            closeWaitDialog();
+            // Attribute delete failed
+            showDialogMessage("Delete failed", AppHelper.formatException(e), false);
+
+            // Fetch user details from the service
+            getDetails();
+        }
+    };
+    GenericHandler trustedDeviceHandler = new GenericHandler() {
+        @Override
+        public void onSuccess() {
+            // Close wait dialog
+            closeWaitDialog();
+        }
+
+        @Override
+        public void onFailure(Exception exception) {
+            closeWaitDialog();
+            showDialogMessage("Failed to update device status", AppHelper.formatException(exception), true);
+        }
+    };
+    GetDetailsHandler detailsHandler = new GetDetailsHandler() {
+        @Override
+        public void onSuccess(CognitoUserDetails cognitoUserDetails) {
+            closeWaitDialog();
+            // Store details in the AppHandler
+            AppHelper.setUserDetails(cognitoUserDetails);
+            showAttributes();
+            // Trusted devices?
+            handleTrustedDevice();
+        }
+
+        @Override
+        public void onFailure(Exception exception) {
+            closeWaitDialog();
+            showDialogMessage("Could not fetch user details!", AppHelper.formatException(exception), true);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +156,7 @@ public class UserActivity extends AppCompatActivity {
 
         // Set navigation drawer for this screen
         mDrawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this,mDrawer, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
         mDrawer.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
@@ -116,7 +181,7 @@ public class UserActivity extends AppCompatActivity {
         int menuItem = item.getItemId();
 
         // Do the task
-        if(menuItem == R.id.user_update_attribute) {
+        if (menuItem == R.id.user_update_attribute) {
             //updateAllAttributes();
             showWaitDialog("Updating...");
             getDetails();
@@ -137,7 +202,7 @@ public class UserActivity extends AppCompatActivity {
         switch (requestCode) {
             case 20:
                 // Settings
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     boolean refresh = data.getBooleanExtra("refresh", true);
                     if (refresh) {
                         showAttributes();
@@ -146,7 +211,7 @@ public class UserActivity extends AppCompatActivity {
                 break;
             case 21:
                 // Verify attributes
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     boolean refresh = data.getBooleanExtra("refresh", true);
                     if (refresh) {
                         showAttributes();
@@ -155,7 +220,7 @@ public class UserActivity extends AppCompatActivity {
                 break;
             case 22:
                 // Add attributes
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     boolean refresh = data.getBooleanExtra("refresh", true);
                     if (refresh) {
                         showAttributes();
@@ -182,7 +247,7 @@ public class UserActivity extends AppCompatActivity {
         mDrawer.closeDrawers();
 
         // Find which item was selected
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.nav_user_add_attribute:
                 // Add a new attribute
                 addAttribute();
@@ -243,7 +308,7 @@ public class UserActivity extends AppCompatActivity {
     // Update attributes
     private void updateAttribute(String attributeType, String attributeValue) {
 
-        if(attributeType == null || attributeType.length() < 1) {
+        if (attributeType == null || attributeType.length() < 1) {
             return;
         }
         CognitoUserAttributes updatedUserAttributes = new CognitoUserAttributes();
@@ -255,13 +320,13 @@ public class UserActivity extends AppCompatActivity {
 
     // Show user MFA Settings
     private void showSettings() {
-        Intent userSettingsActivity = new Intent(this,SettingsActivity.class);
+        Intent userSettingsActivity = new Intent(this, SettingsActivity.class);
         startActivityForResult(userSettingsActivity, 20);
     }
 
     // Add a new attribute
     private void addAttribute() {
-        Intent addAttrbutesActivity = new Intent(this,AddAttributeActivity.class);
+        Intent addAttrbutesActivity = new Intent(this, AddAttributeActivity.class);
         startActivityForResult(addAttrbutesActivity, 22);
     }
 
@@ -281,7 +346,7 @@ public class UserActivity extends AppCompatActivity {
 
     // Verify attributes
     private void attributesVerification() {
-        Intent attrbutesActivity = new Intent(this,VerifyActivity.class);
+        Intent attrbutesActivity = new Intent(this, VerifyActivity.class);
         startActivityForResult(attrbutesActivity, 21);
     }
 
@@ -293,6 +358,7 @@ public class UserActivity extends AppCompatActivity {
     // Sign out user
     private void signOut() {
         user.signOut();
+        FeedFragment.isLoggedIn = false;
         exit();
     }
 
@@ -305,23 +371,7 @@ public class UserActivity extends AppCompatActivity {
         getDetails();
     }
 
-    GetDetailsHandler detailsHandler = new GetDetailsHandler() {
-        @Override
-        public void onSuccess(CognitoUserDetails cognitoUserDetails) {
-            closeWaitDialog();
-            // Store details in the AppHandler
-            AppHelper.setUserDetails(cognitoUserDetails);
-            showAttributes();
-            // Trusted devices?
-            handleTrustedDevice();
-        }
-
-        @Override
-        public void onFailure(Exception exception) {
-            closeWaitDialog();
-            showDialogMessage("Could not fetch user details!", AppHelper.formatException(exception), true);
-        }
-    };
+    // Callback handlers
 
     private void handleTrustedDevice() {
         CognitoDevice newDevice = AppHelper.getNewDevice();
@@ -374,62 +424,6 @@ public class UserActivity extends AppCompatActivity {
         userDialog.show();
     }
 
-    // Callback handlers
-
-    UpdateAttributesHandler updateHandler = new UpdateAttributesHandler() {
-        @Override
-        public void onSuccess(List<CognitoUserCodeDeliveryDetails> attributesVerificationList) {
-            // Update successful
-            if(attributesVerificationList.size() > 0) {
-                showDialogMessage("Updated", "The updated attributes has to be verified",  false);
-            }
-            getDetails();
-        }
-
-        @Override
-        public void onFailure(Exception exception) {
-            // Update failed
-            closeWaitDialog();
-            showDialogMessage("Update failed", AppHelper.formatException(exception), false);
-        }
-    };
-
-    GenericHandler deleteHandler = new GenericHandler() {
-        @Override
-        public void onSuccess() {
-            closeWaitDialog();
-            // Attribute was deleted
-            Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT);
-
-            // Fetch user details from the the service
-            getDetails();
-        }
-
-        @Override
-        public void onFailure(Exception e) {
-            closeWaitDialog();
-            // Attribute delete failed
-            showDialogMessage("Delete failed", AppHelper.formatException(e), false);
-
-            // Fetch user details from the service
-            getDetails();
-        }
-    };
-
-    GenericHandler trustedDeviceHandler = new GenericHandler() {
-        @Override
-        public void onSuccess() {
-            // Close wait dialog
-            closeWaitDialog();
-        }
-
-        @Override
-        public void onFailure(Exception exception) {
-            closeWaitDialog();
-            showDialogMessage("Failed to update device status", AppHelper.formatException(exception), true);
-        }
-    };
-
     private void showUserDetail(final String attributeType, final String attributeValue) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(attributeType);
@@ -449,7 +443,7 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     String newValue = input.getText().toString();
-                    if(!newValue.equals(attributeValue)) {
+                    if (!newValue.equals(attributeValue)) {
                         showWaitDialog("Updating...");
                         updateAttribute(AppHelper.getSignUpFieldsC2O().get(attributeType), newValue);
                     }
@@ -487,13 +481,13 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     userDialog.dismiss();
-                    if(exit) {
+                    if (exit) {
                         exit();
                     }
                 } catch (Exception e) {
                     // Log failure
-                    Log.e(TAG,"Dialog dismiss failed");
-                    if(exit) {
+                    Log.e(TAG, "Dialog dismiss failed");
+                    if (exit) {
                         exit();
                     }
                 }
@@ -506,17 +500,16 @@ public class UserActivity extends AppCompatActivity {
     private void closeWaitDialog() {
         try {
             waitDialog.dismiss();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //
         }
     }
 
-    private void exit () {
+    private void exit() {
         Intent intent = new Intent();
-        if(username == null)
+        if (username == null)
             username = "";
-        intent.putExtra("name",username);
+        intent.putExtra("name", username);
         setResult(RESULT_OK, intent);
         finish();
     }
