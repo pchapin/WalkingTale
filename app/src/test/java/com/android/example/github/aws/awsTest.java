@@ -17,18 +17,49 @@
 package com.android.example.github.aws;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.document.Table;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.android.example.github.repository.Constants;
+import com.android.example.github.repository.Util;
+import com.android.example.github.walkingTale.ExampleRepo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+
 
 
 @RunWith(JUnit4.class)
 public class awsTest {
 
+    private TransferUtility transferUtility;
+
+    @Test
+    public void testS3() {
+
+        File file = new File("idk");
+        try (ObjectOutputStream oos =
+                     new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(ExampleRepo.Companion.getRepo().toString());
+            System.out.println("Done");
+
+//            transferUtility = Util.getTransferUtility(InstrumentationRegistry.getContext());
+
+
+            TransferObserver observer = transferUtility.upload(Constants.BUCKET_NAME, file.getName(),
+                    file);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     @Test
     public void testDynamoDb() {
