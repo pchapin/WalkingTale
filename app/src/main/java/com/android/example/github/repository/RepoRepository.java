@@ -18,6 +18,7 @@ package com.android.example.github.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -68,8 +69,8 @@ public class RepoRepository {
         this.appExecutors = appExecutors;
     }
 
-    public void publishStory(Repo repo) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(repo, db, repoDao);
+    public void publishStory(Repo repo, Context context) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(repo, db, repoDao, context);
         appExecutors.diskIO().execute(saveStoryTask);
     }
 

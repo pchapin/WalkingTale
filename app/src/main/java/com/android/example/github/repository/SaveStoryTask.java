@@ -16,6 +16,7 @@
 
 package com.android.example.github.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.example.github.db.GithubDb;
@@ -30,11 +31,13 @@ public class SaveStoryTask implements Runnable {
     private final GithubDb db;
     private final RepoDao repoDao;
     private Repo story;
+    private Context context;
 
-    SaveStoryTask(Repo story, GithubDb db, RepoDao repoDao) {
+    SaveStoryTask(Repo story, GithubDb db, RepoDao repoDao, Context context) {
         this.db = db;
         this.repoDao = repoDao;
         this.story = story;
+        this.context = context;
     }
 
     @Override

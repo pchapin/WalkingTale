@@ -19,6 +19,7 @@ package com.android.example.github.ui.create;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 import android.util.Log;
 
 import com.android.example.github.repository.RepoRepository;
@@ -63,8 +64,8 @@ public class CreateViewModel extends ViewModel {
         return story;
     }
 
-    void finishStory() {
-        repoRepository.publishStory(story.getValue());
+    void finishStory(Context context) {
+        repoRepository.publishStory(story.getValue(), context);
     }
 
     public final void addChapter(@NotNull String name, @NotNull LatLng location, int radius) {
