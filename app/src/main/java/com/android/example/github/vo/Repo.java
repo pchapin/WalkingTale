@@ -16,14 +16,14 @@
 
 package com.android.example.github.vo;
 
-import com.android.example.github.db.GithubTypeConverters;
-import com.android.example.github.walkingTale.Chapter;
-import com.google.gson.annotations.SerializedName;
-
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.TypeConverters;
+
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
+import com.android.example.github.db.GithubTypeConverters;
+import com.android.example.github.walkingTale.Chapter;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -34,6 +34,7 @@ import java.util.List;
 @Entity(indices = {@Index("id")},
         primaryKeys = {"name"})
 @TypeConverters(GithubTypeConverters.class)
+@DynamoDBTable(tableName = "Repo")
 public class Repo {
     public static final int UNKNOWN_ID = -1;
     public final int id;

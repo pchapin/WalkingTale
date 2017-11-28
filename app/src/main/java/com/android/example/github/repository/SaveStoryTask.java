@@ -17,12 +17,13 @@
 package com.android.example.github.repository;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.vo.Repo;
-import com.google.gson.Gson;
 
 /**
  * A task that uploads a created story to a remote database.
@@ -40,29 +41,33 @@ public class SaveStoryTask implements Runnable {
         this.context = context;
     }
 
+
     @Override
     public void run() {
-        Gson gson = new Gson();
-        String name = "story name";
-        // Current user
-        String owner = "me";
-        // TODO: 10/27/2017 what should the rating start at?
-        String rating = "0";
-        String description = "some description";
 
         try {
             db.beginTransaction();
 
             Repo repo = (new Repo(Repo.UNKNOWN_ID,
-                    name, description,
-                    story.chapters, "", "",
-                    "", 1.1, story.chapters.get(0).getLocation().latitude,
-                    story.chapters.get(0).getLocation().longitude, ""));
+                    story.name, story.description,
+                    story.chapters, story.genre, story.tags,
+                    story.duration, story.rating, story.chapters.get(0).getLocation().latitude,
+                    story.chapters.get(0).getLocation().longitude, story.story_image));
 
-            String json = gson.toJson(repo);
-            Log.i("repo to json", json);
-            Repo repo1 = gson.fromJson(json, (java.lang.reflect.Type) Repo.class);
-            Log.i("json to repo", repo1.name);
+            AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(new AWSCredentials() {
+                @Override
+                public String getAWSAccessKeyId() {
+                    return "access key here";
+                }
+
+                @Override
+                public String getAWSSecretKey() {
+                    return "secret key here";
+                }
+            });
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(ddbClient);
+
+            dynamoDBMapper.save(repo);
 
             db.repoDao().insert(repo);
             db.setTransactionSuccessful();
