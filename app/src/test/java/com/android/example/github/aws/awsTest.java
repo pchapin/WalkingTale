@@ -16,16 +16,12 @@
 
 package com.android.example.github.aws;
 
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.mobileconnectors.dynamodbv2.document.Table;
-import com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -37,26 +33,11 @@ public class awsTest {
     @Test
     public void testDynamoDb() {
 
-        AWSCredentials awsCredentials = new AWSCredentials() {
-            @Override
-            public String getAWSAccessKeyId() {
-                return "YOUR AWS ACCESS KEY HERE";
-            }
+        // TODO: 11/6/17 look at https://github.com/awslabs/aws-sdk-android-samples/tree/master/DynamoDB_DocumentAPI_Notes also putitem
 
-            @Override
-            public String getAWSSecretKey() {
-                return "YOUR AWS SECRET KEY HERE";
-            }
-        };
+        AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        Table myTable = Table.loadTable(client, "MyTable");
 
-        AmazonDynamoDBClient client = new AmazonDynamoDBClient(awsCredentials);
-        Table myTable = Table.loadTable(client, "YOUR TABLE NAME HERE");
-
-        Document myDocumentObject = Document.fromJson("{}");
-
-//        String myJsonString = Document.toJson(myDocumentObject);
-
-        myTable.putItem(myDocumentObject);
 
         assertThat("", 1 == 1);
     }
