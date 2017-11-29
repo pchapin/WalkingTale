@@ -311,11 +311,11 @@ public class CreateFragment extends Fragment implements
     private void initRemoveChapterListener() {
         binding.get().removeChapterButton.setOnClickListener((v) -> {
             try {
+                adapter.get().notifyItemRemoved(createViewModel.getAllChapters().size() - 1);
                 createViewModel.removeChapter();
                 // Remove marker from map and list
                 markerArrayList.get(markerArrayList.size() - 1).remove();
                 markerArrayList.remove(markerArrayList.size() - 1);
-                adapter.get().notifyItemRemoved(createViewModel.getAllChapters().size() - 1);
             } catch (ArrayIndexOutOfBoundsException e) {
                 Toast.makeText(getContext(), "No chapters to remove.", Toast.LENGTH_SHORT).show();
             }
