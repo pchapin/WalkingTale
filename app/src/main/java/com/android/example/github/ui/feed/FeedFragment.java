@@ -110,7 +110,6 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Toast.makeText(getContext(), "on activity result ", Toast.LENGTH_SHORT).show();
         if (!isLoggedIn) userLogin();
     }
 

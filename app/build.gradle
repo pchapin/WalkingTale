@@ -63,6 +63,8 @@ dependencies {
 
     // Onboarding
     implementation 'agency.tango.android:material-intro-screen:0.0.5'
+    implementation "com.android.support:leanback-v17:$support_version"
+    implementation "com.android.support:preference-leanback-v17:$support_version"
 
 
     implementation "com.android.support:appcompat-v7:$support_version"

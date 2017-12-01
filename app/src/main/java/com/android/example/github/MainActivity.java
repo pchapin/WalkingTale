@@ -17,10 +17,15 @@
 package com.android.example.github;
 
 import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.onboarding.OnboardingActivity;
+import com.android.example.github.ui.onboarding.OnboardingFragment;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +52,13 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!sharedPreferences.getBoolean(OnboardingFragment.COMPLETED_ONBOARDING, false)) {
+            // This is the first time running the app, let's go to onboarding
+            startActivity(new Intent(this, OnboardingActivity.class));
+        }
+
         if (savedInstanceState == null) {
             navigationController.navigateToStoryFeed();
         }
