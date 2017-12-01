@@ -39,16 +39,17 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".testing.SingleFragmentActivity" />
         <activity android:name=".ui.audiorecord.AudioRecordActivity" />
         <activity
             android:name=".youruserpools.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".youruserpools.UserActivity"
             android:label="@string/title_activity_user"
@@ -96,6 +97,16 @@
             android:name=".youruserpools.NewPassword"
             android:label="@string/title_activity_new_password"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.onboarding.OnBoardingActivity"
+            android:label="@string/title_activity_on_boarding"
+            android:theme="@style/Theme.Intro">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

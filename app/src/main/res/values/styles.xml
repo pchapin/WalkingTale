@@ -25,15 +25,12 @@
     </style>
 
 
-
-
-
     <!--&lt;!&ndash; Base application theme. &ndash;&gt;-->
     <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
-        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-        <!--<item name="colorPrimary">@color/toolbar_background</item>-->
-        <!--<item name="colorPrimaryDark">@color/toolbar_background</item>-->
-        <!--<item name="colorAccent">@color/toolbar_items</item>-->
+    <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+    <!--<item name="colorPrimary">@color/toolbar_background</item>-->
+    <!--<item name="colorPrimaryDark">@color/toolbar_background</item>-->
+    <!--<item name="colorAccent">@color/toolbar_items</item>-->
     <!--</style>-->
 
     <style name="AWSCognitoTheme" parent="AppTheme">
@@ -78,6 +75,18 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?android:textAppearanceSmall</item>
         <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
     </style>
 
 </resources>
