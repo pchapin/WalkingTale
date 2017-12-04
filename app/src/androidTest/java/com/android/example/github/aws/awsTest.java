@@ -21,9 +21,14 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.regions.Regions;
 import com.android.example.github.repository.Constants;
 import com.android.example.github.repository.Util;
 import com.android.example.github.vo.Repo;
@@ -38,6 +43,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Key;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,11 +55,13 @@ public class awsTest {
     private final String S3_OBJECT_KEY = "ok";
     private Context context = InstrumentationRegistry.getTargetContext();
     private TransferUtility transferUtility = Util.getTransferUtility(context);
+    private AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(new CognitoCachingCredentialsProvider(context, Constants.COGNITO_POOL_ID, Regions.US_EAST_1));
+    private DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
 
     @Test
     public void s3UploadTest() throws NotSerializableException {
         File file = createTempFile();
-
+        Log.i("starting s3 upload", "now");
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(ExampleRepo.Companion.getRepo().toString());
             transferUtility.upload(Constants.BUCKET_NAME, "key", file).setTransferListener(new TransferListener() {
@@ -64,7 +73,7 @@ public class awsTest {
                 @Override
                 public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                     if (bytesCurrent == bytesTotal) {
-                        System.out.println(file);
+                        Log.i("starting s3 upload complete", "");
                     }
                 }
 
@@ -86,6 +95,7 @@ public class awsTest {
     @Test
     public void s3DownloadTest() {
         File file = createTempFile();
+        Log.i("starting s3 download", "");
         transferUtility.download(Constants.BUCKET_NAME, S3_OBJECT_KEY, file).setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
@@ -96,6 +106,15 @@ public class awsTest {
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                 if (bytesCurrent == bytesTotal) {
                     Log.i("s3 download result", "" + file);
+                    try {
+                        String contents = new String(Files.readAllBytes(file.toPath()));
+                        Repo repo = Repo.fromString(contents);
+
+                        Log.i("s3 downloaded", repo.toString());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -108,6 +127,7 @@ public class awsTest {
 
     @Test
     public void ddbUploadTest() {
+        mapper.save(ExampleRepo.Companion.getRepo());
     }
 
     @Test
@@ -123,4 +143,5 @@ public class awsTest {
         }
         return null;
     }
+
 }

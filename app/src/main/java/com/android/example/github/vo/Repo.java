@@ -20,6 +20,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.TypeConverters;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.android.example.github.db.GithubTypeConverters;
 import com.android.example.github.walkingTale.Chapter;
@@ -38,6 +39,7 @@ import java.util.List;
 @DynamoDBTable(tableName = "Repo")
 public class Repo {
     public static final int UNKNOWN_ID = -1;
+    @DynamoDBHashKey(attributeName = "id")
     public final int id;
     @SerializedName("name")
     public String name;
@@ -74,6 +76,18 @@ public class Repo {
         this.story_image = story_image;
     }
 
+    /**
+     * @param json A repo in json form
+     * @return A repo
+     */
+    public static Repo fromString(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, Repo.class);
+    }
+
+    public int getId() {
+        return id;
+    }
 
     /**
      * @return The json representation of this repo
@@ -81,14 +95,5 @@ public class Repo {
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
-    }
-
-    /**
-     * @param json A repo in json form
-     * @return A repo
-     */
-    public Repo fromString(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, Repo.class);
     }
 }
