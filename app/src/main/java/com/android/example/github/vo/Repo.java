@@ -23,6 +23,7 @@ import android.arch.persistence.room.TypeConverters;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.android.example.github.db.GithubTypeConverters;
 import com.android.example.github.walkingTale.Chapter;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -71,5 +72,23 @@ public class Repo {
         this.latitude = latitude;
         this.longitude = longitude;
         this.story_image = story_image;
+    }
+
+
+    /**
+     * @return The json representation of this repo
+     */
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    /**
+     * @param json A repo in json form
+     * @return A repo
+     */
+    public Repo fromString(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, Repo.class);
     }
 }
