@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!sharedPreferences.getBoolean(OnboardingFragment.COMPLETED_ONBOARDING, false)) {
-            // This is the first time running the app, let's go to onboarding
-            startActivity(new Intent(this, OnboardingActivity.class));
-        }
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        if (!sharedPreferences.getBoolean(OnboardingFragment.COMPLETED_ONBOARDING, false)) {
+//            // This is the first time running the app, let's go to onboarding
+//            startActivity(new Intent(this, OnboardingActivity.class));
+//        }
 
         if (savedInstanceState == null) {
             navigationController.navigateToStoryFeed();
