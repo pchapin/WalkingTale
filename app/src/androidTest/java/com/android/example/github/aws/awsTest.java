@@ -23,8 +23,9 @@ import android.util.Log;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedScanList;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Regions;
@@ -49,9 +50,9 @@ import java.nio.file.Files;
 public class awsTest {
     private final String S3_OBJECT_KEY = "ok";
     private Context context = InstrumentationRegistry.getTargetContext();
-    private TransferUtility transferUtility = Util.getTransferUtility(context);
+    private TransferUtility s3TransferUtility = Util.getTransferUtility(context);
     private AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(new CognitoCachingCredentialsProvider(context, Constants.COGNITO_POOL_ID, Regions.US_EAST_1));
-    private DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
+    private DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(ddbClient);
 
     @Test
     public void s3UploadTest() throws NotSerializableException {
@@ -59,7 +60,7 @@ public class awsTest {
         Log.i("starting s3 upload", "now");
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(ExampleRepo.Companion.getRepo().toString());
-            transferUtility.upload(Constants.BUCKET_NAME, S3_OBJECT_KEY, file).setTransferListener(new TransferListener() {
+            s3TransferUtility.upload(Constants.BUCKET_NAME, S3_OBJECT_KEY, file).setTransferListener(new TransferListener() {
                 @Override
                 public void onStateChanged(int id, TransferState state) {
 
@@ -91,7 +92,7 @@ public class awsTest {
     public void s3DownloadTest() {
         File file = createTempFile();
         Log.i("starting s3 download", "");
-        transferUtility.download(Constants.BUCKET_NAME, S3_OBJECT_KEY, file).setTransferListener(new TransferListener() {
+        s3TransferUtility.download(Constants.BUCKET_NAME, S3_OBJECT_KEY, file).setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
 
@@ -122,11 +123,36 @@ public class awsTest {
 
     @Test
     public void ddbUploadTest() {
-        mapper.save(ExampleRepo.Companion.getRepo());
+        Repo repo = ExampleRepo.Companion.getRepo();
+        dynamoDBMapper.save(repo);
+        assert scanDbb().contains(repo);
     }
 
     @Test
-    public void ddbDownloadTest() {
+    public void ddbScanTest() {
+        PaginatedScanList<Repo> repos = scanDbb();
+        for (Repo repo : repos) {
+            Log.i("ddb scan result", repo.toString());
+        }
+        assert !repos.isEmpty();
+    }
+
+    @Test
+    public void ddbUpdateTest() {
+    }
+
+    @Test
+    public void ddbDeleteRepoTest() {
+    }
+
+
+    /**
+     * @return A list of all the repos in the ddb Repo table
+     */
+    public PaginatedScanList<Repo> scanDbb() {
+        DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression();
+        dynamoDBMapper.scan(Repo.class, dynamoDBQueryExpression);
+        return dynamoDBMapper.scan(Repo.class, dynamoDBQueryExpression);
     }
 
     public File createTempFile() {

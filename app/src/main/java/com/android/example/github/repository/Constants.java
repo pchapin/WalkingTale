@@ -39,4 +39,6 @@ public class Constants {
      * Region of your bucket.
      */
     public static final String BUCKET_REGION = "us-east-1";
+
+    public static final String TABLE_ARN = "arn:aws:dynamodb:us-east-1:368974008447:table/Repo";
 }
