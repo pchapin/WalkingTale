@@ -21,14 +21,14 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.android.example.github.repository.Constants;
 import com.android.example.github.repository.Util;
 import com.android.example.github.vo.Repo;
@@ -44,11 +44,6 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.Key;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.isNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class awsTest {
@@ -64,7 +59,7 @@ public class awsTest {
         Log.i("starting s3 upload", "now");
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(ExampleRepo.Companion.getRepo().toString());
-            transferUtility.upload(Constants.BUCKET_NAME, "key", file).setTransferListener(new TransferListener() {
+            transferUtility.upload(Constants.BUCKET_NAME, S3_OBJECT_KEY, file).setTransferListener(new TransferListener() {
                 @Override
                 public void onStateChanged(int id, TransferState state) {
 
