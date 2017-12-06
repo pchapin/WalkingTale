@@ -78,8 +78,6 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
     implementation 'com.google.android.gms:play-services-location:11.6.2'
-    implementation 'com.github.piasy:rxandroidaudio:1.5.2'
-    implementation 'com.github.piasy:AudioProcessor:1.5.2'
 
 //    aws
     implementation 'com.amazonaws:aws-android-sdk-s3:2.6.9'
@@ -98,7 +96,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timber_version"
 
     // https://mvnrepository.com/artifact/commons-logging/commons-logging
-    compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+    implementation group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
 
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -165,9 +163,6 @@ task fullCoverageReport(type: JacocoReport) {
 }
 repositories {
     mavenCentral()
-    maven {
-        url "http://dl.bintray.com/piasy/maven"
-    }
 }
 
 apply plugin: 'kotlin-android-extensions'
