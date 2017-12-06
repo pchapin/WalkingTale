@@ -19,22 +19,18 @@ package com.android.example.github.aws
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.util.Log
-import android.webkit.DownloadListener
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedScanList
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.android.example.github.repository.Constants
 import com.android.example.github.repository.Util
 import com.android.example.github.vo.Repo
-import com.android.example.github.walkingTale.Chapter
 import com.android.example.github.walkingTale.ExampleRepo
-import com.google.android.gms.maps.model.LatLng
 import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,7 +61,7 @@ class awsTest {
 
                     override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
                         // todo: why is this method not being called?
-                        Log.i("s3", "progress changed " + bytesCurrent + "/" + bytesTotal)
+                        Log.i("s3", "progress changed $bytesCurrent/$bytesTotal")
                     }
 
                     override fun onError(id: Int, ex: Exception) {
@@ -110,12 +106,7 @@ class awsTest {
     @Test
     fun ddbUploadTest() {
         val repo = ExampleRepo.getRepo()
-        val repo2 = scanDbb().get(0)
         dynamoDBMapper.save(repo)
-        Log.i("ddb", "local repo" + repo + repo.javaClass)
-        Log.i("ddb", "remote repo" + repo2 + repo2.javaClass)
-        Log.i("ddb", "" + (repo == repo2))
-        //todo: why are these not "equal" even though they have the same values?
         assertTrue(scanDbb().contains(repo))
     }
 
@@ -140,13 +131,13 @@ class awsTest {
     /**
      * @return A list of all the repos in the ddb Repo table
      */
-    fun scanDbb(): PaginatedScanList<Repo> {
+    private fun scanDbb(): PaginatedScanList<Repo> {
         val dynamoDBQueryExpression = DynamoDBScanExpression()
         dynamoDBMapper.scan(Repo::class.java, dynamoDBQueryExpression)
         return dynamoDBMapper.scan(Repo::class.java, dynamoDBQueryExpression)
     }
 
-    fun createTempFile(): File? {
+    private fun createTempFile(): File? {
         val outputDir = context.cacheDir // context being the Activity pointer
         try {
             return File.createTempFile("prefix", "tmp", outputDir)
