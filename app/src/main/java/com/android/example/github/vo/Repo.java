@@ -119,12 +119,16 @@ public class Repo implements Serializable {
         return gson.fromJson(json, Repo.class);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Repo) {
+            if (((Repo) o).chapters.equals(this.chapters)) {
+                if (((Repo) o).id == this.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -133,6 +137,14 @@ public class Repo implements Serializable {
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {

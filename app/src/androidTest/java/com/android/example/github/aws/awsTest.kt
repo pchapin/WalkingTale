@@ -32,7 +32,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.android.example.github.repository.Constants
 import com.android.example.github.repository.Util
 import com.android.example.github.vo.Repo
+import com.android.example.github.walkingTale.Chapter
 import com.android.example.github.walkingTale.ExampleRepo
+import com.google.android.gms.maps.model.LatLng
 import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -108,10 +110,11 @@ class awsTest {
     @Test
     fun ddbUploadTest() {
         val repo = ExampleRepo.getRepo()
-        val repo2 = ExampleRepo.getRepo()
+        val repo2 = scanDbb().get(0)
         dynamoDBMapper.save(repo)
-        Log.i("ddb", "local repo" + repo.toString())
-        Log.i("ddb", "remote repo" + scanDbb().get(0).toString())
+        Log.i("ddb", "local repo" + repo + repo.javaClass)
+        Log.i("ddb", "remote repo" + repo2 + repo2.javaClass)
+        Log.i("ddb", "" + (repo == repo2))
         //todo: why are these not "equal" even though they have the same values?
         assertTrue(scanDbb().contains(repo))
     }
