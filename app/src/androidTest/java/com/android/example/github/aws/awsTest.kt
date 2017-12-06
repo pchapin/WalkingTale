@@ -19,122 +19,76 @@ package com.android.example.github.aws
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.util.Log
-import com.amazonaws.auth.CognitoCachingCredentialsProvider
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedScanList
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.android.example.github.repository.Constants
+import com.android.example.github.repository.DynamoDbManager
 import com.android.example.github.repository.Util
-import com.android.example.github.vo.Repo
 import com.android.example.github.walkingTale.ExampleRepo
 import junit.framework.Assert.assertTrue
+import junit.framework.AssertionFailedError
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.*
-import java.nio.file.Files
 
 @RunWith(AndroidJUnit4::class)
 class awsTest {
     private val S3_OBJECT_KEY = "ok"
     private val context = InstrumentationRegistry.getTargetContext()
     private val s3TransferUtility = Util.getTransferUtility(context)
-    private val ddbClient = AmazonDynamoDBClient(CognitoCachingCredentialsProvider(context, Constants.COGNITO_POOL_ID, Regions.US_EAST_1))
-    private val dynamoDBMapper = DynamoDBMapper(ddbClient)
+    private val dynamoDbManager = DynamoDbManager(context)
 
     @Test
     @Throws(NotSerializableException::class)
     fun s3UploadTest() {
         val file = createTempFile()
-        try {
-            ObjectOutputStream(FileOutputStream(file!!)).use { oos ->
-                oos.writeObject(ExampleRepo.getRepo())
-                val observer = s3TransferUtility.upload(Constants.BUCKET_NAME, S3_OBJECT_KEY, file)
-
-                observer.setTransferListener(object : TransferListener {
-                    override fun onStateChanged(id: Int, state: TransferState) {
-
-                    }
-
-                    override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
-                        // todo: why is this method not being called?
-                        Log.i("s3", "progress changed $bytesCurrent/$bytesTotal")
-                    }
-
-                    override fun onError(id: Int, ex: Exception) {
-
-                    }
-                })
-            }
-        } catch (e: IOException) {
-            println(e)
+        ObjectOutputStream(FileOutputStream(file!!)).use { oos ->
+            oos.writeObject(ExampleRepo.getRepo())
+            s3TransferUtility.upload(Constants.BUCKET_NAME, S3_OBJECT_KEY, file)
+            //todo check if uploaded
         }
     }
 
     @Test
     fun s3DownloadTest() {
         val file = createTempFile()
-        s3TransferUtility.download(Constants.BUCKET_NAME, S3_OBJECT_KEY, file!!).setTransferListener(object : TransferListener {
-            override fun onStateChanged(id: Int, state: TransferState) {
-
-            }
-
-            override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
-                if (bytesCurrent == bytesTotal) {
-                    try {
-                        val contents = String(Files.readAllBytes(file.toPath()))
-                        val repo = Repo.fromString(contents)
-
-                        Log.i("s3", "download result" + repo.toString())
-
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-
-                }
-            }
-
-            override fun onError(id: Int, ex: Exception) {
-
-            }
-        })
+        s3TransferUtility.download(Constants.BUCKET_NAME, S3_OBJECT_KEY, file!!)
+        //todo check if downloaded
     }
 
     @Test
     fun ddbUploadTest() {
-        val repo = ExampleRepo.getRepo()
-        dynamoDBMapper.save(repo)
-        assertTrue(scanDbb().contains(repo))
+        val randomRepo = ExampleRepo.getRandomRepo()
+        dynamoDbManager.ddbUploadRepo(randomRepo)
+        assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
+        dynamoDbManager.ddbDeleteRepo(randomRepo)
     }
 
     @Test
     fun ddbScanTest() {
-        val repos = scanDbb()
-        for (repo in repos) {
-            Log.i("ddb", "scan result " + repo.toString())
-        }
+        val repos = dynamoDbManager.scanDbb()
+        repos.forEach { Log.i("ddb", "scan result $it") }
         assertTrue(!repos.isEmpty())
     }
 
     @Test
     fun ddbUpdateTest() {
+        val randomRepo = ExampleRepo.getRandomRepo()
+        assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
+        dynamoDbManager.ddbUploadRepo(randomRepo)
+        randomRepo.id = randomRepo.id / 2
+        dynamoDbManager.updateRepo(randomRepo)
+        assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
     }
 
     @Test
     fun ddbDeleteRepoTest() {
-    }
+        val randomRepo = ExampleRepo.getRandomRepo()
+        assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
 
+        dynamoDbManager.ddbUploadRepo(randomRepo)
+        assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
 
-    /**
-     * @return A list of all the repos in the ddb Repo table
-     */
-    private fun scanDbb(): PaginatedScanList<Repo> {
-        val dynamoDBQueryExpression = DynamoDBScanExpression()
-        dynamoDBMapper.scan(Repo::class.java, dynamoDBQueryExpression)
-        return dynamoDBMapper.scan(Repo::class.java, dynamoDBQueryExpression)
+        dynamoDbManager.ddbDeleteRepo(randomRepo)
+        assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
     }
 
     private fun createTempFile(): File? {
