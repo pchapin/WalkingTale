@@ -22,6 +22,7 @@ import android.util.Log
 import com.android.example.github.repository.Constants
 import com.android.example.github.repository.DynamoDbManager
 import com.android.example.github.repository.Util
+import com.android.example.github.walkingTale.Chapter
 import com.android.example.github.walkingTale.ExampleRepo
 import junit.framework.Assert.assertTrue
 import junit.framework.AssertionFailedError
@@ -74,9 +75,10 @@ class awsTest {
         val randomRepo = ExampleRepo.getRandomRepo()
         assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
         dynamoDbManager.ddbUploadRepo(randomRepo)
-        randomRepo.id = randomRepo.id / 2
+        randomRepo.description = "description"
         dynamoDbManager.updateRepo(randomRepo)
         assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
+        dynamoDbManager.ddbDeleteRepo(randomRepo)
     }
 
     @Test
