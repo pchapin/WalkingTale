@@ -172,11 +172,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      */
     private String mLastUpdateTime;
 
-    public static PlayFragment create(int id) {
+    public static PlayFragment create(String id) {
         PlayFragment repoFragment = new PlayFragment();
         Bundle args = new Bundle();
 //        args.putString(REPO_OWNER_KEY, owner);
-        args.putInt(REPO_NAME_KEY, id);
+        args.putString(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -187,7 +187,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         playViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            playViewModel.setId(args.getInt(REPO_NAME_KEY));
+            playViewModel.setId(args.getString(REPO_NAME_KEY));
         } else {
             playViewModel.setId(null);
         }

@@ -74,7 +74,7 @@ public class RepoRepository {
         return saveStoryTask.getLiveData();
     }
 
-    public LiveData<Resource<Repo>> loadRepo(int id) {
+    public LiveData<Resource<Repo>> loadRepo(String id) {
         return new NetworkBoundResource<Repo, Repo>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull Repo item) {
@@ -112,7 +112,7 @@ public class RepoRepository {
 
             @Override
             protected void saveCallResult(@NonNull RepoSearchResponse item) {
-                List<Integer> repoIds = item.getRepoIds();
+                List<String> repoIds = item.getRepoIds();
                 RepoSearchResult repoSearchResult = new RepoSearchResult(
                         query, repoIds, item.getTotal(), item.getNextPage());
                 db.beginTransaction();
@@ -137,7 +137,8 @@ public class RepoRepository {
                     if (searchData == null) {
                         return AbsentLiveData.create();
                     } else {
-                        return repoDao.loadOrdered(searchData.repoIds);
+//                        return repoDao.loadOrdered(searchData.repoIds);
+                        return repoDao.loadAll();
                     }
                 });
             }

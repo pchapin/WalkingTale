@@ -41,7 +41,7 @@ public class NavigationController {
         this.fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void navigateToRepo(int id) {
+    public void navigateToRepo(String id) {
         OverviewFragment fragment = OverviewFragment.create(id);
 //        String tag = "repo" + "/" + owner + "/" + name;
         fragmentManager.beginTransaction()
@@ -65,7 +65,7 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToStoryPlay(int id) {
+    public void navigateToStoryPlay(String id) {
 //        String tag = "repo" + "/" + owner + "/" + name;
         PlayFragment storyPlayFragment = PlayFragment.create(id);
         fragmentManager.beginTransaction()
@@ -74,7 +74,7 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToExpositionViewer(int id) {
+    public void navigateToExpositionViewer(String id) {
 //        String tag = "repo" + "/" + owner + "/" + name;
         AlbumFragment expositionViewerFragment = AlbumFragment.create(id);
         fragmentManager.beginTransaction()

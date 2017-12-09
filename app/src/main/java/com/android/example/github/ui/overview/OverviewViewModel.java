@@ -31,7 +31,7 @@ import javax.inject.Inject;
 
 public class OverviewViewModel extends ViewModel {
     @VisibleForTesting
-    private final MutableLiveData<Integer> repoId;
+    private final MutableLiveData<String> repoId;
     private final LiveData<Resource<Repo>> repo;
 
     @Inject
@@ -49,7 +49,7 @@ public class OverviewViewModel extends ViewModel {
         return repo;
     }
 
-    void setId(Integer id) {
+    void setId(String id) {
         repoId.setValue(id);
     }
 }

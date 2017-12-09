@@ -10,7 +10,7 @@ class ExampleRepo() {
     companion object {
         fun getRepo(): Repo {
             return Repo(
-                    1, "name", "description", mutableListOf(), "genre",
+                    "id", "name", "description", mutableListOf(), "genre",
                     "tags", "duration", 1.1, 1.1, 1.1,
                     "story_image"
             )
@@ -18,7 +18,7 @@ class ExampleRepo() {
 
         fun getRandomRepo(): Repo {
             val repo = getRepo()
-            repo.id = Random().nextInt()
+            repo.id = Random().nextInt().toString()
             return repo
         }
     }

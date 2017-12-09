@@ -30,12 +30,12 @@ import java.util.List;
 public class RepoSearchResult {
     @NonNull
     public final String query;
-    public final List<Integer> repoIds;
+    public final List<String> repoIds;
     public final int totalCount;
     @Nullable
     public final Integer next;
 
-    public RepoSearchResult(@NonNull String query, List<Integer> repoIds, int totalCount,
+    public RepoSearchResult(@NonNull String query, List<String> repoIds, int totalCount,
                             @Nullable Integer next) {
         this.query = query;
         this.repoIds = repoIds;

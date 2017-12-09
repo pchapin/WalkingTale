@@ -75,11 +75,11 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
     Gson gson = new Gson();
     private AlbumViewModel albumViewModel;
 
-    public static AlbumFragment create(int id) {
+    public static AlbumFragment create(String id) {
         AlbumFragment expositionViewerFragment = new AlbumFragment();
         Bundle args = new Bundle();
 //        args.putString(REPO_OWNER_KEY, owner);
-        args.putInt(REPO_NAME_KEY, id);
+        args.putString(REPO_NAME_KEY, id);
         expositionViewerFragment.setArguments(args);
         return expositionViewerFragment;
     }
@@ -95,7 +95,7 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         albumViewModel = ViewModelProviders.of(this, viewModelFactory).get(AlbumViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            albumViewModel.setId(args.getInt(REPO_NAME_KEY));
+            albumViewModel.setId(args.getString(REPO_NAME_KEY));
         } else {
             albumViewModel.setId(null);
         }

@@ -65,7 +65,7 @@ public class FetchNextSearchPageTask implements Runnable {
             ApiResponse<RepoSearchResponse> apiResponse = new ApiResponse<>(response);
             if (apiResponse.isSuccessful()) {
                 // we merge all repo ids into 1 list so that it is easier to fetch the result list.
-                List<Integer> ids = new ArrayList<>();
+                List<String> ids = new ArrayList<>();
                 ids.addAll(current.repoIds);
                 //noinspection ConstantConditions
                 ids.addAll(apiResponse.getBody().getRepoIds());
