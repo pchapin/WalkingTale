@@ -22,9 +22,7 @@ import com.android.example.github.vo.User
 import android.arch.lifecycle.LiveData
 
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**
  * REST API access points
@@ -47,4 +45,7 @@ interface GithubService {
 
     @GET("toddcooke/test/master/test.json")
     fun searchRepos(@Query("q") query: String, @Query("page") page: Int): Call<RepoSearchResponse>
+
+    @POST("todos")
+    fun putRepo(@Body repo: Repo): Call<Repo>
 }

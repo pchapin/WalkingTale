@@ -231,6 +231,10 @@ public class CreateFragment extends Fragment implements
             binding.get().executePendingBindings();
         });
 
+        createViewModel.getIsPublishSuccessful().observe(this, isSuccessful -> {
+            binding.get().isPublishSuccessful.setText("Is publish successful: " + isSuccessful);
+        });
+
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
                 chapter -> navigationController.navigateToExpositionViewer(repo.getValue().id));
         this.adapter = new AutoClearedValue<>(this, adapter);
@@ -288,21 +292,22 @@ public class CreateFragment extends Fragment implements
             // Add marker to map
             LatLng chapterLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-            Marker newMarker = mMap.addMarker(new MarkerOptions()
-                    .position(chapterLocation)
-                    .title(chapterName));
-            markerArrayList.add(newMarker);
-
-            // Get bounds of all markers
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (Marker marker : markerArrayList) {
-                builder.include(marker.getPosition());
-            }
-            LatLngBounds bounds = builder.build();
-
-            int padding = 0; // offset from edges of the map in pixels
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            mMap.animateCamera(cameraUpdate);
+//            todo: fix map shrinking
+//            Marker newMarker = mMap.addMarker(new MarkerOptions()
+//                    .position(chapterLocation)
+//                    .title(chapterName));
+//            markerArrayList.add(newMarker);
+//
+//            // Get bounds of all markers
+//            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//            for (Marker marker : markerArrayList) {
+//                builder.include(marker.getPosition());
+//            }
+//            LatLngBounds bounds = builder.build();
+//
+//            int padding = 0; // offset from edges of the map in pixels
+//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+//            mMap.animateCamera(cameraUpdate);
 
             adapter.get().notifyItemInserted(createViewModel.getAllChapters().size() - 1);
         });
@@ -327,7 +332,7 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
-                createViewModel.finishStory(getContext());
+                createViewModel.finishStory();
             }
         });
     }
@@ -448,9 +453,10 @@ public class CreateFragment extends Fragment implements
         binding = new AutoClearedValue<>(this, dataBinding);
 
 
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        //todo: fix bug where map shrinks
+        //        SupportMapFragment mapFragment =
+        //                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        //        mapFragment.getMapAsync(this);
 
 
         return dataBinding.getRoot();

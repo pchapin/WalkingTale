@@ -10,9 +10,9 @@ class ExampleRepo() {
     companion object {
         fun getRepo(): Repo {
             return Repo(
-                    1, "", "", mutableListOf(), "",
-                    "", "", 1.1, 1.1, 1.1,
-                    ""
+                    1, "name", "description", mutableListOf(), "genre",
+                    "tags", "duration", 1.1, 1.1, 1.1,
+                    "story_image"
             )
         }
 

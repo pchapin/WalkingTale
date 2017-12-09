@@ -16,6 +16,8 @@
 
 package com.android.example.github.repository;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
@@ -26,6 +28,9 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.android.example.github.api.ApiResponse;
+import com.android.example.github.api.GithubService;
+import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.vo.Repo;
@@ -36,22 +41,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import retrofit2.Response;
+
 /**
  * A task that uploads a created story to a remote database.
  */
 public class SaveStoryTask implements Runnable {
-    private final GithubDb db;
-    private final RepoDao repoDao;
+    private final GithubService githubService;
     private Repo story;
-    private Context context;
-    private TransferUtility transferUtility;
+    private MutableLiveData<Boolean> isSuccessful = new MutableLiveData<>();
 
 
-    SaveStoryTask(Repo story, GithubDb db, RepoDao repoDao, Context context) {
-        this.db = db;
-        this.repoDao = repoDao;
+    SaveStoryTask(Repo story, GithubService githubService) {
         this.story = story;
-        this.context = context;
+        this.githubService = githubService;
+        this.isSuccessful.postValue(false);
     }
 
 
@@ -59,56 +63,21 @@ public class SaveStoryTask implements Runnable {
     public void run() {
 
         try {
-            db.beginTransaction();
-
-            Repo repo = (new Repo(Repo.UNKNOWN_ID,
-                    story.name, story.description,
-                    story.chapters, story.genre, story.tags,
-                    story.duration, story.rating, story.chapters.get(0).getLocation().latitude,
-                    story.chapters.get(0).getLocation().longitude, story.story_image));
-
-
-            // Dynamo DB upload
-
-            AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(new AWSCredentials() {
-                @Override
-                public String getAWSAccessKeyId() {
-                    return "access key here";
-                }
-
-                @Override
-                public String getAWSSecretKey() {
-                    return "secret key here";
-                }
-            });
-            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(ddbClient);
-//            dynamoDBMapper.save(repo);
-
-            // S3 upload
-            File outputDir = context.getCacheDir(); // context being the Activity pointer
-            File file = null;
-            try {
-                file = File.createTempFile("prefix", "extension", outputDir);
-            } catch (IOException e) {
-                e.printStackTrace();
+            Response<Repo> s = githubService.putRepo(story).execute();
+            Log.i("ddb", "Trying to publish story: " + story);
+            if (s.isSuccessful()) {
+                isSuccessful.postValue(true);
+                Log.i("ddb", "Publish story success" + s.message());
+            } else {
+                isSuccessful.postValue(false);
+                Log.i("ddb", "Publish story failed: " + s.errorBody());
             }
-
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-                oos.writeObject(ExampleRepo.Companion.getRepo().toString());
-                Util.getS3Client(context).putObject(Constants.BUCKET_NAME, "ok", file);
-
-                transferUtility = Util.getTransferUtility(context);
-
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            db.repoDao().insert(repo);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public LiveData<Boolean> getLiveData() {
+        return isSuccessful;
     }
 }

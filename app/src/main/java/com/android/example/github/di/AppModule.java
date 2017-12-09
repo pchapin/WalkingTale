@@ -38,7 +38,7 @@ class AppModule {
     GithubService provideGithubService() {
         // was https://api.github.com/
         return new Retrofit.Builder()
-                .baseUrl("https://raw.githubusercontent.com")
+                .baseUrl("https://oarrlmt68i.execute-api.us-east-1.amazonaws.com/dev/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .build()
