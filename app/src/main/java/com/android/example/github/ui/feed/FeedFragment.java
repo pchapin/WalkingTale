@@ -153,37 +153,11 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     }
 
     private void initRecyclerView() {
-
-        binding.get().repoList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager)
-                        recyclerView.getLayoutManager();
-                int lastPosition = layoutManager
-                        .findLastVisibleItemPosition();
-                if (lastPosition == adapter.get().getItemCount() - 1) {
-                    FeedViewModel.loadNextPage();
-                }
-            }
-        });
         FeedViewModel.getResults().observe(this, result -> {
             binding.get().setSearchResource(result);
             binding.get().setResultCount((result == null || result.data == null)
                     ? 0 : result.data.size());
             adapter.get().replace(result == null ? null : result.data);
-            binding.get().executePendingBindings();
-        });
-
-        FeedViewModel.getLoadMoreStatus().observe(this, loadingMore -> {
-            if (loadingMore == null) {
-                binding.get().setLoadingMore(false);
-            } else {
-                binding.get().setLoadingMore(loadingMore.isRunning());
-                String error = loadingMore.getErrorMessageIfNotHandled();
-                if (error != null) {
-                    Snackbar.make(binding.get().loadMoreBar, error, Snackbar.LENGTH_LONG).show();
-                }
-            }
             binding.get().executePendingBindings();
         });
     }
