@@ -22,6 +22,8 @@ import android.util.Log;
 
 import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
+import com.android.example.github.db.GithubDb;
+import com.android.example.github.db.RepoDao;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Status;
@@ -36,11 +38,15 @@ import retrofit2.Response;
  */
 public class FetchAllReposTask implements Runnable {
     private final GithubService githubService;
+    private GithubDb githubDb;
+    private RepoDao repoDao;
     private MutableLiveData<Resource<List<Repo>>> result = new MutableLiveData<>();
 
 
-    FetchAllReposTask(GithubService githubService) {
+    FetchAllReposTask(GithubService githubService, GithubDb githubDb, RepoDao repoDao) {
         this.githubService = githubService;
+        this.githubDb = githubDb;
+        this.repoDao = repoDao;
         this.result.postValue(null);
     }
 
@@ -52,6 +58,12 @@ public class FetchAllReposTask implements Runnable {
             Log.i("ddb", "Trying to get stories");
             Response<RepoSearchResponse> s = githubService.getAllRepos().execute();
             if (s.isSuccessful()) {
+
+                githubDb.beginTransaction();
+                repoDao.insertRepos(s.body().getItems());
+                githubDb.setTransactionSuccessful();
+                githubDb.endTransaction();
+
                 result.postValue(new Resource<>(Status.SUCCESS, s.body().getItems(), s.message()));
                 Log.i("ddb", "Get stories success" + s.message());
             } else {

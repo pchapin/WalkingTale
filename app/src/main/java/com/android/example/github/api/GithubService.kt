@@ -32,17 +32,11 @@ interface GithubService {
     @GET("users/{login}")
     fun getUser(@Path("login") login: String): LiveData<ApiResponse<User>>
 
-    @GET("users/{login}/repos")
-    fun getRepos(@Path("login") login: String): LiveData<ApiResponse<List<Repo>>>
-
-    @GET("repos/{owner}/{name}")
-    fun getRepo(@Path("owner") owner: String, @Path("name") name: String): LiveData<ApiResponse<Repo>>
+    @GET("todos/{id}")
+    fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Repo>>
 
     @GET("todos")
     fun searchRepos(): LiveData<ApiResponse<RepoSearchResponse>>
-
-    @GET("toddcooke/test/master/test.json")
-    fun searchRepos(@Query("q") query: String): LiveData<ApiResponse<RepoSearchResponse>>
 
     @GET("toddcooke/test/master/test.json")
     fun searchRepos(@Query("q") query: String, @Query("page") page: Int): Call<RepoSearchResponse>

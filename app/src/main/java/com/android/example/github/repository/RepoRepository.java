@@ -78,7 +78,7 @@ public class RepoRepository {
     }
 
     public LiveData<Resource<List<Repo>>> getAllRepos() {
-        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService);
+        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService, db, repoDao);
         appExecutors.networkIO().execute(fetchAllReposTask);
         return fetchAllReposTask.getLiveData();
     }
@@ -104,7 +104,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<Repo>> createCall() {
-                return githubService.getRepo("", "");
+                return githubService.getRepo(id);
             }
         }.asLiveData();
     }

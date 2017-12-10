@@ -175,7 +175,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     public static PlayFragment create(String id) {
         PlayFragment repoFragment = new PlayFragment();
         Bundle args = new Bundle();
-//        args.putString(REPO_OWNER_KEY, owner);
         args.putString(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
