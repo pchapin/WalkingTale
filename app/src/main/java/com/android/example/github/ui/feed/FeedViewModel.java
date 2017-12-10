@@ -50,7 +50,7 @@ public class FeedViewModel extends ViewModel {
             if (search == null || search.trim().length() == 0) {
                 return AbsentLiveData.create();
             } else {
-                return repoRepository.search(search);
+                return repoRepository.getAllRepos();
             }
         });
     }

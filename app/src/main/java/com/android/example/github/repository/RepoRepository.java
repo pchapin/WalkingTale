@@ -33,11 +33,14 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
 
+import java.net.ResponseCache;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import retrofit2.Response;
 
 /**
  * Repository that handles Repo instances.
@@ -72,6 +75,12 @@ public class RepoRepository {
         SaveStoryTask saveStoryTask = new SaveStoryTask(repo, githubService);
         appExecutors.networkIO().execute(saveStoryTask);
         return saveStoryTask.getLiveData();
+    }
+
+    public LiveData<Resource<List<Repo>>> getAllRepos() {
+        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService);
+        appExecutors.networkIO().execute(fetchAllReposTask);
+        return fetchAllReposTask.getLiveData();
     }
 
     public LiveData<Resource<Repo>> loadRepo(String id) {

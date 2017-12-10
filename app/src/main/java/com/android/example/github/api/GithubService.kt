@@ -20,6 +20,7 @@ import com.android.example.github.vo.Repo
 import com.android.example.github.vo.User
 
 import android.arch.lifecycle.LiveData
+import com.android.example.github.vo.Resource
 
 import retrofit2.Call
 import retrofit2.http.*
@@ -48,4 +49,7 @@ interface GithubService {
 
     @POST("todos")
     fun putRepo(@Body repo: Repo): Call<Repo>
+
+    @GET("todos")
+    fun getAllRepos(): Call<RepoSearchResponse>
 }
