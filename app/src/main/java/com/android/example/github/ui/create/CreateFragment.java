@@ -55,6 +55,7 @@ import com.android.example.github.databinding.CreateFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.ChapterAdapter;
+import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
@@ -230,6 +231,13 @@ public class CreateFragment extends Fragment implements
             binding.get().setRepo(resource);
             binding.get().executePendingBindings();
         });
+
+        LocationLiveData liveData = new LocationLiveData(getContext());
+
+        liveData.observe(this, ok -> {
+
+        });
+
 
         createViewModel.getIsPublishSuccessful().observe(this, isSuccessful -> {
             binding.get().isPublishSuccessful.setText("Is publish successful: " + isSuccessful);
