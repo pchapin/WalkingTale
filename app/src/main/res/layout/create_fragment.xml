@@ -52,7 +52,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -76,14 +76,6 @@
                 android:id="@+id/last_update_time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/location_inadequate_warning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="location_settings_inadequate_warning"
-                android:visibility="invisible" />
-
 
             <LinearLayout
                 android:id="@+id/nav_buttons_create_story"
@@ -154,21 +146,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Radius -" />
-
-
-                <Button
-                    android:id="@+id/start_updates_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="start updates" />
-
-                <Button
-                    android:id="@+id/stop_updates_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:text="stop_updates" />
-
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
