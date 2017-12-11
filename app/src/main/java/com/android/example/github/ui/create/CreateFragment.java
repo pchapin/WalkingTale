@@ -75,9 +75,6 @@ public class CreateFragment extends Fragment implements
 
     public static final String AUDIO_KEY_CHAPTER = "AUDIO_KEY_CHAPTER";
     public static final String AUDIO_KEY_EXPOSITION = "AUDIO_KEY_EXPOSITION";
-    // Constants
-    private static final String REPO_OWNER_KEY = "repo_owner";
-    private static final String REPO_NAME_KEY = "repo_name";
     private final int RECORD_AUDIO_REQUEST_CODE = 123;
     private final int TAKE_PICTURE_REQUEST_CODE = 1234;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);

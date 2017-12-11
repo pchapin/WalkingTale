@@ -45,6 +45,9 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.StoryPlayManager;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Collections;
@@ -52,7 +55,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-public class PlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class PlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable, OnMapReadyCallback {
 
     private static final String REPO_NAME_KEY = "repo_name";
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
@@ -67,6 +70,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     private PlayViewModel playViewModel;
     private Location mCurrentLocation;
     private boolean userInNextChapterRadius = false;
+    private GoogleMap mMap;
+
 
     public static PlayFragment create(String id) {
         PlayFragment repoFragment = new PlayFragment();
@@ -125,6 +130,11 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         PlayFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.play_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         return dataBinding.getRoot();
     }
 
@@ -190,5 +200,13 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     @Override
     public LifecycleRegistry getLifecycle() {
         return lifecycleRegistry;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        // Set map preferences
+        mMap.setMinZoomPreference(10.0f);
+        mMap.setMaxZoomPreference(16.0f);
     }
 }
