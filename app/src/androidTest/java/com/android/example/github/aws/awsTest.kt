@@ -57,40 +57,22 @@ class awsTest {
 
     @Test
     fun ddbUploadTest() {
-        val randomRepo = ExampleRepo.getRandomRepo()
-        dynamoDbManager.ddbUploadRepo(randomRepo)
-        assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
-        dynamoDbManager.ddbDeleteRepo(randomRepo)
+
     }
 
     @Test
     fun ddbScanTest() {
-        val repos = dynamoDbManager.scanDbb()
-        repos.forEach { Log.i("ddb", "scan result $it") }
-        assertTrue(!repos.isEmpty())
+
     }
 
     @Test
     fun ddbUpdateTest() {
-        val randomRepo = ExampleRepo.getRandomRepo()
-        assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
-        dynamoDbManager.ddbUploadRepo(randomRepo)
-        randomRepo.description = "description"
-        dynamoDbManager.updateRepo(randomRepo)
-        assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
-        dynamoDbManager.ddbDeleteRepo(randomRepo)
+
     }
 
     @Test
     fun ddbDeleteRepoTest() {
-        val randomRepo = ExampleRepo.getRandomRepo()
-        assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
 
-        dynamoDbManager.ddbUploadRepo(randomRepo)
-        assertTrue(dynamoDbManager.scanDbb().contains(randomRepo))
-
-        dynamoDbManager.ddbDeleteRepo(randomRepo)
-        assertTrue(!dynamoDbManager.scanDbb().contains(randomRepo))
     }
 
     private fun createTempFile(): File? {
