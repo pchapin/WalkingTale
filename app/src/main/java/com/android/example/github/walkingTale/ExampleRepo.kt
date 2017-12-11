@@ -11,7 +11,7 @@ class ExampleRepo() {
         fun getRepo(): Repo {
             return Repo(
                     "id", "name", "description", mutableListOf(), "genre",
-                    "tags", "duration", 1.1, 1.1, 1.1,
+                    "tags", 15, 1.1, 1.1, 1.1,
                     "story_image"
             )
         }

@@ -627,8 +627,6 @@ public class CreateFragment extends Fragment implements
             Uri audioUri = data.getData();
             createViewModel.addExposition(ExpositionType.AUDIO, audioUri.toString());
             adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
-
-
         }
     }
 

@@ -64,6 +64,7 @@ public class SaveStoryTask implements Runnable {
 
         try {
             Log.i("ddb", "Trying to publish story: " + story);
+            Log.i("repo", story.toJson());
             Response<Repo> s = githubService.putRepo(story).execute();
             if (s.isSuccessful()) {
                 isSuccessful.postValue(true);
