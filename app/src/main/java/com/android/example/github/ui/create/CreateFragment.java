@@ -126,7 +126,6 @@ public class CreateFragment extends Fragment implements
 
         LocationLiveData liveData = new LocationLiveData(getContext());
         liveData.observe(this, currentLocation -> {
-            // TODO: 12/11/17 Why is location not updating?
             mCurrentLocation = currentLocation;
             binding.get().latitudeText.setText(Double.toString(mCurrentLocation.getLatitude()));
             binding.get().longitudeText.setText(Double.toString(mCurrentLocation.getLongitude()));
