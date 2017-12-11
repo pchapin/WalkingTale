@@ -52,8 +52,13 @@ public class LocationLiveData extends LiveData<Location> implements
         }
         // Request updates if there’s someone observing
         if (hasActiveObservers()) {
+            long FASTEST_INTERVAL = 10;
             LocationServices.FusedLocationApi.requestLocationUpdates(
-                    googleApiClient, new LocationRequest(), this);
+                    googleApiClient,
+                    new LocationRequest()
+                            .setInterval(FASTEST_INTERVAL)
+                            .setFastestInterval(FASTEST_INTERVAL),
+                    this);
         }
     }
 
