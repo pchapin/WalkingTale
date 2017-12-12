@@ -50,10 +50,15 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,10 +90,6 @@ public class CreateFragment extends Fragment implements
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<CreateFragmentBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
-
-    /**
-     * Represents a geographical location.
-     */
     private Location mCurrentLocation;
     private GoogleMap mMap;
     private CreateViewModel createViewModel;
@@ -158,22 +159,21 @@ public class CreateFragment extends Fragment implements
             // Add marker to map
             LatLng chapterLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-//            todo: fix map shrinking
-//            Marker newMarker = mMap.addMarker(new MarkerOptions()
-//                    .position(chapterLocation)
-//                    .title(chapterName));
-//            markerArrayList.add(newMarker);
-//
-//            // Get bounds of all markers
-//            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//            for (Marker marker : markerArrayList) {
-//                builder.include(marker.getPosition());
-//            }
-//            LatLngBounds bounds = builder.build();
-//
-//            int padding = 0; // offset from edges of the map in pixels
-//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-//            mMap.animateCamera(cameraUpdate);
+            Marker newMarker = mMap.addMarker(new MarkerOptions()
+                    .position(chapterLocation)
+                    .title(chapterName));
+            markerArrayList.add(newMarker);
+
+            // Get bounds of all markers
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : markerArrayList) {
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+
+            int padding = 0; // offset from edges of the map in pixels
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            mMap.animateCamera(cameraUpdate);
 
             adapter.get().notifyItemInserted(createViewModel.getAllChapters().size() - 1);
         });
@@ -286,10 +286,9 @@ public class CreateFragment extends Fragment implements
                 .inflate(inflater, R.layout.create_fragment, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
 
-        //todo: fix bug where map shrinks
-        //        SupportMapFragment mapFragment =
-        //                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        //        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         return dataBinding.getRoot();
     }

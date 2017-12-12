@@ -33,14 +33,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Using name/owner_login as primary key instead of id since name/owner_login is always available
- * vs id is not.
- */
-@Entity(indices = {@Index("id")},
-        primaryKeys = {"name"})
+@Entity(indices = {@Index("id")}, primaryKeys = {"name"})
 @TypeConverters(GithubTypeConverters.class)
-@DynamoDBTable(tableName = "Repo")
 public class Repo {
     public static final int UNKNOWN_ID = -1;
     public String id;

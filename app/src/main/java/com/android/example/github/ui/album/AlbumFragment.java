@@ -59,12 +59,8 @@ import javax.inject.Inject;
  */
 public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
 
-    private static final String REPO_OWNER_KEY = "repo_owner";
-
     private static final String REPO_NAME_KEY = "repo_name";
-
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -72,13 +68,10 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<AlbumFragmentBinding> binding;
     AutoClearedValue<ExpositionAdapter> adapter;
-    Gson gson = new Gson();
     private AlbumViewModel albumViewModel;
-
     public static AlbumFragment create(String id) {
         AlbumFragment expositionViewerFragment = new AlbumFragment();
         Bundle args = new Bundle();
-//        args.putString(REPO_OWNER_KEY, owner);
         args.putString(REPO_NAME_KEY, id);
         expositionViewerFragment.setArguments(args);
         return expositionViewerFragment;

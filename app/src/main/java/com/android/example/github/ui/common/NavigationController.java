@@ -43,7 +43,6 @@ public class NavigationController {
 
     public void navigateToRepo(String id) {
         OverviewFragment fragment = OverviewFragment.create(id);
-//        String tag = "repo" + "/" + owner + "/" + name;
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)
                 .addToBackStack(null)
@@ -66,7 +65,6 @@ public class NavigationController {
     }
 
     public void navigateToStoryPlay(String id) {
-//        String tag = "repo" + "/" + owner + "/" + name;
         PlayFragment storyPlayFragment = PlayFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
@@ -75,7 +73,6 @@ public class NavigationController {
     }
 
     public void navigateToExpositionViewer(String id) {
-//        String tag = "repo" + "/" + owner + "/" + name;
         AlbumFragment expositionViewerFragment = AlbumFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, expositionViewerFragment)
