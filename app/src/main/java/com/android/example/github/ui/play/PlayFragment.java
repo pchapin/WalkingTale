@@ -157,7 +157,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 chapterList.setVisibility(View.GONE);
             }
         });
-        toggle.callOnClick();
+        toggle.performClick();
     }
 
     private void initNextChapterListener() {
