@@ -198,7 +198,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 latLng.latitude,
                 latLng.longitude,
                 distanceBetween);
-//        Toast.makeText(getContext(), "" + distanceBetween[0] + userInNextChapterRadius, Toast.LENGTH_SHORT).show();
         userInNextChapterRadius = distanceBetween[0] < storyPlayManager.getCurrentChapter().getRadius();
         binding.get().setIsUserInNextChapterRadius(userInNextChapterRadius);
     }
@@ -218,10 +217,10 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 .setTitle("Finish Story")
                 .setMessage("Do you want to finish the story?")
                 .setPositiveButton("yes", (dialogInterface, i) -> {
+                    getActivity().onBackPressed();
                 }).setNegativeButton("no", (dialogInterface, i) -> {
         })
                 .create().show();
-
     }
 
     @NonNull
