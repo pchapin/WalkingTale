@@ -47,6 +47,8 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.StoryPlayManager;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -111,6 +113,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             binding.get().lastUpdateTimeText.setText(new Date().toString());
             Log.i("location", "" + mCurrentLocation + new Date().toString());
             isUserInRadius();
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+            mMap.animateCamera(cameraUpdate);
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
@@ -216,8 +221,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
         // Set map preferences
+        mMap = googleMap;
         mMap.setMinZoomPreference(10.0f);
         mMap.setMaxZoomPreference(16.0f);
     }
