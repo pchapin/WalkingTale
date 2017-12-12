@@ -154,7 +154,7 @@ public class CreateFragment extends Fragment implements
             // TODO: 10/27/2017 get chapter name from the author
             String chapterName = "Chapter Name";
             createViewModel.addChapter(chapterName,
-                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 1);
+                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 10);
 
             // Add marker to map
             LatLng chapterLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());

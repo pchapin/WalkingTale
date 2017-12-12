@@ -16,18 +16,22 @@
 
 package com.android.example.github.ui.play;
 
+import android.Manifest;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -113,7 +117,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             binding.get().lastUpdateTimeText.setText(new Date().toString());
             Log.i("location", "" + mCurrentLocation + new Date().toString());
             isUserInRadius();
-
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
             mMap.animateCamera(cameraUpdate);
         });
@@ -127,7 +130,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         initContributorList(playViewModel);
         getActivity().setTitle("Play Story");
         // Disable next chapter button until user is in radius
-        binding.get().nextChapter.setEnabled(false);
+        userInNextChapterRadius = false;
     }
 
     @Nullable
@@ -195,8 +198,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 latLng.latitude,
                 latLng.longitude,
                 distanceBetween);
-
+//        Toast.makeText(getContext(), "" + distanceBetween[0] + userInNextChapterRadius, Toast.LENGTH_SHORT).show();
         userInNextChapterRadius = distanceBetween[0] < storyPlayManager.getCurrentChapter().getRadius();
+        binding.get().setIsUserInNextChapterRadius(userInNextChapterRadius);
     }
 
     private void nextChapterEvent() {
@@ -210,7 +214,14 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     }
 
     private void finalChapterEvent() {
-        // TODO: 12/11/17 Do something special when the user is at the last chapter
+        new AlertDialog.Builder(getContext())
+                .setTitle("Finish Story")
+                .setMessage("Do you want to finish the story?")
+                .setPositiveButton("yes", (dialogInterface, i) -> {
+                }).setNegativeButton("no", (dialogInterface, i) -> {
+        })
+                .create().show();
+
     }
 
     @NonNull
