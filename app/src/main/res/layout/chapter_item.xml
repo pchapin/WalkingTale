@@ -32,6 +32,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardCornerRadius="15dp"
         app:cardUseCompatPadding="true">
 
         <android.support.constraint.ConstraintLayout
@@ -39,61 +40,68 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/stars"
-                android:layout_width="wrap_content"
-                android:layout_height="18dp"
-
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="@{`radius = ` + chapter.radius}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="radius = 5" />
-
-            <TextView
                 android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{`id = `+ chapter.id}"
+                android:textSize="25sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/stars"
+                app:layout_constraintTop_toBottomOf="parent"
                 tools:text="chapter = id" />
 
             <TextView
-                android:id="@+id/desc"
-                android:layout_width="0dp"
+                android:id="@+id/stars"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{`radius = ` + chapter.radius}"
+                app:layout_constraintHorizontal_bias=".3"
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                tools:text="duration" />
+
+            <TextView
+                android:id="@+id/desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{`name = `+chapter.name}"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name"
+                app:layout_constraintHorizontal_bias=".3"
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stars"
                 tools:text="name = cool chapter" />
 
 
             <TextView
                 android:id="@+id/location"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{`location = `+chapter.location}"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias=".3"
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/desc"
                 tools:text="location = 123,123" />
 
             <TextView
                 android:id="@+id/expositions"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{`expositions = `+chapter.expositions}"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias=".3"
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/location"
                 tools:text="expositions = []" />
 
