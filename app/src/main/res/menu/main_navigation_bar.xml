@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_favorites"
+        android:enabled="true"
+        android:icon="@drawable/eye"
+        android:title="profile"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_schedules"
+        android:enabled="true"
+        android:icon="@drawable/ic_account_circle_white"
+        android:title="user"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_music"
+        android:enabled="true"
+        android:icon="@drawable/checked"
+        android:title="feed"
+        app:showAsAction="ifRoom" />
+</menu>
