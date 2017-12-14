@@ -18,7 +18,6 @@ package com.android.example.github.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -34,11 +33,14 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
 
+import java.net.ResponseCache;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import retrofit2.Response;
 
 /**
  * Repository that handles Repo instances.
@@ -69,12 +71,19 @@ public class RepoRepository {
         this.appExecutors = appExecutors;
     }
 
-    public void publishStory(Repo repo, Context context) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(repo, db, repoDao, context);
-        appExecutors.diskIO().execute(saveStoryTask);
+    public LiveData<Boolean> publishStory(Repo repo) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(repo, githubService);
+        appExecutors.networkIO().execute(saveStoryTask);
+        return saveStoryTask.getLiveData();
     }
 
-    public LiveData<Resource<Repo>> loadRepo(int id) {
+    public LiveData<Resource<List<Repo>>> getAllRepos() {
+        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService, db, repoDao);
+        appExecutors.networkIO().execute(fetchAllReposTask);
+        return fetchAllReposTask.getLiveData();
+    }
+
+    public LiveData<Resource<Repo>> loadRepo(String id) {
         return new NetworkBoundResource<Repo, Repo>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull Repo item) {
@@ -95,7 +104,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<Repo>> createCall() {
-                return githubService.getRepo("", "");
+                return githubService.getRepo(id);
             }
         }.asLiveData();
     }
@@ -112,7 +121,7 @@ public class RepoRepository {
 
             @Override
             protected void saveCallResult(@NonNull RepoSearchResponse item) {
-                List<Integer> repoIds = item.getRepoIds();
+                List<String> repoIds = item.getRepoIds();
                 RepoSearchResult repoSearchResult = new RepoSearchResult(
                         query, repoIds, item.getTotal(), item.getNextPage());
                 db.beginTransaction();
@@ -137,7 +146,8 @@ public class RepoRepository {
                     if (searchData == null) {
                         return AbsentLiveData.create();
                     } else {
-                        return repoDao.loadOrdered(searchData.repoIds);
+//                        return repoDao.loadOrdered(searchData.repoIds);
+                        return repoDao.loadAll();
                     }
                 });
             }

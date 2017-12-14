@@ -32,7 +32,7 @@ class RepoSearchResponse {
     var items: List<Repo>? = null
     var nextPage: Int? = null
 
-    val repoIds: List<Int>
+    val repoIds: List<String>
         get() {
             return items!!.map { it.id }
         }

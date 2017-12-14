@@ -20,11 +20,10 @@ import com.android.example.github.vo.Repo
 import com.android.example.github.vo.User
 
 import android.arch.lifecycle.LiveData
+import com.android.example.github.vo.Resource
 
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**
  * REST API access points
@@ -33,18 +32,18 @@ interface GithubService {
     @GET("users/{login}")
     fun getUser(@Path("login") login: String): LiveData<ApiResponse<User>>
 
-    @GET("users/{login}/repos")
-    fun getRepos(@Path("login") login: String): LiveData<ApiResponse<List<Repo>>>
+    @GET("todos/{id}")
+    fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Repo>>
 
-    @GET("repos/{owner}/{name}")
-    fun getRepo(@Path("owner") owner: String, @Path("name") name: String): LiveData<ApiResponse<Repo>>
-
-    @GET("toddcooke/test/master/test.json")
+    @GET("todos")
     fun searchRepos(): LiveData<ApiResponse<RepoSearchResponse>>
 
     @GET("toddcooke/test/master/test.json")
-    fun searchRepos(@Query("q") query: String): LiveData<ApiResponse<RepoSearchResponse>>
-
-    @GET("toddcooke/test/master/test.json")
     fun searchRepos(@Query("q") query: String, @Query("page") page: Int): Call<RepoSearchResponse>
+
+    @POST("todos")
+    fun putRepo(@Body repo: Repo): Call<Repo>
+
+    @GET("todos")
+    fun getAllRepos(): Call<RepoSearchResponse>
 }

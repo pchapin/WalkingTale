@@ -16,19 +16,14 @@
 
 package com.android.example.github;
 
-import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.onboarding.OnboardingActivity;
-import com.android.example.github.ui.onboarding.OnboardingFragment;
-
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+
+import com.android.example.github.ui.common.NavigationController;
 
 import javax.inject.Inject;
 

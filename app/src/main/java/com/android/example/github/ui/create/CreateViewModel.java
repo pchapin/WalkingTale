@@ -44,6 +44,7 @@ public class CreateViewModel extends ViewModel {
 
     private RepoRepository repoRepository;
     private MutableLiveData<Repo> story = null;
+    private MutableLiveData<Boolean> isPublishSuccessful = new MutableLiveData<>();
 
     // TODO: 11/22/17 Limit the number of expositions a user can add
     private int expositionCount = 0;
@@ -58,14 +59,19 @@ public class CreateViewModel extends ViewModel {
             story = new MutableLiveData<>();
             story.setValue(ExampleRepo.Companion.getRepo());
         }
+        isPublishSuccessful.setValue(false);
     }
 
     public LiveData<Repo> getStory() {
         return story;
     }
 
-    void finishStory(Context context) {
-        repoRepository.publishStory(story.getValue(), context);
+    LiveData<Boolean> getIsPublishSuccessful() {
+        return isPublishSuccessful;
+    }
+
+    void finishStory() {
+        repoRepository.publishStory(story.getValue());
     }
 
     public final void addChapter(@NotNull String name, @NotNull LatLng location, int radius) {

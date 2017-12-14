@@ -48,8 +48,6 @@ import javax.inject.Inject;
  */
 public class OverviewFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 
-    private static final String REPO_OWNER_KEY = "repo_owner";
-
     private static final String REPO_NAME_KEY = "repo_name";
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
@@ -62,11 +60,10 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     AutoClearedValue<OverviewFragmentBinding> binding;
     private OverviewViewModel overviewViewModel;
 
-    public static OverviewFragment create(int id) {
+    public static OverviewFragment create(String id) {
         OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
-//        args.putString(REPO_OWNER_KEY, owner);
-        args.putInt(REPO_NAME_KEY, id);
+        args.putString(REPO_NAME_KEY, id);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -82,7 +79,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            overviewViewModel.setId(args.getInt(REPO_NAME_KEY));
+            overviewViewModel.setId(args.getString(REPO_NAME_KEY));
         } else {
             overviewViewModel.setId(null);
         }
@@ -100,8 +97,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-//            String owner = overviewViewModel.getStory().getValue().data.owner.login;
-            int name = overviewViewModel.getRepo().getValue().data.id;
+            String name = overviewViewModel.getRepo().getValue().data.id;
             navigationController.navigateToStoryPlay(name);
         });
     }

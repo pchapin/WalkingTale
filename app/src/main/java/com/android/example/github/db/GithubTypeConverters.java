@@ -26,23 +26,28 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class GithubTypeConverters {
-    static Gson gson = new Gson();
+    private static Gson gson = new Gson();
 
     @TypeConverter
-    public static List<Integer> stringToIntList(String data) {
+    public static List<String> stringToIntList(String data) {
         if (data == null) {
             return Collections.emptyList();
         }
-        return StringUtil.splitToIntList(data);
+        return Arrays.asList(data.split("\\s+"));
     }
 
     @TypeConverter
-    public static String intListToString(List<Integer> ints) {
-        return StringUtil.joinIntoString(ints);
+    public static String intListToString(List<String> ints) {
+        StringBuilder result = new StringBuilder();
+        for (String s : ints) {
+            result.append(s);
+        }
+        return result.toString();
     }
 
     @TypeConverter
