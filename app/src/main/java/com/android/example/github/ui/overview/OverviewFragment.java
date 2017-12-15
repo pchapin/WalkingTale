@@ -21,6 +21,7 @@ import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.OverviewFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
@@ -136,8 +137,12 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
                         case R.id.action_search:
                             break;
                         case R.id.action_create:
+                            if (PermissionManager.checkLocationPermission(getActivity())) {
+                                navigationController.navigateToCreateStory();
+                            }
                             break;
                         case R.id.action_play:
+                            // TODO: 12/15/17 Should there be a dedicated play fragment to show stories in progress?
                             break;
                         case R.id.action_profile:
                             navigationController.navigateToUserProfile(getContext());

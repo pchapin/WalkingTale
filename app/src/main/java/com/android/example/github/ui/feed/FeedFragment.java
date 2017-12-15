@@ -20,7 +20,9 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FeedFragmentBinding;
 import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.ui.common.RepoListAdapter;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.youruserpools.AppHelper;
@@ -64,7 +66,6 @@ import javax.inject.Inject;
  */
 public class FeedFragment extends LifecycleFragment implements Injectable {
 
-    private static final int REQUEST_PERMSSION_CODE = 1;
     public static boolean isLoggedIn = false;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -96,7 +97,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         initRecyclerView();
         RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
                 repo -> {
-                    if (checkLocationPermission()) {
+                    if (PermissionManager.checkLocationPermission(getActivity())) {
                         navigationController.navigateToRepo(repo.id);
                     }
                 });
@@ -123,7 +124,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     private void initCreateStoryListener() {
         binding.get().createStoryBtn.setOnClickListener((v) -> {
             // Check for location permissions
-            if (checkLocationPermission()) {
+            if (PermissionManager.checkLocationPermission(getActivity())) {
                 navigationController.navigateToCreateStory();
             }
         });
@@ -181,47 +182,10 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         }
     }
 
-
-    public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Location Permissions")
-                        .setMessage("This app needs location permissions to run.")
-                        .setPositiveButton("ok", (dialogInterface, i) -> {
-                            //Prompt the user once explanation has been shown
-                            ActivityCompat.requestPermissions(getActivity(),
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    REQUEST_PERMSSION_CODE);
-                        })
-                        .create()
-                        .show();
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_PERMSSION_CODE);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PERMSSION_CODE: {
+            case PermissionManager.REQUEST_PERMSSION_CODE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
