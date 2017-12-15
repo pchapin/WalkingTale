@@ -104,8 +104,6 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
-        initCreateStoryListener();
-        initUserProfileListener();
         binding.get().setCallback(() -> FeedViewModel.refresh());
         getActivity().setTitle("Story Feed");
     }
@@ -115,53 +113,10 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         startActivityForResult(intent, 1);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!isLoggedIn) userLogin();
     }
-
-    private void initCreateStoryListener() {
-        binding.get().createStoryBtn.setOnClickListener((v) -> {
-            // Check for location permissions
-            if (PermissionManager.checkLocationPermission(getActivity())) {
-                navigationController.navigateToCreateStory();
-            }
-        });
-    }
-
-    private void initUserProfileListener() {
-        binding.get().userProfile.setOnClickListener((v) -> {
-            Intent userActivity = new Intent(getContext(), UserActivity.class);
-            startActivityForResult(userActivity, 1);
-        });
-    }
-
-//    private void initSearchInputListener() {
-//        binding.get().input.setOnEditorActionListener((v, actionId, event) -> {
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                doSearch(v);
-//                return true;
-//            }
-//            return false;
-//        });
-//        binding.get().input.setOnKeyListener((v, keyCode, event) -> {
-//            if ((event.getAction() == KeyEvent.ACTION_DOWN)
-//                    && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-//                doSearch(v);
-//                return true;
-//            }
-//            return false;
-//        });
-//    }
-
-//    private void doSearch(View v) {
-//        String query = binding.get().input.getText().toString();
-//        // Dismiss keyboard
-//        dismissKeyboard(v.getWindowToken());
-//        binding.get().setQuery(query);
-//        FeedViewModel.setQuery(query);
-//    }
 
     private void initRecyclerView() {
         FeedViewModel.getResults().observe(this, result -> {
@@ -171,32 +126,5 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
             adapter.get().replace(result == null ? null : result.data);
             binding.get().executePendingBindings();
         });
-    }
-
-    private void dismissKeyboard(IBinder windowToken) {
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(windowToken, 0);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PermissionManager.REQUEST_PERMSSION_CODE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 }

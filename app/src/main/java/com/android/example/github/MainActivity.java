@@ -18,6 +18,7 @@ package com.android.example.github;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.common.PermissionManager;
 
 import javax.inject.Inject;
 
@@ -69,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
                     navigationController.navigateToSearch();
                     break;
                 case R.id.action_create:
-                    navigationController.navigateToCreateStory();
+                    if (PermissionManager.checkLocationPermission(this))
+                        navigationController.navigateToCreateStory();
                     break;
                 case R.id.action_play:
                     break;
@@ -88,5 +91,24 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
     @Override
     public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
         return dispatchingAndroidInjector;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionManager.REQUEST_PERMSSION_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }

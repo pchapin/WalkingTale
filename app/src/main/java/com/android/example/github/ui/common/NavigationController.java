@@ -77,6 +77,7 @@ public class NavigationController {
         AlbumFragment expositionViewerFragment = AlbumFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, expositionViewerFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
