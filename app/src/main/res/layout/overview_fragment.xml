@@ -34,15 +34,16 @@
 
     </data>
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient"
+        android:orientation="vertical">
 
-        <android.support.constraint.ConstraintLayout
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/gradient"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
 
             <LinearLayout
@@ -50,7 +51,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"
+                android:gravity="center"
+                android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent"
                 app:visibleGone="@{repo != null}"
                 tools:ignore="MissingConstraints"
@@ -59,7 +61,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar"
                     android:layout_width="match_parent"
-                    android:layout_height="256dp"
+                    android:layout_height="150dp"
                     android:adjustViewBounds="false"
                     android:contentDescription="@string/a11y_user_photo"
                     android:cropToPadding="false"
@@ -70,147 +72,124 @@
                     app:imageUrl="@{repo.story_image}"
                     tools:src="@color/alert" />
 
+                <RatingBar
+                    android:id="@+id/rating"
+                    android:layout_width="239dp"
+                    android:layout_height="49dp"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:progressTint="#FFD700"
+                    android:rating="3.5"
+                    android:stepSize="0.5"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="rating" />
+
+                <TextView
+                    android:id="@+id/name"
+                    style="@style/TextAppearance.AppCompat.Headline"
+                    android:layout_width="265dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:gravity="center_horizontal"
+                    android:text="@{repo.name}"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="name of the story" />
+
+                <TextView
+                    android:id="@+id/author"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{repo.name}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="author" />
+
+                <TextView
+                    android:id="@+id/description"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{repo.description}"
+                    android:textSize="20sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="description of the story" />
+
+                <TextView
+                    android:id="@+id/genre"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{`Genre: ` + repo.genre}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="genre" />
+
+                <TextView
+                    android:id="@+id/tags"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{`Tags: ` + repo.tags}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="tags" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@{`Duration: ` + repo.duration}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="duration" />
+
+                <Button
+                    android:id="@+id/start_story_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Start Story" />
+
+                <Button
+                    android:id="@+id/story_location_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Story Location" />
             </LinearLayout>
 
-            <RatingBar
-                android:id="@+id/rating"
-                android:layout_width="239dp"
-                android:layout_height="49dp"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:progressTint="#FFD700"
-                android:rating="3.5"
-                android:stepSize="0.5"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header"
-                app:visibleGone="@{repo != null}"
-                tools:text="rating" />
+        </ScrollView>
 
-            <TextView
-                android:id="@+id/name"
-                style="@style/TextAppearance.AppCompat.Headline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/open_sans"
-                android:gravity="center_horizontal"
-                android:text="@{repo.name}"
-                android:textSize="42sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rating"
-                app:visibleGone="@{repo != null}"
-                tools:text="name of the story" />
+        <android.support.design.widget.BottomNavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/bottom_navigation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:itemBackground="@color/colorPrimary"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/bottom_navigation_main" />
 
-            <TextView
-                android:id="@+id/author"
-                style="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/open_sans"
-                android:text="@{repo.name}"
-                android:textSize="24sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name"
-                app:visibleGone="@{repo != null}"
-                tools:text="author" />
-
-            <TextView
-                android:id="@+id/description"
-                style="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/open_sans"
-                android:text="@{repo.description}"
-                android:textSize="20sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/duration"
-                app:visibleGone="@{repo != null}"
-                tools:text="description of the story" />
-
-            <TextView
-                android:id="@+id/genre"
-                style="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/open_sans"
-                android:text="@{`Genre: ` + repo.genre}"
-                android:textSize="24sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description"
-                app:visibleGone="@{repo != null}"
-                tools:text="genre" />
-
-            <TextView
-                android:id="@+id/tags"
-                style="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/open_sans"
-                android:text="@{`Tags: ` + repo.tags}"
-                android:textSize="24sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/genre"
-                app:visibleGone="@{repo != null}"
-                tools:text="tags" />
-
-            <TextView
-                android:id="@+id/duration"
-                style="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@{`Duration: ` + repo.duration}"
-                android:textSize="24sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/author"
-                app:visibleGone="@{repo != null}"
-                tools:text="duration" />
-
-            <Button
-                android:id="@+id/start_story_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Start Story"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tags" />
-
-            <Button
-                android:id="@+id/story_location_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Story Location"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/start_story_button" />
-
-
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+    </android.support.constraint.ConstraintLayout>
 </layout>
