@@ -103,15 +103,9 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
-
-        initSearchInputListener();
         initCreateStoryListener();
         initUserProfileListener();
         binding.get().setCallback(() -> FeedViewModel.refresh());
-        // temp: search on load to save time
-        TextView textView = new TextView(getContext());
-        textView.setText("ok");
-        doSearch(textView);
         getActivity().setTitle("Story Feed");
     }
 
@@ -142,31 +136,31 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         });
     }
 
-    private void initSearchInputListener() {
-        binding.get().input.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                doSearch(v);
-                return true;
-            }
-            return false;
-        });
-        binding.get().input.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                    && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                doSearch(v);
-                return true;
-            }
-            return false;
-        });
-    }
+//    private void initSearchInputListener() {
+//        binding.get().input.setOnEditorActionListener((v, actionId, event) -> {
+//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                doSearch(v);
+//                return true;
+//            }
+//            return false;
+//        });
+//        binding.get().input.setOnKeyListener((v, keyCode, event) -> {
+//            if ((event.getAction() == KeyEvent.ACTION_DOWN)
+//                    && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+//                doSearch(v);
+//                return true;
+//            }
+//            return false;
+//        });
+//    }
 
-    private void doSearch(View v) {
-        String query = binding.get().input.getText().toString();
-        // Dismiss keyboard
-        dismissKeyboard(v.getWindowToken());
-        binding.get().setQuery(query);
-        FeedViewModel.setQuery(query);
-    }
+//    private void doSearch(View v) {
+//        String query = binding.get().input.getText().toString();
+//        // Dismiss keyboard
+//        dismissKeyboard(v.getWindowToken());
+//        binding.get().setQuery(query);
+//        FeedViewModel.setQuery(query);
+//    }
 
     private void initRecyclerView() {
         FeedViewModel.getResults().observe(this, result -> {

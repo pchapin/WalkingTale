@@ -46,13 +46,7 @@ public class FeedViewModel extends ViewModel {
 
     @Inject
     FeedViewModel(RepoRepository repoRepository) {
-        results = Transformations.switchMap(query, search -> {
-            if (search == null || search.trim().length() == 0) {
-                return AbsentLiveData.create();
-            } else {
-                return repoRepository.getAllRepos();
-            }
-        });
+        results = repoRepository.getAllRepos();
     }
 
     LiveData<Resource<List<Repo>>> getResults() {
