@@ -23,6 +23,7 @@ import com.android.example.github.ui.create.CreateFragment;
 import com.android.example.github.ui.feed.FeedFragment;
 import com.android.example.github.ui.overview.OverviewFragment;
 import com.android.example.github.ui.play.PlayFragment;
+import com.android.example.github.ui.search.SearchFragment;
 import com.android.example.github.youruserpools.UserActivity;
 
 import android.content.Context;
@@ -82,5 +83,12 @@ public class NavigationController {
     public void navigateToUserProfile(Context context) {
         Intent userActivity = new Intent(context, UserActivity.class);
         context.startActivity(userActivity);
+    }
+
+    public void navigateToSearch() {
+        SearchFragment searchFragment = new SearchFragment();
+        fragmentManager.beginTransaction()
+                .replace(containerId, searchFragment)
+                .commitAllowingStateLoss();
     }
 }

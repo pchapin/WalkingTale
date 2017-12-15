@@ -46,6 +46,7 @@ import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;

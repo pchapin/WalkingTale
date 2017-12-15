@@ -96,7 +96,6 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
         initStartStoryListener();
         initStoryLocationListener();
-        initNavigationBarListener();
         getActivity().setTitle("Story Overview");
     }
 
@@ -125,30 +124,5 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
                 .inflate(inflater, R.layout.overview_fragment, container, false, dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
-    }
-
-    private void initNavigationBarListener() {
-        binding.get().bottomNavigation.setOnNavigationItemSelectedListener(
-                item -> {
-                    switch (item.getItemId()) {
-                        case R.id.action_home:
-                            navigationController.navigateToStoryFeed();
-                            break;
-                        case R.id.action_search:
-                            break;
-                        case R.id.action_create:
-                            if (PermissionManager.checkLocationPermission(getActivity())) {
-                                navigationController.navigateToCreateStory();
-                            }
-                            break;
-                        case R.id.action_play:
-                            // TODO: 12/15/17 Should there be a dedicated play fragment to show stories in progress?
-                            break;
-                        case R.id.action_profile:
-                            navigationController.navigateToUserProfile(getContext());
-                            break;
-                    }
-                    return true;
-                });
     }
 }

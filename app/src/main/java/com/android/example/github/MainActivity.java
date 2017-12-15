@@ -19,9 +19,12 @@ package com.android.example.github;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.android.example.github.ui.common.NavigationController;
 
@@ -53,6 +56,29 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
 //            // This is the first time running the app, let's go to onboarding
 //            startActivity(new Intent(this, OnboardingActivity.class));
 //        }
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_home:
+                    navigationController.navigateToStoryFeed();
+                    break;
+                case R.id.action_search:
+                    navigationController.navigateToSearch();
+                    break;
+                case R.id.action_create:
+                    navigationController.navigateToCreateStory();
+                    break;
+                case R.id.action_play:
+                    break;
+                case R.id.action_profile:
+                    navigationController.navigateToUserProfile(this);
+                    break;
+            }
+            return true;
+        });
 
         if (savedInstanceState == null) {
             navigationController.navigateToStoryFeed();

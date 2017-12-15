@@ -21,6 +21,7 @@ import com.android.example.github.ui.create.CreateFragment;
 import com.android.example.github.ui.feed.FeedFragment;
 import com.android.example.github.ui.overview.OverviewFragment;
 import com.android.example.github.ui.play.PlayFragment;
+import com.android.example.github.ui.search.SearchFragment;
 
 
 import dagger.Module;
@@ -43,4 +44,7 @@ public abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract AlbumFragment contributeExpositionViewerFragment();
+
+    @ContributesAndroidInjector
+    abstract SearchFragment contributeSearchFragment();
 }
