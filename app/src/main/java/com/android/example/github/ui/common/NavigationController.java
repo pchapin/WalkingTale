@@ -23,7 +23,10 @@ import com.android.example.github.ui.create.CreateFragment;
 import com.android.example.github.ui.feed.FeedFragment;
 import com.android.example.github.ui.overview.OverviewFragment;
 import com.android.example.github.ui.play.PlayFragment;
+import com.android.example.github.youruserpools.UserActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 
 import javax.inject.Inject;
@@ -45,7 +48,6 @@ public class NavigationController {
         OverviewFragment fragment = OverviewFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -53,7 +55,6 @@ public class NavigationController {
         CreateFragment storyCreateFragment = new CreateFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyCreateFragment)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -68,7 +69,6 @@ public class NavigationController {
         PlayFragment storyPlayFragment = PlayFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -76,7 +76,11 @@ public class NavigationController {
         AlbumFragment expositionViewerFragment = AlbumFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, expositionViewerFragment)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
+    }
+
+    public void navigateToUserProfile(Context context) {
+        Intent userActivity = new Intent(context, UserActivity.class);
+        context.startActivity(userActivity);
     }
 }

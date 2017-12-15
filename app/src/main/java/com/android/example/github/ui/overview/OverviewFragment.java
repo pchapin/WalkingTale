@@ -36,8 +36,11 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -92,6 +95,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
         initStartStoryListener();
         initStoryLocationListener();
+        initNavigationBarListener();
         getActivity().setTitle("Story Overview");
     }
 
@@ -120,5 +124,26 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
                 .inflate(inflater, R.layout.overview_fragment, container, false, dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
+    }
+
+    private void initNavigationBarListener() {
+        binding.get().bottomNavigation.setOnNavigationItemSelectedListener(
+                item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_home:
+                            navigationController.navigateToStoryFeed();
+                            break;
+                        case R.id.action_search:
+                            break;
+                        case R.id.action_create:
+                            break;
+                        case R.id.action_play:
+                            break;
+                        case R.id.action_profile:
+                            navigationController.navigateToUserProfile(getContext());
+                            break;
+                    }
+                    return true;
+                });
     }
 }
