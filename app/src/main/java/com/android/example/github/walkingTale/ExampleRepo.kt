@@ -6,13 +6,13 @@ import java.util.*
 /**
  * 11/15/17.
  */
-class ExampleRepo() {
+class ExampleRepo {
     companion object {
         fun getRepo(): Repo {
             return Repo(
-                    "id", "name", "description", mutableListOf(), "genre",
-                    "tags", 15, 1.1, 1.1, 1.1,
-                    "story_image"
+                    "id", "", "", mutableListOf(), "",
+                    "", 15, 1.1, 1.1, 1.1,
+                    ""
             )
         }
 

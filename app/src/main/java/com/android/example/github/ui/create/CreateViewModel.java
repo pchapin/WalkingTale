@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.vo.Repo;
@@ -41,6 +42,7 @@ import kotlin.collections.CollectionsKt;
 
 public class CreateViewModel extends ViewModel {
 
+    // TODO: 12/17/17 turn all fields into live data, and only create repo right at end
 
     private RepoRepository repoRepository;
     private MutableLiveData<Repo> story = null;
@@ -48,8 +50,8 @@ public class CreateViewModel extends ViewModel {
 
     // TODO: 11/22/17 Limit the number of expositions a user can add
     private int expositionCount = 0;
-    private int minRadius = 1;
-    private int maxRadius = 10;
+    private int minRadius = 10;
+    private int maxRadius = 20;
 
 
     @Inject
@@ -62,6 +64,36 @@ public class CreateViewModel extends ViewModel {
         isPublishSuccessful.setValue(false);
     }
 
+    void setGenre(String genre) {
+        Repo repo = story.getValue();
+        repo.genre = genre;
+        story.setValue(repo);
+    }
+
+    void setStoryName(String storyName) {
+        Repo repo = story.getValue();
+        repo.name = storyName;
+        story.setValue(repo);
+    }
+
+    void setDescription(String description) {
+        Repo repo = story.getValue();
+        repo.description = description;
+        story.setValue(repo);
+    }
+
+    void setTags(String tags) {
+        Repo repo = story.getValue();
+        repo.tags = tags;
+        story.setValue(repo);
+    }
+
+    void setStoryImage(String image) {
+        Repo repo = story.getValue();
+        repo.story_image = image;
+        story.setValue(repo);
+    }
+
     public LiveData<Repo> getStory() {
         return story;
     }
@@ -70,8 +102,21 @@ public class CreateViewModel extends ViewModel {
         return isPublishSuccessful;
     }
 
-    void finishStory() {
-        repoRepository.publishStory(story.getValue());
+    void finishStory(Context context) {
+        // Check that fields of story are valid
+        if (story.getValue().name.isEmpty()) {
+            Toast.makeText(context, "Please enter a name.", Toast.LENGTH_SHORT).show();
+        } else if (story.getValue().genre.isEmpty()) {
+            Toast.makeText(context, "Please select a genre.", Toast.LENGTH_SHORT).show();
+        } else if (story.getValue().description.isEmpty()) {
+            Toast.makeText(context, "Please enter a description.", Toast.LENGTH_SHORT).show();
+        } else if (story.getValue().tags.isEmpty()) {
+            Toast.makeText(context, "Please enter up to 5 tags.", Toast.LENGTH_SHORT).show();
+        } else if (story.getValue().story_image.isEmpty()) {
+            Toast.makeText(context, "Please select a image for your story.", Toast.LENGTH_SHORT).show();
+        } else {
+            repoRepository.publishStory(story.getValue());
+        }
     }
 
     public final void addChapter(@NotNull String name, @NotNull LatLng location, int radius) {

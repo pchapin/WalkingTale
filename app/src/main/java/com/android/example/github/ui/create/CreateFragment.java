@@ -32,10 +32,14 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.android.example.github.R;
@@ -46,7 +50,6 @@ import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;
@@ -106,6 +109,11 @@ public class CreateFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         createViewModel = ViewModelProviders.of(this, viewModelFactory).get(CreateViewModel.class);
+        initStoryNameListener();
+        initDescriptionListener();
+        initTagsListener();
+        initGenreSpinner();
+        initStoryImageListener();
         initAddChapterListener();
         initRemoveChapterListener();
         initFinishStoryListener();
@@ -139,7 +147,102 @@ public class CreateFragment extends Fragment implements
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
                 chapter -> navigationController.navigateToExpositionViewer(repo.getValue().id));
         this.adapter = new AutoClearedValue<>(this, adapter);
+
         binding.get().chapterList.setAdapter(adapter);
+    }
+
+    private void initStoryNameListener() {
+        binding.get().storyNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                createViewModel.setStoryName(editable.toString());
+            }
+        });
+    }
+
+    private void initDescriptionListener() {
+        binding.get().storyDescEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                createViewModel.setDescription(editable.toString());
+            }
+        });
+    }
+
+    private void initTagsListener() {
+        binding.get().storyTags.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                createViewModel.setTags(editable.toString());
+            }
+        });
+    }
+
+    private void initStoryImageListener() {
+        binding.get().storyTags.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                createViewModel.setStoryImage(editable.toString());
+            }
+        });
+    }
+
+    private void initGenreSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.genre_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.get().genreSpinner.setAdapter(adapter);
+        binding.get().genreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                createViewModel.setGenre(binding.get().genreSpinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     private void initAddChapterListener() {
@@ -199,7 +302,7 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
-                createViewModel.finishStory();
+                createViewModel.finishStory(getContext());
             }
         });
     }
@@ -293,7 +396,6 @@ public class CreateFragment extends Fragment implements
 
         return dataBinding.getRoot();
     }
-
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

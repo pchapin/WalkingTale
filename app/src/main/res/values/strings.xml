@@ -76,4 +76,12 @@
     <string name="onboarding_description_simple">You can include the Leanback library through gradle in your own apps</string>
     <string name="onboarding_description_project">Are you looking for guidance? This sample is available on GitHub so you can see how we built this.</string>
 
+    <string-array name="genre_array">
+        <item>Horror</item>
+        <item>Comedy</item>
+        <item>Romance</item>
+        <item>Family</item>
+        <item>Mystery</item>
+    </string-array>
+
 </resources>
