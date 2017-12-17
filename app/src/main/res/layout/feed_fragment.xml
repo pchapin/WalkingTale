@@ -113,7 +113,6 @@
             app:visibleGone="@{searchResource.status == Status.SUCCESS &amp;&amp; resultCount == 0}"
             tools:layout_editor_absoluteY="247dp" />
 
-
         <include
             layout="@layout/loading_state"
             android:layout_width="wrap_content"

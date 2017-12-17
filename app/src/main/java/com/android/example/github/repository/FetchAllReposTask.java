@@ -47,7 +47,7 @@ public class FetchAllReposTask implements Runnable {
         this.githubService = githubService;
         this.githubDb = githubDb;
         this.repoDao = repoDao;
-        this.result.postValue(null);
+        this.result.postValue(new Resource<>(Status.LOADING, null, ""));
     }
 
 
@@ -67,6 +67,7 @@ public class FetchAllReposTask implements Runnable {
                 result.postValue(new Resource<>(Status.SUCCESS, s.body().getItems(), s.message()));
                 Log.i("ddb", "Get stories success" + s.message());
             } else {
+                result.postValue(new Resource<>(Status.ERROR, s.body().getItems(), s.message()));
                 Log.i("ddb", "Get stories failed: " + s.errorBody());
             }
         } catch (IOException e) {
