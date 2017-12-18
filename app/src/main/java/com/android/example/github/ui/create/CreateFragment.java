@@ -209,7 +209,7 @@ public class CreateFragment extends Fragment implements
     }
 
     private void initStoryImageListener() {
-        binding.get().storyTags.addTextChangedListener(new TextWatcher() {
+        binding.get().storyImageview.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
