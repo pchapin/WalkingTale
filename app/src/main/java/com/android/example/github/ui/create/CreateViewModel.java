@@ -24,6 +24,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
@@ -46,7 +47,6 @@ public class CreateViewModel extends ViewModel {
 
     private RepoRepository repoRepository;
     private MutableLiveData<Repo> story = null;
-    private MutableLiveData<Boolean> isPublishSuccessful = new MutableLiveData<>();
 
     // TODO: 11/22/17 Limit the number of expositions a user can add
     private int expositionCount = 0;
@@ -61,7 +61,6 @@ public class CreateViewModel extends ViewModel {
             story = new MutableLiveData<>();
             story.setValue(ExampleRepo.Companion.getRepo());
         }
-        isPublishSuccessful.setValue(false);
     }
 
     void setGenre(String genre) {
@@ -98,11 +97,7 @@ public class CreateViewModel extends ViewModel {
         return story;
     }
 
-    LiveData<Boolean> getIsPublishSuccessful() {
-        return isPublishSuccessful;
-    }
-
-    void finishStory(Context context) {
+    LiveData<Boolean> finishStory(Context context) {
         // Check that fields of story are valid
         if (story.getValue().name.isEmpty()) {
             Toast.makeText(context, "Please enter a name.", Toast.LENGTH_SHORT).show();
@@ -115,8 +110,9 @@ public class CreateViewModel extends ViewModel {
         } else if (story.getValue().story_image.isEmpty()) {
             Toast.makeText(context, "Please select a image for your story.", Toast.LENGTH_SHORT).show();
         } else {
-            repoRepository.publishStory(story.getValue());
+            return repoRepository.publishStory(story.getValue());
         }
+        return AbsentLiveData.create();
     }
 
     public final void addChapter(@NotNull String name, @NotNull LatLng location, int radius) {

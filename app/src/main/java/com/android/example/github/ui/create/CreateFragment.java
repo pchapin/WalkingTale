@@ -19,6 +19,7 @@ package com.android.example.github.ui.create;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -138,10 +139,6 @@ public class CreateFragment extends Fragment implements
             binding.get().longitudeText.setText(Double.toString(mCurrentLocation.getLongitude()));
             binding.get().lastUpdateTimeText.setText(new Date().toString());
             Log.i("location", "" + mCurrentLocation + new Date().toString());
-        });
-
-        createViewModel.getIsPublishSuccessful().observe(this, isSuccessful -> {
-            binding.get().isPublishSuccessful.setText("Is publish successful: " + isSuccessful);
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
@@ -302,7 +299,16 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
-                createViewModel.finishStory(getContext());
+
+                LiveData<Boolean> result = createViewModel.finishStory(getContext());
+                result.observe(this, pubishSuccessful -> {
+                    binding.get().isPublishSuccessful.setText("" + pubishSuccessful);
+                    if (pubishSuccessful != null && pubishSuccessful) {
+                        Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
+                        getActivity().onBackPressed();
+                    }
+                });
+                if (result.getValue() != null && result.getValue()) result.removeObservers(this);
             }
         });
     }
