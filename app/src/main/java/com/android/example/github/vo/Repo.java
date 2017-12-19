@@ -17,16 +17,12 @@
 package com.android.example.github.vo;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.android.example.github.db.GithubTypeConverters;
 import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.ExampleRepo;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -59,8 +55,13 @@ public class Repo {
     public Double longitude;
     @SerializedName("story_image")
     public String story_image;
+    @SerializedName("username")
+    public String username;
 
-    public Repo(String id, @NonNull String name, String description, List<Chapter> chapters, String genre, String tags, int duration, Double rating, Double latitude, Double longitude, String story_image) {
+
+    public Repo(String id, @NonNull String name, String description, List<Chapter> chapters,
+                String genre, String tags, int duration, Double rating, Double latitude,
+                Double longitude, String story_image, String username) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -72,22 +73,7 @@ public class Repo {
         this.latitude = latitude;
         this.longitude = longitude;
         this.story_image = story_image;
-    }
-
-    @Ignore
-    public Repo() {
-        Repo exampleRepo = ExampleRepo.Companion.getRepo();
-        this.id = exampleRepo.id;
-        this.name = exampleRepo.name;
-        this.description = exampleRepo.description;
-        this.chapters = exampleRepo.chapters;
-        this.genre = exampleRepo.genre;
-        this.tags = exampleRepo.tags;
-        this.duration = exampleRepo.duration;
-        this.rating = exampleRepo.rating;
-        this.latitude = exampleRepo.latitude;
-        this.longitude = exampleRepo.longitude;
-        this.story_image = exampleRepo.story_image;
+        this.username = username;
     }
 
     /**
@@ -97,6 +83,14 @@ public class Repo {
     public static Repo fromJson(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, Repo.class);
+    }
+
+    /**
+     * @return The json representation of this repo
+     */
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     @Override
@@ -109,61 +103,5 @@ public class Repo {
             }
         }
         return false;
-    }
-
-    /**
-     * @return The json representation of this repo
-     */
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(@NonNull String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setChapters(List<Chapter> chapters) {
-        this.chapters = chapters;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public void setStory_image(String story_image) {
-        this.story_image = story_image;
     }
 }

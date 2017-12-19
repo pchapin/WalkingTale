@@ -30,6 +30,7 @@ import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
 import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.ExpositionType;
+import com.android.example.github.youruserpools.AppHelper;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,9 @@ public class CreateViewModel extends ViewModel {
         this.repoRepository = repository;
         if (story == null) {
             story = new MutableLiveData<>();
-            story.setValue(ExampleRepo.Companion.getRepo());
+            Repo repo = ExampleRepo.Companion.getRepo();
+            repo.username = AppHelper.getCurrUser();
+            story.setValue(repo);
         }
     }
 

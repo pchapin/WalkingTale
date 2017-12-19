@@ -12,7 +12,7 @@ class ExampleRepo {
             return Repo(
                     "id", "", "", mutableListOf(), "",
                     "", 15, 1.1, 1.1, 1.1,
-                    ""
+                    "", ""
             )
         }
 
