@@ -19,7 +19,6 @@ package com.android.example.github.ui.create;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -299,7 +298,7 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
             } else {
-
+                // TODO: 12/19/17  disable finish button while value is loading, otherwise they upload multiple stories
                 LiveData<Boolean> result = createViewModel.finishStory(getContext());
                 result.observe(this, pubishSuccessful -> {
                     binding.get().isPublishSuccessful.setText("" + pubishSuccessful);
