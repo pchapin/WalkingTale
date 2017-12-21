@@ -16,20 +16,17 @@
 
 package com.android.example.github.ui.play;
 
-import android.Manifest;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -47,10 +44,10 @@ import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.LocationUtilKt;
 import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -118,7 +115,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             binding.get().lastUpdateTimeText.setText(new Date().toString());
             Log.i("location", "" + mCurrentLocation + new Date().toString());
             isUserInRadius();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+            CameraUpdate cameraUpdate = CameraUpdateFactory
+                    .newLatLng(LocationUtilKt.LocationToLatLng(mCurrentLocation));
             mMap.animateCamera(cameraUpdate);
         });
 
@@ -206,7 +204,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     private void nextChapterEvent() {
         try {
             storyPlayManager.goToNextChapter();
-            Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager.getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager
+                    .getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
         } catch (ArrayIndexOutOfBoundsException e) {
             Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
             finalChapterEvent();

@@ -54,6 +54,7 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
+import com.android.example.github.walkingTale.LocationUtilKt;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -253,11 +254,10 @@ public class CreateFragment extends Fragment implements
 
             // TODO: 10/27/2017 get chapter name from the author
             String chapterName = "Chapter Name";
-            createViewModel.addChapter(chapterName,
-                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 10);
+            createViewModel.addChapter(chapterName, LocationUtilKt.LocationToLatLng(mCurrentLocation), 10);
 
             // Add marker to map
-            LatLng chapterLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            LatLng chapterLocation = LocationUtilKt.LocationToLatLng(mCurrentLocation);
 
             Marker newMarker = mMap.addMarker(new MarkerOptions()
                     .position(chapterLocation)
