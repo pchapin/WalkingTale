@@ -126,6 +126,12 @@ public class CreateViewModel extends ViewModel {
         story.setValue(repo);
     }
 
+    /**
+     * Add an exposition to the latest chapter
+     *
+     * @param expositionType
+     * @param content
+     */
     public final void addExposition(@NotNull ExpositionType expositionType, @NotNull String content) {
         int var4 = this.expositionCount++;
         Exposition exposition = new Exposition(expositionType, content, var4);

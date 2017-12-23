@@ -16,9 +16,9 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.android.example.github.ui.common.CreateFileKt;
 import com.android.example.github.ui.create.CreateFragment;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -40,6 +40,8 @@ public class AudioRecordActivity extends AppCompatActivity {
 
     private String chapterKey;
     private String expositionKey;
+
+    private AudioRecordActivity audioRecordActivity = this;
 
 
     // Requesting permission to RECORD_AUDIO
@@ -210,7 +212,12 @@ public class AudioRecordActivity extends AppCompatActivity {
 
         OnClickListener clicker = v -> {
             Intent result = new Intent();
-            Uri resultData = Uri.fromFile(new File(mFileName));
+            Uri resultData = null;
+            try {
+                resultData = Uri.fromFile(CreateFileKt.createFile(audioRecordActivity));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Log.i("uri", resultData.toString());
             result.setData(resultData);
             setResult(Activity.RESULT_OK, result);

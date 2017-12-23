@@ -24,7 +24,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +31,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,6 +48,7 @@ import com.android.example.github.databinding.CreateFragmentBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.ChapterAdapter;
+import com.android.example.github.ui.common.CreateFileKt;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
@@ -65,9 +66,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -82,9 +86,9 @@ public class CreateFragment extends Fragment implements
         LifecycleRegistryOwner,
         Injectable,
         OnMapReadyCallback {
-
     public static final String AUDIO_KEY_CHAPTER = "AUDIO_KEY_CHAPTER";
     public static final String AUDIO_KEY_EXPOSITION = "AUDIO_KEY_EXPOSITION";
+    private final String TAG = this.getClass().getSimpleName();
     private final int RECORD_AUDIO_REQUEST_CODE = 123;
     private final int TAKE_PICTURE_REQUEST_CODE = 1234;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
@@ -99,6 +103,9 @@ public class CreateFragment extends Fragment implements
     private GoogleMap mMap;
     private CreateViewModel createViewModel;
     private ArrayList<Marker> markerArrayList = new ArrayList<>();
+    private List<File> fileList = new ArrayList<>();
+    private List<File> imageList = new ArrayList<>();
+    private File photoFile = null;
 
     @NonNull
     @Override
@@ -404,8 +411,22 @@ public class CreateFragment extends Fragment implements
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST_CODE);
+            // Create the File where the photo should go
+            try {
+                photoFile = CreateFileKt.createFile(getActivity());
+            } catch (IOException ignored) {
+            }
+
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(),
+                        "com.android.example.github",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST_CODE);
+            }
         }
     }
 
@@ -420,15 +441,10 @@ public class CreateFragment extends Fragment implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            createViewModel.addExposition(ExpositionType.PICTURE, imageBitmap.toString());
-            adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
-
+            createViewModel.addExposition(ExpositionType.PICTURE, Uri.fromFile(photoFile).toString());
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
-            Uri audioUri = data.getData();
-            createViewModel.addExposition(ExpositionType.AUDIO, audioUri.toString());
-            adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
+            createViewModel.addExposition(ExpositionType.AUDIO, data.getData().toString());
         }
+        adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
     }
 }
