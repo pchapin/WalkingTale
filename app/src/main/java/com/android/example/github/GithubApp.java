@@ -16,10 +16,10 @@
 
 package com.android.example.github;
 
-import com.android.example.github.di.AppInjector;
-
 import android.app.Activity;
 import android.app.Application;
+
+import com.android.example.github.di.AppInjector;
 
 import javax.inject.Inject;
 
@@ -40,6 +40,9 @@ public class GithubApp extends Application implements HasActivityInjector {
             Timber.plant(new Timber.DebugTree());
         }
         AppInjector.init(this);
+
+        // Initialize the AWS Provider
+        AWSProvider.initialize(getApplicationContext());
     }
 
     @Override

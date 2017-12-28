@@ -85,6 +85,15 @@ dependencies {
     // Circle Image view
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
+    // Amazon Web Services
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.amazonaws:aws-android-sdk-core:2.6.12'
+    compile 'com.amazonaws:aws-android-sdk-auth-core:2.6.12'
+    compile 'com.amazonaws:aws-android-sdk-auth-ui:2.6.0'
+    compile 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.12'
+    compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.6.12'
+    compile 'com.amazonaws:aws-android-sdk-pinpoint:2.6.12'
+
 
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
