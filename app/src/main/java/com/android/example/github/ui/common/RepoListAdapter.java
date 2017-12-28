@@ -16,20 +16,20 @@
 
 package com.android.example.github.ui.common;
 
-import com.android.example.github.R;
-import com.android.example.github.databinding.RepoItemBinding;
-import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
-
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.android.example.github.R;
+import com.android.example.github.databinding.ItemRepoBinding;
+import com.android.example.github.util.Objects;
+import com.android.example.github.vo.Repo;
+
 /**
  * A RecyclerView adapter for {@link Repo} class.
  */
-public class RepoListAdapter extends DataBoundListAdapter<Repo, RepoItemBinding> {
+public class RepoListAdapter extends DataBoundListAdapter<Repo, ItemRepoBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final RepoClickCallback repoClickCallback;
     private final boolean showFullName;
@@ -42,9 +42,9 @@ public class RepoListAdapter extends DataBoundListAdapter<Repo, RepoItemBinding>
     }
 
     @Override
-    protected RepoItemBinding createBinding(ViewGroup parent) {
-        RepoItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.repo_item,
+    protected ItemRepoBinding createBinding(ViewGroup parent) {
+        ItemRepoBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_repo,
                         parent, false, dataBindingComponent);
         binding.setShowFullName(showFullName);
         binding.getRoot().setOnClickListener(v -> {
@@ -57,7 +57,7 @@ public class RepoListAdapter extends DataBoundListAdapter<Repo, RepoItemBinding>
     }
 
     @Override
-    protected void bind(RepoItemBinding binding, Repo item) {
+    protected void bind(ItemRepoBinding binding, Repo item) {
         binding.setRepo(item);
     }
 

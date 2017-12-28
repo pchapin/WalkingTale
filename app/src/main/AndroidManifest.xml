@@ -60,61 +60,6 @@
         </activity>
         <activity android:name=".testing.SingleFragmentActivity" />
         <activity android:name=".ui.audiorecord.AudioRecordActivity" />
-        <activity
-            android:name=".youruserpools.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.UserActivity"
-            android:label="@string/title_activity_user"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.RegisterUser"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.AboutApp"
-            android:label="@string/title_activity_about_app"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.SignUpConfirm"
-            android:label="@string/title_activity_sign_up_confirm"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.MFAActivity"
-            android:label="@string/title_activity_mfa"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.ForgotPasswordActivity"
-            android:label="@string/title_activity_forgot_password"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.ChangePasswordActivity"
-            android:label="@string/title_activity_change_password"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.VerifyActivity"
-            android:label="@string/title_activity_verify"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.AddAttributeActivity"
-            android:label="@string/title_activity_add_attribute"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.DeviceSettings"
-            android:label="@string/title_activity_device_settings"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".youruserpools.NewPassword"
-            android:label="@string/title_activity_new_password"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.onboarding.OnboardingActivity"
-            android:enabled="true"
-            android:exported="true"
-            android:theme="@style/Theme.Leanback.Onboarding" />
     </application>
 
 </manifest>

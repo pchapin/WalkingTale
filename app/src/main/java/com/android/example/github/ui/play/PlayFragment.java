@@ -39,7 +39,7 @@ import android.widget.ToggleButton;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.PlayFragmentBinding;
+import com.android.example.github.databinding.FragmentPlayBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
@@ -70,7 +70,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<PlayFragmentBinding> binding;
+    AutoClearedValue<FragmentPlayBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
     StoryPlayManager storyPlayManager;
     private PlayViewModel playViewModel;
@@ -136,8 +136,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        PlayFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.play_fragment, container, false);
+        FragmentPlayBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_play, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
 
         SupportMapFragment mapFragment =

@@ -25,57 +25,18 @@
     <string name="empty_search_result">No results for <b>%s</b></string>
     <string name="a11y_contributor_avatar">contributor avatar</string>
 
-
-    <!--aws cognito-->
-    <!--<string name="app_name">Cognito Identity</string>-->
-    <string name="app_main_screen">Sign in</string>
-    <string name="app_main_screen_title">Cognito Identity</string>
-    <string name="app_main_desc">A sample app to showcase Cognito Identity and the SDK for Android.</string>
-    <string name="nav_drawer_open">Open navigation drawer</string>
-    <string name="nav_drawer_close">Close navigation drawer</string>
-    <string name="title_activity_user">UserActivity</string>
-    <string name="Username">Username</string>
-    <string name="Password">Password</string>
-    <string name="Menu">Menu</string>
-    <string name="title_activity_about_app">AboutApp</string>
-    <string name="about">Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.\n\nLicensed under the Amazon Software License (the "License").\nYou may not use this file except in compliance with the License.\nA copy of the License is located at\n\nhttp://aws.amazon.com/asl/
-\n\nor in the "license" file accompanying this app. This app is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</string>
-    <string name="more_info">This is a sample app to showcase Cognito Identity and the SDK for Android.</string>
-    <string name="title_activity_sign_up_confirm">SignUpConfirm</string>
-    <string name="title_activity_mfa">MFAActivity</string>
-    <string name="title_activity_forgot_password">ForgotPasswordActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_activity_change_password">ChangePasswordActivity</string>
-    <string name="title_activity_verify">VerifyActivity</string>
-    <string name="title_activity_add_attribute">AddAttributeActivity</string>
-    <string name="title_activity_device_settings">DeviceSettings</string>
-    <string name="title_activity_new_password">NewPassword</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <!--    Permissions    -->
+    <!--Permissions-->
     <string name="permission_rationale">Location permission is needed for core functionality</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
     <string name="settings">Settings</string>
 
+    <!--Location-->
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>
     <string name="last_update_time_label">Last location update time</string>
 
-
-    <!-- Strings related to onboarding -->
-    <string name="onboarding_title_welcome">Welcome to the Leanback Sample</string>
-    <string name="onboarding_title_design">Designed for Android TV</string>
-    <string name="onboarding_title_simple">Simple to include</string>
-    <string name="onboarding_title_project">Check out the Sample Project</string>
-
-    <string name="onboarding_description_welcome">This is the Onboarding Fragment, which runs when the user first opens the app</string>
-    <string name="onboarding_description_design">The Leanback sample shows how to quickly design apps designed for a 10-foot user interface</string>
-    <string name="onboarding_description_simple">You can include the Leanback library through gradle in your own apps</string>
-    <string name="onboarding_description_project">Are you looking for guidance? This sample is available on GitHub so you can see how we built this.</string>
-
+    <!--Story Genres-->
     <string-array name="genre_array">
         <item>Horror</item>
         <item>Comedy</item>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2017 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.android.example.github.vo.Status" />
+
+        <import type="com.android.example.github.vo.Resource" />
+
+        <variable
+            name="repo"
+            type="com.android.example.github.vo.Repo" />
+
+        <variable
+            name="repoResource"
+            type="Resource" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:visibleGone="@{repo != null}"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="154dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:adjustViewBounds="false"
+                    android:contentDescription="@string/a11y_user_photo"
+                    android:cropToPadding="false"
+                    android:hapticFeedbackEnabled="false"
+                    android:scaleType="centerCrop"
+                    app:civ_border_color="#000000"
+                    app:civ_border_width="2dp"
+                    app:imageUrl="@{repo.story_image}"
+                    tools:src="@color/alert" />
+
+                <RatingBar
+                    android:id="@+id/rating"
+                    android:layout_width="239dp"
+                    android:layout_height="49dp"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:progressTint="#FFD700"
+                    android:rating="3.5"
+                    android:stepSize="0.5"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="rating" />
+
+                <TextView
+                    android:id="@+id/name"
+                    style="@style/TextAppearance.AppCompat.Headline"
+                    android:layout_width="265dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:gravity="center_horizontal"
+                    android:text="@{repo.name}"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="name of the story" />
+
+                <TextView
+                    android:id="@+id/author"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{repo.name}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="author" />
+
+                <TextView
+                    android:id="@+id/description"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{repo.description}"
+                    android:textSize="20sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="description of the story" />
+
+                <TextView
+                    android:id="@+id/genre"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{`Genre: ` + repo.genre}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="genre" />
+
+                <TextView
+                    android:id="@+id/tags"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{`Tags: ` + repo.tags}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="tags" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@{`Duration: ` + repo.duration}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{repo != null}"
+                    tools:text="duration" />
+
+                <Button
+                    android:id="@+id/start_story_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Start Story" />
+
+                <Button
+                    android:id="@+id/story_location_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Story Location" />
+            </LinearLayout>
+
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
+</layout>

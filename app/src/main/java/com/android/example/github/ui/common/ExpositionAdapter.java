@@ -16,20 +16,20 @@
 
 package com.android.example.github.ui.common;
 
-import com.android.example.github.R;
-import com.android.example.github.databinding.ExpositionItemBinding;
-import com.android.example.github.util.Objects;
-import com.android.example.github.walkingTale.Exposition;
-
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.android.example.github.R;
+import com.android.example.github.databinding.ItemExpositionBinding;
+import com.android.example.github.util.Objects;
+import com.android.example.github.walkingTale.Exposition;
+
 /**
  * A RecyclerView adapter for {@link Exposition} class.
  */
-public class ExpositionAdapter extends DataBoundListAdapter<Exposition, ExpositionItemBinding> {
+public class ExpositionAdapter extends DataBoundListAdapter<Exposition, ItemExpositionBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final ExpositionClickBack expositionClickBack;
 
@@ -42,9 +42,9 @@ public class ExpositionAdapter extends DataBoundListAdapter<Exposition, Expositi
     }
 
     @Override
-    protected ExpositionItemBinding createBinding(ViewGroup parent) {
-        ExpositionItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.exposition_item,
+    protected ItemExpositionBinding createBinding(ViewGroup parent) {
+        ItemExpositionBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_exposition,
                         parent, false, dataBindingComponent);
         binding.getRoot().setOnClickListener(v -> {
             Exposition exposition = binding.getExposition();
@@ -56,7 +56,7 @@ public class ExpositionAdapter extends DataBoundListAdapter<Exposition, Expositi
     }
 
     @Override
-    protected void bind(ExpositionItemBinding binding, Exposition item) {
+    protected void bind(ItemExpositionBinding binding, Exposition item) {
         binding.setExposition(item);
     }
 

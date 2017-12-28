@@ -44,7 +44,7 @@ import android.widget.Toast;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.CreateFragmentBinding;
+import com.android.example.github.databinding.FragmentCreateBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.ChapterAdapter;
@@ -97,7 +97,7 @@ public class CreateFragment extends Fragment implements
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<CreateFragmentBinding> binding;
+    AutoClearedValue<FragmentCreateBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
     private Location mCurrentLocation;
     private GoogleMap mMap;
@@ -398,8 +398,8 @@ public class CreateFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        CreateFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.create_fragment, container, false);
+        FragmentCreateBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_create, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
 
         SupportMapFragment mapFragment =

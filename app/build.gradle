@@ -61,12 +61,6 @@ jacoco {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Onboarding
-    implementation 'agency.tango.android:material-intro-screen:0.0.5'
-    implementation "com.android.support:leanback-v17:$support_version"
-    implementation "com.android.support:preference-leanback-v17:$support_version"
-
-
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:cardview-v7:$support_version"
@@ -78,16 +72,9 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
     implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation "com.android.support:support-v4:$support_version"
 
-//    aws
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.9'
-    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.22'
-    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.3.2'
-    implementation 'com.amazonaws:aws-android-sdk-core:2.6.9'
-    implementation 'com.amazonaws:aws-android-sdk-ddb:2.4.7'
-    implementation 'com.amazonaws:aws-android-sdk-ddb-document:2.4.7'
-    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.22'
-
+    // Dagger
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.dagger:dagger-android:$dagger_version"
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
@@ -95,19 +82,16 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:$timber_version"
 
-    // https://mvnrepository.com/artifact/commons-logging/commons-logging
-    implementation group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+    // Circle Image view
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
 
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation "com.android.support:support-v4:$support_version"
-    implementation 'com.google.firebase:firebase-core:11.8.0'
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
     annotationProcessor "android.arch.persistence.room:compiler:$arch_version"
     annotationProcessor "android.arch.lifecycle:compiler:$arch_version"
 
+    // Testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "com.squareup.okhttp3:mockwebserver:$mockwebserver_version"
     testImplementation("android.arch.core:core-testing:$arch_version", {

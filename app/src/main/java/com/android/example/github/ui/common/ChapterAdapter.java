@@ -16,20 +16,20 @@
 
 package com.android.example.github.ui.common;
 
-import com.android.example.github.R;
-import com.android.example.github.databinding.ChapterItemBinding;
-import com.android.example.github.util.Objects;
-import com.android.example.github.walkingTale.Chapter;
-
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.android.example.github.R;
+import com.android.example.github.databinding.ItemChapterBinding;
+import com.android.example.github.util.Objects;
+import com.android.example.github.walkingTale.Chapter;
+
 /**
  * A RecyclerView adapter for {@link Chapter} class.
  */
-public class ChapterAdapter extends DataBoundListAdapter<Chapter, ChapterItemBinding> {
+public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final ChapterClickBack chapterClickBack;
 
@@ -41,9 +41,9 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ChapterItemBin
     }
 
     @Override
-    protected ChapterItemBinding createBinding(ViewGroup parent) {
-        ChapterItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.chapter_item,
+    protected ItemChapterBinding createBinding(ViewGroup parent) {
+        ItemChapterBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_chapter,
                         parent, false, dataBindingComponent);
         binding.getRoot().setOnClickListener(v -> {
             Chapter chapter = binding.getChapter();
@@ -55,7 +55,7 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ChapterItemBin
     }
 
     @Override
-    protected void bind(ChapterItemBinding binding, Chapter item) {
+    protected void bind(ItemChapterBinding binding, Chapter item) {
         binding.setChapter(item);
     }
 

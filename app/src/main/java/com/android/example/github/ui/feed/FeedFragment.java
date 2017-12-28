@@ -16,48 +16,25 @@
 
 package com.android.example.github.ui.feed;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.DataBindingComponent;
+import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.FeedFragmentBinding;
+import com.android.example.github.databinding.FragmentFeedBinding;
 import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.ui.common.RepoListAdapter;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.youruserpools.AppHelper;
-import com.android.example.github.youruserpools.UserActivity;
-
-import android.Manifest;
-import android.app.Activity;
-import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.databinding.DataBindingComponent;
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -72,7 +49,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<FeedFragmentBinding> binding;
+    AutoClearedValue<FragmentFeedBinding> binding;
     AutoClearedValue<RepoListAdapter> adapter;
     private FeedViewModel FeedViewModel;
 
@@ -80,8 +57,8 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        FeedFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.feed_fragment, container, false,
+        FragmentFeedBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_feed, container, false,
                         dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
@@ -90,8 +67,6 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (!isLoggedIn) userLogin();
 
         FeedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         initRecyclerView();
@@ -106,16 +81,6 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> FeedViewModel.refresh());
         getActivity().setTitle("Story Feed");
-    }
-
-    private void userLogin() {
-        Intent intent = new Intent(getContext(), com.android.example.github.youruserpools.MainActivity.class);
-        startActivityForResult(intent, 1);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!isLoggedIn) userLogin();
     }
 
     private void initRecyclerView() {

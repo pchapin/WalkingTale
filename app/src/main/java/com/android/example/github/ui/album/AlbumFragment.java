@@ -23,8 +23,6 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,7 +32,7 @@ import android.view.ViewGroup;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.AlbumFragmentBinding;
+import com.android.example.github.databinding.FragmentAlbumBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.ExpositionAdapter;
 import com.android.example.github.ui.common.NavigationController;
@@ -43,11 +41,7 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.Exposition;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +60,7 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<AlbumFragmentBinding> binding;
+    AutoClearedValue<FragmentAlbumBinding> binding;
     AutoClearedValue<ExpositionAdapter> adapter;
     private AlbumViewModel albumViewModel;
     public static AlbumFragment create(String id) {
@@ -133,8 +127,8 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        AlbumFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.album_fragment, container, false);
+        FragmentAlbumBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_album, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }

@@ -16,6 +16,8 @@
 
 package com.android.example.github.ui.common;
 
+import android.support.v4.app.FragmentManager;
+
 import com.android.example.github.MainActivity;
 import com.android.example.github.R;
 import com.android.example.github.ui.album.AlbumFragment;
@@ -24,11 +26,6 @@ import com.android.example.github.ui.feed.FeedFragment;
 import com.android.example.github.ui.overview.OverviewFragment;
 import com.android.example.github.ui.play.PlayFragment;
 import com.android.example.github.ui.search.SearchFragment;
-import com.android.example.github.youruserpools.UserActivity;
-
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.FragmentManager;
 
 import javax.inject.Inject;
 
@@ -81,10 +78,10 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToUserProfile(Context context) {
-        Intent userActivity = new Intent(context, UserActivity.class);
-        context.startActivity(userActivity);
-    }
+//    public void navigateToUserProfile(Context context) {
+//        Intent userActivity = new Intent(context, UserActivity.class);
+//        context.startActivity(userActivity);
+//    }
 
     public void navigateToSearch() {
         SearchFragment searchFragment = new SearchFragment();

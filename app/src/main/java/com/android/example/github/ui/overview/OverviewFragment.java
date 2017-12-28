@@ -16,16 +16,6 @@
 
 package com.android.example.github.ui.overview;
 
-import com.android.example.github.R;
-import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.OverviewFragmentBinding;
-import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.PermissionManager;
-import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
-
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
@@ -37,13 +27,19 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.android.example.github.R;
+import com.android.example.github.binding.FragmentDataBindingComponent;
+import com.android.example.github.databinding.FragmentOverviewBinding;
+import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.util.AutoClearedValue;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
 
 import javax.inject.Inject;
 
@@ -61,7 +57,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<OverviewFragmentBinding> binding;
+    AutoClearedValue<FragmentOverviewBinding> binding;
     private OverviewViewModel overviewViewModel;
 
     public static OverviewFragment create(String id) {
@@ -120,8 +116,8 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        OverviewFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.overview_fragment, container, false, dataBindingComponent);
+        FragmentOverviewBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_overview, container, false, dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }

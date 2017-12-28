@@ -41,8 +41,4 @@
 
 
     <color name="black_overlay">#66000000</color>
-
-    <!--Onboarding-->
-    <color name="fastlane_background">#0096a6</color>
-
 </resources>

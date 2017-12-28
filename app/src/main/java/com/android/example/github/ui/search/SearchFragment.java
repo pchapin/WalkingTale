@@ -16,15 +16,6 @@
 
 package com.android.example.github.ui.search;
 
-import com.android.example.github.R;
-import com.android.example.github.binding.FragmentDataBindingComponent;
-import com.android.example.github.databinding.SearchFragmentBinding;
-import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.PermissionManager;
-import com.android.example.github.ui.common.RepoListAdapter;
-import com.android.example.github.util.AutoClearedValue;
-
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -45,7 +36,13 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
-import java.util.List;
+import com.android.example.github.R;
+import com.android.example.github.binding.FragmentDataBindingComponent;
+import com.android.example.github.databinding.FragmentSearchBinding;
+import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.common.RepoListAdapter;
+import com.android.example.github.util.AutoClearedValue;
 
 import javax.inject.Inject;
 
@@ -56,7 +53,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
     @Inject
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
-    AutoClearedValue<SearchFragmentBinding> binding;
+    AutoClearedValue<FragmentSearchBinding> binding;
     AutoClearedValue<RepoListAdapter> adapter;
     private SearchViewModel searchViewModel;
 
@@ -64,8 +61,8 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        SearchFragmentBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.search_fragment, container, false,
+        FragmentSearchBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_search, container, false,
                         dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();

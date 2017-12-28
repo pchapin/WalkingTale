@@ -18,14 +18,7 @@ package com.android.example.github.aws
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import android.util.Log
-import com.android.example.github.repository.Constants
-import com.android.example.github.repository.DynamoDbManager
-import com.android.example.github.repository.Util
-import com.android.example.github.walkingTale.Chapter
 import com.android.example.github.walkingTale.ExampleRepo
-import junit.framework.Assert.assertTrue
-import junit.framework.AssertionFailedError
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.*
