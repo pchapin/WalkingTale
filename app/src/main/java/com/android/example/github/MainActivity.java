@@ -36,6 +36,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 public class MainActivity extends AppCompatActivity implements LifecycleRegistryOwner,
         HasSupportFragmentInjector {
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    public String cognitoToken;
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
     @Inject
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get cognito token
+        cognitoToken = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_TOKEN_KEY);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
