@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
 
         // Get cognito token
         cognitoToken = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_TOKEN_KEY);
+        Log.i("cognito token", cognitoToken);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
