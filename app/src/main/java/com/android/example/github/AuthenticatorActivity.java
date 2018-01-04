@@ -28,6 +28,8 @@ public class AuthenticatorActivity extends AppCompatActivity {
         final IdentityManager identityManager = AWSProvider.getInstance().getIdentityManager();
         // Set up the callbacks to handle the authentication response
         identityManager.setUpToAuthenticate(this, new DefaultSignInResultHandler() {
+
+
             @Override
             public void onSuccess(Activity activity, IdentityProvider identityProvider) {
                 String cognitoToken = identityProvider.getToken();
