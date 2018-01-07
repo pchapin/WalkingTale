@@ -33,7 +33,6 @@ import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,78 +42,66 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class AwsTest {
 
-    Context context = InstrumentationRegistry.getContext();
-    String TAG = this.getClass().getSimpleName();
-    String USER_ID = "todd";
-    String PASSWORD = "Passw0rd!";
-    String accessToken;
-
-    AuthenticationHandler authenticationHandler = new AuthenticationHandler() {
+    private Context context = InstrumentationRegistry.getContext();
+    private String TAG = this.getClass().getSimpleName();
+    private String accessToken;
+    private Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("https://scfce9cwk7.execute-api.us-east-1.amazonaws.com/dev/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(new LiveDataCallAdapterFactory())
+            .build();
+    private GithubService githubService = retrofit.create(GithubService.class);
+    private CognitoUserPool userPool = new CognitoUserPool(context,
+            "us-east-1_5Jew8wIVQ",
+            "2aj12760enoi6kvs3bun08dsfg",
+            "1tr05oa80sre89di3an5je81k5o78jq6thblkmcgrgo0mljb3li2");
+    private AuthenticationHandler authenticationHandler = new AuthenticationHandler() {
         @Override
         public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
-            Log.i(TAG, String.format("success. Token:%s", userSession.getAccessToken().getJWTToken()));
-            accessToken = userSession.getAccessToken().getJWTToken();
+            accessToken = userSession.getIdToken().getJWTToken();
         }
 
         @Override
         public void getAuthenticationDetails(AuthenticationContinuation authenticationContinuation, String userId) {
-            AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, PASSWORD, null);
+            AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, "Passw0rd!", null);
             authenticationContinuation.setAuthenticationDetails(authenticationDetails);
             authenticationContinuation.continueTask();
         }
 
         @Override
         public void getMFACode(MultiFactorAuthenticationContinuation continuation) {
-
         }
 
         @Override
         public void authenticationChallenge(ChallengeContinuation continuation) {
-            continuation.continueTask();
         }
 
         @Override
         public void onFailure(Exception exception) {
-            Log.i(TAG, exception.toString());
         }
     };
-
-    @Before
-    public void init() {
-
-    }
 
     @Test
     public void testListStories() throws IOException {
         // Get cognito accessToken
-        CognitoUserPool userPool = new CognitoUserPool(context,
-                "us-east-1_5Jew8wIVQ",
-                "2aj12760enoi6kvs3bun08dsfg",
-                "1tr05oa80sre89di3an5je81k5o78jq6thblkmcgrgo0mljb3li2");
-
-        userPool.getUser(USER_ID).getSession(authenticationHandler);
-
-        assertTrue(accessToken != null);
+        userPool.getUser("todd").getSession(authenticationHandler);
+        assertNotNull(accessToken);
 
         // Make GET request to list endpoint
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://scfce9cwk7.execute-api.us-east-1.amazonaws.com/dev/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(new LiveDataCallAdapterFactory())
-                .build();
-
-        GithubService githubService = retrofit.create(GithubService.class);
-
-        Response<RepoSearchResponse> response = null;
-        response = githubService.getAllRepos().execute();
-
-        assertNotNull(response.body());
+        Response<RepoSearchResponse> response = githubService.getAllRepos(accessToken).execute();
+        Log.i(TAG, "error body " + response.errorBody());
+        Log.i(TAG, "body " + response.body());
+        Log.i(TAG, "message " + response.message());
+        Log.i(TAG, "headers " + response.headers());
+        Log.i(TAG, "raw " + response.raw());
+        Log.i(TAG, "token " + accessToken);
+        assertEquals(200, response.code());
         assertNotNull(response.body().getItems());
     }
 }

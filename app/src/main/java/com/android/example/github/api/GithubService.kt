@@ -41,6 +41,6 @@ interface GithubService {
     @POST("stories")
     fun putRepo(@Body repo: Repo): Call<Repo>
 
-    @GET("stories")
-    fun getAllRepos(): Call<RepoSearchResponse>
+    @GET("stories/list")
+    fun getAllRepos(@Header("Authorization") authToken: String): Call<RepoSearchResponse>
 }
