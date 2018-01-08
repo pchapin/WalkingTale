@@ -1,4 +1,4 @@
-package com.android.example.github;
+package com.android.example.github.aws;
 
 import android.content.Context;
 

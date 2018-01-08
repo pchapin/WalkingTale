@@ -33,11 +33,16 @@ import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -48,11 +53,11 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class AwsTest {
 
-    private Context context = InstrumentationRegistry.getContext();
+    private Context context = InstrumentationRegistry.getTargetContext();
     private String TAG = this.getClass().getSimpleName();
     private String accessToken;
     private Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://scfce9cwk7.execute-api.us-east-1.amazonaws.com/dev/")
+            .baseUrl("https://godtbigaai.execute-api.us-east-1.amazonaws.com/dev/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(new LiveDataCallAdapterFactory())
             .build();
@@ -87,21 +92,35 @@ public class AwsTest {
         }
     };
 
-    @Test
-    public void testListStories() throws IOException {
+    @Before
+    public void init() {
         // Get cognito accessToken
         userPool.getUser("todd").getSession(authenticationHandler);
         assertNotNull(accessToken);
+    }
 
+    @Test
+    public void testListStories() throws IOException {
         // Make GET request to list endpoint
         Response<RepoSearchResponse> response = githubService.getAllRepos(accessToken).execute();
-        Log.i(TAG, "error body " + response.errorBody());
-        Log.i(TAG, "body " + response.body());
-        Log.i(TAG, "message " + response.message());
-        Log.i(TAG, "headers " + response.headers());
-        Log.i(TAG, "raw " + response.raw());
-        Log.i(TAG, "token " + accessToken);
         assertEquals(200, response.code());
         assertNotNull(response.body().getItems());
+    }
+
+    @Test
+    public void testS3Upload() throws IOException {
+        File outputDir = context.getCacheDir(); // context being the Activity pointer
+        File file = File.createTempFile("prefix", "extension", outputDir);
+
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData(
+                "file",
+                file.getName(),
+                RequestBody.create(MediaType.parse("image/*"), file));
+
+        Response<RepoSearchResponse> response = githubService.postImage(accessToken, filePart).execute();
+        Log.i(TAG, "body " + response.body());
+        Log.i(TAG, "message " + response.message());
+        Log.i(TAG, "error " + response.errorBody().string());
+        assertEquals(200, response.code());
     }
 }

@@ -11,6 +11,7 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.core.IdentityProvider;
 import com.amazonaws.mobile.auth.ui.AuthUIConfiguration;
 import com.amazonaws.mobile.auth.ui.SignInActivity;
+import com.android.example.github.aws.AWSProvider;
 
 public class AuthenticatorActivity extends AppCompatActivity {
 

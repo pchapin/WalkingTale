@@ -19,6 +19,7 @@ package com.android.example.github.api
 import android.arch.lifecycle.LiveData
 import com.android.example.github.vo.Repo
 import com.android.example.github.vo.User
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -43,4 +44,9 @@ interface GithubService {
 
     @GET("stories/list")
     fun getAllRepos(@Header("Authorization") authToken: String): Call<RepoSearchResponse>
+
+    @Multipart
+    @POST("images")
+    fun postImage(@Header("Authorization") authToken: String,
+                  @Part filePart: MultipartBody.Part): Call<RepoSearchResponse>
 }

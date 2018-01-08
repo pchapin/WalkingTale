@@ -19,6 +19,7 @@ package com.android.example.github;
 import android.app.Activity;
 import android.app.Application;
 
+import com.android.example.github.aws.AWSProvider;
 import com.android.example.github.di.AppInjector;
 
 import javax.inject.Inject;

@@ -93,6 +93,8 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.12'
     compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.6.12'
     compile 'com.amazonaws:aws-android-sdk-pinpoint:2.6.12'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.6.13'
+
 
 
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
