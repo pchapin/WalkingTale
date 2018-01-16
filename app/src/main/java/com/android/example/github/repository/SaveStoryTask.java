@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
+import com.android.example.github.MainActivity;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.vo.Repo;
 
@@ -49,7 +50,7 @@ public class SaveStoryTask implements Runnable {
         try {
             Log.i("ddb", "Trying to publish story: " + story);
             Log.i("repo", story.toJson());
-            Response<Repo> s = githubService.putRepo(story).execute();
+            Response<Repo> s = githubService.putStory(new MainActivity().cognitoToken, story).execute();
             if (s.isSuccessful()) {
                 isSuccessful.postValue(true);
                 Log.i("ddb", "Publish story success: " + s.body());

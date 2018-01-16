@@ -32,6 +32,12 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.Authentic
 import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.ExampleRepo;
+import com.android.example.github.walkingTale.Exposition;
+import com.android.example.github.walkingTale.ExpositionType;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,10 +45,8 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -108,19 +112,36 @@ public class AwsTest {
     }
 
     @Test
+    public void testPutStory() throws IOException {
+        Repo repo = ExampleRepo.Companion.getRandomRepo();
+        repo.name = "name";
+        repo.description = "desc";
+        repo.genre = "genre";
+        repo.tags = "tags";
+        repo.story_image = "image";
+        repo.username = "user";
+        repo.chapters = new ArrayList<>();
+
+        Exposition exposition = new Exposition(ExpositionType.TEXT, "content", 0);
+        Chapter chapter = new Chapter(new ArrayList<>(), "chapter name", new LatLng(1.1, 1.1), 0, 5);
+        ArrayList<Exposition> expositions = new ArrayList<>();
+        expositions.add(exposition);
+        chapter.setExpositions(expositions);
+        repo.chapters.add(chapter);
+
+        Response<Repo> response = githubService.putStory(accessToken, repo).execute();
+        Log.i(TAG, "message " + response.message());
+        Log.i(TAG, "body " + response.body());
+        Log.i(TAG, "headers " + response.headers());
+        Log.i(TAG, "error body " + response.errorBody());
+        Log.i(TAG, "repo " + repo);
+
+        assertEquals(200, response.code());
+    }
+
+    @Test
     public void testS3Upload() throws IOException {
         File outputDir = context.getCacheDir(); // context being the Activity pointer
         File file = File.createTempFile("prefix", "extension", outputDir);
-
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData(
-                "file",
-                file.getName(),
-                RequestBody.create(MediaType.parse("image/*"), file));
-
-        Response<RepoSearchResponse> response = githubService.postImage(accessToken, filePart).execute();
-        Log.i(TAG, "body " + response.body());
-        Log.i(TAG, "message " + response.message());
-        Log.i(TAG, "error " + response.errorBody().string());
-        assertEquals(200, response.code());
     }
 }

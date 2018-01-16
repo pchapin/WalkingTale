@@ -19,7 +19,6 @@ package com.android.example.github.api
 import android.arch.lifecycle.LiveData
 import com.android.example.github.vo.Repo
 import com.android.example.github.vo.User
-import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -39,14 +38,10 @@ interface GithubService {
     @GET("toddcooke/test/master/test.json")
     fun searchRepos(@Query("q") query: String, @Query("page") page: Int): Call<RepoSearchResponse>
 
-    @POST("stories")
-    fun putRepo(@Body repo: Repo): Call<Repo>
-
-    @GET("stories/list")
+    @GET("stories")
     fun getAllRepos(@Header("Authorization") authToken: String): Call<RepoSearchResponse>
 
-    @Multipart
-    @POST("images")
-    fun postImage(@Header("Authorization") authToken: String,
-                  @Part filePart: MultipartBody.Part): Call<RepoSearchResponse>
+    @PUT("stories")
+    fun putStory(@Header("Authorization") authToken: String,
+                 @Body repo: Repo): Call<Repo>
 }
