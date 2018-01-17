@@ -36,8 +36,8 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class MainActivity extends AppCompatActivity implements LifecycleRegistryOwner,
         HasSupportFragmentInjector {
+    public static String cognitoToken;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-    public String cognitoToken;
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
     @Inject

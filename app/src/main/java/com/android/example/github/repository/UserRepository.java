@@ -16,16 +16,16 @@
 
 package com.android.example.github.repository;
 
+import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.android.example.github.AppExecutors;
 import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.db.UserDao;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.User;
-
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -47,7 +47,7 @@ public class UserRepository {
     }
 
     public LiveData<Resource<User>> loadUser(String login) {
-        return new NetworkBoundResource<User,User>(appExecutors) {
+        return new NetworkBoundResource<User, User>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull User item) {
                 userDao.insert(item);
@@ -67,7 +67,8 @@ public class UserRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<User>> createCall() {
-                return githubService.getUser(login);
+                // TODO: 1/17/18 this
+                return null;
             }
         }.asLiveData();
     }

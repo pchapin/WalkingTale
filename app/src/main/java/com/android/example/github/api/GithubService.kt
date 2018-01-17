@@ -18,7 +18,6 @@ package com.android.example.github.api
 
 import android.arch.lifecycle.LiveData
 import com.android.example.github.vo.Repo
-import com.android.example.github.vo.User
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -26,17 +25,8 @@ import retrofit2.http.*
  * REST API access points
  */
 interface GithubService {
-    @GET("users/{login}")
-    fun getUser(@Path("login") login: String): LiveData<ApiResponse<User>>
-
     @GET("stories/{id}")
     fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Repo>>
-
-    @GET("stories")
-    fun searchRepos(): LiveData<ApiResponse<RepoSearchResponse>>
-
-    @GET("toddcooke/test/master/test.json")
-    fun searchRepos(@Query("q") query: String, @Query("page") page: Int): Call<RepoSearchResponse>
 
     @GET("stories")
     fun getAllRepos(@Header("Authorization") authToken: String): Call<RepoSearchResponse>

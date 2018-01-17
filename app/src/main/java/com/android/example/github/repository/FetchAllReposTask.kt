@@ -19,6 +19,7 @@ package com.android.example.github.repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import com.android.example.github.MainActivity
 import com.android.example.github.api.GithubService
 import com.android.example.github.db.GithubDb
 import com.android.example.github.db.RepoDao
@@ -46,8 +47,7 @@ class FetchAllReposTask internal constructor(private val githubService: GithubSe
 
         try {
             Log.i(TAG, "Trying to get stories")
-            // todo: pass cognito auth token
-            val s = githubService.getAllRepos("").execute()
+            val s = githubService.getAllRepos(MainActivity.cognitoToken).execute()
             Log.i(TAG, "Get stories result: " + s.body())
             if (s.isSuccessful) {
                 githubDb.beginTransaction()

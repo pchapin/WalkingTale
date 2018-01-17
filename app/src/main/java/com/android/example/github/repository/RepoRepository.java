@@ -33,14 +33,11 @@ import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
 
-import java.net.ResponseCache;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import retrofit2.Response;
 
 /**
  * Repository that handles Repo instances.
@@ -110,10 +107,8 @@ public class RepoRepository {
     }
 
     public LiveData<Resource<Boolean>> searchNextPage(String query) {
-        FetchNextSearchPageTask fetchNextSearchPageTask = new FetchNextSearchPageTask(
-                query, githubService, db);
-        appExecutors.networkIO().execute(fetchNextSearchPageTask);
-        return fetchNextSearchPageTask.getLiveData();
+        // TODO: 1/17/18 search with query
+        return null;
     }
 
     public LiveData<Resource<List<Repo>>> search(String query) {
@@ -155,7 +150,8 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<RepoSearchResponse>> createCall() {
-                return githubService.searchRepos();
+                // TODO: 1/17/18 search with query
+                return null;
             }
 
             @Override
