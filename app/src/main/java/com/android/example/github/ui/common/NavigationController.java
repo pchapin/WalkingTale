@@ -53,6 +53,7 @@ public class NavigationController {
         CreateFragment storyCreateFragment = new CreateFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyCreateFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -77,11 +78,6 @@ public class NavigationController {
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
-
-//    public void navigateToUserProfile(Context context) {
-//        Intent userActivity = new Intent(context, UserActivity.class);
-//        context.startActivity(userActivity);
-//    }
 
     public void navigateToSearch() {
         SearchFragment searchFragment = new SearchFragment();

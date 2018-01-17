@@ -23,6 +23,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.example.github.MainActivity;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Repo;
@@ -60,7 +61,7 @@ public class CreateViewModel extends ViewModel {
         if (story == null) {
             story = new MutableLiveData<>();
             Repo repo = ExampleRepo.Companion.getRepo();
-            repo.username = "";//todo: get username!
+            repo.username = MainActivity.username;
             story.setValue(repo);
         }
     }

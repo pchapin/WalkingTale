@@ -24,7 +24,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
@@ -37,6 +36,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 public class MainActivity extends AppCompatActivity implements LifecycleRegistryOwner,
         HasSupportFragmentInjector {
     public static String cognitoToken;
+    public static String username;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
@@ -54,9 +54,8 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get cognito token
         cognitoToken = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_TOKEN_KEY);
-        Log.i("cognito token", cognitoToken);
+        username = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_USERNAME_KEY);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
