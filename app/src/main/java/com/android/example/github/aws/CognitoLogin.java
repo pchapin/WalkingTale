@@ -1,6 +1,7 @@
 package com.android.example.github.aws;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
@@ -12,6 +13,7 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.Mult
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
 
 public class CognitoLogin {
+    private final String TAG = this.getClass().getSimpleName();
     private String accessToken;
 
     public String getToken(Context context) {
@@ -47,6 +49,7 @@ public class CognitoLogin {
         };
 
         userPool.getUser("todd").getSession(authenticationHandler);
+        Log.i(TAG, accessToken);
         return accessToken;
     }
 }

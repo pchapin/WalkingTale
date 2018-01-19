@@ -1,7 +1,9 @@
 package com.android.example.github;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,6 +15,8 @@ import com.amazonaws.mobile.auth.core.IdentityProvider;
 import com.android.example.github.aws.AWSProvider;
 import com.android.example.github.aws.CognitoLogin;
 import com.auth0.android.jwt.JWT;
+
+import java.util.concurrent.ExecutionException;
 
 public class AuthenticatorActivity extends AppCompatActivity {
 
@@ -65,7 +69,19 @@ public class AuthenticatorActivity extends AppCompatActivity {
 
 
         // TODO: 1/19/18 development only
-        String cognitoToken = new CognitoLogin().getToken(this);
+        Context context = this;
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                return new CognitoLogin().getToken(context);
+            }
+        };
+        String cognitoToken = null;
+        try {
+            cognitoToken = (String) asyncTask.execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         String username = new JWT(cognitoToken).getClaim("cognito:username").asString();
         final Intent intent = new Intent(this, MainActivity.class)
                 .putExtra(COGNITO_TOKEN_KEY, cognitoToken)
