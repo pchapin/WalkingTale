@@ -10,15 +10,18 @@ import android.widget.Toast;
 import com.amazonaws.mobile.auth.core.DefaultSignInResultHandler;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.core.IdentityProvider;
-import com.amazonaws.mobile.auth.ui.AuthUIConfiguration;
-import com.amazonaws.mobile.auth.ui.SignInActivity;
 import com.android.example.github.aws.AWSProvider;
+import com.android.example.github.aws.CognitoLogin;
 import com.auth0.android.jwt.JWT;
 
 public class AuthenticatorActivity extends AppCompatActivity {
 
     static final String COGNITO_TOKEN_KEY = "COGNITO_TOKEN_KEY";
     static final String COGNITO_USERNAME_KEY = "COGNITO_USERNAME_KEY";
+    // Keys for shared preferences
+    private static final String SP_USERNAME_KEY = "username";
+    private static final String SP_PASSWORD_KEY = "password";
+
     final String TAG = this.getClass().getSimpleName();
 
     @Override
@@ -29,6 +32,7 @@ public class AuthenticatorActivity extends AppCompatActivity {
         // Initialize the AWS Provider
         AWSProvider.initialize(getApplicationContext());
 
+
         final IdentityManager identityManager = AWSProvider.getInstance().getIdentityManager();
         // Set up the callbacks to handle the authentication response
         identityManager.setUpToAuthenticate(this, new DefaultSignInResultHandler() {
@@ -38,6 +42,7 @@ public class AuthenticatorActivity extends AppCompatActivity {
                 String cognitoToken = identityProvider.getToken();
                 Log.i(TAG, cognitoToken);
 
+                // Decode token here to see what the fields are: https://jwt.io/
                 String username = new JWT(cognitoToken).getClaim("cognito:username").asString();
 
                 Toast.makeText(AuthenticatorActivity.this,
@@ -58,11 +63,24 @@ public class AuthenticatorActivity extends AppCompatActivity {
             }
         });
 
-        // Start the authentication UI
-        AuthUIConfiguration config = new AuthUIConfiguration.Builder()
-                .userPools(true)
-                .build();
-        SignInActivity.startSignInActivity(this, config);
-        AuthenticatorActivity.this.finish();
+
+        // TODO: 1/19/18 development only
+        String cognitoToken = new CognitoLogin().getToken(this);
+        String username = new JWT(cognitoToken).getClaim("cognito:username").asString();
+        final Intent intent = new Intent(this, MainActivity.class)
+                .putExtra(COGNITO_TOKEN_KEY, cognitoToken)
+                .putExtra(COGNITO_USERNAME_KEY, username)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+
+
+        // TODO: 1/19/18 uncomment, or add a better login screen
+//        // Start the authentication UI
+//        AuthUIConfiguration config = new AuthUIConfiguration.Builder()
+//                .userPools(true)
+//                .build();
+//        SignInActivity.startSignInActivity(this, config);
+//        AuthenticatorActivity.this.finish();
     }
 }

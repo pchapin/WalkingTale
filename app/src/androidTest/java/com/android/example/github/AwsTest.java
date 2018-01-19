@@ -21,16 +21,9 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationContinuation;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationDetails;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
+import com.android.example.github.aws.CognitoLogin;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;
@@ -66,40 +59,11 @@ public class AwsTest {
             .addCallAdapterFactory(new LiveDataCallAdapterFactory())
             .build();
     private GithubService githubService = retrofit.create(GithubService.class);
-    private CognitoUserPool userPool = new CognitoUserPool(context,
-            "us-east-1_5Jew8wIVQ",
-            "2aj12760enoi6kvs3bun08dsfg",
-            "1tr05oa80sre89di3an5je81k5o78jq6thblkmcgrgo0mljb3li2");
-    private AuthenticationHandler authenticationHandler = new AuthenticationHandler() {
-        @Override
-        public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
-            accessToken = userSession.getIdToken().getJWTToken();
-        }
-
-        @Override
-        public void getAuthenticationDetails(AuthenticationContinuation authenticationContinuation, String userId) {
-            AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, "Passw0rd!", null);
-            authenticationContinuation.setAuthenticationDetails(authenticationDetails);
-            authenticationContinuation.continueTask();
-        }
-
-        @Override
-        public void getMFACode(MultiFactorAuthenticationContinuation continuation) {
-        }
-
-        @Override
-        public void authenticationChallenge(ChallengeContinuation continuation) {
-        }
-
-        @Override
-        public void onFailure(Exception exception) {
-        }
-    };
 
     @Before
     public void init() {
         // Get cognito accessToken
-        userPool.getUser("todd").getSession(authenticationHandler);
+        accessToken = new CognitoLogin().getToken(context);
         assertNotNull(accessToken);
     }
 
