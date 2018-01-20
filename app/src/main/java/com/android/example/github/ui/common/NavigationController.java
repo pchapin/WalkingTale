@@ -46,6 +46,7 @@ public class NavigationController {
         OverviewFragment fragment = OverviewFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -61,6 +62,7 @@ public class NavigationController {
         FeedFragment storyFeedFragment = new FeedFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyFeedFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -68,6 +70,7 @@ public class NavigationController {
         PlayFragment storyPlayFragment = PlayFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -83,6 +86,7 @@ public class NavigationController {
         SearchFragment searchFragment = new SearchFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, searchFragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 }
