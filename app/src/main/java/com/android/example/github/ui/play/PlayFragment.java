@@ -55,6 +55,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Collections;
 import java.util.Date;
@@ -64,6 +65,7 @@ import javax.inject.Inject;
 public class PlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable, OnMapReadyCallback {
 
     private static final String REPO_NAME_KEY = "repo_name";
+    private final String TAG = this.getClass().getSimpleName();
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -107,27 +109,18 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             }
         });
 
-        LocationLiveData locationLiveData = new LocationLiveData(getContext());
-        locationLiveData.observe(this, currentLocation -> {
-            mCurrentLocation = currentLocation;
-            binding.get().latitudeText.setText(Double.toString(mCurrentLocation.getLatitude()));
-            binding.get().longitudeText.setText(Double.toString(mCurrentLocation.getLongitude()));
-            binding.get().lastUpdateTimeText.setText(new Date().toString());
-            Log.i("location", "" + mCurrentLocation + new Date().toString());
-            isUserInRadius();
-            CameraUpdate cameraUpdate = CameraUpdateFactory
-                    .newLatLng(LocationUtilKt.LocationToLatLng(mCurrentLocation));
-            mMap.animateCamera(cameraUpdate);
-        });
+        // When location changes, call a method with the location
+        new LocationLiveData(getContext()).observe(this, this::locationChangeListener);
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
                 chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().chapterList.setAdapter(adapter);
+
         initViewExpositionsListener();
         initNextChapterListener();
         initContributorList(playViewModel);
-        getActivity().setTitle("Play Story");
+
         // Disable next chapter button until user is in radius
         userInNextChapterRadius = false;
     }
@@ -145,6 +138,18 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         mapFragment.getMapAsync(this);
 
         return dataBinding.getRoot();
+    }
+
+    private void locationChangeListener(Location currentLocation) {
+        mCurrentLocation = currentLocation;
+        binding.get().latitudeText.setText(Double.toString(mCurrentLocation.getLatitude()));
+        binding.get().longitudeText.setText(Double.toString(mCurrentLocation.getLongitude()));
+        binding.get().lastUpdateTimeText.setText(new Date().toString());
+        Log.i(TAG, "" + mCurrentLocation + new Date().toString());
+        isUserInRadius();
+        CameraUpdate cameraUpdate = CameraUpdateFactory
+                .newLatLng(LocationUtilKt.LocationToLatLng(mCurrentLocation));
+        mMap.animateCamera(cameraUpdate);
     }
 
     private void initViewExpositionsListener() {
@@ -206,6 +211,13 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             storyPlayManager.goToNextChapter();
             Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager
                     .getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
+
+            // Show chapter id + 1 on marker
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .title("" + storyPlayManager.getCurrentChapter().getId())
+                    .position(storyPlayManager.getCurrentChapter().getLocation());
+            mMap.addMarker(markerOptions);
+
         } catch (ArrayIndexOutOfBoundsException e) {
             Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
             finalChapterEvent();
@@ -216,10 +228,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         new AlertDialog.Builder(getContext())
                 .setTitle("Finish Story")
                 .setMessage("Do you want to finish the story?")
-                .setPositiveButton("yes", (dialogInterface, i) -> {
-                    getActivity().onBackPressed();
-                }).setNegativeButton("no", (dialogInterface, i) -> {
-        })
+                .setPositiveButton("yes", (dialogInterface, i) -> getActivity().onBackPressed())
+                .setNegativeButton("no", (dialogInterface, i) -> {
+                })
                 .create().show();
     }
 
