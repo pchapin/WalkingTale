@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
                     break;
                 case R.id.action_play:
                     break;
+                case R.id.action_profile:
+                    navigationController.navigateToProfile();
+                    break;
             }
             return true;
         });

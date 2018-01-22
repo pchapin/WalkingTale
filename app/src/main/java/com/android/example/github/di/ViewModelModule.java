@@ -8,7 +8,7 @@ import com.android.example.github.ui.create.CreateViewModel;
 import com.android.example.github.ui.feed.FeedViewModel;
 import com.android.example.github.ui.overview.OverviewViewModel;
 import com.android.example.github.ui.play.PlayViewModel;
-import com.android.example.github.ui.search.SearchFragment;
+import com.android.example.github.ui.profile.ProfileViewModel;
 import com.android.example.github.ui.search.SearchViewModel;
 import com.android.example.github.viewmodel.GithubViewModelFactory;
 
@@ -47,6 +47,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SearchViewModel.class)
     abstract ViewModel bindSearchViewModel(SearchViewModel searchViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProfileViewModel.class)
+    abstract ViewModel bindProfileViewModel(ProfileViewModel profileViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(GithubViewModelFactory factory);

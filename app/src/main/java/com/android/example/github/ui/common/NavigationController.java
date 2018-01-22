@@ -25,6 +25,7 @@ import com.android.example.github.ui.create.CreateFragment;
 import com.android.example.github.ui.feed.FeedFragment;
 import com.android.example.github.ui.overview.OverviewFragment;
 import com.android.example.github.ui.play.PlayFragment;
+import com.android.example.github.ui.profile.ProfileFragment;
 import com.android.example.github.ui.search.SearchFragment;
 
 import javax.inject.Inject;
@@ -86,6 +87,14 @@ public class NavigationController {
         SearchFragment searchFragment = new SearchFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, searchFragment)
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+    }
+
+    public void navigateToProfile() {
+        ProfileFragment profileFragment = new ProfileFragment();
+        fragmentManager.beginTransaction()
+                .replace(containerId, profileFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
