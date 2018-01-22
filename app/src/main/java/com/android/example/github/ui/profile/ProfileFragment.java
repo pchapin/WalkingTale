@@ -19,7 +19,6 @@ package com.android.example.github.ui.profile;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
@@ -37,8 +36,6 @@ import com.android.example.github.databinding.FragmentProfileBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
 
 import javax.inject.Inject;
 
@@ -60,10 +57,7 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     private ProfileViewModel ProfileViewModel;
 
     public static ProfileFragment create() {
-        ProfileFragment repoFragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        repoFragment.setArguments(args);
-        return repoFragment;
+        return new ProfileFragment();
     }
 
     @NonNull
@@ -76,18 +70,6 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ProfileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
-        Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            ProfileViewModel.setId(args.getString(REPO_NAME_KEY));
-        } else {
-            ProfileViewModel.setId(null);
-        }
-        LiveData<Resource<Repo>> repo = ProfileViewModel.getRepo();
-        repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-        });
     }
 
     @Nullable
