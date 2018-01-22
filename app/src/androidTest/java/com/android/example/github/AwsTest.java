@@ -61,6 +61,7 @@ public class AwsTest {
             .addCallAdapterFactory(new LiveDataCallAdapterFactory())
             .build();
     private GithubService githubService = retrofit.create(GithubService.class);
+    private String storyToDelete;
 
     @Before
     public void init() {
@@ -79,6 +80,11 @@ public class AwsTest {
 
     @Test
     public void testPutStory() throws IOException {
+        Response<Repo> response = putStory();
+        assertEquals(200, response.code());
+    }
+
+    public Response<Repo> putStory() throws IOException {
         Repo repo = ExampleRepo.Companion.getRandomRepo();
         repo.name = "name";
         repo.description = "desc";
@@ -95,13 +101,12 @@ public class AwsTest {
         chapter.setExpositions(expositions);
         repo.chapters.add(chapter);
 
-        Response<Repo> response = githubService.putStory(accessToken, repo).execute();
-        Log.i(TAG, "message " + response.message());
-        Log.i(TAG, "body " + response.body());
-        Log.i(TAG, "headers " + response.headers());
-        Log.i(TAG, "error body " + response.errorBody());
-        Log.i(TAG, "repo " + repo);
+        return githubService.putStory(accessToken, repo).execute();
+    }
 
+    @Test
+    public void testDeleteStory() throws IOException {
+        Response<Void> response = githubService.deleteStory(accessToken, putStory().body().id).execute();
         assertEquals(200, response.code());
     }
 

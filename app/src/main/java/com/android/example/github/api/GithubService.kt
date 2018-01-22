@@ -36,6 +36,10 @@ interface GithubService {
     fun putStory(@Header("Authorization") authToken: String,
                  @Body repo: Repo): Call<Repo>
 
+    @DELETE("stories/{id}")
+    fun deleteStory(@Header("Authorization") authToken: String,
+                    @Path("id") id: String): Call<Void>
+
     @GET("users")
     fun getAllUsers(@Header("Authorization") authToken: String): Call<List<User>>
 
