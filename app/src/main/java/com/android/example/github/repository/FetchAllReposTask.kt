@@ -48,14 +48,15 @@ class FetchAllReposTask internal constructor(private val githubService: GithubSe
         try {
             Log.i(TAG, "Trying to get stories")
             val s = githubService.getAllRepos(MainActivity.cognitoToken).execute()
-            Log.i(TAG, "Get stories result: " + s.body())
             if (s.isSuccessful) {
+                Log.i(TAG, "Get stories success: " + s.body())
                 githubDb.beginTransaction()
                 repoDao.insertRepos(s.body()!!.items)
                 githubDb.setTransactionSuccessful()
                 githubDb.endTransaction()
                 result.postValue(Resource(Status.SUCCESS, s.body()!!.items, s.message()))
             } else {
+                Log.i(TAG, "Get stories fail: " + s.message())
                 result.postValue(Resource(Status.ERROR, ArrayList(), s.message()))
             }
         } catch (e: IOException) {

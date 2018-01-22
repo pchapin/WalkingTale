@@ -26,6 +26,7 @@ import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.aws.CognitoLogin;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
 import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.User;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
 import com.android.example.github.walkingTale.Exposition;
@@ -39,6 +40,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -101,6 +103,14 @@ public class AwsTest {
         Log.i(TAG, "repo " + repo);
 
         assertEquals(200, response.code());
+    }
+
+    @Test
+    public void testListUsers() throws IOException {
+        // Make GET request to list endpoint
+        Response<List<User>> response = githubService.getAllUsers(accessToken).execute();
+        assertEquals(200, response.code());
+        assertNotNull(response.body());
     }
 
     @Test

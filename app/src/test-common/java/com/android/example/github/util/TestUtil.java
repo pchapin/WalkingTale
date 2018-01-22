@@ -26,8 +26,7 @@ import java.util.List;
 public class TestUtil {
 
     public static User createUser(String login) {
-        return new User(login, null,
-                login + " name", null, null, null);
+        return null;
     }
 
     public static List<Repo> createRepos(int count, String owner, String name,

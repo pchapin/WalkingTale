@@ -17,38 +17,17 @@
 package com.android.example.github.db;
 
 import android.arch.persistence.room.TypeConverter;
-import android.arch.persistence.room.util.StringUtil;
-import android.util.Log;
 
-import com.android.example.github.vo.Repo;
 import com.android.example.github.walkingTale.Chapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class GithubTypeConverters {
     private static Gson gson = new Gson();
-
-    @TypeConverter
-    public static List<String> stringToIntList(String data) {
-        if (data == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(data.split("\\s+"));
-    }
-
-    @TypeConverter
-    public static String intListToString(List<String> ints) {
-        StringBuilder result = new StringBuilder();
-        for (String s : ints) {
-            result.append(s);
-        }
-        return result.toString();
-    }
 
     @TypeConverter
     public static List<Chapter> stringToChapterList(String data) {
@@ -65,5 +44,16 @@ public class GithubTypeConverters {
     @TypeConverter
     public static String chapterListToString(List<Chapter> chapters) {
         return gson.toJson(chapters);
+    }
+
+    @TypeConverter
+    public static String listOfStringToString(List<String> stringList) {
+        return gson.toJson(stringList);
+    }
+
+    @TypeConverter
+    public static List<String> stringToListOfString(String jsonString) {
+        return gson.fromJson(jsonString, new TypeToken<List<String>>() {
+        }.getType());
     }
 }

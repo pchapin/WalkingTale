@@ -22,9 +22,6 @@ public class AuthenticatorActivity extends AppCompatActivity {
 
     static final String COGNITO_TOKEN_KEY = "COGNITO_TOKEN_KEY";
     static final String COGNITO_USERNAME_KEY = "COGNITO_USERNAME_KEY";
-    // Keys for shared preferences
-    private static final String SP_USERNAME_KEY = "username";
-    private static final String SP_PASSWORD_KEY = "password";
 
     final String TAG = this.getClass().getSimpleName();
 

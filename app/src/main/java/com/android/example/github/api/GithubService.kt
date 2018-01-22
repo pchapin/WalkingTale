@@ -18,6 +18,7 @@ package com.android.example.github.api
 
 import android.arch.lifecycle.LiveData
 import com.android.example.github.vo.Repo
+import com.android.example.github.vo.User
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -30,6 +31,9 @@ interface GithubService {
 
     @GET("stories")
     fun getAllRepos(@Header("Authorization") authToken: String): Call<RepoSearchResponse>
+
+    @GET("users")
+    fun getAllUsers(@Header("Authorization") authToken: String): Call<List<User>>
 
     @PUT("stories")
     fun putStory(@Header("Authorization") authToken: String,

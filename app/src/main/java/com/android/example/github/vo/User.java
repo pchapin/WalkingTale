@@ -17,34 +17,25 @@
 package com.android.example.github.vo;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Index;
+import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
-import com.google.gson.annotations.SerializedName;
+import com.android.example.github.db.GithubTypeConverters;
+
+import java.util.List;
 
 @Entity(primaryKeys = "login")
+@TypeConverters(GithubTypeConverters.class)
 public class User {
-    @SerializedName("login")
-    @NonNull
-    public final String login;
-    @SerializedName("avatar_url")
-    public final String avatarUrl;
-    @SerializedName("name")
-    public final String name;
-    @SerializedName("company")
-    public final String company;
-    @SerializedName("repos_url")
-    public final String reposUrl;
-    @SerializedName("blog")
-    public final String blog;
 
-    public User(String login, String avatarUrl, String name, String company,
-                String reposUrl, String blog) {
+    @NonNull
+    public String login;
+    public List<String> createdStories;
+    public List<String> playedStories;
+
+    public User(String login, List<String> createdStories, List<String> playedStories) {
         this.login = login;
-        this.avatarUrl = avatarUrl;
-        this.name = name;
-        this.company = company;
-        this.reposUrl = reposUrl;
-        this.blog = blog;
+        this.createdStories = createdStories;
+        this.playedStories = playedStories;
     }
 }
