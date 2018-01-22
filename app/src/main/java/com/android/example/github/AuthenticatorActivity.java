@@ -88,7 +88,7 @@ public class AuthenticatorActivity extends AppCompatActivity {
         finish();
 
 
-        // TODO: 1/19/18 uncomment, or add a better login screen
+        // TODO: 1/19/18 uncomment, or add a better id screen
 //        // Start the authentication UI
 //        AuthUIConfiguration config = new AuthUIConfiguration.Builder()
 //                .userPools(true)

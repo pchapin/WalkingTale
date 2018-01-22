@@ -32,10 +32,14 @@ interface GithubService {
     @GET("stories")
     fun getAllRepos(@Header("Authorization") authToken: String): Call<RepoSearchResponse>
 
-    @GET("users")
-    fun getAllUsers(@Header("Authorization") authToken: String): Call<List<User>>
-
     @PUT("stories")
     fun putStory(@Header("Authorization") authToken: String,
                  @Body repo: Repo): Call<Repo>
+
+    @GET("users")
+    fun getAllUsers(@Header("Authorization") authToken: String): Call<List<User>>
+
+    @PUT("users")
+    fun putUser(@Header("Authorization") authToken: String,
+                @Body user: User): Call<User>
 }

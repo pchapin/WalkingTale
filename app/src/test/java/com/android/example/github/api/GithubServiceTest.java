@@ -104,7 +104,7 @@
 //
 ////        Repo.Owner owner = repo.owner;
 ////        assertThat(owner, notNullValue());
-////        assertThat(owner.login, is("yigit"));
+////        assertThat(owner.id, is("yigit"));
 ////        assertThat(owner.url, is("https://api.github.com/users/yigit"));
 //
 //        Repo repo2 = repos.get(1);

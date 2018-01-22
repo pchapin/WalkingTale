@@ -46,7 +46,7 @@
 //        assertThat(loaded.name, is("bar"));
 //        assertThat(loaded.description, is("desc"));
 ////        assertThat(loaded.owner, notNullValue());
-////        assertThat(loaded.owner.login, is("foo"));
+////        assertThat(loaded.owner.id, is("foo"));
 //    }
 //
 //    @Test

@@ -107,8 +107,20 @@ public class AwsTest {
 
     @Test
     public void testListUsers() throws IOException {
-        // Make GET request to list endpoint
         Response<List<User>> response = githubService.getAllUsers(accessToken).execute();
+        assertEquals(200, response.code());
+        assertNotNull(response.body());
+        for (User user : response.body()) {
+            Log.i(TAG, user.createdStories.toString());
+        }
+    }
+
+    @Test
+    public void testPutUser() throws IOException {
+        User user = new User("", new ArrayList<>(), new ArrayList<>());
+        user.createdStories.add("123");
+        user.playedStories.add("321");
+        Response<User> response = githubService.putUser(accessToken, user).execute();
         assertEquals(200, response.code());
         assertNotNull(response.body());
     }
