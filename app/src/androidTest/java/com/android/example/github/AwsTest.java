@@ -122,12 +122,22 @@ public class AwsTest {
 
     @Test
     public void testPutUser() throws IOException {
+        Response<User> response = putUser();
+        assertEquals(200, response.code());
+        assertNotNull(response.body());
+    }
+
+    public Response<User> putUser() throws IOException {
         User user = new User("", new ArrayList<>(), new ArrayList<>());
         user.createdStories.add("123");
         user.playedStories.add("321");
-        Response<User> response = githubService.putUser(accessToken, user).execute();
+        return githubService.putUser(accessToken, user).execute();
+    }
+
+    @Test
+    public void testDeleteUser() throws IOException {
+        Response<Void> response = githubService.deleteUser(accessToken, putUser().body().id).execute();
         assertEquals(200, response.code());
-        assertNotNull(response.body());
     }
 
     @Test
