@@ -20,12 +20,6 @@
         android:title="create"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_play"
-        android:enabled="true"
-        android:icon="@drawable/ic_play_arrow_black_36dp"
-        android:title="play"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_profile"
         android:enabled="true"
         android:icon="@drawable/ic_account_box_black_36dp"

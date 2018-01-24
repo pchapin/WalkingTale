@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
                     if (PermissionManager.checkLocationPermission(this))
                         navigationController.navigateToCreateStory();
                     break;
-                case R.id.action_play:
-                    break;
                 case R.id.action_profile:
                     navigationController.navigateToProfile();
                     break;
