@@ -47,7 +47,7 @@ class AppModule {
 
     @Singleton @Provides
     GithubDb provideDb(Application app) {
-        return Room.databaseBuilder(app, GithubDb.class,"github.db").build();
+        return Room.databaseBuilder(app, GithubDb.class, "github.db").fallbackToDestructiveMigration().build();
     }
 
     @Singleton @Provides
