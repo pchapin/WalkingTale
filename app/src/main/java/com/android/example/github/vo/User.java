@@ -32,10 +32,14 @@ public class User {
     public String id;
     public List<String> createdStories;
     public List<String> playedStories;
+    public String name;
+    public String userImage;
 
-    public User(@NonNull String id, List<String> createdStories, List<String> playedStories) {
+    public User(@NonNull String id, List<String> createdStories, List<String> playedStories, String name, String userImage) {
         this.id = id;
         this.createdStories = createdStories;
         this.playedStories = playedStories;
+        this.name = name;
+        this.userImage = userImage;
     }
 }

@@ -78,12 +78,6 @@ public class AwsTest {
         assertNotNull(response.body().getItems());
     }
 
-    @Test
-    public void testPutStory() throws IOException {
-        Response<Repo> response = putStory();
-        assertEquals(200, response.code());
-    }
-
     public Response<Repo> putStory() throws IOException {
         Repo repo = ExampleRepo.Companion.getRandomRepo();
         repo.name = "name";
@@ -120,15 +114,8 @@ public class AwsTest {
         }
     }
 
-    @Test
-    public void testPutUser() throws IOException {
-        Response<User> response = putUser();
-        assertEquals(200, response.code());
-        assertNotNull(response.body());
-    }
-
     public Response<User> putUser() throws IOException {
-        User user = new User("", new ArrayList<>(), new ArrayList<>());
+        User user = new User("", new ArrayList<>(), new ArrayList<>(), "name", "https://i.imgur.com/KWl6pqT.png");
         user.createdStories.add("123");
         user.playedStories.add("321");
         return githubService.putUser(accessToken, user).execute();

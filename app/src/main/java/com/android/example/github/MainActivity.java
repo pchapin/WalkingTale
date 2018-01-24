@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
         });
 
         if (savedInstanceState == null) {
-            navigationController.navigateToStoryFeed();
+            navigationController.navigateToProfile();
         }
     }
 

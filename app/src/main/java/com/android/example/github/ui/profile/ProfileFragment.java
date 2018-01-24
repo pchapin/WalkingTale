@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TabHost;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
@@ -56,10 +57,6 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     AutoClearedValue<FragmentProfileBinding> binding;
     private ProfileViewModel ProfileViewModel;
 
-    public static ProfileFragment create() {
-        return new ProfileFragment();
-    }
-
     @NonNull
     @Override
     public LifecycleRegistry getLifecycle() {
@@ -70,6 +67,42 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ProfileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
+        initTabHost();
+        // TODO: 1/24/18 get user from viewmodel
+//        binding.get().setUser(get user from view model);
+    }
+
+    private void initTabHost() {
+        TabHost tabHost = binding.get().tabs;
+        tabHost.setup();
+
+        TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
+        TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
+        TabHost.TabSpec tab3 = tabHost.newTabSpec("Third Tab");
+
+        tab1.setIndicator("Played");
+        tab1.setContent(binding.get().tab1.getId());
+
+        tab2.setIndicator("Created");
+        tab2.setContent(binding.get().tab2.getId());
+
+        tab3.setIndicator("Following");
+        tab3.setContent(binding.get().tab3.getId());
+
+        tabHost.addTab(tab1);
+        tabHost.addTab(tab2);
+        tabHost.addTab(tab3);
+
+        initTabListener();
+    }
+
+    private void initTabListener() {
+        binding.get().tabs.setOnTabChangedListener(s -> {
+            switch (binding.get().tabs.getCurrentTab()) {
+                case 0:
+                    break;
+            }
+        });
     }
 
     @Nullable
