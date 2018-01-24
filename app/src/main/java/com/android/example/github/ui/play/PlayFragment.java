@@ -41,12 +41,14 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentPlayBinding;
 import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.common.ChapterAdapter;
+import com.android.example.github.ui.common.ExpositionAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.LocationUtilKt;
 import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.maps.CameraUpdate;
@@ -57,8 +59,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -73,7 +77,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentPlayBinding> binding;
-    AutoClearedValue<ChapterAdapter> adapter;
+    AutoClearedValue<ExpositionAdapter> adapter;
     StoryPlayManager storyPlayManager;
     private PlayViewModel playViewModel;
     private Location mCurrentLocation;
@@ -112,14 +116,15 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         // When location changes, call a method with the location
         new LocationLiveData(getContext()).observe(this, this::locationChangeListener);
 
-        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
-                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().data.id));
+        ExpositionAdapter adapter = new ExpositionAdapter(dataBindingComponent, false,
+                exposition -> {
+                });
         this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().chapterList.setAdapter(adapter);
+        binding.get().expositionList.setAdapter(adapter);
 
         initViewExpositionsListener();
         initNextChapterListener();
-        initContributorList(playViewModel);
+        initExpositionList(playViewModel);
 
         // Disable next chapter button until user is in radius
         userInNextChapterRadius = false;
@@ -156,12 +161,12 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         ToggleButton toggle = binding.get().viewExpositions;
         toggle.setTextOn("Hide Expositions");
         toggle.setTextOff("View Expositions");
-        RecyclerView chapterList = binding.get().chapterList;
+        RecyclerView expositionList = binding.get().expositionList;
         toggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                chapterList.setVisibility(View.VISIBLE);
+                expositionList.setVisibility(View.VISIBLE);
             } else {
-                chapterList.setVisibility(View.GONE);
+                expositionList.setVisibility(View.GONE);
             }
         });
         toggle.performClick();
@@ -178,10 +183,14 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         });
     }
 
-    private void initContributorList(PlayViewModel viewModel) {
+    private void initExpositionList(PlayViewModel viewModel) {
         viewModel.getRepo().observe(this, listResource -> {
             if (listResource != null && listResource.data != null) {
-                adapter.get().replace(listResource.data.chapters);
+                List<Exposition> expositionList = new ArrayList<>();
+                for (Chapter chapter : listResource.data.chapters) {
+                    expositionList.addAll(chapter.getExpositions());
+                }
+                adapter.get().replace(expositionList);
             } else {
                 adapter.get().replace(Collections.emptyList());
             }
