@@ -55,7 +55,7 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentProfileBinding> binding;
-    private ProfileViewModel ProfileViewModel;
+    private ProfileViewModel profileViewModel;
 
     @NonNull
     @Override
@@ -66,10 +66,12 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ProfileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
+        profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
         initTabHost();
         // TODO: 1/24/18 get user from viewmodel
-//        binding.get().setUser(get user from view model);
+        profileViewModel.user.observe(this, userResource -> {
+            if (userResource != null) binding.get().setUser(userResource.data);
+        });
     }
 
     private void initTabHost() {

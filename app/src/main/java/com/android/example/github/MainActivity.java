@@ -18,6 +18,8 @@ package com.android.example.github;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
     @Inject
     NavigationController navigationController;
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+    private MainViewModel mainViewModel;
+
 
     @NonNull
     @Override
@@ -53,10 +59,19 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         cognitoToken = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_TOKEN_KEY);
         username = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_USERNAME_KEY);
 
+        mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
+
+        initBottomNavigationListener();
+
+        if (savedInstanceState == null) {
+            navigationController.navigateToProfile();
+        }
+    }
+
+    private void initBottomNavigationListener() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -76,10 +91,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
             }
             return true;
         });
-
-        if (savedInstanceState == null) {
-            navigationController.navigateToStoryFeed();
-        }
     }
 
     @Override
