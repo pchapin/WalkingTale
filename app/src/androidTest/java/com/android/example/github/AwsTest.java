@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -52,6 +53,8 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class AwsTest {
 
+    private final String USER_ID = "us-east-1:62348d01-af01-440e-9d9f-16b59d80cbdc";
+    private final String USERNAME = "todd";
     private Context context = InstrumentationRegistry.getTargetContext();
     private String TAG = this.getClass().getSimpleName();
     private String accessToken;
@@ -61,7 +64,6 @@ public class AwsTest {
             .addCallAdapterFactory(new LiveDataCallAdapterFactory())
             .build();
     private GithubService githubService = retrofit.create(GithubService.class);
-    private String storyToDelete;
 
     @Before
     public void init() {
@@ -116,14 +118,23 @@ public class AwsTest {
 
     public Response<User> putUser() throws IOException {
         User user = new User("", new ArrayList<>(), new ArrayList<>(), "name", "https://i.imgur.com/KWl6pqT.png");
+        user.id = String.valueOf(new Random().nextInt());
         user.createdStories.add("123");
         user.playedStories.add("321");
+        user.name = USERNAME;
+        user.userImage = "https://i.imgur.com/g3D5jNz.jpg";
         return githubService.putUser(accessToken, user).execute();
     }
 
     @Test
     public void testDeleteUser() throws IOException {
         Response<Void> response = githubService.deleteUser(accessToken, putUser().body().id).execute();
+        assertEquals(200, response.code());
+    }
+
+    @Test
+    public void testGetUser() throws IOException {
+        Response<User> response = githubService.getUser(accessToken, USER_ID).execute();
         assertEquals(200, response.code());
     }
 

@@ -80,6 +80,7 @@ public class AuthenticatorActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         String username = new JWT(cognitoToken).getClaim("cognito:username").asString();
+        Log.i(TAG, identityManager.getCachedUserID());
         final Intent intent = new Intent(this, MainActivity.class)
                 .putExtra(COGNITO_TOKEN_KEY, cognitoToken)
                 .putExtra(COGNITO_USERNAME_KEY, username)

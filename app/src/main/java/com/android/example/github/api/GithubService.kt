@@ -50,4 +50,8 @@ interface GithubService {
     @DELETE("users/{id}")
     fun deleteUser(@Header("Authorization") authToken: String,
                    @Path("id") id: String): Call<Void>
+
+    @GET("users/{id}")
+    fun getUser(@Header("Authorization") authToken: String,
+                @Path("id") id: String): Call<User>
 }
