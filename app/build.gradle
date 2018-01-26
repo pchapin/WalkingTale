@@ -22,7 +22,10 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.android.example.github"
-        minSdkVersion 21
+        // Note the only reason we are using such a high minSdkVersion is that
+        // the aws auth ui requires it, if we used a different sign in solution
+        // we could knock the min version down a few
+        minSdkVersion 23
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -90,15 +93,19 @@ dependencies {
 
     // Amazon Web Services
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.amazonaws:aws-android-sdk-core:2.6.12'
-    compile 'com.amazonaws:aws-android-sdk-auth-core:2.6.12'
-    compile 'com.amazonaws:aws-android-sdk-auth-ui:2.6.0'
-    compile 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.12'
-    compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.6.12'
-    compile 'com.amazonaws:aws-android-sdk-pinpoint:2.6.12'
-    compile 'com.amazonaws:aws-android-sdk-s3:2.6.13'
+    compile "com.amazonaws:aws-android-sdk-core:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-auth-core:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-auth-userpools:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
+    compile("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
+    compile "com.android.support:appcompat-v7:$aws_version"
+    compile("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
 
-
+    // Google sign in
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation("com.amazonaws:aws-android-sdk-auth-google:$aws_version") { transitive = true }
 
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"

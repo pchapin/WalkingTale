@@ -26,7 +26,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
 
@@ -35,10 +37,13 @@ import javax.inject.Inject;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MainActivity extends AppCompatActivity implements LifecycleRegistryOwner,
+public class MainActivity extends AppCompatActivity implements
+        LifecycleRegistryOwner,
         HasSupportFragmentInjector {
+
     public static String cognitoToken;
     public static String username;
+    private final String TAG = this.getClass().getSimpleName();
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
@@ -59,8 +64,11 @@ public class MainActivity extends AppCompatActivity implements LifecycleRegistry
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cognitoToken = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_TOKEN_KEY);
-        username = getIntent().getExtras().getString(AuthenticatorActivity.COGNITO_USERNAME_KEY);
+
+        cognitoToken = "";
+        username = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        Log.i(TAG, username);
+        Log.i(TAG, cognitoToken);
 
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
 
