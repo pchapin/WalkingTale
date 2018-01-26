@@ -73,7 +73,7 @@
 
                 <RatingBar
                     android:id="@+id/rating"
-                    android:layout_width="239dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:isIndicator="true"
                     android:numStars="5"
@@ -86,7 +86,7 @@
                 <TextView
                     android:id="@+id/name"
                     style="@style/TextAppearance.AppCompat.Headline"
-                    android:layout_width="265dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans"
@@ -103,7 +103,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans"
-                    android:text="@{repo.name}"
+                    android:text="@{repo.username}"
                     android:textSize="24sp"
                     app:visibleGone="@{repo != null}"
                     tools:text="author" />
