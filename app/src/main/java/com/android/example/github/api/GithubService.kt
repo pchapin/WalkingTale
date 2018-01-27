@@ -53,5 +53,5 @@ interface GithubService {
 
     @GET("users/{id}")
     fun getUser(@Header("Authorization") authToken: String,
-                @Path("id") id: String): Call<User>
+                @Path("id") id: String): LiveData<ApiResponse<User>>
 }

@@ -33,7 +33,7 @@ public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<User>> user = new MutableLiveData<>();
 
-    MutableLiveData<String> userId = new MutableLiveData<>();
+    private MutableLiveData<String> userId = new MutableLiveData<>();
 
     @Inject
     ProfileViewModel(RepoRepository repository, UserRepository userRepository) {

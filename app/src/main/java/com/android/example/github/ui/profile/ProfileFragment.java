@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
 
+import com.android.example.github.MainActivity;
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentProfileBinding;
@@ -69,6 +70,7 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
         initTabHost();
         // TODO: 1/24/18 get user from viewmodel
+        profileViewModel.setUserId(MainActivity.cognitoId);
         profileViewModel.user.observe(this, userResource -> {
             if (userResource != null) binding.get().setUser(userResource.data);
         });

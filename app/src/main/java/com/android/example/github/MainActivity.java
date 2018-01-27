@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
         initBottomNavigationListener();
 
         if (savedInstanceState == null) {
-            navigationController.navigateToStoryFeed();
+            navigationController.navigateToProfile();
         }
     }
 

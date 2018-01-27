@@ -158,7 +158,7 @@ public class RepoRepository {
             protected RepoSearchResponse processResponse(ApiResponse<RepoSearchResponse> response) {
                 RepoSearchResponse body = response.getBody();
                 if (body != null) {
-                    body.setNextPage(response.getNextPage());
+//                    body.setNextPage(response.getNextPage());
                 }
                 return body;
             }

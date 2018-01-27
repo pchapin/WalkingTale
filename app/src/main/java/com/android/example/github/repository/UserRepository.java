@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.android.example.github.AppExecutors;
+import com.android.example.github.MainActivity;
 import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.db.UserDao;
@@ -67,8 +68,7 @@ public class UserRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<User>> createCall() {
-                // TODO: 1/17/18 this
-                return null;
+                return githubService.getUser(MainActivity.cognitoToken, login);
             }
         }.asLiveData();
     }
