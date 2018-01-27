@@ -37,6 +37,7 @@ import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentProfileBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
+import com.android.example.github.ui.common.RepoListAdapter;
 import com.android.example.github.util.AutoClearedValue;
 
 import javax.inject.Inject;
@@ -56,7 +57,18 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentProfileBinding> binding;
+    AutoClearedValue<RepoListAdapter> adapter;
     private ProfileViewModel profileViewModel;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        FragmentProfileBinding dataBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_profile, container, false, dataBindingComponent);
+        binding = new AutoClearedValue<>(this, dataBinding);
+        return dataBinding.getRoot();
+    }
 
     @NonNull
     @Override
@@ -68,12 +80,21 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
-        initTabHost();
-        // TODO: 1/24/18 get user from viewmodel
+
+        RepoListAdapter repoListAdapter = new RepoListAdapter(dataBindingComponent, false, repo -> {
+            // TODO: 1/27/18 fetch user from repo.userm, then set the id from that user
+            profileViewModel.setUserId(repo.username);
+        });
+        binding.get().repoList.setAdapter(repoListAdapter);
+        adapter = new AutoClearedValue<>(this, repoListAdapter);
+
         profileViewModel.setUserId(MainActivity.cognitoId);
         profileViewModel.user.observe(this, userResource -> {
             if (userResource != null) binding.get().setUser(userResource.data);
         });
+
+        initRecyclerView();
+        initTabHost();
     }
 
     private void initTabHost() {
@@ -109,13 +130,14 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
         });
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        FragmentProfileBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.fragment_profile, container, false, dataBindingComponent);
-        binding = new AutoClearedValue<>(this, dataBinding);
-        return dataBinding.getRoot();
+    private void initRecyclerView() {
+        profileViewModel.usersRepos.observe(this, result -> {
+            if (result != null && result.data != null) {
+                adapter.get().replace(result.data);
+            }
+            binding.get().executePendingBindings();
+        });
     }
+
+
 }

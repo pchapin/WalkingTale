@@ -24,14 +24,19 @@ import android.arch.lifecycle.ViewModel;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.repository.UserRepository;
 import com.android.example.github.util.AbsentLiveData;
+import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.User;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<User>> user = new MutableLiveData<>();
+
+    LiveData<Resource<List<Repo>>> usersRepos = new MutableLiveData<>();
 
     private MutableLiveData<String> userId = new MutableLiveData<>();
 
@@ -40,6 +45,11 @@ public class ProfileViewModel extends ViewModel {
         user = Transformations.switchMap(userId, input -> {
             if (userId == null) return AbsentLiveData.create();
             else return userRepository.loadUser(input);
+        });
+
+        usersRepos = Transformations.switchMap(userId, input -> {
+            if (userId == null) return AbsentLiveData.create();
+            else return repository.getAllRepos();
         });
     }
 
