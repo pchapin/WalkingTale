@@ -26,11 +26,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
+import com.auth0.android.jwt.JWT;
 
 import javax.inject.Inject;
 
@@ -42,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements
         HasSupportFragmentInjector {
 
     public static String cognitoToken;
-    public static String username;
+    public static String cognitoId;
+    public static String cognitoUsername;
+
     private final String TAG = this.getClass().getSimpleName();
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
@@ -65,19 +67,19 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cognitoToken = "";
-        username = IdentityManager.getDefaultIdentityManager().getCachedUserID();
-        Log.i(TAG, username);
-        Log.i(TAG, cognitoToken);
+        cognitoToken = IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
+        cognitoId = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        cognitoUsername = new JWT(cognitoToken).getClaim("cognito:username").asString();
 
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
 
         initBottomNavigationListener();
 
         if (savedInstanceState == null) {
-            navigationController.navigateToProfile();
+            navigationController.navigateToStoryFeed();
         }
     }
+
 
     private void initBottomNavigationListener() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

@@ -47,6 +47,7 @@ class FetchAllReposTask internal constructor(private val githubService: GithubSe
 
         try {
             Log.i(TAG, "Trying to get stories")
+            Log.i(TAG, "" + MainActivity.cognitoToken)
             val response = githubService.getAllRepos(MainActivity.cognitoToken).execute()
             if (response.isSuccessful) {
                 Log.i(TAG, "Get stories success: " + response.body())

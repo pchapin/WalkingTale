@@ -75,6 +75,7 @@ public class AwsTest {
     @Test
     public void testListStories() throws IOException {
         // Make GET request to list endpoint
+        Log.i(TAG, accessToken);
         Response<RepoSearchResponse> response = githubService.getAllRepos(accessToken).execute();
         assertEquals(200, response.code());
         assertNotNull(response.body().getItems());
