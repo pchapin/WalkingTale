@@ -32,6 +32,9 @@ interface GithubService {
     @GET("stories")
     fun getAllRepos(@Header("Authorization") authToken: String): LiveData<ApiResponse<List<Repo>>>
 
+    @GET("stories")
+    fun getAllReposTesting(@Header("Authorization") authToken: String): Call<List<Repo>>
+
     @PUT("stories")
     fun putStory(@Header("Authorization") authToken: String,
                  @Body repo: Repo): Call<Repo>

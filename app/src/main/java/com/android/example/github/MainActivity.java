@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements
     ViewModelProvider.Factory viewModelFactory;
     private MainViewModel mainViewModel;
 
-
     @NonNull
     @Override
     public LifecycleRegistry getLifecycle() {
@@ -80,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements
             navigationController.navigateToStoryFeed();
         }
     }
-
 
     private void initBottomNavigationListener() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

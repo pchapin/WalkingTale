@@ -22,7 +22,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.android.example.github.api.GithubService;
-import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.aws.CognitoLogin;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
 import com.android.example.github.vo.Repo;
@@ -74,11 +73,9 @@ public class AwsTest {
 
     @Test
     public void testListStories() throws IOException {
-        // Make GET request to list endpoint
-        Log.i(TAG, accessToken);
-        Response<RepoSearchResponse> response = githubService.getAllRepos(accessToken).execute();
+        Response<List<Repo>> response = githubService.getAllReposTesting(accessToken).execute();
         assertEquals(200, response.code());
-        assertNotNull(response.body().getItems());
+        assertNotNull(response.body());
     }
 
     public Response<Repo> putStory() throws IOException {
