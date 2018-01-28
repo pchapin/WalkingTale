@@ -47,8 +47,6 @@ import javax.inject.Inject;
  */
 public class ProfileFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 
-    private static final String REPO_NAME_KEY = "repo_name";
-
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     @Inject
@@ -82,7 +80,6 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
 
         RepoListAdapter repoListAdapter = new RepoListAdapter(dataBindingComponent, false, repo -> {
-            // TODO: 1/27/18 fetch user from repo.userm, then set the id from that user
             profileViewModel.setUserId(repo.username);
         });
         binding.get().repoList.setAdapter(repoListAdapter);
