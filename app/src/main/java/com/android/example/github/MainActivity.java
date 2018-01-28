@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements
         LifecycleRegistryOwner,
         HasSupportFragmentInjector {
 
+    @Deprecated
     public static String cognitoToken;
     public static String cognitoId;
     public static String cognitoUsername;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements
         initBottomNavigationListener();
 
         if (savedInstanceState == null) {
-            navigationController.navigateToProfile();
+            navigationController.navigateToStoryFeed();
         }
     }
 

@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.android.example.github.AppExecutors;
+import com.android.example.github.MainActivity;
 import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
@@ -74,11 +75,38 @@ public class RepoRepository {
         return saveStoryTask.getLiveData();
     }
 
+//    public LiveData<Resource<List<Repo>>> getAllRepos() {
+//        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService, db, repoDao);
+//        appExecutors.networkIO().execute(fetchAllReposTask);
+//        return fetchAllReposTask.getLiveData();
+//    }
+
     public LiveData<Resource<List<Repo>>> getAllRepos() {
-        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService, db, repoDao);
-        appExecutors.networkIO().execute(fetchAllReposTask);
-        return fetchAllReposTask.getLiveData();
+        return new NetworkBoundResource<List<Repo>, List<Repo>>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull List<Repo> item) {
+                repoDao.insertRepos(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Repo> data) {
+                return data == null;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Repo>> loadFromDb() {
+                return repoDao.loadAll();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<List<Repo>>> createCall() {
+                return githubService.getAllRepos(MainActivity.cognitoToken);
+            }
+        }.asLiveData();
     }
+
 
     public LiveData<Resource<Repo>> loadRepo(String id) {
         return new NetworkBoundResource<Repo, Repo>(appExecutors) {
