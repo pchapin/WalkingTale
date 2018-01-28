@@ -48,7 +48,7 @@
 //import static com.android.example.github.util.LiveDataTestUtil.getValue;
 //import static org.hamcrest.CoreMatchers.is;
 //import static org.hamcrest.core.IsNull.notNullValue;
-//import static org.junit.Assert.assertThat;
+//import stat ic org.junit.Assert.assertThat;
 //
 //@RunWith(JUnit4.class)
 //public class GithubServiceTest {
