@@ -75,12 +75,6 @@ public class RepoRepository {
         return saveStoryTask.getLiveData();
     }
 
-//    public LiveData<Resource<List<Repo>>> getAllRepos() {
-//        FetchAllReposTask fetchAllReposTask = new FetchAllReposTask(githubService, db, repoDao);
-//        appExecutors.networkIO().execute(fetchAllReposTask);
-//        return fetchAllReposTask.getLiveData();
-//    }
-
     public LiveData<Resource<List<Repo>>> getAllRepos() {
         return new NetworkBoundResource<List<Repo>, List<Repo>>(appExecutors) {
             @Override
@@ -90,7 +84,7 @@ public class RepoRepository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Repo> data) {
-                return data == null;
+                return data == null || data.isEmpty();
             }
 
             @NonNull
