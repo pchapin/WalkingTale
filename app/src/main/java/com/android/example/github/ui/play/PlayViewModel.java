@@ -16,17 +16,16 @@
 
 package com.android.example.github.ui.play;
 
-import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
-
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
+
+import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.util.AbsentLiveData;
+import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Resource;
 
 import javax.inject.Inject;
 
@@ -36,7 +35,7 @@ public class PlayViewModel extends ViewModel {
     private final LiveData<Resource<Repo>> repo;
 
     @Inject
-    public PlayViewModel(RepoRepository repository) {
+    PlayViewModel(RepoRepository repository) {
         this.repoId = new MutableLiveData<>();
         repo = Transformations.switchMap(repoId, input -> {
             if (input == null) {

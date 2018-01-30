@@ -30,7 +30,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +109,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             binding.get().executePendingBindings();
             if (storyPlayManager == null && resource != null && resource.data != null) {
                 storyPlayManager = new StoryPlayManager(resource.data);
+                // Do once as the first chapter is the one they start at
+                nextChapterEvent();
             }
         });
 
@@ -128,6 +129,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
         // Disable next chapter button until user is in radius
         userInNextChapterRadius = false;
+
+
     }
 
     @Nullable
@@ -147,10 +150,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
     private void locationChangeListener(Location currentLocation) {
         mCurrentLocation = currentLocation;
-        binding.get().latitudeText.setText(Double.toString(mCurrentLocation.getLatitude()));
-        binding.get().longitudeText.setText(Double.toString(mCurrentLocation.getLongitude()));
+        binding.get().latitudeText.setText(String.format("%s", mCurrentLocation.getLatitude()));
+        binding.get().longitudeText.setText(String.format("%s", mCurrentLocation.getLongitude()));
         binding.get().lastUpdateTimeText.setText(new Date().toString());
-        Log.i(TAG, "" + mCurrentLocation + new Date().toString());
         isUserInRadius();
         CameraUpdate cameraUpdate = CameraUpdateFactory
                 .newLatLng(LocationUtilKt.LocationToLatLng(mCurrentLocation));
@@ -218,8 +220,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     private void nextChapterEvent() {
         try {
             storyPlayManager.goToNextChapter();
-            Toast.makeText(getContext(), "current chapter is now:" + storyPlayManager
-                    .getCurrentChapter().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "current chapter is now: " + storyPlayManager
+                    .getCurrentChapter().getId(), Toast.LENGTH_SHORT).show();
 
             // Show chapter id + 1 on marker
             MarkerOptions markerOptions = new MarkerOptions()
