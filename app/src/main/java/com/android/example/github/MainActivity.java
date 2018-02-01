@@ -16,6 +16,7 @@
 
 package com.android.example.github;
 
+import android.app.Dialog;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
@@ -31,6 +32,8 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
 import com.auth0.android.jwt.JWT;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import javax.inject.Inject;
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements
     NavigationController navigationController;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
+    Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
 
     @NonNull
@@ -105,5 +109,32 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
         return dispatchingAndroidInjector;
+    }
+
+    /**
+     * Prevents user from using the app unless they have google play services installed.
+     * Not having it will prevent the google map from working.
+     */
+    private void checkPlayServices() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(this);
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (googleApiAvailability.isUserResolvableError(resultCode)) {
+                if (playServicesErrorDialog == null) {
+                    playServicesErrorDialog = googleApiAvailability.getErrorDialog(this, resultCode, 2404);
+                    playServicesErrorDialog.setCancelable(false);
+                }
+
+                if (!playServicesErrorDialog.isShowing())
+                    playServicesErrorDialog.show();
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
     }
 }
