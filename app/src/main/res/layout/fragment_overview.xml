@@ -57,10 +57,10 @@
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="154dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageView
                     android:id="@+id/avatar"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="200dp"
                     android:adjustViewBounds="false"
                     android:contentDescription="@string/a11y_user_photo"
                     android:cropToPadding="false"
@@ -123,59 +123,72 @@
                     app:visibleGone="@{repo != null}"
                     tools:text="description of the story" />
 
-                <TextView
-                    android:id="@+id/genre"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/open_sans"
-                    android:text="@{`Genre: ` + repo.genre}"
-                    android:textSize="24sp"
-                    app:visibleGone="@{repo != null}"
-                    tools:text="genre" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
 
-                <TextView
-                    android:id="@+id/tags"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/open_sans"
-                    android:text="@{`Tags: ` + repo.tags}"
-                    android:textSize="24sp"
-                    app:visibleGone="@{repo != null}"
-                    tools:text="tags" />
+                    <TextView
+                        android:id="@+id/genre"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{`Genre: ` + repo.genre}"
+                        android:textSize="24sp"
+                        app:visibleGone="@{repo != null}"
+                        tools:text="genre" />
 
-                <TextView
-                    android:id="@+id/duration"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@{`Duration: ` + repo.duration}"
-                    android:textSize="24sp"
-                    app:visibleGone="@{repo != null}"
-                    tools:text="duration" />
+                    <TextView
+                        android:id="@+id/tags"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{`Tags: ` + repo.tags}"
+                        android:textSize="24sp"
+                        app:visibleGone="@{repo != null}"
+                        tools:text="tags" />
 
-                <Button
-                    android:id="@+id/start_story_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Start Story" />
+                    <TextView
+                        android:id="@+id/duration"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@{`Duration: ` + repo.duration}"
+                        android:textSize="24sp"
+                        app:visibleGone="@{repo != null}"
+                        tools:text="duration" />
 
-                <Button
-                    android:id="@+id/story_location_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Story Location" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/start_story_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Start Story" />
+
+                    <Button
+                        android:id="@+id/story_location_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Story Location" />
+                </LinearLayout>
             </LinearLayout>
-
         </ScrollView>
     </android.support.constraint.ConstraintLayout>
 </layout>
