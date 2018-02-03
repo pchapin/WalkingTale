@@ -36,6 +36,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class UserRepository {
+    private final String TAG = this.getClass().getSimpleName();
     private final UserDao userDao;
     private final GithubService githubService;
     private final AppExecutors appExecutors;
@@ -47,6 +48,32 @@ public class UserRepository {
         this.appExecutors = appExecutors;
     }
 
+    public LiveData<Resource<User>> putUser(User user) {
+        return new NetworkBoundResource<User, User>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull User item) {
+                userDao.insert(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable User data) {
+                return true;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<User> loadFromDb() {
+                return userDao.findByLogin(user.id);
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<User>> createCall() {
+                return githubService.putUser(MainActivity.cognitoToken, user);
+            }
+        }.asLiveData();
+    }
+
     public LiveData<Resource<User>> loadUser(String login) {
         return new NetworkBoundResource<User, User>(appExecutors) {
             @Override
@@ -56,7 +83,7 @@ public class UserRepository {
 
             @Override
             protected boolean shouldFetch(@Nullable User data) {
-                return data == null;
+                return true;
             }
 
             @NonNull
@@ -68,7 +95,10 @@ public class UserRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<User>> createCall() {
-                return githubService.getUser(MainActivity.cognitoToken, login);
+
+                LiveData<ApiResponse<User>> result = githubService.getUser(MainActivity.cognitoToken, login);
+                ApiResponse<User> deb = result.getValue();
+                return result;
             }
         }.asLiveData();
     }

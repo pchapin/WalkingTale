@@ -48,6 +48,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class AwsTest {
@@ -121,7 +122,7 @@ public class AwsTest {
         user.playedStories.add("321");
         user.name = USERNAME;
         user.userImage = "https://i.imgur.com/g3D5jNz.jpg";
-        return githubService.putUser(accessToken, user).execute();
+        return githubService.putUserTesting(accessToken, user).execute();
     }
 
     @Test
@@ -133,7 +134,11 @@ public class AwsTest {
     @Test
     public void testGetUser() throws IOException {
         Response<User> response = githubService.getUserTesting(accessToken, USER_ID).execute();
-        assertEquals(200, response.code());
+        Log.i(TAG, "" + response.body().id);
+        assertTrue(response.isSuccessful());
+
+        Response<User> failResponse = githubService.getUserTesting(accessToken, "not real id").execute();
+        assertEquals(404, failResponse.code());
     }
 
     @Test

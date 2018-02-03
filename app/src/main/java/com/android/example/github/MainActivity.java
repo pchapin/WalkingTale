@@ -27,13 +27,17 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
+import com.android.example.github.vo.User;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -77,11 +81,48 @@ public class MainActivity extends AppCompatActivity implements
 
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
 
-        initBottomNavigationListener();
+        userSetup(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            navigationController.navigateToStoryFeed();
-        }
+        initBottomNavigationListener();
+    }
+
+    /**
+     * Get user if they exist in the dynamo db
+     * Put user if they do not exist
+     */
+    private void userSetup(Bundle savedInstanceState) {
+
+        mainViewModel.user.observe(this, userResource -> {
+            if (userResource != null) {
+                switch (userResource.status) {
+                    case SUCCESS:
+                        Log.i(TAG, "Get user success " + userResource);
+                        if (savedInstanceState == null) navigationController.navigateToStoryFeed();
+                        mainViewModel.user.removeObservers(this);
+                        mainViewModel.newUser.removeObservers(this);
+                        break;
+                    case LOADING:
+                        Log.i(TAG, "Get user loading " + userResource);
+                        break;
+                    case ERROR:
+                        Log.i(TAG, "Get user error " + userResource);
+                        // Create new user if user not already in user db
+                        if (userResource.message != null && userResource.message.contains("User not found in")) {
+                            mainViewModel.setCreateNewUser(new User(cognitoId, new ArrayList<>(), new ArrayList<>(), cognitoUsername, "none"));
+                        }
+                        break;
+                }
+            }
+        });
+
+        mainViewModel.newUser.observe(this, userResource -> {
+            if (userResource != null && userResource.data != null) {
+                Log.i(TAG, "Creating new user: " + userResource);
+                mainViewModel.setUserId(userResource.data.id);
+            }
+        });
+
+        mainViewModel.setUserId(cognitoId);
     }
 
     private void initBottomNavigationListener() {

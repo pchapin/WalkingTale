@@ -48,7 +48,11 @@ interface GithubService {
 
     @PUT("users")
     fun putUser(@Header("Authorization") authToken: String,
-                @Body user: User): Call<User>
+                @Body user: User): LiveData<ApiResponse<User>>
+
+    @PUT("users")
+    fun putUserTesting(@Header("Authorization") authToken: String,
+                       @Body user: User): Call<User>
 
     @DELETE("users/{id}")
     fun deleteUser(@Header("Authorization") authToken: String,
