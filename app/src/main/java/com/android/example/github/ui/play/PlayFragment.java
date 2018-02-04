@@ -40,14 +40,12 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentPlayBinding;
 import com.android.example.github.di.Injectable;
-import com.android.example.github.ui.common.ExpositionAdapter;
+import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
-import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.LocationUtilKt;
 import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.maps.CameraUpdate;
@@ -58,10 +56,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -76,7 +72,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentPlayBinding> binding;
-    AutoClearedValue<ExpositionAdapter> adapter;
+    AutoClearedValue<ChapterAdapter> adapter;
     StoryPlayManager storyPlayManager;
     private PlayViewModel playViewModel;
     private Location mCurrentLocation;
@@ -117,20 +113,18 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         // When location changes, call a method with the location
         new LocationLiveData(getContext()).observe(this, this::locationChangeListener);
 
-        ExpositionAdapter adapter = new ExpositionAdapter(dataBindingComponent, false,
-                exposition -> {
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
+                chapter -> {
                 });
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().expositionList.setAdapter(adapter);
 
         initViewExpositionsListener();
         initNextChapterListener();
-        initExpositionList(playViewModel);
+        initExpositionList();
 
         // Disable next chapter button until user is in radius
         userInNextChapterRadius = false;
-
-
     }
 
     @Nullable
@@ -185,14 +179,10 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         });
     }
 
-    private void initExpositionList(PlayViewModel viewModel) {
-        viewModel.getRepo().observe(this, listResource -> {
+    private void initExpositionList() {
+        playViewModel.getRepo().observe(this, listResource -> {
             if (listResource != null && listResource.data != null) {
-                List<Exposition> expositionList = new ArrayList<>();
-                for (Chapter chapter : listResource.data.chapters) {
-                    expositionList.addAll(chapter.getExpositions());
-                }
-                adapter.get().replace(expositionList);
+                adapter.get().replace(listResource.data.chapters);
             } else {
                 adapter.get().replace(Collections.emptyList());
             }

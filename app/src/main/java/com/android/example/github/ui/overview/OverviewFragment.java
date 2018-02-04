@@ -27,6 +27,7 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,6 +69,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         return repoFragment;
     }
 
+    @NonNull
     @Override
     public LifecycleRegistry getLifecycle() {
         return lifecycleRegistry;
@@ -88,11 +90,14 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
+            // TODO: 2/4/18 Testing only
+//            if (resource != null && resource.data != null) {
+//                navigationController.navigateToStoryPlay(resource.data.id);
+//            }
         });
 
         initStartStoryListener();
         initStoryLocationListener();
-        getActivity().setTitle("Story Overview");
     }
 
     private void initStartStoryListener() {

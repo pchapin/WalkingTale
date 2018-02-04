@@ -80,7 +80,8 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> FeedViewModel.refresh());
-        getActivity().setTitle("Story Feed");
+        // TODO: Testing only
+//        navigationController.navigateToRepo("12345");
     }
 
     private void initRecyclerView() {

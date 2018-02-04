@@ -18,6 +18,7 @@ package com.android.example.github.ui.common;
 
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -33,9 +34,7 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBin
     private final DataBindingComponent dataBindingComponent;
     private final ChapterClickBack chapterClickBack;
 
-    public ChapterAdapter(DataBindingComponent dataBindingComponent,
-                          ChapterClickBack chapterClickBack
-    ) {
+    public ChapterAdapter(DataBindingComponent dataBindingComponent, ChapterClickBack chapterClickBack) {
         this.dataBindingComponent = dataBindingComponent;
         this.chapterClickBack = chapterClickBack;
     }
@@ -57,6 +56,13 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBin
     @Override
     protected void bind(ItemChapterBinding binding, Chapter item) {
         binding.setChapter(item);
+
+        ExpositionAdapter expositionAdapter = new ExpositionAdapter(dataBindingComponent, false, null);
+        binding.repoList.setAdapter(expositionAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
+        binding.repoList.setLayoutManager(linearLayoutManager);
+        expositionAdapter.replace(binding.getChapter().getExpositions());
+
     }
 
     @Override
@@ -68,23 +74,6 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBin
     protected boolean areContentsTheSame(Chapter oldItem, Chapter newItem) {
         return Objects.equals(oldItem.getId(), newItem.getId());
     }
-
-//    @Override
-//    protected void bind(RepoItemBinding binding, Repo item) {
-//        binding.setRepo(item);
-//    }
-//
-//    @Override
-//    protected boolean areItemsTheSame(Repo oldItem, Repo newItem) {
-//        return Objects.equals(oldItem.owner, newItem.owner) &&
-//                Objects.equals(oldItem.name, newItem.name);
-//    }
-//
-//    @Override
-//    protected boolean areContentsTheSame(Repo oldItem, Repo newItem) {
-//        return Objects.equals(oldItem.description, newItem.description) &&
-//                oldItem.stars == newItem.stars;
-//    }
 
     public interface ChapterClickBack {
         void onClick(Chapter chapter);
