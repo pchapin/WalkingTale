@@ -47,7 +47,6 @@ import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.LocationUtilKt;
-import com.android.example.github.walkingTale.StoryPlayManager;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -73,7 +72,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentPlayBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
-    StoryPlayManager storyPlayManager;
     private PlayViewModel playViewModel;
     private Location mCurrentLocation;
     private boolean userInNextChapterRadius = false;
@@ -103,9 +101,9 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
-            if (storyPlayManager == null && resource != null && resource.data != null) {
-                storyPlayManager = new StoryPlayManager(resource.data);
+            if (!playViewModel.isStorySet() && resource != null && resource.data != null) {
                 // Do once as the first chapter is the one they start at
+                playViewModel.setStory(resource.data);
                 nextChapterEvent();
             }
         });
@@ -193,7 +191,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
      * Check if user is within next chapter radius
      */
     private void isUserInRadius() {
-        LatLng latLng = storyPlayManager.getCurrentChapter().getLocation();
+        LatLng latLng = playViewModel.getCurrentChapter().getLocation();
         float[] distanceBetween = new float[1];
 
         // Distance in meters from here to center of chapter radius
@@ -203,20 +201,20 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 latLng.latitude,
                 latLng.longitude,
                 distanceBetween);
-        userInNextChapterRadius = distanceBetween[0] < storyPlayManager.getCurrentChapter().getRadius();
+        userInNextChapterRadius = distanceBetween[0] < playViewModel.getCurrentChapter().getRadius();
         binding.get().setIsUserInNextChapterRadius(userInNextChapterRadius);
     }
 
     private void nextChapterEvent() {
         try {
-            storyPlayManager.goToNextChapter();
-            Toast.makeText(getContext(), "current chapter is now: " + storyPlayManager
+            playViewModel.goToNextChapter();
+            Toast.makeText(getContext(), "current chapter is now: " + playViewModel
                     .getCurrentChapter().getId(), Toast.LENGTH_SHORT).show();
 
             // Show chapter id + 1 on marker
             MarkerOptions markerOptions = new MarkerOptions()
-                    .title("" + storyPlayManager.getCurrentChapter().getId())
-                    .position(storyPlayManager.getCurrentChapter().getLocation());
+                    .title("" + playViewModel.getCurrentChapter().getId())
+                    .position(playViewModel.getCurrentChapter().getLocation());
             mMap.addMarker(markerOptions);
 
         } catch (ArrayIndexOutOfBoundsException e) {

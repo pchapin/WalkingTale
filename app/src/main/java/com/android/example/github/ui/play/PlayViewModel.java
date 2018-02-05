@@ -26,6 +26,7 @@ import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
 
 import javax.inject.Inject;
 
@@ -33,6 +34,8 @@ public class PlayViewModel extends ViewModel {
     @VisibleForTesting
     private final MutableLiveData<String> repoId;
     private final LiveData<Resource<Repo>> repo;
+    private Repo story;
+    private Chapter currentChapter;
 
     @Inject
     PlayViewModel(RepoRepository repository) {
@@ -51,5 +54,26 @@ public class PlayViewModel extends ViewModel {
 
     void setId(String id) {
         repoId.setValue(id);
+    }
+
+    void setStory(Repo repo) throws IllegalArgumentException {
+        if (story != null) throw new IllegalArgumentException("Story has already been initialized");
+        story = repo;
+        currentChapter = story.chapters.get(0);
+    }
+
+    boolean isStorySet() {
+        return story != null;
+    }
+
+    Chapter getCurrentChapter() {
+        return currentChapter;
+    }
+
+    void goToNextChapter() throws ArrayIndexOutOfBoundsException {
+        if (currentChapter == story.chapters.get(story.chapters.size() - 1)) {
+            throw new ArrayIndexOutOfBoundsException("Current chapter is already the last chapter.");
+        }
+        currentChapter = story.chapters.get(currentChapter.getId() + 1);
     }
 }
