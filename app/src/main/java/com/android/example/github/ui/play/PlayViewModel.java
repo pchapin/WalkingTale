@@ -23,28 +23,41 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
 import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.walkingTale.Chapter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 
 public class PlayViewModel extends ViewModel {
+    private final String TAG = this.getClass().getSimpleName();
     @VisibleForTesting
     private final MutableLiveData<String> repoId;
     private final LiveData<Resource<Repo>> repo;
+    LiveData<List<Chapter>> availableChapters = new MutableLiveData<>();
     private Repo story;
-    private Chapter currentChapter;
+    private Chapter finalChapter;
+    private MutableLiveData<Chapter> nextChapter = new MutableLiveData<>();
 
     @Inject
     PlayViewModel(RepoRepository repository) {
         this.repoId = new MutableLiveData<>();
-        repo = Transformations.switchMap(repoId, input -> {
-            if (input == null) {
-                return AbsentLiveData.create();
+        repo = Transformations.switchMap(repoId, repository::loadRepo);
+
+        availableChapters = Transformations.map(nextChapter, (Chapter next) -> {
+            if (next == null) return Collections.emptyList();
+
+            List<Chapter> chapterList = new ArrayList<>();
+            for (Chapter chapter : story.chapters) {
+                if (chapter.getId() <= next.getId()) {
+                    chapterList.add(chapter);
+                }
             }
-            return repository.loadRepo(input);
+            return chapterList;
         });
     }
 
@@ -59,21 +72,22 @@ public class PlayViewModel extends ViewModel {
     void setStory(Repo repo) throws IllegalArgumentException {
         if (story != null) throw new IllegalArgumentException("Story has already been initialized");
         story = repo;
-        currentChapter = story.chapters.get(0);
+        finalChapter = story.chapters.get(story.chapters.size() - 1);
+        nextChapter.setValue(story.chapters.get(0));
     }
 
     boolean isStorySet() {
         return story != null;
     }
 
-    Chapter getCurrentChapter() {
-        return currentChapter;
+    Chapter getNextChapter() {
+        return nextChapter.getValue();
     }
 
     void goToNextChapter() throws ArrayIndexOutOfBoundsException {
-        if (currentChapter == story.chapters.get(story.chapters.size() - 1)) {
+        if (nextChapter.getValue() == story.chapters.get(story.chapters.size() - 1)) {
             throw new ArrayIndexOutOfBoundsException("Current chapter is already the last chapter.");
         }
-        currentChapter = story.chapters.get(currentChapter.getId() + 1);
+        nextChapter.setValue(story.chapters.get(nextChapter.getValue().getId() + 1));
     }
 }
