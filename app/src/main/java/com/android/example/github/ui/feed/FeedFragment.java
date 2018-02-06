@@ -51,7 +51,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentFeedBinding> binding;
     AutoClearedValue<RepoListAdapter> adapter;
-    private FeedViewModel FeedViewModel;
+    private FeedViewModel feedViewModel;
 
     @Nullable
     @Override
@@ -68,8 +68,11 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FeedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
+        feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
+
         initRecyclerView();
+        initRefreshListener();
+
         RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
                 repo -> {
                     if (PermissionManager.checkLocationPermission(getActivity())) {
@@ -79,18 +82,27 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
-        binding.get().setCallback(() -> FeedViewModel.refresh());
+        binding.get().setCallback(() -> feedViewModel.refresh());
         // TODO: Testing only
 //        navigationController.navigateToRepo("73e2eac0-febb-11e7-8804-552773a7dce8");
     }
 
     private void initRecyclerView() {
-        FeedViewModel.getResults().observe(this, result -> {
+        feedViewModel.getResults().observe(this, result -> {
             binding.get().setSearchResource(result);
             binding.get().setResultCount((result == null || result.data == null)
                     ? 0 : result.data.size());
             adapter.get().replace(result == null ? null : result.data);
             binding.get().executePendingBindings();
+        });
+    }
+
+    public void initRefreshListener() {
+        binding.get().feedRefreshLayout.setOnRefreshListener(() -> {
+            feedViewModel.refresh();
+            feedViewModel.getResults().observe(this, listResource -> {
+                binding.get().feedRefreshLayout.setRefreshing(false);
+            });
         });
     }
 }

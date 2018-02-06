@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.android.example.github.AppExecutors;
 import com.android.example.github.MainActivity;
@@ -50,14 +51,11 @@ import javax.inject.Singleton;
 @Singleton
 public class RepoRepository {
 
+    private final String TAG = this.getClass().getSimpleName();
     private final GithubDb db;
-
     private final RepoDao repoDao;
-
     private final GithubService githubService;
-
     private final AppExecutors appExecutors;
-
     private RateLimiter<String> repoListRateLimit = new RateLimiter<>(10, TimeUnit.MINUTES);
 
     @Inject
@@ -75,7 +73,7 @@ public class RepoRepository {
         return saveStoryTask.getLiveData();
     }
 
-    public LiveData<Resource<List<Repo>>> getAllRepos() {
+    public LiveData<Resource<List<Repo>>> getAllRepos(boolean shouldFetch) {
         return new NetworkBoundResource<List<Repo>, List<Repo>>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull List<Repo> item) {
@@ -84,7 +82,9 @@ public class RepoRepository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Repo> data) {
-                return data == null || data.isEmpty();
+                boolean result = shouldFetch || data == null || data.isEmpty();
+                Log.i(TAG, "fetching new stories: " + result);
+                return result;
             }
 
             @NonNull

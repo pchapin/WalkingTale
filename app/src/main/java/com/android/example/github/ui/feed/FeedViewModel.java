@@ -18,52 +18,34 @@ package com.android.example.github.ui.feed;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 
 import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.util.Objects;
 import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
 public class FeedViewModel extends ViewModel {
 
-    private final MutableLiveData<String> query = new MutableLiveData<>();
-
+    private final String TAG = this.getClass().getSimpleName();
+    private final MutableLiveData<Boolean> shouldFetch = new MutableLiveData<>();
     private final LiveData<Resource<List<Repo>>> results;
-
 
     @Inject
     FeedViewModel(RepoRepository repoRepository) {
-        results = repoRepository.getAllRepos();
+        shouldFetch.setValue(false);
+        results = Transformations.switchMap(shouldFetch, repoRepository::getAllRepos);
     }
 
     LiveData<Resource<List<Repo>>> getResults() {
         return results;
     }
 
-    public void setQuery(@NonNull String originalInput) {
-        String input = originalInput.toLowerCase(Locale.getDefault()).trim();
-        if (Objects.equals(input, query.getValue())) {
-            return;
-        }
-        query.setValue(input);
-    }
-
     void refresh() {
-        if (query.getValue() != null) {
-            query.setValue(query.getValue());
-        }
+        shouldFetch.setValue(true);
     }
 }
