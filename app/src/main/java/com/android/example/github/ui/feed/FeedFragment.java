@@ -85,6 +85,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         binding.get().setCallback(() -> feedViewModel.refresh());
         // TODO: Testing only
 //        navigationController.navigateToRepo("73e2eac0-febb-11e7-8804-552773a7dce8");
+//        navigationController.navigateToCreateStory();
     }
 
     private void initRecyclerView() {
