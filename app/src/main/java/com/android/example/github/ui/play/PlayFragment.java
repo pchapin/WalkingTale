@@ -52,6 +52,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -159,6 +161,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
             }
         });
         toggle.performClick();
+        toggle.performClick();
     }
 
     private void initNextChapterListener() {
@@ -238,7 +241,22 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     public void onMapReady(GoogleMap googleMap) {
         // Set map preferences
         mMap = googleMap;
-        mMap.setMinZoomPreference(10.0f);
-        mMap.setMaxZoomPreference(16.0f);
+        mMap.setMinZoomPreference(15.0f);
+        mMap.setMaxZoomPreference(18.0f);
+
+        // Change tilt
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(mMap.getCameraPosition().target)
+                .tilt(60).build();
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        UiSettings mUiSettings = mMap.getUiSettings();
+        mUiSettings.setMapToolbarEnabled(false);
+        mUiSettings.setZoomControlsEnabled(false);
+        mUiSettings.setScrollGesturesEnabled(true);
+        mUiSettings.setZoomGesturesEnabled(true);
+        mUiSettings.setTiltGesturesEnabled(false);
+        mUiSettings.setRotateGesturesEnabled(false);
+        mUiSettings.setCompassEnabled(false);
     }
 }
