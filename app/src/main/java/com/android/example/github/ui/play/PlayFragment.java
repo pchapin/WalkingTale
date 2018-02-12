@@ -88,6 +88,21 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         return repoFragment;
     }
 
+    /**
+     * Distance in meters between two locations
+     */
+    private static double distanceBetween(Location location1, Location location2) {
+        float[] distanceBetween = new float[1];
+
+        Location.distanceBetween(
+                location1.getLatitude(),
+                location1.getLongitude(),
+                location2.getLatitude(),
+                location2.getLongitude(),
+                distanceBetween);
+        return distanceBetween[0];
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
