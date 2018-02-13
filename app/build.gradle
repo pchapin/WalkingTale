@@ -89,6 +89,9 @@ dependencies {
     // Javascript Web Token
     implementation 'com.auth0.android:jwtdecode:1.1.1'
 
+    // Google map utils
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+
     // Amazon Web Services
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "com.amazonaws:aws-android-sdk-core:$aws_version"

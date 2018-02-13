@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,7 +30,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +45,7 @@ import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.walkingTale.Chapter;
+import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.LocationUtilKt;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -52,14 +53,26 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.Collections;
 
 import javax.inject.Inject;
 
-public class PlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable, OnMapReadyCallback {
+
+public class PlayFragment extends Fragment implements
+        LifecycleRegistryOwner,
+        Injectable,
+        OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnCircleClickListener {
 
     private static final String REPO_NAME_KEY = "repo_name";
     private static final String TAG = PlayFragment.class.getSimpleName();
@@ -101,11 +114,6 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         // User is not in radius of chapter that does not exist
         if (nextChapter == null) return false;
         double distance = distanceBetween(location, LocationUtilKt.LatLngToLocation(nextChapter.getLocation()));
-        if (distance < nextChapter.getRadius()) {
-            Log.i(TAG, "user in radius " + distance);
-        } else {
-            Log.i(TAG, "user NOT in radius " + distance);
-        }
         return distance < nextChapter.getRadius();
     }
 
@@ -122,6 +130,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().expositionList.setAdapter(adapter);
 
+        initCurrentChapterObserver();
         initRepoObserver();
         initLocationObserver();
         initIsCurrentFinalObserver();
@@ -140,6 +149,28 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         return dataBinding.getRoot();
+    }
+
+    private void initCurrentChapterObserver() {
+        playViewModel.getCurrentChapter().observe(this, chapter -> {
+            if (chapter == null) return;
+
+            for (Exposition exposition : chapter.getExpositions()) {
+                IconGenerator iconGenerator = new IconGenerator(getContext());
+                MarkerOptions marker = new MarkerOptions()
+                        .position(chapter.getLocation())
+                        .icon(BitmapDescriptorFactory
+                                .fromBitmap(iconGenerator.makeIcon("" + exposition.getId())));
+                mMap.addMarker(marker);
+            }
+
+            Circle circle = mMap.addCircle(new CircleOptions()
+                    .center(chapter.getLocation())
+                    .clickable(true)
+                    .radius(chapter.getRadius())
+                    .strokeColor(Color.BLUE)
+                    .fillColor(Color.RED));
+        });
     }
 
     private void initRepoObserver() {
@@ -233,6 +264,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         mMap.setMinZoomPreference(16.0f);
         mMap.setMaxZoomPreference(18.0f);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
+        mMap.setOnMarkerClickListener(this);
 
         // Change tilt
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -248,5 +280,16 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         mUiSettings.setTiltGesturesEnabled(false);
         mUiSettings.setRotateGesturesEnabled(false);
         mUiSettings.setCompassEnabled(false);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Toast.makeText(getContext(), "marker id " + marker.getId(), Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public void onCircleClick(Circle circle) {
+        Toast.makeText(getContext(), "circle id " + circle.getId(), Toast.LENGTH_SHORT).show();
     }
 }

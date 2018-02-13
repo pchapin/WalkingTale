@@ -91,9 +91,9 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
             // TODO: 2/4/18 Testing only
-//            if (resource != null && resource.data != null) {
-//                navigationController.navigateToStoryPlay(resource.data.id);
-//            }
+            if (resource != null && resource.data != null) {
+                navigationController.navigateToStoryPlay(resource.data.id);
+            }
         });
 
         initStartStoryListener();
