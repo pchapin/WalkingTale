@@ -53,6 +53,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import java.util.Collections;
 
@@ -231,6 +232,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         mMap = googleMap;
         mMap.setMinZoomPreference(16.0f);
         mMap.setMaxZoomPreference(18.0f);
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
 
         // Change tilt
         CameraPosition cameraPosition = new CameraPosition.Builder()

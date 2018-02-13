@@ -109,8 +109,8 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
     private void initStoryLocationListener() {
         binding.get().storyLocationButton.setOnClickListener((v) -> {
-            String latitude = Double.toString(overviewViewModel.getRepo().getValue().data.latitude);
-            String longitude = Double.toString(overviewViewModel.getRepo().getValue().data.longitude);
+            String latitude = Double.toString(overviewViewModel.getRepo().getValue().data.chapters.get(0).getLocation().latitude);
+            String longitude = Double.toString(overviewViewModel.getRepo().getValue().data.chapters.get(0).getLocation().longitude);
             String url = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s", latitude, longitude);
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);

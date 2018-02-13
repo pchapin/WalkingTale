@@ -49,8 +49,10 @@ public class Repo {
     public int duration;
     @SerializedName("rating")
     public Double rating;
+    @Deprecated
     @SerializedName("latitude")
     public Double latitude;
+    @Deprecated
     @SerializedName("longitude")
     public Double longitude;
     @SerializedName("story_image")
