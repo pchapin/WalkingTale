@@ -37,6 +37,10 @@
             type="boolean" />
 
         <variable
+            name="isCurrentChapterFinal"
+            type="boolean" />
+
+        <variable
             name="contributorsStatus"
             type="com.android.example.github.vo.Status" />
 
@@ -68,10 +72,18 @@
             android:id="@+id/next_chapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:enabled="@{isUserInNextChapterRadius}"
             android:text="Next Chapter"
             app:layout_constraintRight_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/view_expositions" />
+
+        <Button
+            android:id="@+id/finish_play_story_btn"
+            visibleGone="@{isCurrentChapterFinal}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Finish Story"
+            app:layout_constraintRight_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/next_chapter" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/location_items"

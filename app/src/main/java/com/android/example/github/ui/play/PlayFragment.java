@@ -18,7 +18,6 @@ package com.android.example.github.ui.play;
 
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
@@ -30,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +44,7 @@ import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
+import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.LocationUtilKt;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,18 +53,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Collections;
-import java.util.Date;
 
 import javax.inject.Inject;
 
 public class PlayFragment extends Fragment implements LifecycleRegistryOwner, Injectable, OnMapReadyCallback {
 
     private static final String REPO_NAME_KEY = "repo_name";
-    private final String TAG = this.getClass().getSimpleName();
+    private static final String TAG = PlayFragment.class.getSimpleName();
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -75,10 +71,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     AutoClearedValue<FragmentPlayBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
     private PlayViewModel playViewModel;
-    private Location mCurrentLocation;
-    private boolean userInNextChapterRadius = false;
     private GoogleMap mMap;
-
 
     public static PlayFragment create(String id) {
         PlayFragment repoFragment = new PlayFragment();
@@ -91,7 +84,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     /**
      * Distance in meters between two locations
      */
-    private static double distanceBetween(Location location1, Location location2) {
+    private static double distanceBetween(@NonNull Location location1, @NonNull Location location2) {
         float[] distanceBetween = new float[1];
 
         Location.distanceBetween(
@@ -103,6 +96,18 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         return distanceBetween[0];
     }
 
+    private static boolean isUserInNextRadius(@NonNull Location location, @Nullable Chapter nextChapter) {
+        // User is not in radius of chapter that does not exist
+        if (nextChapter == null) return false;
+        double distance = distanceBetween(location, LocationUtilKt.LatLngToLocation(nextChapter.getLocation()));
+        if (distance < nextChapter.getRadius()) {
+            Log.i(TAG, "user in radius " + distance);
+        } else {
+            Log.i(TAG, "user NOT in radius " + distance);
+        }
+        return distance < nextChapter.getRadius();
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -110,8 +115,34 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         Bundle args = getArguments();
         playViewModel.setId(args.getString(REPO_NAME_KEY));
 
-        LiveData<Resource<Repo>> repo = playViewModel.getRepo();
-        repo.observe(this, resource -> {
+        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
+                chapter -> {
+                });
+        this.adapter = new AutoClearedValue<>(this, adapter);
+        binding.get().expositionList.setAdapter(adapter);
+
+        initRepoObserver();
+        initLocationObserver();
+        initIsCurrentFinalObserver();
+
+        initViewExpositionsListener();
+        initNextChapterListener();
+        initExpositionList();
+        initFinishStoryListener();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        FragmentPlayBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_play, container, false);
+        binding = new AutoClearedValue<>(this, dataBinding);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        return dataBinding.getRoot();
+    }
+
+    private void initRepoObserver() {
+        playViewModel.getRepo().observe(this, resource -> {
             binding.get().setRepo(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
@@ -119,55 +150,29 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
                 playViewModel.setStory(resource.data);
             }
         });
-
-        // When location changes, call a method with the location
-        new LocationLiveData(getContext()).observe(this, this::locationChangeListener);
-
-        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
-                chapter -> {
-                });
-        this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().expositionList.setAdapter(adapter);
-
-        initViewExpositionsListener();
-        initNextChapterListener();
-        initExpositionList();
-
-        // Disable next chapter button until user is in radius
-        userInNextChapterRadius = false;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        FragmentPlayBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.fragment_play, container, false);
-        binding = new AutoClearedValue<>(this, dataBinding);
-
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        return dataBinding.getRoot();
+    private void initLocationObserver() {
+        new LocationLiveData(getContext()).observe(this, location -> {
+            moveCamera(location);
+            boolean isUserInNext = isUserInNextRadius(location, playViewModel.getNextChapter().getValue());
+            binding.get().nextChapter.setEnabled(isUserInNext);
+        });
     }
 
-    private void locationChangeListener(Location currentLocation) {
-        mCurrentLocation = currentLocation;
-        binding.get().latitudeText.setText(String.format("%s", mCurrentLocation.getLatitude()));
-        binding.get().longitudeText.setText(String.format("%s", mCurrentLocation.getLongitude()));
-        binding.get().lastUpdateTimeText.setText(new Date().toString());
-        isUserInRadius();
-        CameraUpdate cameraUpdate = CameraUpdateFactory
-                .newLatLng(LocationUtilKt.LocationToLatLng(mCurrentLocation));
-        mMap.animateCamera(cameraUpdate);
+    private void initIsCurrentFinalObserver() {
+        playViewModel.getIsCurrentFinal().observe(this, isFinalChapter -> {
+            if (isFinalChapter != null) {
+                binding.get().setIsCurrentChapterFinal(isFinalChapter);
+            }
+        });
     }
 
     private void initViewExpositionsListener() {
+        RecyclerView expositionList = binding.get().expositionList;
         ToggleButton toggle = binding.get().viewExpositions;
         toggle.setTextOn("Hide Expositions");
         toggle.setTextOff("View Expositions");
-        RecyclerView expositionList = binding.get().expositionList;
         toggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 expositionList.setVisibility(View.VISIBLE);
@@ -181,11 +186,8 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
 
     private void initNextChapterListener() {
         binding.get().nextChapter.setOnClickListener((v) -> {
-            if (userInNextChapterRadius) {
-                nextChapterEvent();
-                binding.get().nextChapter.setEnabled(false);
-            } else {
-                Toast.makeText(getContext(), "You are not in the radius", Toast.LENGTH_SHORT).show();
+            if (!playViewModel.incrementChapter()) {
+                Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -200,50 +202,21 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
         });
     }
 
-    /**
-     * Check if user is within next chapter radius
-     */
-    private void isUserInRadius() {
-        LatLng latLng = playViewModel.getNextChapter().getLocation();
-        float[] distanceBetween = new float[1];
-
-        // Distance in meters from here to center of chapter radius
-        Location.distanceBetween(
-                mCurrentLocation.getLatitude(),
-                mCurrentLocation.getLongitude(),
-                latLng.latitude,
-                latLng.longitude,
-                distanceBetween);
-        userInNextChapterRadius = distanceBetween[0] < playViewModel.getNextChapter().getRadius();
-        binding.get().setIsUserInNextChapterRadius(userInNextChapterRadius);
+    private void initFinishStoryListener() {
+        binding.get().finishPlayStoryBtn.setOnClickListener(view -> {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Finish Story")
+                    .setMessage("Do you want to finish the story?")
+                    .setPositiveButton("yes", (dialogInterface, i) -> getActivity().onBackPressed())
+                    .setNegativeButton("no", (dialogInterface, i) -> {
+                    })
+                    .create().show();
+        });
     }
 
-    private void nextChapterEvent() {
-        try {
-            playViewModel.goToNextChapter();
-            Toast.makeText(getContext(), "current chapter is now: " + playViewModel
-                    .getNextChapter().getId(), Toast.LENGTH_SHORT).show();
-
-            // Show chapter id + 1 on marker
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .title("" + playViewModel.getNextChapter().getId())
-                    .position(playViewModel.getNextChapter().getLocation());
-            mMap.addMarker(markerOptions);
-
-        } catch (ArrayIndexOutOfBoundsException e) {
-            Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
-            finalChapterEvent();
-        }
-    }
-
-    private void finalChapterEvent() {
-        new AlertDialog.Builder(getContext())
-                .setTitle("Finish Story")
-                .setMessage("Do you want to finish the story?")
-                .setPositiveButton("yes", (dialogInterface, i) -> getActivity().onBackPressed())
-                .setNegativeButton("no", (dialogInterface, i) -> {
-                })
-                .create().show();
+    private void moveCamera(Location currentLocation) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(LocationUtilKt.LocationToLatLng(currentLocation));
+        mMap.animateCamera(cameraUpdate);
     }
 
     @NonNull
@@ -256,7 +229,7 @@ public class PlayFragment extends Fragment implements LifecycleRegistryOwner, In
     public void onMapReady(GoogleMap googleMap) {
         // Set map preferences
         mMap = googleMap;
-        mMap.setMinZoomPreference(15.0f);
+        mMap.setMinZoomPreference(16.0f);
         mMap.setMaxZoomPreference(18.0f);
 
         // Change tilt
