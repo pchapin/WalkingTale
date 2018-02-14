@@ -84,7 +84,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> feedViewModel.refresh());
         // TODO: Testing only
-        navigationController.navigateToRepo("23565e20-0fff-11e8-996c-732ef70acd1f");
+//        navigationController.navigateToRepo("23565e20-0fff-11e8-996c-732ef70acd1f");
 //        navigationController.navigateToRepo("12345");
 //        navigationController.navigateToCreateStory();
     }
