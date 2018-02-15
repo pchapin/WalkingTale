@@ -22,7 +22,6 @@ import java.util.Objects;
 @DynamoDBTable(tableName = "walkingtale-mobilehub-466729221-Stories")
 public class Story {
 
-
     public String userId;
     public String id;
     @SerializedName("name")
