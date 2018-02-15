@@ -24,12 +24,12 @@ import android.view.ViewGroup;
 import com.android.example.github.R;
 import com.android.example.github.databinding.ItemRepoBinding;
 import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Story;
 
 /**
- * A RecyclerView adapter for {@link Repo} class.
+ * A RecyclerView adapter for {@link Story} class.
  */
-public class RepoListAdapter extends DataBoundListAdapter<Repo, ItemRepoBinding> {
+public class RepoListAdapter extends DataBoundListAdapter<Story, ItemRepoBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final RepoClickCallback repoClickCallback;
     private final boolean showFullName;
@@ -48,30 +48,30 @@ public class RepoListAdapter extends DataBoundListAdapter<Repo, ItemRepoBinding>
                         parent, false, dataBindingComponent);
         binding.setShowFullName(showFullName);
         binding.getRoot().setOnClickListener(v -> {
-            Repo repo = binding.getRepo();
-            if (repo != null && repoClickCallback != null) {
-                repoClickCallback.onClick(repo);
+            Story story = binding.getStory();
+            if (story != null && repoClickCallback != null) {
+                repoClickCallback.onClick(story);
             }
         });
         return binding;
     }
 
     @Override
-    protected void bind(ItemRepoBinding binding, Repo item) {
-        binding.setRepo(item);
+    protected void bind(ItemRepoBinding binding, Story item) {
+        binding.setStory(item);
     }
 
     @Override
-    protected boolean areItemsTheSame(Repo oldItem, Repo newItem) {
+    protected boolean areItemsTheSame(Story oldItem, Story newItem) {
         return Objects.equals(oldItem, newItem);
     }
 
     @Override
-    protected boolean areContentsTheSame(Repo oldItem, Repo newItem) {
+    protected boolean areContentsTheSame(Story oldItem, Story newItem) {
         return Objects.equals(oldItem.chapters, newItem.chapters);
     }
 
     public interface RepoClickCallback {
-        void onClick(Repo repo);
+        void onClick(Story story);
     }
 }

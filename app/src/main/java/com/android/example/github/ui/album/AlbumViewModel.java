@@ -24,16 +24,15 @@ import android.support.annotation.VisibleForTesting;
 
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import javax.inject.Inject;
 
 public class AlbumViewModel extends ViewModel {
     @VisibleForTesting
     private final MutableLiveData<String> repoId;
-    private final LiveData<Resource<Repo>> repo;
+    private final LiveData<Resource<Story>> repo;
 
     @Inject
     public AlbumViewModel(RepoRepository repository) {
@@ -46,7 +45,7 @@ public class AlbumViewModel extends ViewModel {
         });
     }
 
-    public LiveData<Resource<Repo>> getRepo() {
+    public LiveData<Resource<Story>> getRepo() {
         return repo;
     }
 

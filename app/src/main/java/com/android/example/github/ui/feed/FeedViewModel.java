@@ -22,8 +22,8 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
 import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class FeedViewModel extends ViewModel {
 
     private final String TAG = this.getClass().getSimpleName();
     private final MutableLiveData<Boolean> shouldFetch = new MutableLiveData<>();
-    private final LiveData<Resource<List<Repo>>> results;
+    private final LiveData<Resource<List<Story>>> results;
 
     @Inject
     FeedViewModel(RepoRepository repoRepository) {
@@ -41,7 +41,7 @@ public class FeedViewModel extends ViewModel {
         results = Transformations.switchMap(shouldFetch, repoRepository::getAllRepos);
     }
 
-    LiveData<Resource<List<Repo>>> getResults() {
+    LiveData<Resource<List<Story>>> getResults() {
         return results;
     }
 

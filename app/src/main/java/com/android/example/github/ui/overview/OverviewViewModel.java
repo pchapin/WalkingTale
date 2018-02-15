@@ -16,23 +16,23 @@
 
 package com.android.example.github.ui.overview;
 
-import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.Resource;
-
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
+import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.util.AbsentLiveData;
+import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
+
 import javax.inject.Inject;
 
 public class OverviewViewModel extends ViewModel {
     @VisibleForTesting
     private final MutableLiveData<String> repoId;
-    private final LiveData<Resource<Repo>> repo;
+    private final LiveData<Resource<Story>> repo;
 
     @Inject
     public OverviewViewModel(RepoRepository repository) {
@@ -45,7 +45,7 @@ public class OverviewViewModel extends ViewModel {
         });
     }
 
-    public LiveData<Resource<Repo>> getRepo() {
+    public LiveData<Resource<Story>> getRepo() {
         return repo;
     }
 

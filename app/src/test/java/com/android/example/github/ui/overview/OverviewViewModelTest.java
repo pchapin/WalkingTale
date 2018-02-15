@@ -18,7 +18,7 @@
 //
 //import com.android.example.github.repository.RepoRepository;
 //import com.android.example.github.vo.Contributor;
-//import com.android.example.github.vo.Repo;
+//import com.android.example.github.vo.Story;
 //import com.android.example.github.vo.Resource;
 //
 //import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -132,7 +132,7 @@
 //        verifyNoMoreInteractions(repository);
 //        overviewViewModel.setId("foo", "bar");
 //        verifyNoMoreInteractions(repository);
-//        Observer<Resource<Repo>> observer = mock(Observer.class);
+//        Observer<Resource<Story>> observer = mock(Observer.class);
 //        overviewViewModel.getStory().observeForever(observer);
 ////        verify(repository).loadRepo("foo", "bar");
 //        reset(repository);
@@ -143,7 +143,7 @@
 //    @Test
 //    public void nullRepoId() {
 //        overviewViewModel.setId(null, null);
-//        Observer<Resource<Repo>> observer1 = mock(Observer.class);
+//        Observer<Resource<Story>> observer1 = mock(Observer.class);
 //        Observer<Resource<List<Contributor>>> observer2 = mock(Observer.class);
 //        overviewViewModel.getStory().observeForever(observer1);
 //        overviewViewModel.getContributors().observeForever(observer2);

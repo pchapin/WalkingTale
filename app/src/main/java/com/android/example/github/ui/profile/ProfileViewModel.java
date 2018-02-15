@@ -24,8 +24,8 @@ import android.arch.lifecycle.ViewModel;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.repository.UserRepository;
 import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 import com.android.example.github.vo.User;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<User>> user = new MutableLiveData<>();
 
-    LiveData<Resource<List<Repo>>> usersRepos = new MutableLiveData<>();
+    LiveData<Resource<List<Story>>> usersRepos = new MutableLiveData<>();
 
     private MutableLiveData<String> userId = new MutableLiveData<>();
 

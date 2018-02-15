@@ -39,8 +39,8 @@ import com.android.example.github.databinding.FragmentOverviewBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import javax.inject.Inject;
 
@@ -85,9 +85,9 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         } else {
             overviewViewModel.setId(null);
         }
-        LiveData<Resource<Repo>> repo = overviewViewModel.getRepo();
+        LiveData<Resource<Story>> repo = overviewViewModel.getRepo();
         repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
+            binding.get().setStory(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
             // TODO: 2/4/18 Testing only

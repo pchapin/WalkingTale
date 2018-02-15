@@ -28,8 +28,8 @@ import com.android.example.github.testing.SingleFragmentActivity;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.TaskExecutorWithIdlingResourceRule;
 import com.android.example.github.util.TestUtil;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,7 +52,7 @@ public class StoryOverviewFragmentTest {
     @Rule
     public TaskExecutorWithIdlingResourceRule executorRule =
             new TaskExecutorWithIdlingResourceRule();
-    private MutableLiveData<Resource<Repo>> repo = new MutableLiveData<>();
+    private MutableLiveData<Resource<Story>> repo = new MutableLiveData<>();
     private OverviewFragment repoFragment;
     private OverviewViewModel viewModel;
 
@@ -86,8 +86,8 @@ public class StoryOverviewFragmentTest {
 
     @Test
     public void testValueWhileLoading() {
-        Repo repo = TestUtil.createRepo("yigit", "foo", "foo-bar");
-        this.repo.postValue(Resource.loading(repo));
+        Story story = TestUtil.createRepo("yigit", "foo", "foo-bar");
+        this.repo.postValue(Resource.loading(story));
         onView(withId(R.id.progress_bar)).check(matches(not(isDisplayed())));
         onView(withId(R.id.name)).check(matches(
                 withText(getString(R.string.repo_full_name, "yigit", "foo"))));
@@ -96,8 +96,8 @@ public class StoryOverviewFragmentTest {
 
     @Test
     public void testLoaded() throws InterruptedException {
-        Repo repo = TestUtil.createRepo("foo", "bar", "buzz");
-        this.repo.postValue(Resource.success(repo));
+        Story story = TestUtil.createRepo("foo", "bar", "buzz");
+        this.repo.postValue(Resource.success(story));
         onView(withId(R.id.progress_bar)).check(matches(not(isDisplayed())));
         onView(withId(R.id.name)).check(matches(
                 withText(getString(R.string.repo_full_name, "foo", "bar"))));
@@ -115,8 +115,8 @@ public class StoryOverviewFragmentTest {
 
         onView(withId(R.id.progress_bar)).check(matches(isDisplayed()));
         onView(withId(R.id.retry)).check(matches(not(isDisplayed())));
-        Repo repo = TestUtil.createRepo("owner", "name", "desc");
-        this.repo.postValue(Resource.success(repo));
+        Story story = TestUtil.createRepo("owner", "name", "desc");
+        this.repo.postValue(Resource.success(story));
 
         onView(withId(R.id.progress_bar)).check(matches(not(isDisplayed())));
         onView(withId(R.id.retry)).check(matches(not(isDisplayed())));
@@ -161,7 +161,7 @@ public class StoryOverviewFragmentTest {
     }
 
     private void setContributors(String... names) {
-//        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
+//        Story repo = TestUtil.createRepo("foo", "bar", "desc");
 //        List<Contributor> contributors = new ArrayList<>();
 //        int contributionCount = 100;
 //        for (String name : names) {

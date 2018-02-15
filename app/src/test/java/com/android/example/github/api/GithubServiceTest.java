@@ -17,7 +17,7 @@
 //package com.android.example.github.api;
 //
 //import com.android.example.github.util.LiveDataCallAdapterFactory;
-//import com.android.example.github.vo.Repo;
+//import com.android.example.github.vo.Story;
 //import com.android.example.github.vo.User;
 //
 //import org.junit.After;
@@ -92,22 +92,22 @@
 //    @Test
 //    public void getRepos() throws IOException, InterruptedException {
 //        enqueueResponse("repos-yigit.json");
-//        List<Repo> repos = getValue(service.getRepos("yigit")).getBody();
+//        List<Story> repos = getValue(service.getRepos("yigit")).getBody();
 //
 //        RecordedRequest request = mockWebServer.takeRequest();
 //        assertThat(request.getPath(), is("/users/yigit/repos"));
 //
 //        assertThat(repos.size(), is(2));
 //
-//        Repo repo = repos.get(0);
+//        Story repo = repos.get(0);
 ////        assertThat(repo.fullName, is("yigit/AckMate"));
 //
-////        Repo.Owner owner = repo.owner;
+////        Story.Owner owner = repo.owner;
 ////        assertThat(owner, notNullValue());
 ////        assertThat(owner.id, is("yigit"));
 ////        assertThat(owner.url, is("https://api.github.com/users/yigit"));
 //
-//        Repo repo2 = repos.get(1);
+//        Story repo2 = repos.get(1);
 ////        assertThat(repo2.fullName, is("yigit/android-architecture"));
 //    }
 //

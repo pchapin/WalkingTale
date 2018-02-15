@@ -21,7 +21,7 @@
 //import com.android.example.github.db.GithubDb;
 //import com.android.example.github.db.RepoDao;
 //import com.android.example.github.util.TestUtil;
-//import com.android.example.github.vo.Repo;
+//import com.android.example.github.vo.Story;
 //import com.android.example.github.vo.RepoSearchResult;
 //import com.android.example.github.vo.Resource;
 //
@@ -103,7 +103,7 @@
 //        createDbResult(1);
 //        RepoSearchResponse result = new RepoSearchResponse();
 //        result.setTotal(10);
-//        List<Repo> repos = TestUtil.createRepos(10, "a", "b", "c");
+//        List<Story> repos = TestUtil.createRepos(10, "a", "b", "c");
 //        result.setItems(repos);
 //        Call<RepoSearchResponse> call = createCall(result, null);
 //        when(service.searchRepos("foo", 1)).thenReturn(call);
@@ -117,7 +117,7 @@
 //        createDbResult(1);
 //        RepoSearchResponse result = new RepoSearchResponse();
 //        result.setTotal(10);
-//        List<Repo> repos = TestUtil.createRepos(10, "a", "b", "c");
+//        List<Story> repos = TestUtil.createRepos(10, "a", "b", "c");
 //        result.setItems(repos);
 //        result.setNextPage(2);
 //        Call<RepoSearchResponse> call = createCall(result, 2);

@@ -24,22 +24,22 @@ import com.android.example.github.db.GithubTypeConverters;
 
 import java.util.List;
 
-@Entity(primaryKeys = "id")
+@Entity(primaryKeys = "userId")
 @TypeConverters(GithubTypeConverters.class)
 public class User {
 
     @NonNull
-    public String id;
+    public String userId;
     public List<String> createdStories;
     public List<String> playedStories;
-    public String name;
+    public String userName;
     public String userImage;
 
-    public User(@NonNull String id, List<String> createdStories, List<String> playedStories, String name, String userImage) {
-        this.id = id;
+    public User(@NonNull String userId, List<String> createdStories, List<String> playedStories, String userName, String userImage) {
+        this.userId = userId;
         this.createdStories = createdStories;
         this.playedStories = playedStories;
-        this.name = name;
+        this.userName = userName;
         this.userImage = userImage;
     }
 }

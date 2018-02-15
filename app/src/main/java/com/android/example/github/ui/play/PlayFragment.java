@@ -175,7 +175,7 @@ public class PlayFragment extends Fragment implements
 
     private void initRepoObserver() {
         playViewModel.getRepo().observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
+            binding.get().setStory(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
             if (!playViewModel.isStorySet() && resource != null && resource.data != null) {

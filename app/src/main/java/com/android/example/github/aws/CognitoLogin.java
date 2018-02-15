@@ -19,9 +19,9 @@ public class CognitoLogin {
     public String getToken(Context context) {
 
         CognitoUserPool userPool = new CognitoUserPool(context,
-                "us-east-1_5Jew8wIVQ",
-                "2aj12760enoi6kvs3bun08dsfg",
-                "1tr05oa80sre89di3an5je81k5o78jq6thblkmcgrgo0mljb3li2");
+                ConstantsKt.getCognitoUserPoolId(),
+                ConstantsKt.getCognitoClientId(),
+                ConstantsKt.getCognitoClientSecret());
         AuthenticationHandler authenticationHandler = new AuthenticationHandler() {
             @Override
             public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {

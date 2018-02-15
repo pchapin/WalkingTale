@@ -17,7 +17,7 @@
 package com.android.example.github.api
 
 import android.arch.lifecycle.LiveData
-import com.android.example.github.vo.Repo
+import com.android.example.github.vo.Story
 import com.android.example.github.vo.User
 import retrofit2.Call
 import retrofit2.http.*
@@ -27,17 +27,17 @@ import retrofit2.http.*
  */
 interface GithubService {
     @GET("stories/{id}")
-    fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Repo>>
+    fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Story>>
 
     @GET("stories")
-    fun getAllRepos(@Header("Authorization") authToken: String): LiveData<ApiResponse<List<Repo>>>
+    fun getAllRepos(@Header("Authorization") authToken: String): LiveData<ApiResponse<List<Story>>>
 
     @GET("stories")
-    fun getAllReposTesting(@Header("Authorization") authToken: String): Call<List<Repo>>
+    fun getAllReposTesting(@Header("Authorization") authToken: String): Call<List<Story>>
 
     @PUT("stories")
     fun putStory(@Header("Authorization") authToken: String,
-                 @Body repo: Repo): Call<Repo>
+                 @Body story: Story): Call<Story>
 
     @DELETE("stories/{id}")
     fun deleteStory(@Header("Authorization") authToken: String,

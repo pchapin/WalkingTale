@@ -7,8 +7,8 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
 import com.android.example.github.repository.RepoRepository;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ public class PlayViewModel extends ViewModel {
     private final String TAG = this.getClass().getSimpleName();
     @VisibleForTesting
     private final MutableLiveData<String> repoId;
-    private final LiveData<Resource<Repo>> repo;
+    private final LiveData<Resource<Story>> repo;
     LiveData<List<Chapter>> availableChapters = new MutableLiveData<>();
-    private Repo story;
+    private Story story;
     private MutableLiveData<Chapter> currentChapter = new MutableLiveData<>();
     private MutableLiveData<Chapter> nextChapter = new MutableLiveData<>();
     private LiveData<Boolean> isCurrentFinal = new MutableLiveData<>();
@@ -49,7 +49,7 @@ public class PlayViewModel extends ViewModel {
         isCurrentFinal = Transformations.map(availableChapters, input -> input.size() == story.chapters.size());
     }
 
-    public LiveData<Resource<Repo>> getRepo() {
+    public LiveData<Resource<Story>> getRepo() {
         return repo;
     }
 
@@ -65,11 +65,12 @@ public class PlayViewModel extends ViewModel {
         return nextChapter;
     }
 
-    void setStory(Repo repo) throws IllegalArgumentException {
-        if (story != null) throw new IllegalArgumentException("Story has already been initialized");
-        story = repo;
-        currentChapter.setValue(story.chapters.get(0));
-        nextChapter.setValue(story.chapters.get(1));
+    void setStory(Story story) throws IllegalArgumentException {
+        if (this.story != null)
+            throw new IllegalArgumentException("Story has already been initialized");
+        this.story = story;
+        currentChapter.setValue(this.story.chapters.get(0));
+        nextChapter.setValue(this.story.chapters.get(1));
     }
 
     boolean incrementChapter() {

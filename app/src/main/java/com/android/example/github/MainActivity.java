@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements
         mainViewModel.newUser.observe(this, userResource -> {
             if (userResource != null && userResource.data != null) {
                 Log.i(TAG, "Creating new user: " + userResource);
-                mainViewModel.setUserId(userResource.data.id);
+                mainViewModel.setUserId(userResource.data.userId);
             }
         });
 

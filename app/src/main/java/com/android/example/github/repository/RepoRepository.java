@@ -31,9 +31,9 @@ import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.RateLimiter;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,10 +42,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Repository that handles Repo instances.
+ * Repository that handles Story instances.
  * <p>
  * unfortunate naming :/ .
- * Repo - value object name
+ * Story - value object name
  * Repository - type of this class.
  */
 @Singleton
@@ -67,21 +67,24 @@ public class RepoRepository {
         this.appExecutors = appExecutors;
     }
 
-    public LiveData<Boolean> publishStory(Repo repo) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(repo, githubService);
+    public LiveData<Boolean> publishStory(Story story) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(story, githubService);
         appExecutors.networkIO().execute(saveStoryTask);
         return saveStoryTask.getLiveData();
     }
 
-    public LiveData<Resource<List<Repo>>> getAllRepos(boolean shouldFetch) {
-        return new NetworkBoundResource<List<Repo>, List<Repo>>(appExecutors) {
+    public LiveData<Resource<List<Story>>> getAllRepos(boolean shouldFetch) {
+        GetStoriesTask getStoriesTask = new GetStoriesTask(githubService);
+        appExecutors.networkIO().execute(getStoriesTask);
+
+        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
             @Override
-            protected void saveCallResult(@NonNull List<Repo> item) {
+            protected void saveCallResult(@NonNull List<Story> item) {
                 repoDao.insertRepos(item);
             }
 
             @Override
-            protected boolean shouldFetch(@Nullable List<Repo> data) {
+            protected boolean shouldFetch(@Nullable List<Story> data) {
                 boolean result = shouldFetch || data == null || data.isEmpty();
                 Log.i(TAG, "fetching new stories: " + result);
                 return result;
@@ -89,40 +92,39 @@ public class RepoRepository {
 
             @NonNull
             @Override
-            protected LiveData<List<Repo>> loadFromDb() {
+            protected LiveData<List<Story>> loadFromDb() {
                 return repoDao.loadAll();
             }
 
             @NonNull
             @Override
-            protected LiveData<ApiResponse<List<Repo>>> createCall() {
+            protected LiveData<ApiResponse<List<Story>>> createCall() {
                 return githubService.getAllRepos(MainActivity.cognitoToken);
             }
         }.asLiveData();
     }
 
-
-    public LiveData<Resource<Repo>> loadRepo(String id) {
-        return new NetworkBoundResource<Repo, Repo>(appExecutors) {
+    public LiveData<Resource<Story>> loadRepo(String id) {
+        return new NetworkBoundResource<Story, Story>(appExecutors) {
             @Override
-            protected void saveCallResult(@NonNull Repo item) {
+            protected void saveCallResult(@NonNull Story item) {
                 repoDao.insert(item);
             }
 
             @Override
-            protected boolean shouldFetch(@Nullable Repo data) {
+            protected boolean shouldFetch(@Nullable Story data) {
                 return data == null;
             }
 
             @NonNull
             @Override
-            protected LiveData<Repo> loadFromDb() {
+            protected LiveData<Story> loadFromDb() {
                 return repoDao.load(id);
             }
 
             @NonNull
             @Override
-            protected LiveData<ApiResponse<Repo>> createCall() {
+            protected LiveData<ApiResponse<Story>> createCall() {
                 return githubService.getRepo(id);
             }
         }.asLiveData();
@@ -133,8 +135,8 @@ public class RepoRepository {
         return null;
     }
 
-    public LiveData<Resource<List<Repo>>> search(String query) {
-        return new NetworkBoundResource<List<Repo>, RepoSearchResponse>(appExecutors) {
+    public LiveData<Resource<List<Story>>> search(String query) {
+        return new NetworkBoundResource<List<Story>, RepoSearchResponse>(appExecutors) {
 
             @Override
             protected void saveCallResult(@NonNull RepoSearchResponse item) {
@@ -152,13 +154,13 @@ public class RepoRepository {
             }
 
             @Override
-            protected boolean shouldFetch(@Nullable List<Repo> data) {
+            protected boolean shouldFetch(@Nullable List<Story> data) {
                 return data == null;
             }
 
             @NonNull
             @Override
-            protected LiveData<List<Repo>> loadFromDb() {
+            protected LiveData<List<Story>> loadFromDb() {
                 return Transformations.switchMap(repoDao.search(query), searchData -> {
                     if (searchData == null) {
                         return AbsentLiveData.create();

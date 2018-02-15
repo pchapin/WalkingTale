@@ -21,13 +21,13 @@ import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import com.android.example.github.MainActivity
 import com.android.example.github.api.GithubService
-import com.android.example.github.vo.Repo
+import com.android.example.github.vo.Story
 import java.io.IOException
 
 /**
  * A task that uploads a created story to a remote database.
  */
-class SaveStoryTask internal constructor(private val story: Repo, private val githubService: GithubService) : Runnable {
+class SaveStoryTask internal constructor(private val story: Story, private val githubService: GithubService) : Runnable {
     private val TAG = this.javaClass.simpleName
     private val isSuccessful = MutableLiveData<Boolean>()
 

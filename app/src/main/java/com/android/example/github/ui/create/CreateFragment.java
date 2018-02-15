@@ -52,7 +52,7 @@ import com.android.example.github.ui.common.CreateFileKt;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
 import com.android.example.github.walkingTale.LocationUtilKt;
@@ -133,9 +133,9 @@ public class CreateFragment extends Fragment implements
         initContributorList(createViewModel);
         getActivity().setTitle("Create Story");
 
-        LiveData<Repo> repo = createViewModel.getStory();
+        LiveData<Story> repo = createViewModel.getStory();
         repo.observe(this, resource -> {
-            binding.get().setRepo(resource);
+            binding.get().setStory(resource);
             binding.get().executePendingBindings();
         });
 
@@ -207,7 +207,7 @@ public class CreateFragment extends Fragment implements
 
             @Override
             public void afterTextChanged(Editable editable) {
-                createViewModel.setTags(editable.toString());
+                createViewModel.setTags(new ArrayList<>());
             }
         });
     }

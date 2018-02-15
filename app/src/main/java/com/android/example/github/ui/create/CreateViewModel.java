@@ -26,7 +26,7 @@ import android.widget.Toast;
 import com.android.example.github.MainActivity;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
 import com.android.example.github.walkingTale.Exposition;
@@ -47,7 +47,7 @@ public class CreateViewModel extends ViewModel {
     // TODO: 12/17/17 turn all fields into live data, and only create repo right at end
 
     private RepoRepository repoRepository;
-    private MutableLiveData<Repo> story = null;
+    private MutableLiveData<Story> story = null;
 
     // TODO: 11/22/17 Limit the number of expositions a user can add
     private int expositionCount = 0;
@@ -59,50 +59,50 @@ public class CreateViewModel extends ViewModel {
     public CreateViewModel(RepoRepository repository) {
         this.repoRepository = repository;
         if (story == null) {
-            story = new MutableLiveData<>();
-            Repo repo = ExampleRepo.Companion.getRepo();
-            repo.username = MainActivity.cognitoUsername;
-            story.setValue(repo);
+            this.story = new MutableLiveData<>();
+            Story story = ExampleRepo.Companion.getRepo();
+            story.username = MainActivity.cognitoUsername;
+            this.story.setValue(story);
         }
     }
 
     void setGenre(String genre) {
-        Repo repo = story.getValue();
-        repo.genre = genre;
-        story.setValue(repo);
+        Story story = this.story.getValue();
+        story.genre = genre;
+        this.story.setValue(story);
     }
 
     void setStoryName(String storyName) {
-        Repo repo = story.getValue();
-        repo.name = storyName;
-        story.setValue(repo);
+        Story story = this.story.getValue();
+        story.storyName = storyName;
+        this.story.setValue(story);
     }
 
     void setDescription(String description) {
-        Repo repo = story.getValue();
-        repo.description = description;
-        story.setValue(repo);
+        Story story = this.story.getValue();
+        story.description = description;
+        this.story.setValue(story);
     }
 
-    void setTags(String tags) {
-        Repo repo = story.getValue();
-        repo.tags = tags;
-        story.setValue(repo);
+    void setTags(List<String> tags) {
+        Story story = this.story.getValue();
+        story.tags = tags;
+        this.story.setValue(story);
     }
 
     void setStoryImage(String image) {
-        Repo repo = story.getValue();
-        repo.story_image = image;
-        story.setValue(repo);
+        Story story = this.story.getValue();
+        story.story_image = image;
+        this.story.setValue(story);
     }
 
-    public LiveData<Repo> getStory() {
+    public LiveData<Story> getStory() {
         return story;
     }
 
     LiveData<Boolean> finishStory(Context context) {
         // Check that fields of story are valid
-        if (story.getValue().name.isEmpty()) {
+        if (story.getValue().getStoryName().isEmpty()) {
             Toast.makeText(context, "Please enter a name.", Toast.LENGTH_SHORT).show();
         } else if (story.getValue().genre.isEmpty()) {
             Toast.makeText(context, "Please select a genre.", Toast.LENGTH_SHORT).show();
@@ -120,10 +120,10 @@ public class CreateViewModel extends ViewModel {
 
     public final void addChapter(@NotNull String name, @NotNull LatLng location, int radius) {
         Chapter chapter = new Chapter(new ArrayList(), name, location, this.story.getValue().chapters.size(), radius);
-        Repo repo = story.getValue();
-        repo.chapters.add(chapter);
-        Log.i("addchapter", "repo " + repo);
-        story.setValue(repo);
+        Story story = this.story.getValue();
+        story.chapters.add(chapter);
+        Log.i("addchapter", "story " + story);
+        this.story.setValue(story);
     }
 
     /**
@@ -135,14 +135,14 @@ public class CreateViewModel extends ViewModel {
     public final void addExposition(@NotNull ExpositionType expositionType, @NotNull String content) {
         int var4 = this.expositionCount++;
         Exposition exposition = new Exposition(expositionType, content, var4);
-        Repo repo = story.getValue();
+        Story story = this.story.getValue();
         Chapter chapter = CollectionsKt.last(this.story.getValue().chapters);
         ArrayList<Exposition> expositions = chapter.getExpositions();
         expositions.add(exposition);
         chapter.setExpositions(expositions);
-        repo.chapters.remove(repo.chapters.size() - 1);
-        repo.chapters.add(chapter);
-        story.setValue(repo);
+        story.chapters.remove(story.chapters.size() - 1);
+        story.chapters.add(chapter);
+        this.story.setValue(story);
     }
 
     @NotNull
@@ -156,9 +156,9 @@ public class CreateViewModel extends ViewModel {
     }
 
     public final void removeChapter() throws ArrayIndexOutOfBoundsException {
-        Repo repo = story.getValue();
-        repo.chapters.remove(repo.chapters.size() - 1);
-        story.setValue(repo);
+        Story story = this.story.getValue();
+        story.chapters.remove(story.chapters.size() - 1);
+        this.story.setValue(story);
     }
 
     public final void incrementRadius() throws ArrayIndexOutOfBoundsException {
@@ -167,10 +167,10 @@ public class CreateViewModel extends ViewModel {
         } else {
             Chapter chapter = CollectionsKt.last(this.story.getValue().chapters);
             chapter.setRadius(chapter.getRadius() + 1);
-            Repo repo = story.getValue();
-            repo.chapters.remove(repo.chapters.size() - 1);
-            repo.chapters.add(chapter);
-            story.setValue(repo);
+            Story story = this.story.getValue();
+            story.chapters.remove(story.chapters.size() - 1);
+            story.chapters.add(chapter);
+            this.story.setValue(story);
         }
     }
 
@@ -180,10 +180,10 @@ public class CreateViewModel extends ViewModel {
         } else {
             Chapter chapter = CollectionsKt.last(this.story.getValue().chapters);
             chapter.setRadius(chapter.getRadius() - 1);
-            Repo repo = story.getValue();
-            repo.chapters.remove(repo.chapters.size() - 1);
-            repo.chapters.add(chapter);
-            story.setValue(repo);
+            Story story = this.story.getValue();
+            story.chapters.remove(story.chapters.size() - 1);
+            story.chapters.add(chapter);
+            this.story.setValue(story);
         }
     }
 }

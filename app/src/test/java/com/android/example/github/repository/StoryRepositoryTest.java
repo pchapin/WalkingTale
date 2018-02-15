@@ -27,8 +27,8 @@ import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.util.InstantAppExecutors;
 import com.android.example.github.util.TestUtil;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnit4.class)
-public class RepoRepositoryTest {
+public class StoryRepositoryTest {
     @Rule
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
     private RepoRepository repository;
@@ -64,14 +64,14 @@ public class RepoRepositoryTest {
 
     @Test
     public void loadRepoFromNetwork() throws IOException {
-        MutableLiveData<Repo> dbData = new MutableLiveData<>();
+        MutableLiveData<Story> dbData = new MutableLiveData<>();
 //        when(dao.load("foo", "bar")).thenReturn(dbData);
 
-        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
-        LiveData<ApiResponse<Repo>> call = successCall(repo);
+        Story story = TestUtil.createRepo("foo", "bar", "desc");
+        LiveData<ApiResponse<Story>> call = successCall(story);
         when(service.getRepo("foo")).thenReturn(call);
 
-//        LiveData<Resource<Repo>> data = repository.loadRepo("foo", "bar");
+//        LiveData<Resource<Story>> data = repository.loadRepo("foo", "bar");
 //        verify(dao).load("foo", "bar");
         verifyNoMoreInteractions(service);
 
@@ -79,15 +79,15 @@ public class RepoRepositoryTest {
 //        data.observeForever(observer);
         verifyNoMoreInteractions(service);
         verify(observer).onChanged(Resource.loading(null));
-        MutableLiveData<Repo> updatedDbData = new MutableLiveData<>();
+        MutableLiveData<Story> updatedDbData = new MutableLiveData<>();
 //        when(dao.load("foo", "bar")).thenReturn(updatedDbData);
 
         dbData.postValue(null);
         verify(service).getRepo("foo");
-        verify(dao).insert(repo);
+        verify(dao).insert(story);
 
-        updatedDbData.postValue(repo);
-        verify(observer).onChanged(Resource.success(repo));
+        updatedDbData.postValue(story);
+        verify(observer).onChanged(Resource.success(story));
     }
 
     @Test

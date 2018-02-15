@@ -16,42 +16,38 @@
 
 package com.android.example.github.db;
 
-import com.android.example.github.vo.Repo;
-import com.android.example.github.vo.RepoSearchResult;
-
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.RoomWarnings;
-import android.util.SparseIntArray;
 
-import java.util.Collections;
+import com.android.example.github.vo.RepoSearchResult;
+import com.android.example.github.vo.Story;
+
 import java.util.List;
 
 /**
- * Interface for database access on Repo related operations.
+ * Interface for database access on Story related operations.
  */
 @Dao
 public abstract class RepoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Repo... repos);
+    public abstract void insert(Story... stories);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertRepos(List<Repo> repositories);
+    public abstract void insertRepos(List<Story> repositories);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long createRepoIfNotExists(Repo repo);
+    public abstract long createRepoIfNotExists(Story story);
 
-    @Query("SELECT * FROM repo WHERE id = :id")
-    public abstract LiveData<Repo> load(String id);
+    @Query("SELECT * FROM Story WHERE id = :id")
+    public abstract LiveData<Story> load(String id);
 
-    @Query("SELECT * FROM Repo "
+    @Query("SELECT * FROM Story "
             + "WHERE id = :id")
-    public abstract LiveData<List<Repo>> loadRepositories(int id);
+    public abstract LiveData<List<Story>> loadRepositories(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(RepoSearchResult result);
@@ -59,7 +55,7 @@ public abstract class RepoDao {
     @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
     public abstract LiveData<RepoSearchResult> search(String query);
 
-//    public LiveData<List<Repo>> loadOrdered(List<Integer> repoIds) {
+//    public LiveData<List<Story>> loadOrdered(List<Integer> repoIds) {
 //        SparseIntArray order = new SparseIntArray();
 //        int index = 0;
 //        for (Integer repoId : repoIds) {
@@ -75,12 +71,12 @@ public abstract class RepoDao {
 //        });
 //    }
 
-    @Query("SELECT * FROM Repo WHERE id in (:repoIds)")
-    protected abstract LiveData<List<Repo>> loadById(List<Integer> repoIds);
+    @Query("SELECT * FROM Story WHERE id in (:repoIds)")
+    protected abstract LiveData<List<Story>> loadById(List<Integer> repoIds);
 
     @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
     public abstract RepoSearchResult findSearchResult(String query);
 
-    @Query("SELECT * FROM repo")
-    public abstract LiveData<List<Repo>> loadAll();
+    @Query("SELECT * FROM Story")
+    public abstract LiveData<List<Story>> loadAll();
 }

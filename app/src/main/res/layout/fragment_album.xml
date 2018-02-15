@@ -21,8 +21,8 @@
     <data>
 
         <variable
-            name="repo"
-            type="com.android.example.github.vo.Repo" />
+            name="story"
+            type="com.android.example.github.vo.Story" />
 
         <variable
             name="retryCallback"

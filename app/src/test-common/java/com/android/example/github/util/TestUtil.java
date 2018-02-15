@@ -16,7 +16,7 @@
 
 package com.android.example.github.util;
 
-import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Story;
 import com.android.example.github.vo.User;
 import com.android.example.github.walkingTale.ExampleRepo;
 
@@ -29,20 +29,20 @@ public class TestUtil {
         return null;
     }
 
-    public static List<Repo> createRepos(int count, String owner, String name,
-                                         String description) {
-        List<Repo> repos = new ArrayList<>();
+    public static List<Story> createRepos(int count, String owner, String name,
+                                          String description) {
+        List<Story> stories = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            repos.add(createRepo(owner + i, name + i, description + i));
+            stories.add(createRepo(owner + i, name + i, description + i));
         }
-        return repos;
+        return stories;
     }
 
-    public static Repo createRepo(String owner, String name, String description) {
-        return createRepo(Repo.UNKNOWN_ID, owner, name, description);
+    public static Story createRepo(String owner, String name, String description) {
+        return createRepo(Story.UNKNOWN_ID, owner, name, description);
     }
 
-    public static Repo createRepo(int id, String owner, String name, String description) {
+    public static Story createRepo(int id, String owner, String name, String description) {
         return ExampleRepo.Companion.getRepo();
     }
 }

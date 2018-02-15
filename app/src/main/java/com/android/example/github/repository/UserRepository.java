@@ -63,7 +63,7 @@ public class UserRepository {
             @NonNull
             @Override
             protected LiveData<User> loadFromDb() {
-                return userDao.findByLogin(user.id);
+                return userDao.findByLogin(user.userId);
             }
 
             @NonNull

@@ -25,8 +25,8 @@
         <import type="com.android.example.github.vo.Resource" />
 
         <variable
-            name="repo"
-            type="com.android.example.github.vo.Repo" />
+            name="story"
+            type="com.android.example.github.vo.Story" />
 
         <variable
             name="repoResource"
@@ -53,7 +53,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent"
-                app:visibleGone="@{repo != null}"
+                app:visibleGone="@{story != null}"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="154dp">
 
@@ -68,7 +68,7 @@
                     android:scaleType="centerCrop"
                     app:civ_border_color="#000000"
                     app:civ_border_width="2dp"
-                    app:imageUrl="@{repo.story_image}"
+                    app:imageUrl="@{story.story_image}"
                     tools:src="@color/alert" />
 
                 <RatingBar
@@ -80,7 +80,7 @@
                     android:progressTint="#FFD700"
                     android:rating="3.5"
                     android:stepSize="0.5"
-                    app:visibleGone="@{repo != null}"
+                    app:visibleGone="@{story != null}"
                     tools:text="rating" />
 
                 <TextView
@@ -91,8 +91,8 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans"
                     android:gravity="center_horizontal"
-                    android:text="@{repo.name}"
-                    app:visibleGone="@{repo != null}"
+                    android:text="@{story.storyName}"
+                    app:visibleGone="@{story != null}"
                     tools:text="name of the story" />
 
                 <TextView
@@ -103,9 +103,9 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans"
-                    android:text="@{repo.username}"
+                    android:text="@{story.username}"
                     android:textSize="24sp"
-                    app:visibleGone="@{repo != null}"
+                    app:visibleGone="@{story != null}"
                     tools:text="author" />
 
                 <TextView
@@ -118,9 +118,9 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans"
-                    android:text="@{repo.description}"
+                    android:text="@{story.description}"
                     android:textSize="20sp"
-                    app:visibleGone="@{repo != null}"
+                    app:visibleGone="@{story != null}"
                     tools:text="description of the story" />
 
                 <LinearLayout
@@ -136,9 +136,9 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
                         android:fontFamily="@font/open_sans"
-                        android:text="@{`Genre: ` + repo.genre}"
+                        android:text="@{`Genre: ` + story.genre}"
                         android:textSize="24sp"
-                        app:visibleGone="@{repo != null}"
+                        app:visibleGone="@{story != null}"
                         tools:text="genre" />
 
                     <TextView
@@ -149,9 +149,9 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
                         android:fontFamily="@font/open_sans"
-                        android:text="@{`Tags: ` + repo.tags}"
+                        android:text="@{`Tags: ` + story.tags}"
                         android:textSize="24sp"
-                        app:visibleGone="@{repo != null}"
+                        app:visibleGone="@{story != null}"
                         tools:text="tags" />
 
                     <TextView
@@ -161,9 +161,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
-                        android:text="@{`Duration: ` + repo.duration}"
+                        android:text="@{`Duration: ` + story.duration}"
                         android:textSize="24sp"
-                        app:visibleGone="@{repo != null}"
+                        app:visibleGone="@{story != null}"
                         tools:text="duration" />
 
                 </LinearLayout>

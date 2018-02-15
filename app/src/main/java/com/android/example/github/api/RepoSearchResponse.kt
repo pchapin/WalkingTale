@@ -17,9 +17,8 @@
 package com.android.example.github.api
 
 
+import com.android.example.github.vo.Story
 import com.google.gson.annotations.SerializedName
-
-import com.android.example.github.vo.Repo
 
 /**
  * POJO to hold repo search responses. This is different from the Entity in the database because
@@ -29,7 +28,7 @@ class RepoSearchResponse {
     @SerializedName("total_count")
     var total: Int = 0
     @SerializedName("items")
-    var items: List<Repo>? = null
+    var items: List<Story>? = null
     var nextPage: Int? = null
 
     val repoIds: List<String>

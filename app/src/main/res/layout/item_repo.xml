@@ -25,8 +25,8 @@
             type="boolean" />
 
         <variable
-            name="repo"
-            type="com.android.example.github.vo.Repo" />
+            name="story"
+            type="com.android.example.github.vo.Story" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -46,7 +46,7 @@
                 android:contentDescription="Story Image"
                 android:maxHeight="200dp"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{repo.story_image}"
+                app:imageUrl="@{story.story_image}"
                 tools:src="@mipmap/ic_launcher" />
 
             <android.support.constraint.ConstraintLayout
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="20dp"
-                    android:text="@{repo.name}"
+                    android:text="@{story.storyName}"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +73,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:paddingBottom="8dp"
-                    android:text="@{repo.username}"
+                    android:text="@{story.username}"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/desc"
@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="@{repo.description}"
+                    android:text="@{story.description}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/name"
                     tools:text="this is some description more description more description" />

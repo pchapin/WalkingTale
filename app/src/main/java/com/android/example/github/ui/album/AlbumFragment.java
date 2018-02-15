@@ -37,8 +37,8 @@ import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.ExpositionAdapter;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.Exposition;
 
@@ -86,9 +86,9 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         } else {
             albumViewModel.setId(null);
         }
-        LiveData<Resource<Repo>> repo = albumViewModel.getRepo();
+        LiveData<Resource<Story>> repo = albumViewModel.getRepo();
         repo.observe(this, resource -> {
-            binding.get().setRepo(resource == null ? null : resource.data);
+            binding.get().setStory(resource == null ? null : resource.data);
             binding.get().executePendingBindings();
         });
 

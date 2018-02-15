@@ -21,10 +21,15 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.aws.CognitoLogin;
+import com.android.example.github.aws.ConstantsKt;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
-import com.android.example.github.vo.Repo;
+import com.android.example.github.vo.Story;
 import com.android.example.github.vo.User;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
@@ -74,29 +79,29 @@ public class AwsTest {
 
     @Test
     public void testListStories() throws IOException {
-        Response<List<Repo>> response = githubService.getAllReposTesting(accessToken).execute();
+        Response<List<Story>> response = githubService.getAllReposTesting(accessToken).execute();
         assertEquals(200, response.code());
         assertNotNull(response.body());
     }
 
-    public Response<Repo> putStory() throws IOException {
-        Repo repo = ExampleRepo.Companion.getRandomRepo();
-        repo.name = "name";
-        repo.description = "desc";
-        repo.genre = "genre";
-        repo.tags = "tags";
-        repo.story_image = "image";
-        repo.username = "user";
-        repo.chapters = new ArrayList<>();
+    public Response<Story> putStory() throws IOException {
+        Story story = ExampleRepo.Companion.getRandomRepo();
+        story.name = "name";
+        story.description = "desc";
+        story.genre = "genre";
+        story.tags = "tags";
+        story.story_image = "image";
+        story.username = "user";
+        story.chapters = new ArrayList<>();
 
         Exposition exposition = new Exposition(ExpositionType.TEXT, "content", 0);
         Chapter chapter = new Chapter(new ArrayList<>(), "chapter name", new LatLng(1.1, 1.1), 0, 5);
         ArrayList<Exposition> expositions = new ArrayList<>();
         expositions.add(exposition);
         chapter.setExpositions(expositions);
-        repo.chapters.add(chapter);
+        story.chapters.add(chapter);
 
-        return githubService.putStory(accessToken, repo).execute();
+        return githubService.putStory(accessToken, story).execute();
     }
 
     @Test
@@ -145,5 +150,23 @@ public class AwsTest {
     public void testS3Upload() throws IOException {
         File outputDir = context.getCacheDir(); // context being the Activity pointer
         File file = File.createTempFile("prefix", "extension", outputDir);
+    }
+
+    @Test
+    public void testDynamo() throws IOException {
+        CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider =
+//                new CognitoCachingCredentialsProvider(
+//                        context,
+//                        ConstantsKt.getCognitoIdentityPoolId(),
+//                        ConstantsKt.getCognitoPoolRegion());
+                new CognitoCachingCredentialsProvider(
+                        context, ConstantsKt.getCognitoIdentityPoolId(), Regions.US_EAST_1
+                );
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+//        AmazonDynamoDBClient ddb = new AmazonDynamoDBClient(cognitoCachingCredentialsProvider);
+//        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(ddb);
+
+//        Story repo = dynamoDBMapper.load(Story.class, "12345");
+//        Log.i(TAG, "" + repo.username);
     }
 }

@@ -28,8 +28,8 @@ import android.support.annotation.VisibleForTesting;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.Objects;
-import com.android.example.github.vo.Repo;
 import com.android.example.github.vo.Resource;
+import com.android.example.github.vo.Story;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +40,7 @@ public class SearchViewModel extends ViewModel {
 
     private final MutableLiveData<String> query = new MutableLiveData<>();
 
-    private final LiveData<Resource<List<Repo>>> results;
+    private final LiveData<Resource<List<Story>>> results;
 
     private final NextPageHandler nextPageHandler;
 
@@ -57,7 +57,7 @@ public class SearchViewModel extends ViewModel {
     }
 
     @VisibleForTesting
-    public LiveData<Resource<List<Repo>>> getResults() {
+    public LiveData<Resource<List<Story>>> getResults() {
         return results;
     }
 

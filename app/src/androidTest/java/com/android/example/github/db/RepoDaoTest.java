@@ -17,7 +17,7 @@
 //package com.android.example.github.db;
 //
 //import com.android.example.github.util.TestUtil;
-//import com.android.example.github.vo.Repo;
+//import com.android.example.github.vo.Story;
 //
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -39,9 +39,9 @@
 //public class RepoDaoTest extends DbTest {
 //    @Test
 //    public void insertAndRead() throws InterruptedException {
-//        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
+//        Story repo = TestUtil.createRepo("foo", "bar", "desc");
 //        db.repoDao().insert(repo);
-//        Repo loaded = getValue(db.repoDao().load(1));
+//        Story loaded = getValue(db.repoDao().load(1));
 //        assertThat(loaded, notNullValue());
 //        assertThat(loaded.name, is("bar"));
 //        assertThat(loaded.description, is("desc"));
@@ -51,14 +51,14 @@
 //
 //    @Test
 //    public void createIfNotExists_exists() throws InterruptedException {
-//        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
+//        Story repo = TestUtil.createRepo("foo", "bar", "desc");
 //        db.repoDao().insert(repo);
 //        assertThat(db.repoDao().createRepoIfNotExists(repo), is(-1L));
 //    }
 //
 //    @Test
 //    public void createIfNotExists_doesNotExist() {
-//        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
+//        Story repo = TestUtil.createRepo("foo", "bar", "desc");
 //        assertThat(db.repoDao().createRepoIfNotExists(repo), is(1L));
 //    }
 //}
