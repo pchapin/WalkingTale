@@ -65,13 +65,13 @@ public class RepoRepository {
     }
 
     public LiveData<Resource<Void>> publishStory(Story story) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(story);
+        SaveStoryTask saveStoryTask = new SaveStoryTask(story, db);
         appExecutors.networkIO().execute(saveStoryTask);
         return saveStoryTask.getResult();
     }
 
     public LiveData<Resource<List<Story>>> getAllStories() {
-        GetAllStoriesTask getAllStoriesTask = new GetAllStoriesTask("");
+        GetAllStoriesTask getAllStoriesTask = new GetAllStoriesTask("", db);
         appExecutors.networkIO().execute(getAllStoriesTask);
         return getAllStoriesTask.getResult();
     }

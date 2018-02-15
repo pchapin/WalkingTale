@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData;
 
 import com.android.example.github.AppExecutors;
 import com.android.example.github.api.GithubService;
+import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.UserDao;
 import com.android.example.github.repository.tasks.GetUserTask;
 import com.android.example.github.repository.tasks.PutUserTask;
@@ -38,22 +39,24 @@ public class UserRepository {
     private final UserDao userDao;
     private final GithubService githubService;
     private final AppExecutors appExecutors;
+    private final GithubDb db;
 
     @Inject
-    UserRepository(AppExecutors appExecutors, UserDao userDao, GithubService githubService) {
+    UserRepository(AppExecutors appExecutors, UserDao userDao, GithubService githubService, GithubDb db) {
         this.userDao = userDao;
         this.githubService = githubService;
         this.appExecutors = appExecutors;
+        this.db = db;
     }
 
     public LiveData<Resource<User>> loadUser(String userId) {
-        GetUserTask getUserTask = new GetUserTask(userId);
+        GetUserTask getUserTask = new GetUserTask(userId, db);
         appExecutors.networkIO().execute(getUserTask);
         return getUserTask.getResult();
     }
 
     public LiveData<Resource<Void>> putUser(User user) {
-        PutUserTask putUserTask = new PutUserTask(user);
+        PutUserTask putUserTask = new PutUserTask(user, db);
         appExecutors.networkIO().execute(putUserTask);
         return putUserTask.getResult();
     }
