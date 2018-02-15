@@ -20,23 +20,19 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.android.example.github.AppExecutors;
-import com.android.example.github.MainActivity;
 import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
 import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.util.RateLimiter;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -56,7 +52,6 @@ public class RepoRepository {
     private final RepoDao repoDao;
     private final GithubService githubService;
     private final AppExecutors appExecutors;
-    private RateLimiter<String> repoListRateLimit = new RateLimiter<>(10, TimeUnit.MINUTES);
 
     @Inject
     public RepoRepository(AppExecutors appExecutors, GithubDb db, RepoDao repoDao,
@@ -73,35 +68,10 @@ public class RepoRepository {
         return saveStoryTask.getLiveData();
     }
 
-    public LiveData<Resource<List<Story>>> getAllRepos(boolean shouldFetch) {
-        GetStoriesTask getStoriesTask = new GetStoriesTask(githubService);
-        appExecutors.networkIO().execute(getStoriesTask);
-
-        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull List<Story> item) {
-                repoDao.insertRepos(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Story> data) {
-                boolean result = shouldFetch || data == null || data.isEmpty();
-                Log.i(TAG, "fetching new stories: " + result);
-                return result;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Story>> loadFromDb() {
-                return repoDao.loadAll();
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<List<Story>>> createCall() {
-                return githubService.getAllRepos(MainActivity.getCognitoToken());
-            }
-        }.asLiveData();
+    public LiveData<Resource<List<Story>>> getAllStories() {
+        GetAllStoriesTask getAllStoriesTask = new GetAllStoriesTask("");
+        appExecutors.networkIO().execute(getAllStoriesTask);
+        return getAllStoriesTask.getResult();
     }
 
     public LiveData<Resource<Story>> loadRepo(String id) {

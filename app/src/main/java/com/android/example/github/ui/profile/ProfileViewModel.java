@@ -50,7 +50,7 @@ public class ProfileViewModel extends ViewModel {
         usersRepos = Transformations.switchMap(userId, input -> {
             if (userId == null) return AbsentLiveData.create();
                 // TODO: 1/28/18 only get the repos for a single user
-            else return repository.getAllRepos(true);
+            else return repository.getAllStories();
         });
     }
 

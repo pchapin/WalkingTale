@@ -11,26 +11,25 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.android.example.github.vo.Resource
 import com.android.example.github.vo.Status
 
-abstract class AbstractTask<I, O>(val input: I) : Runnable {
+abstract class AbstractTask<out I, O>(val input: I) : Runnable {
 
-    open val TAG = this.javaClass.simpleName
+    val TAG = this.javaClass.simpleName
     val result = MutableLiveData<Resource<O>>()
     val dynamoDBClient: AmazonDynamoDBClient
     val dynamoDBMapper: DynamoDBMapper
-
 
     fun getResult(): LiveData<Resource<O>> {
         return result
     }
 
     init {
-        dynamoDBClient = Region.getRegion(Regions.US_EAST_1) // CRUCIAL
+        dynamoDBClient = Region.getRegion(Regions.US_EAST_1)
                 .createClient(
                         AmazonDynamoDBClient::class.java,
                         AWSMobileClient.getInstance().credentialsProvider,
                         ClientConfiguration())
-        this.dynamoDBMapper = DynamoDBMapper(dynamoDBClient)
-        this.result.postValue(Resource(Status.LOADING, null, null))
+        dynamoDBMapper = DynamoDBMapper(dynamoDBClient)
+        result.postValue(Resource(Status.LOADING, null, null))
     }
 
     override fun run() {
