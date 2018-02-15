@@ -27,6 +27,8 @@ import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.RepoDao;
+import com.android.example.github.repository.tasks.GetAllStoriesTask;
+import com.android.example.github.repository.tasks.SaveStoryTask;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;

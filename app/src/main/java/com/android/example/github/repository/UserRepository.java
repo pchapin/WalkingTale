@@ -17,14 +17,12 @@
 package com.android.example.github.repository;
 
 import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.android.example.github.AppExecutors;
-import com.android.example.github.MainActivity;
-import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.db.UserDao;
+import com.android.example.github.repository.tasks.GetUserTask;
+import com.android.example.github.repository.tasks.PutUserTask;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.User;
 
@@ -48,35 +46,15 @@ public class UserRepository {
         this.appExecutors = appExecutors;
     }
 
-    public LiveData<Resource<User>> putUser(User user) {
-        return new NetworkBoundResource<User, User>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull User item) {
-                userDao.insert(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable User data) {
-                return true;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<User> loadFromDb() {
-                return userDao.findByLogin(user.userId);
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<User>> createCall() {
-                return githubService.putUser(MainActivity.getCognitoToken(), user);
-            }
-        }.asLiveData();
-    }
-
     public LiveData<Resource<User>> loadUser(String userId) {
         GetUserTask getUserTask = new GetUserTask(userId);
         appExecutors.networkIO().execute(getUserTask);
         return getUserTask.getResult();
+    }
+
+    public LiveData<Resource<Void>> putUser(User user) {
+        PutUserTask putUserTask = new PutUserTask(user);
+        appExecutors.networkIO().execute(putUserTask);
+        return putUserTask.getResult();
     }
 }

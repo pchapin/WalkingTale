@@ -36,7 +36,6 @@ public class FeedViewModel extends ViewModel {
 
     @Inject
     FeedViewModel(RepoRepository repoRepository) {
-
         this.repoRepository = repoRepository;
         shouldFetch.setValue(false);
     }

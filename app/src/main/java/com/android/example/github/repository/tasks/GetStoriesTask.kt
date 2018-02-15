@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.github.repository
+package com.android.example.github.repository.tasks
 
 import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient

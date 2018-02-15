@@ -1,4 +1,4 @@
-package com.android.example.github.repository
+package com.android.example.github.repository.tasks
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
