@@ -17,7 +17,6 @@
 package com.android.example.github.ui.feed;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.android.example.github.repository.RepoRepository;
@@ -31,20 +30,14 @@ import javax.inject.Inject;
 public class FeedViewModel extends ViewModel {
 
     private final String TAG = this.getClass().getSimpleName();
-    private final MutableLiveData<Boolean> shouldFetch = new MutableLiveData<>();
     private RepoRepository repoRepository;
 
     @Inject
     FeedViewModel(RepoRepository repoRepository) {
         this.repoRepository = repoRepository;
-        shouldFetch.setValue(false);
     }
 
     LiveData<Resource<List<Story>>> getResults() {
         return repoRepository.getAllStories();
-    }
-
-    void refresh() {
-        shouldFetch.setValue(true);
     }
 }

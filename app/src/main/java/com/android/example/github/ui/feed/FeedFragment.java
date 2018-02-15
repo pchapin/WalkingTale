@@ -23,6 +23,7 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ import javax.inject.Inject;
  */
 public class FeedFragment extends LifecycleFragment implements Injectable {
 
-    public static boolean isLoggedIn = false;
+    private final String TAG = this.getClass().getSimpleName();
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -67,11 +68,8 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
-
         initRecyclerView();
-        initRefreshListener();
 
         RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
                 repo -> {
@@ -82,7 +80,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
-        binding.get().setCallback(() -> feedViewModel.refresh());
+        binding.get().setCallback(() -> feedViewModel.getResults());
         // TODO: Testing only
 //        navigationController.navigateToRepo("23565e20-0fff-11e8-996c-732ef70acd1f");
 //        navigationController.navigateToRepo("12345");
@@ -91,20 +89,13 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
     private void initRecyclerView() {
         feedViewModel.getResults().observe(this, result -> {
+            Log.i(TAG, "" + result);
+            if (result != null) Log.i(TAG, "" + result.data);
             binding.get().setSearchResource(result);
             binding.get().setResultCount((result == null || result.data == null)
                     ? 0 : result.data.size());
             adapter.get().replace(result == null ? null : result.data);
             binding.get().executePendingBindings();
-        });
-    }
-
-    public void initRefreshListener() {
-        binding.get().feedRefreshLayout.setOnRefreshListener(() -> {
-            feedViewModel.refresh();
-            feedViewModel.getResults().observe(this, listResource -> {
-                binding.get().feedRefreshLayout.setRefreshing(false);
-            });
         });
     }
 }

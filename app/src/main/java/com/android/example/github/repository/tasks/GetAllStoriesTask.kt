@@ -9,9 +9,6 @@ class GetAllStoriesTask(val nothing: String) : AbstractTask<String, MutableList<
 
     override fun run() {
         val response = dynamoDBMapper.scan(Story::class.java, DynamoDBScanExpression())
-        if (response.isEmpty())
-            result.postValue(Resource(Status.ERROR, null, null))
-        else
-            result.postValue(Resource(Status.SUCCESS, response, null))
+        result.postValue(Resource(Status.SUCCESS, response, null))
     }
 }
