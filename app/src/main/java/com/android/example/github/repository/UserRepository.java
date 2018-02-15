@@ -75,7 +75,7 @@ public class UserRepository {
     }
 
     public LiveData<Resource<User>> loadUser(String userId) {
-        GetUserTask getUserTask = new GetUserTask(userId, githubService);
+        GetUserTask getUserTask = new GetUserTask(userId);
         appExecutors.networkIO().execute(getUserTask);
         return getUserTask.getResult();
     }

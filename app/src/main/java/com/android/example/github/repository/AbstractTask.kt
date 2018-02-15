@@ -8,11 +8,11 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
 import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.android.example.github.api.GithubService
 import com.android.example.github.vo.Resource
 import com.android.example.github.vo.Status
 
-abstract class AbstractTask<I, O> constructor(val input: I, private val githubService: GithubService) : Runnable {
+abstract class AbstractTask<I, O>(val input: I) : Runnable {
+
     open val TAG = this.javaClass.simpleName
     val result = MutableLiveData<Resource<O>>()
     val dynamoDBClient: AmazonDynamoDBClient

@@ -11,7 +11,6 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.android.example.github.db.GithubTypeConverters;
 import com.android.example.github.walkingTale.Chapter;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -48,8 +47,7 @@ public class Story {
     }
 
     public Story(String id, @NonNull String storyName, String description, List<Chapter> chapters,
-                 String genre, List<String> tags, int duration, Double rating, Double latitude,
-                 Double longitude, String story_image, String username, String userId) {
+                 String genre, List<String> tags, int duration, Double rating, String story_image, String username, String userId) {
         this.id = id;
         this.storyName = storyName;
         this.description = description;
@@ -61,23 +59,6 @@ public class Story {
         this.story_image = story_image;
         this.username = username;
         this.userId = userId;
-    }
-
-    /**
-     * @param json A repo in json form
-     * @return A repo
-     */
-    public static Story fromJson(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, Story.class);
-    }
-
-    /**
-     * @return The json representation of this repo
-     */
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
     }
 
     @Override
