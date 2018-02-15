@@ -52,6 +52,7 @@ import com.android.example.github.ui.common.CreateFileKt;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
+import com.android.example.github.vo.Status;
 import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExpositionType;
@@ -207,7 +208,7 @@ public class CreateFragment extends Fragment implements
 
             @Override
             public void afterTextChanged(Editable editable) {
-                createViewModel.setTags(new ArrayList<>());
+                createViewModel.setTags(Collections.singletonList("tags"));
             }
         });
     }
@@ -304,18 +305,17 @@ public class CreateFragment extends Fragment implements
         binding.get().finishStoryButton.setOnClickListener((v) -> {
             if (createViewModel.getAllChapters().size() < 2) {
                 Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
-            } else {
-                // TODO: 12/19/17  disable finish button while value is loading, otherwise they upload multiple stories
-                LiveData<Boolean> result = createViewModel.finishStory(getContext());
-                result.observe(this, pubishSuccessful -> {
-                    binding.get().isPublishSuccessful.setText("" + pubishSuccessful);
-                    if (pubishSuccessful != null && pubishSuccessful) {
+                return;
+            }
+
+            createViewModel.finishStory(getContext()).observe(this, publishSuccessful -> {
+                if (publishSuccessful != null) {
+                    if (publishSuccessful.status == Status.SUCCESS) {
                         Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
                         getActivity().onBackPressed();
                     }
-                });
-                if (result.getValue() != null && result.getValue()) result.removeObservers(this);
-            }
+                }
+            });
         });
     }
 

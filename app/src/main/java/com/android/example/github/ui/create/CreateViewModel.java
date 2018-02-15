@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.android.example.github.MainActivity;
 import com.android.example.github.repository.RepoRepository;
 import com.android.example.github.util.AbsentLiveData;
+import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.ExampleRepo;
@@ -44,8 +45,8 @@ import kotlin.collections.CollectionsKt;
 
 public class CreateViewModel extends ViewModel {
 
-    // TODO: 12/17/17 turn all fields into live data, and only create repo right at end
 
+    private final String TAG = this.getClass().getSimpleName();
     private RepoRepository repoRepository;
     private MutableLiveData<Story> story = null;
 
@@ -100,8 +101,9 @@ public class CreateViewModel extends ViewModel {
         return story;
     }
 
-    LiveData<Boolean> finishStory(Context context) {
+    LiveData<Resource<Void>> finishStory(Context context) {
         // Check that fields of story are valid
+        Log.i(TAG, "tags " + story.getValue().tags);
         if (story.getValue().getStoryName().isEmpty()) {
             Toast.makeText(context, "Please enter a name.", Toast.LENGTH_SHORT).show();
         } else if (story.getValue().genre.isEmpty()) {

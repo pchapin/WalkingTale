@@ -64,10 +64,10 @@ public class RepoRepository {
         this.appExecutors = appExecutors;
     }
 
-    public LiveData<Boolean> publishStory(Story story) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(story, githubService);
+    public LiveData<Resource<Void>> publishStory(Story story) {
+        SaveStoryTask saveStoryTask = new SaveStoryTask(story);
         appExecutors.networkIO().execute(saveStoryTask);
-        return saveStoryTask.getLiveData();
+        return saveStoryTask.getResult();
     }
 
     public LiveData<Resource<List<Story>>> getAllStories() {

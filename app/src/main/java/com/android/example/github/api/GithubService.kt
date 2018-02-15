@@ -29,15 +29,12 @@ interface GithubService {
     @GET("stories/{id}")
     fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Story>>
 
-//    @GET("stories")
-//    fun getAllRepos(@Header("Authorization") authToken: String): LiveData<ApiResponse<List<Story>>>
-
     @GET("stories")
     fun getAllReposTesting(@Header("Authorization") authToken: String): Call<List<Story>>
 
-    @PUT("stories")
-    fun putStory(@Header("Authorization") authToken: String,
-                 @Body story: Story): Call<Story>
+//    @PUT("stories")
+//    fun putStory(@Header("Authorization") authToken: String,
+//                 @Body story: Story): Call<Story>
 
     @DELETE("stories/{id}")
     fun deleteStory(@Header("Authorization") authToken: String,
@@ -47,20 +44,12 @@ interface GithubService {
     fun getAllUsers(@Header("Authorization") authToken: String): Call<List<User>>
 
     @PUT("users")
-    fun putUser(@Header("Authorization") authToken: String,
-                @Body user: User): LiveData<ApiResponse<User>>
-
-    @PUT("users")
     fun putUserTesting(@Header("Authorization") authToken: String,
                        @Body user: User): Call<User>
 
     @DELETE("users/{id}")
     fun deleteUser(@Header("Authorization") authToken: String,
                    @Path("id") id: String): Call<Void>
-
-//    @GET("users/{id}")
-//    fun getUser(@Header("Authorization") authToken: String,
-//                @Path("id") id: String): LiveData<ApiResponse<User>>
 
     @GET("users/{id}")
     fun getUserTesting(@Header("Authorization") authToken: String,
