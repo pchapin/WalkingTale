@@ -27,17 +27,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
-import com.android.example.github.vo.User;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -47,11 +43,6 @@ import dagger.android.support.HasSupportFragmentInjector;
 public class MainActivity extends AppCompatActivity implements
         LifecycleRegistryOwner,
         HasSupportFragmentInjector {
-
-    @Deprecated
-    public static String cognitoToken;
-    public static String cognitoId;
-    public static String cognitoUsername;
 
     private final String TAG = this.getClass().getSimpleName();
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
@@ -64,6 +55,18 @@ public class MainActivity extends AppCompatActivity implements
     Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
 
+    public static String getCognitoToken() {
+        return IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
+    }
+
+    public static String getCognitoId() {
+        return IdentityManager.getDefaultIdentityManager().getCachedUserID();
+    }
+
+    public static String getCognitoUsername() {
+        return new JWT(getCognitoToken()).getClaim("cognito:username").asString();
+    }
+
     @NonNull
     @Override
     public LifecycleRegistry getLifecycle() {
@@ -74,15 +77,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        cognitoToken = IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
-        cognitoId = IdentityManager.getDefaultIdentityManager().getCachedUserID();
-        cognitoUsername = new JWT(cognitoToken).getClaim("cognito:username").asString();
-
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
-
         userSetup(savedInstanceState);
-
         initBottomNavigationListener();
     }
 
@@ -92,37 +88,41 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void userSetup(Bundle savedInstanceState) {
 
-        mainViewModel.user.observe(this, userResource -> {
-            if (userResource != null) {
-                switch (userResource.status) {
-                    case SUCCESS:
-                        Log.i(TAG, "Get user success " + userResource);
-                        if (savedInstanceState == null) navigationController.navigateToStoryFeed();
-                        mainViewModel.user.removeObservers(this);
-                        mainViewModel.newUser.removeObservers(this);
-                        break;
-                    case LOADING:
-                        Log.i(TAG, "Get user loading " + userResource);
-                        break;
-                    case ERROR:
-                        Log.i(TAG, "Get user error " + userResource);
-                        // Create new user if user not already in user db
-                        if (userResource.message != null && userResource.message.contains("User not found in")) {
-                            mainViewModel.setCreateNewUser(new User(cognitoId, new ArrayList<>(), new ArrayList<>(), cognitoUsername, "none"));
-                        }
-                        break;
-                }
-            }
+        mainViewModel.getUser(IdentityManager.getDefaultIdentityManager().getCachedUserID()).observe(this, userResource -> {
+
         });
 
-        mainViewModel.newUser.observe(this, userResource -> {
-            if (userResource != null && userResource.data != null) {
-                Log.i(TAG, "Creating new user: " + userResource);
-                mainViewModel.setUserId(userResource.data.userId);
-            }
-        });
-
-        mainViewModel.setUserId(cognitoId);
+////        mainViewModel.user.observe(this, userResource -> {
+////            if (userResource != null) {
+////                switch (userResource.status) {
+////                    case SUCCESS:
+////                        Log.i(TAG, "Get user success " + userResource);
+////                        if (savedInstanceState == null) navigationController.navigateToStoryFeed();
+////                        mainViewModel.user.removeObservers(this);
+////                        mainViewModel.newUser.removeObservers(this);
+////                        break;
+////                    case LOADING:
+////                        Log.i(TAG, "Get user loading " + userResource);
+////                        break;
+////                    case ERROR:
+////                        Log.i(TAG, "Get user error " + userResource);
+////                        // Create new user if user not already in user db
+////                        if (userResource.message != null && userResource.message.contains("User not found in")) {
+////                            mainViewModel.setCreateNewUser(new User(cognitoId, new ArrayList<>(), new ArrayList<>(), cognitoUsername, "none"));
+////                        }
+////                        break;
+////                }
+////            }
+////        });
+//
+//        mainViewModel.newUser.observe(this, userResource -> {
+//            if (userResource != null && userResource.data != null) {
+//                Log.i(TAG, "Creating new user: " + userResource);
+//                mainViewModel.setUserId(userResource.data.userId);
+//            }
+//        });
+//
+//        mainViewModel.setUserId(cognitoId);
     }
 
     private void initBottomNavigationListener() {

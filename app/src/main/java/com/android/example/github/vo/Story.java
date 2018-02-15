@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.android.example.github.db.GithubTypeConverters;
 import com.android.example.github.walkingTale.Chapter;
@@ -18,8 +19,11 @@ import java.util.Objects;
 
 @Entity(indices = {@Index("id")}, primaryKeys = {"storyName"})
 @TypeConverters(GithubTypeConverters.class)
-@DynamoDBTable(tableName = "walking-tale-aws-backend-dev")
+@DynamoDBTable(tableName = "walkingtale-mobilehub-466729221-Stories")
 public class Story {
+
+
+    public String userId;
     public String id;
     @SerializedName("name")
     @NonNull
@@ -46,7 +50,7 @@ public class Story {
 
     public Story(String id, @NonNull String storyName, String description, List<Chapter> chapters,
                  String genre, List<String> tags, int duration, Double rating, Double latitude,
-                 Double longitude, String story_image, String username) {
+                 Double longitude, String story_image, String username, String userId) {
         this.id = id;
         this.storyName = storyName;
         this.description = description;
@@ -57,6 +61,7 @@ public class Story {
         this.rating = rating;
         this.story_image = story_image;
         this.username = username;
+        this.userId = userId;
     }
 
     /**
@@ -88,7 +93,7 @@ public class Story {
         return false;
     }
 
-    @DynamoDBHashKey(attributeName = "id")
+    @DynamoDBAttribute(attributeName = "id")
     public String getId() {
         return id;
     }
@@ -98,7 +103,8 @@ public class Story {
     }
 
     @NonNull
-    @DynamoDBAttribute(attributeName = "userName")
+    @DynamoDBRangeKey(attributeName = "storyName")
+    @DynamoDBAttribute(attributeName = "storyName")
     public String getStoryName() {
         return storyName;
     }
@@ -177,5 +183,15 @@ public class Story {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @DynamoDBHashKey(attributeName = "userId")
+    @DynamoDBAttribute(attributeName = "userId")
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(final String _userId) {
+        this.userId = _userId;
     }
 }

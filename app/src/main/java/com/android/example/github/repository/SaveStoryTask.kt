@@ -43,7 +43,7 @@ class SaveStoryTask internal constructor(private val story: Story, private val g
         try {
             Log.i(TAG, "Trying to publish story: " + story)
             Log.i(TAG, story.toJson())
-            val s = githubService.putStory(MainActivity.cognitoToken, story).execute()
+            val s = githubService.putStory(MainActivity.getCognitoToken(), story).execute()
             if (s.isSuccessful) {
                 isSuccessful.postValue(true)
                 Log.i(TAG, "Publish story success: " + s.body()!!)

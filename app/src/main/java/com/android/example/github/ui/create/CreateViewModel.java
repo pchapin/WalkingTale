@@ -61,7 +61,7 @@ public class CreateViewModel extends ViewModel {
         if (story == null) {
             this.story = new MutableLiveData<>();
             Story story = ExampleRepo.Companion.getRepo();
-            story.username = MainActivity.cognitoUsername;
+            story.username = MainActivity.getCognitoUsername();
             this.story.setValue(story);
         }
     }

@@ -99,7 +99,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<List<Story>>> createCall() {
-                return githubService.getAllRepos(MainActivity.cognitoToken);
+                return githubService.getAllRepos(MainActivity.getCognitoToken());
             }
         }.asLiveData();
     }

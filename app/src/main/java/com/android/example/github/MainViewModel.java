@@ -19,11 +19,16 @@ public class MainViewModel extends ViewModel {
     LiveData<Resource<User>> newUser = new MutableLiveData<>();
     private MutableLiveData<String> userId = new MutableLiveData<>();
     private MutableLiveData<User> createNewUser = new MutableLiveData<>();
+    private UserRepository userRepository;
 
     @Inject
     MainViewModel(RepoRepository repository, UserRepository userRepository) {
-        user = Transformations.switchMap(userId, userRepository::loadUser);
+        this.userRepository = userRepository;
         newUser = Transformations.switchMap(createNewUser, userRepository::putUser);
+    }
+
+    LiveData<Resource<User>> getUser(String userId) {
+        return userRepository.loadUser(userId);
     }
 
     void setUserId(@NonNull String id) {

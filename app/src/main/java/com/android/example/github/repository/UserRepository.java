@@ -69,37 +69,43 @@ public class UserRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<User>> createCall() {
-                return githubService.putUser(MainActivity.cognitoToken, user);
+                return githubService.putUser(MainActivity.getCognitoToken(), user);
             }
         }.asLiveData();
     }
 
-    public LiveData<Resource<User>> loadUser(String login) {
-        return new NetworkBoundResource<User, User>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull User item) {
-                userDao.insert(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable User data) {
-                return true;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<User> loadFromDb() {
-                return userDao.findByLogin(login);
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<User>> createCall() {
-
-                LiveData<ApiResponse<User>> result = githubService.getUser(MainActivity.cognitoToken, login);
-                ApiResponse<User> deb = result.getValue();
-                return result;
-            }
-        }.asLiveData();
+    public LiveData<Resource<User>> loadUser(String userId) {
+        GetUserTask getUserTask = new GetUserTask(userId, githubService);
+        appExecutors.networkIO().execute(getUserTask);
+        return getUserTask.getResult();
     }
+
+//    public LiveData<Resource<User>> loadUser(String login) {
+//        return new NetworkBoundResource<User, User>(appExecutors) {
+//            @Override
+//            protected void saveCallResult(@NonNull User item) {
+//                userDao.insert(item);
+//            }
+//
+//            @Override
+//            protected boolean shouldFetch(@Nullable User data) {
+//                return true;
+//            }
+//
+//            @NonNull
+//            @Override
+//            protected LiveData<User> loadFromDb() {
+//                return userDao.findByLogin(login);
+//            }
+//
+//            @NonNull
+//            @Override
+//            protected LiveData<ApiResponse<User>> createCall() {
+//
+//                LiveData<ApiResponse<User>> result = githubService.getUser(MainActivity.cognitoToken, login);
+//                ApiResponse<User> deb = result.getValue();
+//                return result;
+//            }
+//        }.asLiveData();
+//    }
 }

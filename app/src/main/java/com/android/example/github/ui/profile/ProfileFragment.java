@@ -85,7 +85,7 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
         binding.get().repoList.setAdapter(repoListAdapter);
         adapter = new AutoClearedValue<>(this, repoListAdapter);
 
-        profileViewModel.setUserId(MainActivity.cognitoId);
+        profileViewModel.setUserId(MainActivity.getCognitoId());
         profileViewModel.user.observe(this, userResource -> {
             if (userResource != null) binding.get().setUser(userResource.data);
         });
