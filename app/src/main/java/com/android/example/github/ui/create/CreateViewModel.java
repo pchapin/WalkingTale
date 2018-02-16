@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.android.example.github.MainActivity;
 import com.android.example.github.repository.StoryRepository;
+import com.android.example.github.repository.tasks.S3Args;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
@@ -45,7 +46,6 @@ import kotlin.collections.CollectionsKt;
 
 public class CreateViewModel extends ViewModel {
 
-
     private final String TAG = this.getClass().getSimpleName();
     private StoryRepository storyRepository;
     private MutableLiveData<Story> story = null;
@@ -65,6 +65,10 @@ public class CreateViewModel extends ViewModel {
             story.username = MainActivity.getCognitoUsername();
             this.story.setValue(story);
         }
+    }
+
+    LiveData<Resource<String>> putFileInS3(S3Args s3Args) {
+        return storyRepository.putFileInS3(s3Args);
     }
 
     void setGenre(String genre) {
@@ -103,8 +107,9 @@ public class CreateViewModel extends ViewModel {
 
     LiveData<Resource<Void>> finishStory(Context context) {
         // Check that fields of story are valid
-        Log.i(TAG, "tags " + story.getValue().tags);
-        if (story.getValue().getStoryName().isEmpty()) {
+        if (story.getValue().chapters.size() < 2) {
+            Toast.makeText(context, "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
+        } else if (story.getValue().getStoryName().isEmpty()) {
             Toast.makeText(context, "Please enter a name.", Toast.LENGTH_SHORT).show();
         } else if (story.getValue().genre.isEmpty()) {
             Toast.makeText(context, "Please select a genre.", Toast.LENGTH_SHORT).show();
@@ -115,6 +120,8 @@ public class CreateViewModel extends ViewModel {
         } else if (story.getValue().story_image.isEmpty()) {
             Toast.makeText(context, "Please select a image for your story.", Toast.LENGTH_SHORT).show();
         } else {
+            S3Args s3Args = new S3Args(story.getValue(), context);
+            storyRepository.putFileInS3(s3Args);
             return storyRepository.publishStory(story.getValue());
         }
         return AbsentLiveData.create();

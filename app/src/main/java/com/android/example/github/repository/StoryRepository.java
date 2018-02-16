@@ -25,17 +25,15 @@ import com.android.example.github.db.StoryDao;
 import com.android.example.github.repository.tasks.GetAllStoriesTask;
 import com.android.example.github.repository.tasks.GetOneStoryTask;
 import com.android.example.github.repository.tasks.PutFileS3Task;
+import com.android.example.github.repository.tasks.S3Args;
 import com.android.example.github.repository.tasks.SaveStoryTask;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import kotlin.Pair;
 
 @Singleton
 public class StoryRepository {
@@ -73,8 +71,8 @@ public class StoryRepository {
         return getOneStoryTask.getResult();
     }
 
-    public LiveData<Resource<String>> putFileInS3(Pair<String, File> stringFilePair) {
-        PutFileS3Task putFileS3Task = new PutFileS3Task(stringFilePair, db);
+    public LiveData<Resource<String>> putFileInS3(S3Args s3Args) {
+        PutFileS3Task putFileS3Task = new PutFileS3Task(s3Args, db);
         appExecutors.networkIO().execute(putFileS3Task);
         return putFileS3Task.getResult();
     }

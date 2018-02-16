@@ -303,14 +303,10 @@ public class CreateFragment extends Fragment implements
 
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
-            if (createViewModel.getAllChapters().size() < 2) {
-                Toast.makeText(getContext(), "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             createViewModel.finishStory(getContext()).observe(this, publishSuccessful -> {
                 if (publishSuccessful != null) {
                     if (publishSuccessful.status == Status.SUCCESS) {
+
                         Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
                         getActivity().onBackPressed();
                     }
@@ -441,7 +437,7 @@ public class CreateFragment extends Fragment implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
-            createViewModel.addExposition(ExpositionType.PICTURE, Uri.fromFile(photoFile).toString());
+            createViewModel.addExposition(ExpositionType.PICTURE, photoFile.getAbsolutePath());
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
             createViewModel.addExposition(ExpositionType.AUDIO, data.getData().toString());
         }

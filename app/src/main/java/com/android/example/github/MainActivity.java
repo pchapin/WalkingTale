@@ -28,16 +28,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
-import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.android.example.github.aws.ConstantsKt;
+import com.android.example.github.repository.tasks.AbstractTask;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.vo.User;
@@ -45,8 +38,6 @@ import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -92,9 +83,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
-//        userSetup(savedInstanceState);
-//        initBottomNavigationListener();
-        s3();
+        userSetup(savedInstanceState);
+        initBottomNavigationListener();
     }
 
     /**
@@ -190,46 +180,13 @@ public class MainActivity extends AppCompatActivity implements
         checkPlayServices();
     }
 
-    public Context loljk() {
-        return getBaseContext();
-    }
-
-    void s3() {
-        TransferUtility transferUtility =
-                TransferUtility.builder()
-                        .context(getApplicationContext()).defaultBucket(ConstantsKt.getS3BucketName())
-                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
-                        .build();
-
-        File file = null;
-        try {
-            file = File.createTempFile("prefix", "suffix");
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * This must only be called from AbstractTask
+     */
+    public Context hackContext(Object o) {
+        if (o instanceof AbstractTask) {
+            return this;
         }
-
-        TransferObserver uploadObserver =
-                transferUtility.upload(
-                        "public/somekeydude",
-                        file);
-
-        uploadObserver.setTransferListener(new TransferListener() {
-            @Override
-            public void onStateChanged(int id, TransferState state) {
-                Log.i(TAG, "state " + state);
-            }
-
-            @Override
-            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-
-            }
-
-            @Override
-            public void onError(int id, Exception ex) {
-                Log.i(TAG, "error " + ex);
-
-            }
-        });
+        return null;
     }
 }
