@@ -16,42 +16,7 @@
 
 package com.android.example.github.api
 
-import android.arch.lifecycle.LiveData
-import com.android.example.github.vo.Story
-import com.android.example.github.vo.User
-import retrofit2.Call
-import retrofit2.http.*
-
 /**
  * REST API access points
  */
-interface GithubService {
-    @GET("stories/{id}")
-    fun getRepo(@Path("id") id: String): LiveData<ApiResponse<Story>>
-
-    @GET("stories")
-    fun getAllReposTesting(@Header("Authorization") authToken: String): Call<List<Story>>
-
-//    @PUT("stories")
-//    fun putStory(@Header("Authorization") authToken: String,
-//                 @Body story: Story): Call<Story>
-
-    @DELETE("stories/{id}")
-    fun deleteStory(@Header("Authorization") authToken: String,
-                    @Path("id") id: String): Call<Void>
-
-    @GET("users")
-    fun getAllUsers(@Header("Authorization") authToken: String): Call<List<User>>
-
-    @PUT("users")
-    fun putUserTesting(@Header("Authorization") authToken: String,
-                       @Body user: User): Call<User>
-
-    @DELETE("users/{id}")
-    fun deleteUser(@Header("Authorization") authToken: String,
-                   @Path("id") id: String): Call<Void>
-
-    @GET("users/{id}")
-    fun getUserTesting(@Header("Authorization") authToken: String,
-                       @Path("id") id: String): Call<User>
-}
+interface GithubService

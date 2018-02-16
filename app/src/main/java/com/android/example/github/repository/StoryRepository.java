@@ -17,21 +17,14 @@
 package com.android.example.github.repository;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.android.example.github.AppExecutors;
-import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
-import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.StoryDao;
 import com.android.example.github.repository.tasks.GetAllStoriesTask;
 import com.android.example.github.repository.tasks.GetOneStoryTask;
 import com.android.example.github.repository.tasks.SaveStoryTask;
-import com.android.example.github.util.AbsentLiveData;
-import com.android.example.github.vo.RepoSearchResult;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
@@ -40,13 +33,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/**
- * Repository that handles Story instances.
- * <p>
- * unfortunate naming :/ .
- * Story - value object name
- * Repository - type of this class.
- */
 @Singleton
 public class StoryRepository {
 
@@ -81,64 +67,5 @@ public class StoryRepository {
         GetOneStoryTask getOneStoryTask = new GetOneStoryTask(id, db);
         appExecutors.networkIO().execute(getOneStoryTask);
         return getOneStoryTask.getResult();
-    }
-
-    public LiveData<Resource<Boolean>> searchNextPage(String query) {
-        // TODO: 1/17/18 search with query
-        return null;
-    }
-
-    public LiveData<Resource<List<Story>>> search(String query) {
-        return new NetworkBoundResource<List<Story>, RepoSearchResponse>(appExecutors) {
-
-            @Override
-            protected void saveCallResult(@NonNull RepoSearchResponse item) {
-                List<String> repoIds = item.getRepoIds();
-                RepoSearchResult repoSearchResult = new RepoSearchResult(
-                        query, repoIds, item.getTotal(), item.getNextPage());
-                db.beginTransaction();
-                try {
-                    storyDao.insertRepos(item.getItems());
-                    storyDao.insert(repoSearchResult);
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Story> data) {
-                return data == null;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Story>> loadFromDb() {
-                return Transformations.switchMap(storyDao.search(query), searchData -> {
-                    if (searchData == null) {
-                        return AbsentLiveData.create();
-                    } else {
-//                        return storyDao.loadOrdered(searchData.repoIds);
-                        return storyDao.loadAll();
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<RepoSearchResponse>> createCall() {
-                // TODO: 1/17/18 search with query
-                return null;
-            }
-
-            @Override
-            protected RepoSearchResponse processResponse(ApiResponse<RepoSearchResponse> response) {
-                RepoSearchResponse body = response.getBody();
-                if (body != null) {
-//                    body.setNextPage(response.getNextPage());
-                }
-                return body;
-            }
-        }.asLiveData();
     }
 }

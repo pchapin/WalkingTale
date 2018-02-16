@@ -19,22 +19,16 @@ package com.android.example.github.ui.search;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
@@ -109,47 +103,8 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
     }
 
     private void initRecyclerView() {
-
-        binding.get().repoList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager)
-                        recyclerView.getLayoutManager();
-                int lastPosition = layoutManager
-                        .findLastVisibleItemPosition();
-                if (lastPosition == adapter.get().getItemCount() - 1) {
-                    searchViewModel.loadNextPage();
-                }
-            }
-        });
-        searchViewModel.getResults().observe(this, result -> {
-            binding.get().setSearchResource(result);
-            binding.get().setResultCount((result == null || result.data == null)
-                    ? 0 : result.data.size());
-            adapter.get().replace(result == null ? null : result.data);
-            binding.get().executePendingBindings();
-        });
-
-        searchViewModel.getLoadMoreStatus().observe(this, loadingMore -> {
-            if (loadingMore == null) {
-                binding.get().setLoadingMore(false);
-            } else {
-                binding.get().setLoadingMore(loadingMore.isRunning());
-                String error = loadingMore.getErrorMessageIfNotHandled();
-                if (error != null) {
-                    Snackbar.make(binding.get().loadMoreBar, error, Snackbar.LENGTH_LONG).show();
-                }
-            }
-            binding.get().executePendingBindings();
-        });
     }
 
     private void dismissKeyboard(IBinder windowToken) {
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(windowToken, 0);
-        }
     }
 }
