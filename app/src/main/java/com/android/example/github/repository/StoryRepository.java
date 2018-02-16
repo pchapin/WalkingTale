@@ -28,6 +28,7 @@ import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.db.GithubDb;
 import com.android.example.github.db.StoryDao;
 import com.android.example.github.repository.tasks.GetAllStoriesTask;
+import com.android.example.github.repository.tasks.GetOneStoryTask;
 import com.android.example.github.repository.tasks.SaveStoryTask;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.RepoSearchResult;
@@ -77,29 +78,9 @@ public class StoryRepository {
     }
 
     public LiveData<Resource<Story>> loadRepo(String id) {
-        return new NetworkBoundResource<Story, Story>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull Story item) {
-                storyDao.insert(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable Story data) {
-                return data == null;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Story> loadFromDb() {
-                return storyDao.load(id);
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<Story>> createCall() {
-                return githubService.getRepo(id);
-            }
-        }.asLiveData();
+        GetOneStoryTask getOneStoryTask = new GetOneStoryTask(id, db);
+        appExecutors.networkIO().execute(getOneStoryTask);
+        return getOneStoryTask.getResult();
     }
 
     public LiveData<Resource<Boolean>> searchNextPage(String query) {

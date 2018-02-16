@@ -17,13 +17,10 @@
 package com.android.example.github.ui.overview;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
 import com.android.example.github.repository.StoryRepository;
-import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
@@ -31,25 +28,14 @@ import javax.inject.Inject;
 
 public class OverviewViewModel extends ViewModel {
     @VisibleForTesting
-    private final MutableLiveData<String> repoId;
-    private final LiveData<Resource<Story>> repo;
+    private final StoryRepository storyRepository;
 
     @Inject
     public OverviewViewModel(StoryRepository repository) {
-        this.repoId = new MutableLiveData<>();
-        repo = Transformations.switchMap(repoId, input -> {
-            if (input == null) {
-                return AbsentLiveData.create();
-            }
-            return repository.loadRepo(input);
-        });
+        this.storyRepository = repository;
     }
 
-    public LiveData<Resource<Story>> getRepo() {
-        return repo;
-    }
-
-    void setId(String id) {
-        repoId.setValue(id);
+    public LiveData<Resource<Story>> getRepo(String id) {
+        return storyRepository.loadRepo(id);
     }
 }

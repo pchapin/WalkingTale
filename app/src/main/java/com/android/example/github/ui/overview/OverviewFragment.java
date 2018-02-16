@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,10 +50,9 @@ import javax.inject.Inject;
  */
 public class OverviewFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
 
+    private static final String TAG = OverviewFragment.class.getSimpleName();
     private static final String REPO_NAME_KEY = "repo_name";
-
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -60,8 +60,10 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentOverviewBinding> binding;
     private OverviewViewModel overviewViewModel;
+    private Story story;
 
     public static OverviewFragment create(String id) {
+        Log.i(TAG, "id " + id);
         OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
         args.putString(REPO_NAME_KEY, id);
@@ -81,20 +83,21 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            overviewViewModel.setId(args.getString(REPO_NAME_KEY));
-        } else {
-            overviewViewModel.setId(null);
-        }
-        LiveData<Resource<Story>> repo = overviewViewModel.getRepo();
-        repo.observe(this, resource -> {
-            binding.get().setStory(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-            // TODO: 2/4/18 Testing only
+            LiveData<Resource<Story>> repo = overviewViewModel.getRepo(args.getString(REPO_NAME_KEY));
+            repo.observe(this, resource -> {
+                Log.i(TAG, "" + resource);
+                if (resource != null) {
+                    binding.get().setStory(resource.data);
+                    story = resource.data;
+                    binding.get().setRepoResource(resource);
+                    binding.get().executePendingBindings();
+                }
+                // TODO: 2/4/18 Testing only
 //            if (resource != null && resource.data != null) {
 //                navigationController.navigateToStoryPlay(resource.data.id);
 //            }
-        });
+            });
+        }
 
         initStartStoryListener();
         initStoryLocationListener();
@@ -102,15 +105,15 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-            String name = overviewViewModel.getRepo().getValue().data.id;
+            String name = story.id;
             navigationController.navigateToStoryPlay(name);
         });
     }
 
     private void initStoryLocationListener() {
         binding.get().storyLocationButton.setOnClickListener((v) -> {
-            String latitude = Double.toString(overviewViewModel.getRepo().getValue().data.chapters.get(0).getLocation().latitude);
-            String longitude = Double.toString(overviewViewModel.getRepo().getValue().data.chapters.get(0).getLocation().longitude);
+            String latitude = Double.toString(story.chapters.get(0).getLocation().latitude);
+            String longitude = Double.toString(story.chapters.get(0).getLocation().longitude);
             String url = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s", latitude, longitude);
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
