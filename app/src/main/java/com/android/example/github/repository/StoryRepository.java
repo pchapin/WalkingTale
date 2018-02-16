@@ -26,7 +26,7 @@ import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.api.RepoSearchResponse;
 import com.android.example.github.db.GithubDb;
-import com.android.example.github.db.RepoDao;
+import com.android.example.github.db.StoryDao;
 import com.android.example.github.repository.tasks.GetAllStoriesTask;
 import com.android.example.github.repository.tasks.SaveStoryTask;
 import com.android.example.github.util.AbsentLiveData;
@@ -47,19 +47,19 @@ import javax.inject.Singleton;
  * Repository - type of this class.
  */
 @Singleton
-public class RepoRepository {
+public class StoryRepository {
 
     private final String TAG = this.getClass().getSimpleName();
     private final GithubDb db;
-    private final RepoDao repoDao;
+    private final StoryDao storyDao;
     private final GithubService githubService;
     private final AppExecutors appExecutors;
 
     @Inject
-    public RepoRepository(AppExecutors appExecutors, GithubDb db, RepoDao repoDao,
-                          GithubService githubService) {
+    public StoryRepository(AppExecutors appExecutors, GithubDb db, StoryDao storyDao,
+                           GithubService githubService) {
         this.db = db;
-        this.repoDao = repoDao;
+        this.storyDao = storyDao;
         this.githubService = githubService;
         this.appExecutors = appExecutors;
     }
@@ -80,7 +80,7 @@ public class RepoRepository {
         return new NetworkBoundResource<Story, Story>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull Story item) {
-                repoDao.insert(item);
+                storyDao.insert(item);
             }
 
             @Override
@@ -91,7 +91,7 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<Story> loadFromDb() {
-                return repoDao.load(id);
+                return storyDao.load(id);
             }
 
             @NonNull
@@ -117,8 +117,8 @@ public class RepoRepository {
                         query, repoIds, item.getTotal(), item.getNextPage());
                 db.beginTransaction();
                 try {
-                    repoDao.insertRepos(item.getItems());
-                    repoDao.insert(repoSearchResult);
+                    storyDao.insertRepos(item.getItems());
+                    storyDao.insert(repoSearchResult);
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
@@ -133,12 +133,12 @@ public class RepoRepository {
             @NonNull
             @Override
             protected LiveData<List<Story>> loadFromDb() {
-                return Transformations.switchMap(repoDao.search(query), searchData -> {
+                return Transformations.switchMap(storyDao.search(query), searchData -> {
                     if (searchData == null) {
                         return AbsentLiveData.create();
                     } else {
-//                        return repoDao.loadOrdered(searchData.repoIds);
-                        return repoDao.loadAll();
+//                        return storyDao.loadOrdered(searchData.repoIds);
+                        return storyDao.loadAll();
                     }
                 });
             }

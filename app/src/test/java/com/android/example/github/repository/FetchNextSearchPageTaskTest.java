@@ -19,7 +19,7 @@
 //import com.android.example.github.api.GithubService;
 //import com.android.example.github.api.RepoSearchResponse;
 //import com.android.example.github.db.GithubDb;
-//import com.android.example.github.db.RepoDao;
+//import com.android.example.github.db.StoryDao;
 //import com.android.example.github.util.TestUtil;
 //import com.android.example.github.vo.Story;
 //import com.android.example.github.vo.RepoSearchResult;
@@ -60,7 +60,7 @@
 //
 //    private GithubDb db;
 //
-//    private RepoDao repoDao;
+//    private StoryDao repoDao;
 //
 //    private FetchNextSearchPageTask task;
 //
@@ -72,7 +72,7 @@
 //    public void init() {
 //        service = mock(GithubService.class);
 //        db = mock(GithubDb.class);
-//        repoDao = mock(RepoDao.class);
+//        repoDao = mock(StoryDao.class);
 //        when(db.repoDao()).thenReturn(repoDao);
 //        task = new FetchNextSearchPageTask("foo", service, db);
 //        //noinspection unchecked

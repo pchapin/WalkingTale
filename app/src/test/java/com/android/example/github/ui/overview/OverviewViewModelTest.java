@@ -16,7 +16,7 @@
 //
 //package com.android.example.github.ui.overview;
 //
-//import com.android.example.github.repository.RepoRepository;
+//import com.android.example.github.repository.StoryRepository;
 //import com.android.example.github.vo.Contributor;
 //import com.android.example.github.vo.Story;
 //import com.android.example.github.vo.Resource;
@@ -51,12 +51,12 @@
 //    @Rule
 //    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
 //
-//    private RepoRepository repository;
+//    private StoryRepository repository;
 //    private OverviewViewModel overviewViewModel;
 //
 //    @Before
 //    public void setup() {
-//        repository = mock(RepoRepository.class);
+//        repository = mock(StoryRepository.class);
 //        overviewViewModel = new OverviewViewModel(repository);
 //    }
 //

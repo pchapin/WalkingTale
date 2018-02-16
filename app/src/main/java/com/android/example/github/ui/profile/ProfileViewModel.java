@@ -21,7 +21,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
-import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.repository.StoryRepository;
 import com.android.example.github.repository.UserRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Resource;
@@ -41,7 +41,7 @@ public class ProfileViewModel extends ViewModel {
     private MutableLiveData<String> userId = new MutableLiveData<>();
 
     @Inject
-    ProfileViewModel(RepoRepository repository, UserRepository userRepository) {
+    ProfileViewModel(StoryRepository repository, UserRepository userRepository) {
         user = Transformations.switchMap(userId, input -> {
             if (userId == null) return AbsentLiveData.create();
             else return userRepository.loadUser(input);

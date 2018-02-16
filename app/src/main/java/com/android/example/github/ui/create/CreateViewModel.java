@@ -24,12 +24,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.example.github.MainActivity;
-import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.repository.StoryRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.ExampleRepo;
+import com.android.example.github.walkingTale.ExampleStory;
 import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.ExpositionType;
 import com.google.android.gms.maps.model.LatLng;
@@ -47,7 +47,7 @@ public class CreateViewModel extends ViewModel {
 
 
     private final String TAG = this.getClass().getSimpleName();
-    private RepoRepository repoRepository;
+    private StoryRepository storyRepository;
     private MutableLiveData<Story> story = null;
 
     // TODO: 11/22/17 Limit the number of expositions a user can add
@@ -57,11 +57,11 @@ public class CreateViewModel extends ViewModel {
 
 
     @Inject
-    public CreateViewModel(RepoRepository repository) {
-        this.repoRepository = repository;
+    public CreateViewModel(StoryRepository repository) {
+        this.storyRepository = repository;
         if (story == null) {
             this.story = new MutableLiveData<>();
-            Story story = ExampleRepo.Companion.getRepo();
+            Story story = ExampleStory.Companion.getStory();
             story.username = MainActivity.getCognitoUsername();
             this.story.setValue(story);
         }
@@ -115,7 +115,7 @@ public class CreateViewModel extends ViewModel {
         } else if (story.getValue().story_image.isEmpty()) {
             Toast.makeText(context, "Please select a image for your story.", Toast.LENGTH_SHORT).show();
         } else {
-            return repoRepository.publishStory(story.getValue());
+            return storyRepository.publishStory(story.getValue());
         }
         return AbsentLiveData.create();
     }

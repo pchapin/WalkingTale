@@ -43,7 +43,7 @@ public class NavigationController {
         this.fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void navigateToRepo(String id) {
+    public void navigateToOverview(String id) {
         OverviewFragment fragment = OverviewFragment.create(id);
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)

@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
-import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.repository.StoryRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.util.Objects;
 import com.android.example.github.vo.Resource;
@@ -45,13 +45,13 @@ public class SearchViewModel extends ViewModel {
     private final NextPageHandler nextPageHandler;
 
     @Inject
-    SearchViewModel(RepoRepository repoRepository) {
-        nextPageHandler = new NextPageHandler(repoRepository);
+    SearchViewModel(StoryRepository storyRepository) {
+        nextPageHandler = new NextPageHandler(storyRepository);
         results = Transformations.switchMap(query, search -> {
             if (search == null || search.trim().length() == 0) {
                 return AbsentLiveData.create();
             } else {
-                return repoRepository.search(search);
+                return storyRepository.search(search);
             }
         });
     }
@@ -120,7 +120,7 @@ public class SearchViewModel extends ViewModel {
     @VisibleForTesting
     static class NextPageHandler implements Observer<Resource<Boolean>> {
         private final MutableLiveData<LoadMoreState> loadMoreState = new MutableLiveData<>();
-        private final RepoRepository repository;
+        private final StoryRepository repository;
         @VisibleForTesting
         boolean hasMore;
         @Nullable
@@ -128,7 +128,7 @@ public class SearchViewModel extends ViewModel {
         private String query;
 
         @VisibleForTesting
-        NextPageHandler(RepoRepository repository) {
+        NextPageHandler(StoryRepository repository) {
             this.repository = repository;
             reset();
         }

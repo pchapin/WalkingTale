@@ -16,7 +16,7 @@
 //
 //package com.android.example.github.ui.search;
 //
-//import com.android.example.github.repository.RepoRepository;
+//import com.android.example.github.repository.StoryRepository;
 //import com.android.example.github.vo.Resource;
 //
 //import org.junit.Before;
@@ -43,11 +43,11 @@
 //
 //    private SearchViewModel.NextPageHandler pageHandler;
 //
-//    private RepoRepository repository;
+//    private StoryRepository repository;
 //
 //    @Before
 //    public void init() {
-//        repository = mock(RepoRepository.class);
+//        repository = mock(StoryRepository.class);
 //        pageHandler = new SearchViewModel.NextPageHandler(repository);
 //    }
 //

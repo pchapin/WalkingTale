@@ -24,7 +24,7 @@ import android.arch.lifecycle.Observer;
 import com.android.example.github.api.ApiResponse;
 import com.android.example.github.api.GithubService;
 import com.android.example.github.db.GithubDb;
-import com.android.example.github.db.RepoDao;
+import com.android.example.github.db.StoryDao;
 import com.android.example.github.util.InstantAppExecutors;
 import com.android.example.github.util.TestUtil;
 import com.android.example.github.vo.Resource;
@@ -49,17 +49,17 @@ import static org.mockito.Mockito.when;
 public class StoryRepositoryTest {
     @Rule
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
-    private RepoRepository repository;
-    private RepoDao dao;
+    private StoryRepository repository;
+    private StoryDao dao;
     private GithubService service;
 
     @Before
     public void init() {
-        dao = mock(RepoDao.class);
+        dao = mock(StoryDao.class);
         service = mock(GithubService.class);
         GithubDb db = mock(GithubDb.class);
         when(db.repoDao()).thenReturn(dao);
-        repository = new RepoRepository(new InstantAppExecutors(), db, dao, service);
+        repository = new StoryRepository(new InstantAppExecutors(), db, dao, service);
     }
 
     @Test

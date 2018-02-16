@@ -74,7 +74,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
         searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel.class);
         initRecyclerView();
         RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
-                repo -> navigationController.navigateToRepo(repo.id));
+                repo -> navigationController.navigateToOverview(repo.id));
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
         initSearchInputListener();

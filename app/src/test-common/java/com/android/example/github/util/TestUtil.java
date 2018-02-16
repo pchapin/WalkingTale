@@ -18,7 +18,7 @@ package com.android.example.github.util;
 
 import com.android.example.github.vo.Story;
 import com.android.example.github.vo.User;
-import com.android.example.github.walkingTale.ExampleRepo;
+import com.android.example.github.walkingTale.ExampleStory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,6 @@ public class TestUtil {
     }
 
     public static Story createRepo(int id, String owner, String name, String description) {
-        return ExampleRepo.Companion.getRepo();
+        return ExampleStory.Companion.getStory();
     }
 }

@@ -22,7 +22,7 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
-import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.repository.StoryRepository;
 import com.android.example.github.util.AbsentLiveData;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
@@ -35,7 +35,7 @@ public class AlbumViewModel extends ViewModel {
     private final LiveData<Resource<Story>> repo;
 
     @Inject
-    public AlbumViewModel(RepoRepository repository) {
+    public AlbumViewModel(StoryRepository repository) {
         this.repoId = new MutableLiveData<>();
         repo = Transformations.switchMap(repoId, input -> {
             if (input == null) {

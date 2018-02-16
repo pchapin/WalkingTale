@@ -3,7 +3,7 @@ package com.android.example.github;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.repository.StoryRepository;
 import com.android.example.github.repository.UserRepository;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.User;
@@ -15,7 +15,7 @@ public class MainViewModel extends ViewModel {
     private UserRepository userRepository;
 
     @Inject
-    MainViewModel(RepoRepository repository, UserRepository userRepository) {
+    MainViewModel(StoryRepository repository, UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

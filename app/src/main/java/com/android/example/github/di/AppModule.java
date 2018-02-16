@@ -21,7 +21,7 @@ import android.arch.persistence.room.Room;
 
 import com.android.example.github.api.GithubService;
 import com.android.example.github.db.GithubDb;
-import com.android.example.github.db.RepoDao;
+import com.android.example.github.db.StoryDao;
 import com.android.example.github.db.UserDao;
 import com.android.example.github.util.LiveDataCallAdapterFactory;
 
@@ -56,7 +56,7 @@ class AppModule {
     }
 
     @Singleton @Provides
-    RepoDao provideRepoDao(GithubDb db) {
+    StoryDao provideRepoDao(GithubDb db) {
         return db.repoDao();
     }
 }

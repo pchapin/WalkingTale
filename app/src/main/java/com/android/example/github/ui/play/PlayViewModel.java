@@ -6,7 +6,7 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
-import com.android.example.github.repository.RepoRepository;
+import com.android.example.github.repository.StoryRepository;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
@@ -30,7 +30,7 @@ public class PlayViewModel extends ViewModel {
 
 
     @Inject
-    PlayViewModel(RepoRepository repository) {
+    PlayViewModel(StoryRepository repository) {
         this.repoId = new MutableLiveData<>();
         repo = Transformations.switchMap(repoId, repository::loadRepo);
 

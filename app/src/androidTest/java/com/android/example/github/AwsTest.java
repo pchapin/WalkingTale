@@ -32,7 +32,7 @@ import com.android.example.github.util.LiveDataCallAdapterFactory;
 import com.android.example.github.vo.Story;
 import com.android.example.github.vo.User;
 import com.android.example.github.walkingTale.Chapter;
-import com.android.example.github.walkingTale.ExampleRepo;
+import com.android.example.github.walkingTale.ExampleStory;
 import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.ExpositionType;
 import com.google.android.gms.maps.model.LatLng;
@@ -85,7 +85,7 @@ public class AwsTest {
     }
 
     public Response<Story> putStory() throws IOException {
-        Story story = ExampleRepo.Companion.getRandomRepo();
+        Story story = ExampleStory.Companion.getRandomStory();
         story.name = "name";
         story.description = "desc";
         story.genre = "genre";

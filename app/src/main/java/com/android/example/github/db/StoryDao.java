@@ -31,7 +31,7 @@ import java.util.List;
  * Interface for database access on Story related operations.
  */
 @Dao
-public abstract class RepoDao {
+public abstract class StoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(Story... stories);
