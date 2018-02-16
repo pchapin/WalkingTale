@@ -41,9 +41,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -72,7 +72,6 @@ public class AwsTest {
 
     @Before
     public void init() {
-        // Get cognito accessToken
         accessToken = new CognitoLogin().getToken(context);
         assertNotNull(accessToken);
     }
@@ -86,10 +85,10 @@ public class AwsTest {
 
     public Response<Story> putStory() throws IOException {
         Story story = ExampleStory.Companion.getRandomStory();
-        story.name = "name";
+        story.storyName = "name";
         story.description = "desc";
         story.genre = "genre";
-        story.tags = "tags";
+        story.tags = Collections.singletonList("tags");
         story.story_image = "image";
         story.username = "user";
         story.chapters = new ArrayList<>();
@@ -101,7 +100,7 @@ public class AwsTest {
         chapter.setExpositions(expositions);
         story.chapters.add(chapter);
 
-        return githubService.putStory(accessToken, story).execute();
+        return null;
     }
 
     @Test
@@ -122,24 +121,22 @@ public class AwsTest {
 
     public Response<User> putUser() throws IOException {
         User user = new User("", new ArrayList<>(), new ArrayList<>(), "name", "https://i.imgur.com/KWl6pqT.png");
-        user.id = String.valueOf(new Random().nextInt());
+        user.userId = String.valueOf(new Random().nextInt());
         user.createdStories.add("123");
         user.playedStories.add("321");
-        user.name = USERNAME;
+        user.userName = USERNAME;
         user.userImage = "https://i.imgur.com/g3D5jNz.jpg";
         return githubService.putUserTesting(accessToken, user).execute();
     }
 
     @Test
     public void testDeleteUser() throws IOException {
-        Response<Void> response = githubService.deleteUser(accessToken, putUser().body().id).execute();
-        assertEquals(200, response.code());
     }
 
     @Test
     public void testGetUser() throws IOException {
         Response<User> response = githubService.getUserTesting(accessToken, USER_ID).execute();
-        Log.i(TAG, "" + response.body().id);
+        Log.i(TAG, "" + response.body().getUserId());
         assertTrue(response.isSuccessful());
 
         Response<User> failResponse = githubService.getUserTesting(accessToken, "not real id").execute();
@@ -148,8 +145,6 @@ public class AwsTest {
 
     @Test
     public void testS3Upload() throws IOException {
-        File outputDir = context.getCacheDir(); // context being the Activity pointer
-        File file = File.createTempFile("prefix", "extension", outputDir);
     }
 
     @Test
