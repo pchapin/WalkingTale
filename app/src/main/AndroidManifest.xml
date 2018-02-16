@@ -37,6 +37,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.android.example.github"
@@ -56,8 +61,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".testing.SingleFragmentActivity" />
         <activity android:name=".ui.audiorecord.AudioRecordActivity" />
