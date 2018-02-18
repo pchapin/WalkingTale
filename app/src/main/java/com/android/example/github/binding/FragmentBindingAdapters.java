@@ -20,13 +20,21 @@ import android.databinding.BindingAdapter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.android.example.github.aws.ConstantsKt;
+import com.android.example.github.ui.common.CreateFileKt;
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -36,6 +44,7 @@ import javax.inject.Inject;
  */
 public class FragmentBindingAdapters {
     final Fragment fragment;
+    private final String TAG = this.getClass().getSimpleName();
     MediaPlayer mp = new MediaPlayer();
 
     @Inject
@@ -45,6 +54,41 @@ public class FragmentBindingAdapters {
 
     @BindingAdapter("imageUrl")
     public void bindImage(ImageView imageView, String url) {
+
+        Log.i(TAG, "image url: " + url);
+        if (url == null) return;
+
+        TransferUtility transferUtility = TransferUtility.builder()
+                .defaultBucket(ConstantsKt.getS3BucketName())
+                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
+                .context(fragment.getContext())
+                .build();
+
+        File file = null;
+        try {
+            file = CreateFileKt.createFile(fragment.getActivity());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        transferUtility.download(url, file).setTransferListener(new TransferListener() {
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                Log.i(TAG, "state " + state);
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                Log.i(TAG, "error " + ex);
+
+            }
+        });
+
         Glide.with(fragment).load(url).into(imageView);
     }
 

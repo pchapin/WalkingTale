@@ -72,7 +72,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -91,7 +90,8 @@ public class CreateFragment extends Fragment implements
     public static final String AUDIO_KEY_EXPOSITION = "AUDIO_KEY_EXPOSITION";
     private final String TAG = this.getClass().getSimpleName();
     private final int RECORD_AUDIO_REQUEST_CODE = 123;
-    private final int TAKE_PICTURE_REQUEST_CODE = 1234;
+    private final int TAKE_EXPOSITION_PICTURE_REQUEST_CODE = 1234;
+    private final int TAKE_STORY_PICTURE_REQUEST_CODE = 12345;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -104,8 +104,8 @@ public class CreateFragment extends Fragment implements
     private GoogleMap mMap;
     private CreateViewModel createViewModel;
     private ArrayList<Marker> markerArrayList = new ArrayList<>();
-    private List<File> fileList = new ArrayList<>();
-    private List<File> imageList = new ArrayList<>();
+
+    // This file is used to hold images temporarily
     private File photoFile = null;
 
     @NonNull
@@ -214,21 +214,8 @@ public class CreateFragment extends Fragment implements
     }
 
     private void initStoryImageListener() {
-        binding.get().storyImageview.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                createViewModel.setStoryImage(editable.toString());
-            }
+        binding.get().createStoryImage.setOnClickListener(v -> {
+            dispatchTakePictureIntent(TAKE_STORY_PICTURE_REQUEST_CODE);
         });
     }
 
@@ -303,13 +290,16 @@ public class CreateFragment extends Fragment implements
 
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
-            createViewModel.finishStory(getContext()).observe(this, publishSuccessful -> {
-                if (publishSuccessful != null) {
-                    if (publishSuccessful.status == Status.SUCCESS) {
+            createViewModel.finishStoryPart1(getContext()).observe(this, publishSuccessful -> {
 
-                        Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
-                        getActivity().onBackPressed();
-                    }
+                if (publishSuccessful != null && publishSuccessful.status == Status.SUCCESS) {
+                    createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
+
+                        if (voidResource.status == Status.SUCCESS) {
+                            Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
+                            getActivity().onBackPressed();
+                        }
+                    });
                 }
             });
         });
@@ -331,7 +321,7 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
-                dispatchTakePictureIntent();
+                dispatchTakePictureIntent(TAKE_EXPOSITION_PICTURE_REQUEST_CODE);
             }
         });
     }
@@ -405,7 +395,7 @@ public class CreateFragment extends Fragment implements
         return dataBinding.getRoot();
     }
 
-    private void dispatchTakePictureIntent() {
+    private void dispatchTakePictureIntent(int requestCode) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -421,7 +411,7 @@ public class CreateFragment extends Fragment implements
                         "com.android.example.github",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST_CODE);
+                startActivityForResult(takePictureIntent, requestCode);
             }
         }
     }
@@ -436,10 +426,13 @@ public class CreateFragment extends Fragment implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == TAKE_EXPOSITION_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
             createViewModel.addExposition(ExpositionType.PICTURE, photoFile.getAbsolutePath());
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
             createViewModel.addExposition(ExpositionType.AUDIO, data.getData().toString());
+        } else if (requestCode == TAKE_STORY_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
+            createViewModel.setStoryImage(photoFile.getAbsolutePath());
+            binding.get().createStoryImage.setImageURI(Uri.fromFile(photoFile));
         }
         adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
     }

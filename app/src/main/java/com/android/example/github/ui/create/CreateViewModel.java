@@ -67,7 +67,7 @@ public class CreateViewModel extends ViewModel {
         }
     }
 
-    LiveData<Resource<String>> putFileInS3(S3Args s3Args) {
+    LiveData<Resource<Story>> putFileInS3(S3Args s3Args) {
         return storyRepository.putFileInS3(s3Args);
     }
 
@@ -105,7 +105,7 @@ public class CreateViewModel extends ViewModel {
         return story;
     }
 
-    LiveData<Resource<Void>> finishStory(Context context) {
+    LiveData<Resource<Story>> finishStoryPart1(Context context) {
         // Check that fields of story are valid
         if (story.getValue().chapters.size() < 2) {
             Toast.makeText(context, "Your story must have at least 2 chapters.", Toast.LENGTH_SHORT).show();
@@ -121,10 +121,13 @@ public class CreateViewModel extends ViewModel {
             Toast.makeText(context, "Please select a image for your story.", Toast.LENGTH_SHORT).show();
         } else {
             S3Args s3Args = new S3Args(story.getValue(), context);
-            storyRepository.putFileInS3(s3Args);
-            return storyRepository.publishStory(story.getValue());
+            return storyRepository.putFileInS3(s3Args);
         }
         return AbsentLiveData.create();
+    }
+
+    LiveData<Resource<Void>> finishStoryPart2(Story story) {
+        return storyRepository.publishStory(story);
     }
 
     public final void addChapter(@NotNull String name, @NotNull LatLng location, int radius) {

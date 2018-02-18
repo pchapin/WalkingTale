@@ -71,7 +71,7 @@ public class StoryRepository {
         return getOneStoryTask.getResult();
     }
 
-    public LiveData<Resource<String>> putFileInS3(S3Args s3Args) {
+    public LiveData<Resource<Story>> putFileInS3(S3Args s3Args) {
         PutFileS3Task putFileS3Task = new PutFileS3Task(s3Args, db);
         appExecutors.networkIO().execute(putFileS3Task);
         return putFileS3Task.getResult();
