@@ -19,18 +19,16 @@ package com.android.example.github.binding;
 import android.databinding.BindingAdapter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.android.example.github.aws.ConstantsKt;
+import com.android.example.github.aws.S3UtilKt;
 import com.android.example.github.ui.common.CreateFileKt;
 import com.bumptech.glide.Glide;
 
@@ -43,9 +41,9 @@ import javax.inject.Inject;
  * Binding adapters that work with a fragment instance.
  */
 public class FragmentBindingAdapters {
-    final Fragment fragment;
+    private final Fragment fragment;
     private final String TAG = this.getClass().getSimpleName();
-    MediaPlayer mp = new MediaPlayer();
+    private MediaPlayer mp = new MediaPlayer();
 
     @Inject
     public FragmentBindingAdapters(Fragment fragment) {
@@ -56,14 +54,14 @@ public class FragmentBindingAdapters {
     public void bindImage(ImageView imageView, String url) {
 
         Log.i(TAG, "image url: " + url);
+        // The url should never be null, but just in case
         if (url == null) return;
 
-        TransferUtility transferUtility = TransferUtility.builder()
-                .defaultBucket(ConstantsKt.getS3BucketName())
-                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
-                .context(fragment.getContext())
-                .build();
+        if (new File(url).isFile()) {
+            // This is still needed to show images on the device before they are uploaded to s3
+            Glide.with(fragment).load(url).into(imageView);
+            return;
+        }
 
         File file = null;
         try {
@@ -71,25 +69,30 @@ public class FragmentBindingAdapters {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        transferUtility.download(url, file).setTransferListener(new TransferListener() {
-            @Override
-            public void onStateChanged(int id, TransferState state) {
-                Log.i(TAG, "state " + state);
-            }
+        File finalFile = file;
 
-            @Override
-            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+        S3UtilKt.getTransferUtility(fragment.getContext())
+                .download(url, file)
+                .setTransferListener(new TransferListener() {
+                    @Override
+                    public void onStateChanged(int id, TransferState state) {
+                        Log.i(TAG, "state " + state);
+                        if (state == TransferState.COMPLETED) {
+                            Glide.with(fragment).load(Uri.fromFile(finalFile)).into(imageView);
+                        }
+                    }
 
-            }
+                    @Override
+                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
 
-            @Override
-            public void onError(int id, Exception ex) {
-                Log.i(TAG, "error " + ex);
+                    }
 
-            }
-        });
+                    @Override
+                    public void onError(int id, Exception ex) {
+                        Log.i(TAG, "error " + ex);
 
-        Glide.with(fragment).load(url).into(imageView);
+                    }
+                });
     }
 
     @BindingAdapter("audioUrl")

@@ -293,9 +293,12 @@ public class CreateFragment extends Fragment implements
             createViewModel.finishStoryPart1(getContext()).observe(this, publishSuccessful -> {
 
                 if (publishSuccessful != null && publishSuccessful.status == Status.SUCCESS) {
+
+                    Log.i("returned chapters", "" + publishSuccessful.data.chapters);
+
                     createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
 
-                        if (voidResource.status == Status.SUCCESS) {
+                        if (voidResource != null && voidResource.status == Status.SUCCESS) {
                             Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
                             getActivity().onBackPressed();
                         }
