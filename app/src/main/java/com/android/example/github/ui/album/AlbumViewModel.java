@@ -41,7 +41,7 @@ public class AlbumViewModel extends ViewModel {
             if (input == null) {
                 return AbsentLiveData.create();
             }
-            return repository.getOneStory(input);
+            return repository.getOneStory(null);
         });
     }
 

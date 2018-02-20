@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
 import com.android.example.github.repository.StoryRepository;
+import com.android.example.github.repository.tasks.StoryKey;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
@@ -19,20 +20,17 @@ import javax.inject.Inject;
 
 public class PlayViewModel extends ViewModel {
     private final String TAG = this.getClass().getSimpleName();
+    private final StoryRepository storyRepository;
     @VisibleForTesting
-    private final MutableLiveData<String> repoId;
-    private final LiveData<Resource<Story>> repo;
     LiveData<List<Chapter>> availableChapters = new MutableLiveData<>();
     private Story story;
     private MutableLiveData<Chapter> currentChapter = new MutableLiveData<>();
     private MutableLiveData<Chapter> nextChapter = new MutableLiveData<>();
     private LiveData<Boolean> isCurrentFinal = new MutableLiveData<>();
 
-
     @Inject
     PlayViewModel(StoryRepository repository) {
-        this.repoId = new MutableLiveData<>();
-        repo = Transformations.switchMap(repoId, repository::getOneStory);
+        storyRepository = repository;
 
         availableChapters = Transformations.map(currentChapter, (Chapter current) -> {
             if (current == null) return Collections.emptyList();
@@ -49,12 +47,8 @@ public class PlayViewModel extends ViewModel {
         isCurrentFinal = Transformations.map(availableChapters, input -> input.size() == story.chapters.size());
     }
 
-    public LiveData<Resource<Story>> getRepo() {
-        return repo;
-    }
-
-    void setId(String id) {
-        repoId.setValue(id);
+    public LiveData<Resource<Story>> getStory(StoryKey storyKey) {
+        return storyRepository.getOneStory(storyKey);
     }
 
     LiveData<Chapter> getCurrentChapter() {

@@ -34,6 +34,7 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentOverviewBinding;
 import com.android.example.github.di.Injectable;
+import com.android.example.github.repository.tasks.StoryKey;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
 import com.android.example.github.vo.Story;
@@ -47,6 +48,7 @@ public class OverviewFragment extends Fragment implements Injectable {
 
     private static final String TAG = OverviewFragment.class.getSimpleName();
     private static final String REPO_NAME_KEY = "repo_name";
+    private static final String REPO_USER_KEY = "repo_user";
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -57,10 +59,10 @@ public class OverviewFragment extends Fragment implements Injectable {
     private Story story;
 
     public static OverviewFragment create(Story s) {
-        Log.i(TAG, "id " + s.id);
         OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
         args.putString(REPO_NAME_KEY, s.id);
+        args.putString(REPO_USER_KEY, s.userId);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -70,8 +72,8 @@ public class OverviewFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            overviewViewModel.getStory(args.getString(REPO_NAME_KEY)).observe(this, resource -> {
+        if (args != null && args.containsKey(REPO_NAME_KEY) && args.containsKey(REPO_USER_KEY)) {
+            overviewViewModel.getStory(new StoryKey(args.getString(REPO_USER_KEY), args.getString(REPO_NAME_KEY))).observe(this, resource -> {
                 Log.i(TAG, "" + resource);
                 if (resource != null) {
                     binding.get().setStory(resource.data);
@@ -92,8 +94,7 @@ public class OverviewFragment extends Fragment implements Injectable {
 
     private void initStartStoryListener() {
         binding.get().startStoryButton.setOnClickListener((v) -> {
-            String name = story.id;
-            navigationController.navigateToStoryPlay(name);
+            navigationController.navigateToStoryPlay(story);
         });
     }
 

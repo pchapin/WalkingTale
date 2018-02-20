@@ -1,23 +1,23 @@
 package com.android.example.github.repository.tasks
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
 import com.android.example.github.db.GithubDb
 import com.android.example.github.vo.Resource
 import com.android.example.github.vo.Status
 import com.android.example.github.vo.Story
 
-class GetOneStoryTask(private val storyId: String, val db: GithubDb) : AbstractTask<String, Story>(storyId, db) {
+class GetOneStoryTask(val storyKey: StoryKey, val db: GithubDb) : AbstractTask<StoryKey, Story>(storyKey, db) {
 
     override fun run() {
-        val response = dynamoDBMapper.scan(Story::class.java, DynamoDBScanExpression())
-        val oneStory = response.filter { it.id == storyId }
-        if (oneStory.isEmpty()) {
-            result.postValue(Resource(Status.ERROR, null, null))
-        } else {
-            result.postValue(Resource(Status.SUCCESS, response[0], null))
+        val response = dynamoDBMapper.load(Story::class.java, storyKey.userId, storyKey.storyId)
+        if (response != null) {
+            result.postValue(Resource(Status.SUCCESS, response, null))
             db.beginTransaction()
-            db.repoDao().insert(response[0])
+            db.repoDao().insert(response)
             db.endTransaction()
+        } else {
+            result.postValue(Resource(Status.ERROR, null, null))
         }
     }
 }
+
+data class StoryKey(val userId: String, val storyId: String)

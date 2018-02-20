@@ -73,6 +73,8 @@ public class Story {
         return false;
     }
 
+    @NonNull
+    @DynamoDBRangeKey(attributeName = "id")
     @DynamoDBAttribute(attributeName = "id")
     public String getId() {
         return id;
@@ -82,8 +84,7 @@ public class Story {
         this.id = id;
     }
 
-    @NonNull
-    @DynamoDBRangeKey(attributeName = "storyName")
+
     @DynamoDBAttribute(attributeName = "storyName")
     public String getStoryName() {
         return storyName;

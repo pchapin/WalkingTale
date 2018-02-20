@@ -38,10 +38,12 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentPlayBinding;
 import com.android.example.github.di.Injectable;
+import com.android.example.github.repository.tasks.StoryKey;
 import com.android.example.github.ui.common.ChapterAdapter;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
+import com.android.example.github.vo.Story;
 import com.android.example.github.walkingTale.Chapter;
 import com.android.example.github.walkingTale.Exposition;
 import com.android.example.github.walkingTale.LocationUtilKt;
@@ -72,6 +74,7 @@ public class PlayFragment extends Fragment implements
         GoogleMap.OnCircleClickListener {
 
     private static final String REPO_NAME_KEY = "repo_name";
+    private static final String REPO_USER_ID_KEY = "repo_userid";
     private static final String TAG = PlayFragment.class.getSimpleName();
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -83,10 +86,11 @@ public class PlayFragment extends Fragment implements
     private PlayViewModel playViewModel;
     private GoogleMap mMap;
 
-    public static PlayFragment create(String id) {
+    public static PlayFragment create(Story story) {
         PlayFragment repoFragment = new PlayFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_NAME_KEY, id);
+        args.putString(REPO_NAME_KEY, story.id);
+        args.putString(REPO_USER_ID_KEY, story.userId);
         repoFragment.setArguments(args);
         return repoFragment;
     }
@@ -118,7 +122,7 @@ public class PlayFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         playViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayViewModel.class);
         Bundle args = getArguments();
-        playViewModel.setId(args.getString(REPO_NAME_KEY));
+        StoryKey storyKey = new StoryKey(args.getString(REPO_USER_ID_KEY), args.getString(REPO_NAME_KEY));
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
                 chapter -> {
@@ -127,7 +131,7 @@ public class PlayFragment extends Fragment implements
         binding.get().expositionList.setAdapter(adapter);
 
         initCurrentChapterObserver();
-        initRepoObserver();
+        initStoryObserver(storyKey);
         initLocationObserver();
         initIsCurrentFinalObserver();
 
@@ -169,8 +173,8 @@ public class PlayFragment extends Fragment implements
         });
     }
 
-    private void initRepoObserver() {
-        playViewModel.getRepo().observe(this, resource -> {
+    private void initStoryObserver(StoryKey storyKey) {
+        playViewModel.getStory(storyKey).observe(this, resource -> {
             binding.get().setStory(resource == null ? null : resource.data);
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();

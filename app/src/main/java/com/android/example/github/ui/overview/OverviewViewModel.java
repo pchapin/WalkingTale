@@ -21,6 +21,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
 import com.android.example.github.repository.StoryRepository;
+import com.android.example.github.repository.tasks.StoryKey;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
@@ -35,7 +36,7 @@ public class OverviewViewModel extends ViewModel {
         this.storyRepository = repository;
     }
 
-    public LiveData<Resource<Story>> getStory(String id) {
-        return storyRepository.getOneStory(id);
+    public LiveData<Resource<Story>> getStory(StoryKey storyKey) {
+        return storyRepository.getOneStory(storyKey);
     }
 }

@@ -68,8 +68,8 @@ public class NavigationController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToStoryPlay(String id) {
-        PlayFragment storyPlayFragment = PlayFragment.create(id);
+    public void navigateToStoryPlay(Story story) {
+        PlayFragment storyPlayFragment = PlayFragment.create(story);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
                 .addToBackStack(null)

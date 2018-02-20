@@ -27,6 +27,7 @@ import com.android.example.github.repository.tasks.GetOneStoryTask;
 import com.android.example.github.repository.tasks.PutFileS3Task;
 import com.android.example.github.repository.tasks.S3Args;
 import com.android.example.github.repository.tasks.SaveStoryTask;
+import com.android.example.github.repository.tasks.StoryKey;
 import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
@@ -65,8 +66,8 @@ public class StoryRepository {
         return getAllStoriesTask.getResult();
     }
 
-    public LiveData<Resource<Story>> getOneStory(String id) {
-        GetOneStoryTask getOneStoryTask = new GetOneStoryTask(id, db);
+    public LiveData<Resource<Story>> getOneStory(StoryKey storyKey) {
+        GetOneStoryTask getOneStoryTask = new GetOneStoryTask(storyKey, db);
         appExecutors.networkIO().execute(getOneStoryTask);
         return getOneStoryTask.getResult();
     }
