@@ -35,7 +35,7 @@ public class OverviewViewModel extends ViewModel {
         this.storyRepository = repository;
     }
 
-    public LiveData<Resource<Story>> getRepo(String id) {
-        return storyRepository.loadRepo(id);
+    public LiveData<Resource<Story>> getStory(String id) {
+        return storyRepository.getOneStory(id);
     }
 }

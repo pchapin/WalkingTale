@@ -16,13 +16,13 @@
 
 package com.android.example.github.ui.feed;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +42,7 @@ import javax.inject.Inject;
 /**
  * The UI controller for the main screen of the app, the feed.
  */
-public class FeedFragment extends LifecycleFragment implements Injectable {
+public class FeedFragment extends Fragment implements Injectable {
 
     private final String TAG = this.getClass().getSimpleName();
     @Inject
@@ -56,8 +56,7 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentFeedBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_feed, container, false,
                         dataBindingComponent);
@@ -71,12 +70,11 @@ public class FeedFragment extends LifecycleFragment implements Injectable {
         feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         initRecyclerView();
 
-        RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, true,
-                repo -> {
-                    if (PermissionManager.checkLocationPermission(getActivity())) {
-                        navigationController.navigateToOverview(repo.id);
-                    }
-                });
+        RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, story -> {
+            if (PermissionManager.checkLocationPermission(getActivity())) {
+                navigationController.navigateToOverview(story);
+            }
+        });
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);

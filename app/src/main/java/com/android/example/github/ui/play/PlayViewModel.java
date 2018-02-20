@@ -32,7 +32,7 @@ public class PlayViewModel extends ViewModel {
     @Inject
     PlayViewModel(StoryRepository repository) {
         this.repoId = new MutableLiveData<>();
-        repo = Transformations.switchMap(repoId, repository::loadRepo);
+        repo = Transformations.switchMap(repoId, repository::getOneStory);
 
         availableChapters = Transformations.map(currentChapter, (Chapter current) -> {
             if (current == null) return Collections.emptyList();

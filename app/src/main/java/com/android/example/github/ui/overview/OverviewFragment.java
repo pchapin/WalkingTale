@@ -16,10 +16,6 @@
 
 package com.android.example.github.ui.overview;
 
-import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -27,8 +23,8 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +36,6 @@ import com.android.example.github.databinding.FragmentOverviewBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
-import com.android.example.github.vo.Resource;
 import com.android.example.github.vo.Story;
 
 import javax.inject.Inject;
@@ -48,11 +43,10 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying the overview for a story.
  */
-public class OverviewFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
+public class OverviewFragment extends Fragment implements Injectable {
 
     private static final String TAG = OverviewFragment.class.getSimpleName();
     private static final String REPO_NAME_KEY = "repo_name";
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -62,19 +56,13 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
     private OverviewViewModel overviewViewModel;
     private Story story;
 
-    public static OverviewFragment create(String id) {
-        Log.i(TAG, "id " + id);
+    public static OverviewFragment create(Story s) {
+        Log.i(TAG, "id " + s.id);
         OverviewFragment repoFragment = new OverviewFragment();
         Bundle args = new Bundle();
-        args.putString(REPO_NAME_KEY, id);
+        args.putString(REPO_NAME_KEY, s.id);
         repoFragment.setArguments(args);
         return repoFragment;
-    }
-
-    @NonNull
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 
     @Override
@@ -83,8 +71,7 @@ public class OverviewFragment extends LifecycleFragment implements LifecycleRegi
         overviewViewModel = ViewModelProviders.of(this, viewModelFactory).get(OverviewViewModel.class);
         Bundle args = getArguments();
         if (args != null && args.containsKey(REPO_NAME_KEY)) {
-            LiveData<Resource<Story>> repo = overviewViewModel.getRepo(args.getString(REPO_NAME_KEY));
-            repo.observe(this, resource -> {
+            overviewViewModel.getStory(args.getString(REPO_NAME_KEY)).observe(this, resource -> {
                 Log.i(TAG, "" + resource);
                 if (resource != null) {
                     binding.get().setStory(resource.data);

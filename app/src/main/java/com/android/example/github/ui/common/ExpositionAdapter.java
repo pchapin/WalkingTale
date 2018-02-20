@@ -33,19 +33,19 @@ public class ExpositionAdapter extends DataBoundListAdapter<Exposition, ItemExpo
     private final DataBindingComponent dataBindingComponent;
     private final ExpositionClickBack expositionClickBack;
 
-    public ExpositionAdapter(DataBindingComponent dataBindingComponent,
-                             boolean showFullName,
-                             ExpositionClickBack expositionClickBack
-    ) {
+    public ExpositionAdapter(DataBindingComponent dataBindingComponent, ExpositionClickBack expositionClickBack) {
         this.dataBindingComponent = dataBindingComponent;
         this.expositionClickBack = expositionClickBack;
     }
 
     @Override
     protected ItemExpositionBinding createBinding(ViewGroup parent) {
-        ItemExpositionBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_exposition,
-                        parent, false, dataBindingComponent);
+        ItemExpositionBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent.getContext()),
+                R.layout.item_exposition,
+                parent,
+                false,
+                dataBindingComponent);
         binding.getRoot().setOnClickListener(v -> {
             Exposition exposition = binding.getExposition();
             if (exposition != null && expositionClickBack != null) {

@@ -16,16 +16,13 @@
 
 package com.android.example.github.ui.profile;
 
-import android.arch.lifecycle.LifecycleFragment;
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +42,7 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying the overview for a story.
  */
-public class ProfileFragment extends LifecycleFragment implements LifecycleRegistryOwner, Injectable {
-
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+public class ProfileFragment extends Fragment implements Injectable {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -68,18 +63,12 @@ public class ProfileFragment extends LifecycleFragment implements LifecycleRegis
         return dataBinding.getRoot();
     }
 
-    @NonNull
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
 
-        RepoListAdapter repoListAdapter = new RepoListAdapter(dataBindingComponent, false, repo -> {
+        RepoListAdapter repoListAdapter = new RepoListAdapter(dataBindingComponent, repo -> {
             profileViewModel.setUserId(repo.username);
         });
         binding.get().repoList.setAdapter(repoListAdapter);

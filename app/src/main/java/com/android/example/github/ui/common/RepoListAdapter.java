@@ -32,13 +32,10 @@ import com.android.example.github.vo.Story;
 public class RepoListAdapter extends DataBoundListAdapter<Story, ItemRepoBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final RepoClickCallback repoClickCallback;
-    private final boolean showFullName;
 
-    public RepoListAdapter(DataBindingComponent dataBindingComponent, boolean showFullName,
-                           RepoClickCallback repoClickCallback) {
+    public RepoListAdapter(DataBindingComponent dataBindingComponent, RepoClickCallback repoClickCallback) {
         this.dataBindingComponent = dataBindingComponent;
         this.repoClickCallback = repoClickCallback;
-        this.showFullName = showFullName;
     }
 
     @Override
@@ -46,7 +43,6 @@ public class RepoListAdapter extends DataBoundListAdapter<Story, ItemRepoBinding
         ItemRepoBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_repo,
                         parent, false, dataBindingComponent);
-        binding.setShowFullName(showFullName);
         binding.getRoot().setOnClickListener(v -> {
             Story story = binding.getStory();
             if (story != null && repoClickCallback != null) {

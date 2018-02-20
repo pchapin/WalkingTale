@@ -65,7 +65,7 @@ public class StoryRepository {
         return getAllStoriesTask.getResult();
     }
 
-    public LiveData<Resource<Story>> loadRepo(String id) {
+    public LiveData<Resource<Story>> getOneStory(String id) {
         GetOneStoryTask getOneStoryTask = new GetOneStoryTask(id, db);
         appExecutors.networkIO().execute(getOneStoryTask);
         return getOneStoryTask.getResult();

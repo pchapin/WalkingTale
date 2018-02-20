@@ -55,22 +55,6 @@ public abstract class StoryDao {
     @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
     public abstract LiveData<RepoSearchResult> search(String query);
 
-//    public LiveData<List<Story>> loadOrdered(List<Integer> repoIds) {
-//        SparseIntArray order = new SparseIntArray();
-//        int index = 0;
-//        for (Integer repoId : repoIds) {
-//            order.put(repoId, index++);
-//        }
-//        return Transformations.map(loadById(repoIds), repositories -> {
-//            Collections.sort(repositories, (r1, r2) -> {
-//                int pos1 = order.get(r1.id);
-//                int pos2 = order.get(r2.id);
-//                return pos1 - pos2;
-//            });
-//            return repositories;
-//        });
-//    }
-
     @Query("SELECT * FROM Story WHERE id in (:repoIds)")
     protected abstract LiveData<List<Story>> loadById(List<Integer> repoIds);
 

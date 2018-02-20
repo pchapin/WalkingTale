@@ -16,8 +16,6 @@
 
 package com.android.example.github.ui.album;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -51,10 +49,9 @@ import javax.inject.Inject;
 /**
  * The UI Controller for displaying a list of expositions.
  */
-public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, Injectable {
+public class AlbumFragment extends Fragment implements Injectable {
 
     private static final String REPO_NAME_KEY = "repo_name";
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -69,11 +66,6 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
         args.putString(REPO_NAME_KEY, id);
         expositionViewerFragment.setArguments(args);
         return expositionViewerFragment;
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 
     @Override
@@ -92,7 +84,7 @@ public class AlbumFragment extends Fragment implements LifecycleRegistryOwner, I
             binding.get().executePendingBindings();
         });
 
-        ExpositionAdapter adapter = new ExpositionAdapter(dataBindingComponent, false,
+        ExpositionAdapter adapter = new ExpositionAdapter(dataBindingComponent,
                 chapter -> {
                     // TODO: 10/30/2017 Do something if user clicks an exposition, animation maybe?
 

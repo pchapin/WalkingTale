@@ -27,6 +27,7 @@ import com.android.example.github.ui.overview.OverviewFragment;
 import com.android.example.github.ui.play.PlayFragment;
 import com.android.example.github.ui.profile.ProfileFragment;
 import com.android.example.github.ui.search.SearchFragment;
+import com.android.example.github.vo.Story;
 
 import javax.inject.Inject;
 
@@ -43,8 +44,8 @@ public class NavigationController {
         this.fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void navigateToOverview(String id) {
-        OverviewFragment fragment = OverviewFragment.create(id);
+    public void navigateToOverview(Story s) {
+        OverviewFragment fragment = OverviewFragment.create(s);
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)
                 .addToBackStack(null)

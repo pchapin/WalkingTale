@@ -16,8 +16,6 @@
 
 package com.android.example.github.ui.play;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
@@ -68,7 +66,6 @@ import javax.inject.Inject;
 
 
 public class PlayFragment extends Fragment implements
-        LifecycleRegistryOwner,
         Injectable,
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
@@ -76,7 +73,6 @@ public class PlayFragment extends Fragment implements
 
     private static final String REPO_NAME_KEY = "repo_name";
     private static final String TAG = PlayFragment.class.getSimpleName();
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -249,12 +245,6 @@ public class PlayFragment extends Fragment implements
     private void moveCamera(Location currentLocation) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(LocationUtilKt.LocationToLatLng(currentLocation));
         mMap.animateCamera(cameraUpdate);
-    }
-
-    @NonNull
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 
     @Override

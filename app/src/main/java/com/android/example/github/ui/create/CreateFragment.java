@@ -16,8 +16,6 @@
 
 package com.android.example.github.ui.create;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -28,7 +26,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -83,7 +80,6 @@ import static android.app.Activity.RESULT_OK;
  * The UI Controller for creating a story.
  */
 public class CreateFragment extends Fragment implements
-        LifecycleRegistryOwner,
         Injectable,
         OnMapReadyCallback {
     public static final String AUDIO_KEY_CHAPTER = "AUDIO_KEY_CHAPTER";
@@ -92,7 +88,6 @@ public class CreateFragment extends Fragment implements
     private final int RECORD_AUDIO_REQUEST_CODE = 123;
     private final int TAKE_EXPOSITION_PICTURE_REQUEST_CODE = 1234;
     private final int TAKE_STORY_PICTURE_REQUEST_CODE = 12345;
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -107,12 +102,6 @@ public class CreateFragment extends Fragment implements
 
     // This file is used to hold images temporarily
     private File photoFile = null;
-
-    @NonNull
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

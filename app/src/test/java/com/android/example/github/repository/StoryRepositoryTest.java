@@ -69,7 +69,7 @@
 //
 //        Story story = TestUtil.createRepo("foo", "bar", "desc");
 //        LiveData<ApiResponse<Story>> call = successCall(story);
-//        when(service.getRepo("foo")).thenReturn(call);
+//        when(service.getStory("foo")).thenReturn(call);
 //
 ////        LiveData<Resource<Story>> data = repository.loadRepo("foo", "bar");
 ////        verify(dao).load("foo", "bar");
@@ -83,7 +83,7 @@
 ////        when(dao.load("foo", "bar")).thenReturn(updatedDbData);
 //
 //        dbData.postValue(null);
-//        verify(service).getRepo("foo");
+//        verify(service).getStory("foo");
 //        verify(dao).insert(story);
 //
 //        updatedDbData.postValue(story);
