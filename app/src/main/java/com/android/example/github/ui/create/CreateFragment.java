@@ -31,7 +31,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +134,6 @@ public class CreateFragment extends Fragment implements
             binding.get().latitudeText.setText(Double.toString(mCurrentLocation.getLatitude()));
             binding.get().longitudeText.setText(Double.toString(mCurrentLocation.getLongitude()));
             binding.get().lastUpdateTimeText.setText(new Date().toString());
-            Log.i("location", "" + mCurrentLocation + new Date().toString());
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
@@ -282,9 +280,6 @@ public class CreateFragment extends Fragment implements
             createViewModel.finishStoryPart1(getContext()).observe(this, publishSuccessful -> {
 
                 if (publishSuccessful != null && publishSuccessful.status == Status.SUCCESS) {
-
-                    Log.i("returned chapters", "" + publishSuccessful.data.chapters);
-
                     createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
 
                         if (voidResource != null && voidResource.status == Status.SUCCESS) {
@@ -421,7 +416,7 @@ public class CreateFragment extends Fragment implements
         if (requestCode == TAKE_EXPOSITION_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
             createViewModel.addExposition(ExpositionType.PICTURE, photoFile.getAbsolutePath());
         } else if (requestCode == RECORD_AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
-            createViewModel.addExposition(ExpositionType.AUDIO, data.getData().toString());
+            createViewModel.addExposition(ExpositionType.AUDIO, data.getData().getPath());
         } else if (requestCode == TAKE_STORY_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
             createViewModel.setStoryImage(photoFile.getAbsolutePath());
             binding.get().createStoryImage.setImageURI(Uri.fromFile(photoFile));

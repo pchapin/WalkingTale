@@ -20,13 +20,14 @@ import android.databinding.BindingAdapter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.example.github.aws.ConstantsKt;
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -56,22 +57,27 @@ public class FragmentBindingAdapters {
 
     @BindingAdapter("audioUrl")
     public void bindAudio(View view, String url) {
+        // https://developer.android.com/reference/android/media/MediaPlayer.html
+
         view.setOnClickListener(v -> {
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             if (mp.isPlaying()) {
                 mp.stop();
-                mp.reset();
-            } else {
-                try {
-                    mp.setDataSource(url);
-                } catch (IOException e) {
-                    // Todo: the user should never have to see this, instead: check all urls before starting story
-                    Toast.makeText(view.getContext(), "Error: Invalid audio url", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                mp.prepareAsync();
-                mp.setOnPreparedListener(MediaPlayer::start);
+                return;
             }
+
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mp.reset();
+            try {
+                if (new File(url).isFile()) {
+                    mp.setDataSource(url);
+                } else {
+                    mp.setDataSource(s3HostName + url);
+                }
+            } catch (IOException e) {
+                Log.i(TAG, "" + e);
+            }
+            mp.prepareAsync();
+            mp.setOnPreparedListener(MediaPlayer::start);
         });
     }
 }
