@@ -278,7 +278,7 @@ public class CreateFragment extends Fragment implements
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
             createViewModel.finishStoryPart1(getContext()).observe(this, publishSuccessful -> {
-
+                binding.get().finishStoryInputs.setVisibility(View.VISIBLE);
                 if (publishSuccessful != null && publishSuccessful.status == Status.SUCCESS) {
                     createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
 
