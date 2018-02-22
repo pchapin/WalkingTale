@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.example.github.MainActivity;
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentFeedBinding;
@@ -79,10 +80,6 @@ public class FeedFragment extends Fragment implements Injectable {
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> feedViewModel.getResults());
-        // TODO: Testing only
-//        navigationController.navigateToOverview("23565e20-0fff-11e8-996c-732ef70acd1f");
-//        navigationController.navigateToOverview("12345");
-//        navigationController.navigateToCreateStory();
     }
 
     private void initRecyclerView() {
@@ -94,6 +91,13 @@ public class FeedFragment extends Fragment implements Injectable {
                     ? 0 : result.data.size());
             adapter.get().replace(result == null ? null : result.data);
             binding.get().executePendingBindings();
+
+
+            if (MainActivity.DEBUG_MODE) {
+                if (result != null && result.data != null && !result.data.isEmpty()) {
+                    navigationController.navigateToOverview(result.data.get(0));
+                }
+            }
         });
     }
 }

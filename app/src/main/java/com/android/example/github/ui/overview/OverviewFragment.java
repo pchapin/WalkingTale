@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.example.github.MainActivity;
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentOverviewBinding;
@@ -80,11 +81,11 @@ public class OverviewFragment extends Fragment implements Injectable {
                     story = resource.data;
                     binding.get().setRepoResource(resource);
                     binding.get().executePendingBindings();
+
+                    if (MainActivity.DEBUG_MODE && resource.data != null) {
+                        navigationController.navigateToStoryPlay(resource.data);
+                    }
                 }
-                // TODO: 2/4/18 Testing only
-//            if (resource != null && resource.data != null) {
-//                navigationController.navigateToStoryPlay(resource.data.id);
-//            }
             });
         }
 
