@@ -34,7 +34,7 @@ import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentProfileBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.RepoListAdapter;
+import com.android.example.github.ui.common.StoryListAdapter;
 import com.android.example.github.util.AutoClearedValue;
 
 import javax.inject.Inject;
@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment implements Injectable {
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentProfileBinding> binding;
-    AutoClearedValue<RepoListAdapter> adapter;
+    AutoClearedValue<StoryListAdapter> adapter;
     private ProfileViewModel profileViewModel;
 
     @Nullable
@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
 
-        RepoListAdapter repoListAdapter = new RepoListAdapter(dataBindingComponent, repo -> {
+        StoryListAdapter repoListAdapter = new StoryListAdapter(dataBindingComponent, repo -> {
             profileViewModel.setUserId(repo.username);
         });
         binding.get().repoList.setAdapter(repoListAdapter);

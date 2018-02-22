@@ -97,7 +97,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3"
-            tools:listitem="@layout/item_repo" />
+            tools:listitem="@layout/item_story" />
 
         <TextView
             android:id="@+id/no_results_text"

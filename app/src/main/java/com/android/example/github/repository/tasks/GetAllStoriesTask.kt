@@ -12,7 +12,7 @@ class GetAllStoriesTask(val nothing: String, val db: GithubDb) : AbstractTask<St
         val response = dynamoDBMapper.scan(Story::class.java, DynamoDBScanExpression())
         db.beginTransaction()
         response.forEach {
-            db.repoDao().insert(it)
+            db.storyDao().insert(it)
         }
         db.endTransaction()
         result.postValue(Resource(Status.SUCCESS, response, null))

@@ -35,7 +35,7 @@ import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentSearchBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.RepoListAdapter;
+import com.android.example.github.ui.common.StoryListAdapter;
 import com.android.example.github.util.AutoClearedValue;
 
 import javax.inject.Inject;
@@ -48,7 +48,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentSearchBinding> binding;
-    AutoClearedValue<RepoListAdapter> adapter;
+    AutoClearedValue<StoryListAdapter> adapter;
     private SearchViewModel searchViewModel;
 
     @Nullable
@@ -67,7 +67,7 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel.class);
         initRecyclerView();
-        RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent,
+        StoryListAdapter rvAdapter = new StoryListAdapter(dataBindingComponent,
                 repo -> navigationController.navigateToOverview(repo));
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);

@@ -22,38 +22,38 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.android.example.github.R;
-import com.android.example.github.databinding.ItemRepoBinding;
+import com.android.example.github.databinding.ItemStoryBinding;
 import com.android.example.github.util.Objects;
 import com.android.example.github.vo.Story;
 
 /**
  * A RecyclerView adapter for {@link Story} class.
  */
-public class RepoListAdapter extends DataBoundListAdapter<Story, ItemRepoBinding> {
+public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBinding> {
     private final DataBindingComponent dataBindingComponent;
-    private final RepoClickCallback repoClickCallback;
+    private final StoryClickCallback storyClickCallback;
 
-    public RepoListAdapter(DataBindingComponent dataBindingComponent, RepoClickCallback repoClickCallback) {
+    public StoryListAdapter(DataBindingComponent dataBindingComponent, StoryClickCallback storyClickCallback) {
         this.dataBindingComponent = dataBindingComponent;
-        this.repoClickCallback = repoClickCallback;
+        this.storyClickCallback = storyClickCallback;
     }
 
     @Override
-    protected ItemRepoBinding createBinding(ViewGroup parent) {
-        ItemRepoBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_repo,
+    protected ItemStoryBinding createBinding(ViewGroup parent) {
+        ItemStoryBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_story,
                         parent, false, dataBindingComponent);
         binding.getRoot().setOnClickListener(v -> {
             Story story = binding.getStory();
-            if (story != null && repoClickCallback != null) {
-                repoClickCallback.onClick(story);
+            if (story != null && storyClickCallback != null) {
+                storyClickCallback.onClick(story);
             }
         });
         return binding;
     }
 
     @Override
-    protected void bind(ItemRepoBinding binding, Story item) {
+    protected void bind(ItemStoryBinding binding, Story item) {
         binding.setStory(item);
     }
 
@@ -67,7 +67,7 @@ public class RepoListAdapter extends DataBoundListAdapter<Story, ItemRepoBinding
         return Objects.equals(oldItem.chapters, newItem.chapters);
     }
 
-    public interface RepoClickCallback {
+    public interface StoryClickCallback {
         void onClick(Story story);
     }
 }

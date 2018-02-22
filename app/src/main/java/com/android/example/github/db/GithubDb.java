@@ -33,5 +33,5 @@ public abstract class GithubDb extends RoomDatabase {
 
     abstract public UserDao userDao();
 
-    abstract public StoryDao repoDao();
+    abstract public StoryDao storyDao();
 }

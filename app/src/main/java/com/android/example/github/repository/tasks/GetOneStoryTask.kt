@@ -12,7 +12,7 @@ class GetOneStoryTask(val storyKey: StoryKey, val db: GithubDb) : AbstractTask<S
         if (response != null) {
             result.postValue(Resource(Status.SUCCESS, response, null))
             db.beginTransaction()
-            db.repoDao().insert(response)
+            db.storyDao().insert(response)
             db.endTransaction()
         } else {
             result.postValue(Resource(Status.ERROR, null, null))

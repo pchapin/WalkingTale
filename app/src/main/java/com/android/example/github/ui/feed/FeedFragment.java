@@ -35,7 +35,7 @@ import com.android.example.github.databinding.FragmentFeedBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
-import com.android.example.github.ui.common.RepoListAdapter;
+import com.android.example.github.ui.common.StoryListAdapter;
 import com.android.example.github.util.AutoClearedValue;
 
 import javax.inject.Inject;
@@ -52,7 +52,7 @@ public class FeedFragment extends Fragment implements Injectable {
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentFeedBinding> binding;
-    AutoClearedValue<RepoListAdapter> adapter;
+    AutoClearedValue<StoryListAdapter> adapter;
     private FeedViewModel feedViewModel;
 
     @Nullable
@@ -71,7 +71,7 @@ public class FeedFragment extends Fragment implements Injectable {
         feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         initRecyclerView();
 
-        RepoListAdapter rvAdapter = new RepoListAdapter(dataBindingComponent, story -> {
+        StoryListAdapter rvAdapter = new StoryListAdapter(dataBindingComponent, story -> {
             if (PermissionManager.checkLocationPermission(getActivity())) {
                 navigationController.navigateToOverview(story);
             }

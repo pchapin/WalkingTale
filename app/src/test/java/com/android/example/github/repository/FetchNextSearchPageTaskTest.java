@@ -73,7 +73,7 @@
 //        service = mock(GithubService.class);
 //        db = mock(GithubDb.class);
 //        repoDao = mock(StoryDao.class);
-//        when(db.repoDao()).thenReturn(repoDao);
+//        when(db.storyDao()).thenReturn(storyDao);
 //        task = new FetchNextSearchPageTask("foo", service, db);
 //        //noinspection unchecked
 //        observer = mock(Observer.class);

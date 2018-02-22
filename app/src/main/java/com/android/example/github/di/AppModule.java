@@ -57,6 +57,6 @@ class AppModule {
 
     @Singleton @Provides
     StoryDao provideRepoDao(GithubDb db) {
-        return db.repoDao();
+        return db.storyDao();
     }
 }
