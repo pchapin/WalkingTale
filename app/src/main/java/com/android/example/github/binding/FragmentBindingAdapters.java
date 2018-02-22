@@ -24,8 +24,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.android.example.github.R;
 import com.android.example.github.aws.ConstantsKt;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +52,8 @@ public class FragmentBindingAdapters {
     public void bindImage(ImageView imageView, String url) {
         Glide.with(fragment)
                 .load(s3HostName + url)
-                .error(Glide.with(fragment)
-                        .load(url))
+                .apply(new RequestOptions().placeholder(R.drawable.white))
+                .error(Glide.with(fragment).load(url))
                 .into(imageView);
     }
 

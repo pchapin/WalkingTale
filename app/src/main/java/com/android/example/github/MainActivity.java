@@ -19,7 +19,6 @@ package com.android.example.github;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -27,7 +26,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
-import com.android.example.github.repository.tasks.AbstractTask;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.vo.User;
@@ -167,15 +165,5 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onResume() {
         super.onResume();
         checkPlayServices();
-    }
-
-    /**
-     * This must only be called from AbstractTask
-     */
-    public Context hackContext(Object o) {
-        if (o instanceof AbstractTask) {
-            return this;
-        }
-        return null;
     }
 }
