@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_save_story"
+        android:title="Save" />
+    <item
+        android:id="@+id/menu_share_story"
+        android:title="Share" />
+    <item
+        android:id="@+id/menu_hide_story"
+        android:title="Hide" />
+    <item
+        android:id="@+id/menu_report_story"
+        android:title="Report" />
+</menu>

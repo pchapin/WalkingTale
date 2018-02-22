@@ -20,6 +20,7 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.android.example.github.R;
 import com.android.example.github.databinding.ItemStoryBinding;
@@ -49,6 +50,28 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
                 storyClickCallback.onClick(story);
             }
         });
+
+        binding.storyMenuButton.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(parent.getContext(), v);
+            popupMenu.getMenuInflater().inflate(R.menu.story_menu, popupMenu.getMenu());
+
+            // Set a listener so we are notified if a menu item is clicked
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_report_story:
+                        return true;
+                    case R.id.menu_save_story:
+                        return true;
+                    case R.id.menu_share_story:
+                        return true;
+                    case R.id.menu_hide_story:
+                        return true;
+                }
+                return false;
+            });
+            popupMenu.show();
+        });
+
         return binding;
     }
 
