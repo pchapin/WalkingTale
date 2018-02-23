@@ -93,7 +93,6 @@ public class AlbumFragment extends Fragment implements Injectable {
         binding.get().expositionList.setAdapter(adapter);
 
         initContributorList(albumViewModel);
-        getActivity().setTitle("Exposition Viewer");
     }
 
 

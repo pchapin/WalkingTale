@@ -21,13 +21,14 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.View;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
-import com.android.example.github.ui.common.PermissionManager;
 import com.android.example.github.vo.User;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     ViewModelProvider.Factory viewModelFactory;
     Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
+    private Toolbar toolbar;
 
     public static String getCognitoToken() {
         return IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
@@ -71,7 +73,28 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         setContentView(R.layout.activity_main);
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
         userSetup(savedInstanceState);
-        initBottomNavigationListener();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        menuClickListener();
+        showToolbar();
+    }
+
+    private void menuClickListener() {
+        toolbar.setTitleTextColor(getColor(R.color.white));
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_profile:
+                    navigationController.navigateToProfile();
+                    break;
+                case R.id.action_create:
+                    navigationController.navigateToCreateStory();
+                    break;
+                case R.id.action_search:
+                    navigationController.navigateToSearch();
+                    break;
+            }
+            return true;
+        });
     }
 
     /**
@@ -113,26 +136,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     }
 
-    private void initBottomNavigationListener() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.action_home:
-                    navigationController.navigateToStoryFeed();
-                    break;
-                case R.id.action_search:
-                    navigationController.navigateToSearch();
-                    break;
-                case R.id.action_create:
-                    if (PermissionManager.checkLocationPermission(this))
-                        navigationController.navigateToCreateStory();
-                    break;
-                case R.id.action_profile:
-                    navigationController.navigateToProfile();
-                    break;
-            }
-            return true;
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
@@ -165,5 +172,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onResume() {
         super.onResume();
         checkPlayServices();
+    }
+
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
     }
 }

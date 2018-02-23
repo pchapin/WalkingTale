@@ -120,7 +120,6 @@ public class CreateFragment extends Fragment implements
         initRadiusIncrementListener();
         initRadiusDecrementListener();
         initContributorList(createViewModel);
-        getActivity().setTitle("Create Story");
 
         LiveData<Story> repo = createViewModel.getStory();
         repo.observe(this, resource -> {

@@ -73,7 +73,6 @@ public class SearchFragment extends LifecycleFragment implements Injectable {
         adapter = new AutoClearedValue<>(this, rvAdapter);
         initSearchInputListener();
         binding.get().setCallback(() -> searchViewModel.refresh());
-        getActivity().setTitle("Search");
     }
 
     private void initSearchInputListener() {

@@ -64,7 +64,6 @@ public class NavigationController {
         FeedFragment storyFeedFragment = new FeedFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyFeedFragment)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
