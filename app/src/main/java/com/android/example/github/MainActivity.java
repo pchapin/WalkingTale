@@ -21,11 +21,11 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.View;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.android.example.github.ui.common.NavigationController;
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
     private Toolbar toolbar;
+    private AppBarLayout appBarLayout;
+
 
     public static String getCognitoToken() {
         return IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
         userSetup(savedInstanceState);
         toolbar = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         menuClickListener();
         showToolbar();
@@ -175,10 +178,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
+        appBarLayout.setExpanded(true, true);
     }
 
     public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
+        appBarLayout.setExpanded(false, false);
     }
 }

@@ -37,14 +37,17 @@ import javax.inject.Inject;
 public class NavigationController {
     private final int containerId;
     private final FragmentManager fragmentManager;
+    private MainActivity mainActivity;
 
     @Inject
     public NavigationController(MainActivity mainActivity) {
         this.containerId = R.id.container;
         this.fragmentManager = mainActivity.getSupportFragmentManager();
+        this.mainActivity = mainActivity;
     }
 
     public void navigateToOverview(Story s) {
+        mainActivity.hideToolbar();
         OverviewFragment fragment = OverviewFragment.create(s);
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)
@@ -53,6 +56,7 @@ public class NavigationController {
     }
 
     public void navigateToCreateStory() {
+        mainActivity.hideToolbar();
         CreateFragment storyCreateFragment = new CreateFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyCreateFragment)
@@ -61,6 +65,7 @@ public class NavigationController {
     }
 
     public void navigateToStoryFeed() {
+        mainActivity.showToolbar();
         FeedFragment storyFeedFragment = new FeedFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyFeedFragment)
@@ -68,6 +73,7 @@ public class NavigationController {
     }
 
     public void navigateToStoryPlay(Story story) {
+        mainActivity.hideToolbar();
         PlayFragment storyPlayFragment = PlayFragment.create(story);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
@@ -84,6 +90,7 @@ public class NavigationController {
     }
 
     public void navigateToSearch() {
+        mainActivity.hideToolbar();
         SearchFragment searchFragment = new SearchFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, searchFragment)
@@ -92,6 +99,7 @@ public class NavigationController {
     }
 
     public void navigateToProfile() {
+        mainActivity.hideToolbar();
         ProfileFragment profileFragment = new ProfileFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, profileFragment)
