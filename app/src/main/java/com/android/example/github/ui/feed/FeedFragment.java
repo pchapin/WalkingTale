@@ -23,6 +23,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public class FeedFragment extends Fragment implements Injectable {
     AutoClearedValue<FragmentFeedBinding> binding;
     AutoClearedValue<StoryListAdapter> adapter;
     private FeedViewModel feedViewModel;
+    private Toolbar toolbar;
 
     @Nullable
     @Override
@@ -69,6 +71,10 @@ public class FeedFragment extends Fragment implements Injectable {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
+        toolbar = binding.get().toolbar;
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setSupportActionBar(toolbar);
+        menuClickListener();
         initRecyclerView();
 
         StoryListAdapter rvAdapter = new StoryListAdapter(dataBindingComponent, story -> {
@@ -80,6 +86,24 @@ public class FeedFragment extends Fragment implements Injectable {
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> feedViewModel.getResults());
+    }
+
+    private void menuClickListener() {
+        toolbar.setTitleTextColor(getActivity().getColor(R.color.white));
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_profile:
+                    navigationController.navigateToProfile();
+                    break;
+                case R.id.action_create:
+                    navigationController.navigateToCreateStory();
+                    break;
+                case R.id.action_search:
+                    navigationController.navigateToSearch();
+                    break;
+            }
+            return true;
+        });
     }
 
     private void initRecyclerView() {
