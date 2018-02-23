@@ -29,8 +29,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +64,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -99,16 +98,13 @@ public class CreateFragment extends Fragment implements
     private CreateViewModel createViewModel;
     private ArrayList<Marker> markerArrayList = new ArrayList<>();
 
-    // This file is used to hold images temporarily
+    // This file is used to hold images and audio temporarily
     private File photoFile = null;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         createViewModel = ViewModelProviders.of(this, viewModelFactory).get(CreateViewModel.class);
-        initStoryNameListener();
-        initDescriptionListener();
-        initTagsListener();
         initGenreSpinner();
         initStoryImageListener();
         initAddChapterListener();
@@ -140,63 +136,6 @@ public class CreateFragment extends Fragment implements
         this.adapter = new AutoClearedValue<>(this, adapter);
 
         binding.get().chapterList.setAdapter(adapter);
-    }
-
-    private void initStoryNameListener() {
-        binding.get().storyNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                createViewModel.setStoryName(editable.toString());
-            }
-        });
-    }
-
-    private void initDescriptionListener() {
-        binding.get().storyDescEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                createViewModel.setDescription(editable.toString());
-            }
-        });
-    }
-
-    private void initTagsListener() {
-        binding.get().storyTags.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                createViewModel.setTags(Collections.singletonList("tags"));
-            }
-        });
     }
 
     private void initStoryImageListener() {
@@ -276,6 +215,12 @@ public class CreateFragment extends Fragment implements
 
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
+
+            // Add text input to viewmodel
+            createViewModel.setDescription(String.valueOf(binding.get().storyDescEditText.getText()));
+            createViewModel.setStoryName(String.valueOf(binding.get().storyNameEditText.getText()));
+            createViewModel.setTags(Arrays.asList(String.valueOf(binding.get().storyTags.getText()).split(" ")));
+
             createViewModel.finishStoryPart1(getContext()).observe(this, publishSuccessful -> {
 
                 if (binding.get().finishStoryInputs.getVisibility() == View.GONE) {
@@ -434,4 +379,6 @@ public class CreateFragment extends Fragment implements
         }
         adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
     }
+
+
 }
