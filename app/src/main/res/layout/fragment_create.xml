@@ -78,7 +78,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -213,6 +214,21 @@
                     android:layout_height="wrap_content"
                     android:text="Radius -" />
             </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/story_exposition_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Text Exposition"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapSentences|textAutoCorrect"
+                    android:maxLength="280"
+                    tools:text="text" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/chapter_list"

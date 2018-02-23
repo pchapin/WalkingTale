@@ -278,7 +278,13 @@ public class CreateFragment extends Fragment implements
     private void initFinishStoryListener() {
         binding.get().finishStoryButton.setOnClickListener((v) -> {
             createViewModel.finishStoryPart1(getContext()).observe(this, publishSuccessful -> {
-                binding.get().finishStoryInputs.setVisibility(View.VISIBLE);
+
+                if (binding.get().finishStoryInputs.getVisibility() == View.GONE) {
+                    binding.get().finishStoryInputs.setVisibility(View.VISIBLE);
+                } else {
+                    binding.get().finishStoryInputs.setVisibility(View.GONE);
+                }
+
                 if (publishSuccessful != null && publishSuccessful.status == Status.SUCCESS) {
                     createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
 
@@ -295,7 +301,13 @@ public class CreateFragment extends Fragment implements
     private void initAddTextListener() {
         binding.get().addTextExpositionButton.setOnClickListener((v) -> {
             try {
-                createViewModel.addExposition(ExpositionType.TEXT, "hello world");
+                String textExposition = String.valueOf(binding.get().storyExpositionEditText.getText());
+                if (textExposition.isEmpty()) {
+                    Toast.makeText(getContext(), "Text exposition cant be empty!", Toast.LENGTH_SHORT).show();
+                } else {
+                    createViewModel.addExposition(ExpositionType.TEXT, textExposition);
+                    binding.get().storyExpositionEditText.setText("");
+                }
                 adapter.get().notifyItemChanged(createViewModel.getAllChapters().size() - 1);
             } catch (NoSuchElementException e) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
