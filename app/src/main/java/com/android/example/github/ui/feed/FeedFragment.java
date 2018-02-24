@@ -76,6 +76,7 @@ public class FeedFragment extends Fragment implements Injectable {
         mainActivity.setSupportActionBar(toolbar);
         menuClickListener();
         initRecyclerView();
+        fabListener();
 
         StoryListAdapter rvAdapter = new StoryListAdapter(dataBindingComponent, story -> {
             if (PermissionManager.checkLocationPermission(getActivity())) {
@@ -95,9 +96,6 @@ public class FeedFragment extends Fragment implements Injectable {
                 case R.id.action_profile:
                     navigationController.navigateToProfile();
                     break;
-                case R.id.action_create:
-                    navigationController.navigateToCreateStory();
-                    break;
                 case R.id.action_search:
                     navigationController.navigateToSearch();
                     break;
@@ -116,12 +114,17 @@ public class FeedFragment extends Fragment implements Injectable {
             adapter.get().replace(result == null ? null : result.data);
             binding.get().executePendingBindings();
 
-
             if (MainActivity.DEBUG_MODE) {
                 if (result != null && result.data != null && !result.data.isEmpty()) {
                     navigationController.navigateToOverview(result.data.get(0));
                 }
             }
+        });
+    }
+
+    private void fabListener() {
+        binding.get().feedFloatingActionButton.setOnClickListener(v -> {
+            navigationController.navigateToCreateStory();
         });
     }
 }

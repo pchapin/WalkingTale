@@ -2,18 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_create"
-        android:icon="@drawable/ic_chrome_reader_mode_black_36dp"
-        android:title="create"
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_36dp"
+        android:title="search"
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_profile"
         android:icon="@drawable/ic_account_box_black_36dp"
         android:title="profile"
-        app:showAsAction="ifRoom|withText" />
-    <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_black_36dp"
-        android:title="search"
         app:showAsAction="ifRoom|withText" />
 </menu>
