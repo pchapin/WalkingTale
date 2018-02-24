@@ -18,11 +18,13 @@ package com.android.example.github.ui.profile;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,17 +35,23 @@ import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
 import com.android.example.github.databinding.FragmentProfileBinding;
 import com.android.example.github.di.Injectable;
+import com.android.example.github.ui.common.FileUtilKt;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.ui.common.StoryListAdapter;
 import com.android.example.github.util.AutoClearedValue;
 
+import java.io.File;
+
 import javax.inject.Inject;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * The UI Controller for displaying the overview for a story.
  */
 public class ProfileFragment extends Fragment implements Injectable {
 
+    private final int RC_TAKE_PROFILE_IMAGE = 1;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     @Inject
@@ -51,6 +59,7 @@ public class ProfileFragment extends Fragment implements Injectable {
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentProfileBinding> binding;
     AutoClearedValue<StoryListAdapter> adapter;
+    File photoFile;
     private ProfileViewModel profileViewModel;
 
     @Nullable
@@ -81,6 +90,7 @@ public class ProfileFragment extends Fragment implements Injectable {
 
         initRecyclerView();
         initTabHost();
+        profileImageListener();
     }
 
     private void initTabHost() {
@@ -125,5 +135,24 @@ public class ProfileFragment extends Fragment implements Injectable {
         });
     }
 
+    private void profileImageListener() {
+        binding.get().avatar.setOnClickListener(v -> {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Set profile image")
+                    .setMessage("Do you want to change your profile image?")
+                    .setPositiveButton("yes", (dialogInterface, i) ->
+                            FileUtilKt.dispatchTakePictureIntent(RC_TAKE_PROFILE_IMAGE, this, photoFile))
+                    .setNegativeButton("no", (dialogInterface, i) -> {
+                    })
+                    .create()
+                    .show();
+        });
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_TAKE_PROFILE_IMAGE && resultCode == RESULT_OK) {
+            // TODO: 2/23/18 save file to s3, then update user in ddb
+        }
+    }
 }

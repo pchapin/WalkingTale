@@ -25,10 +25,8 @@ import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +40,7 @@ import com.android.example.github.databinding.FragmentCreateBinding;
 import com.android.example.github.di.Injectable;
 import com.android.example.github.ui.audiorecord.AudioRecordActivity;
 import com.android.example.github.ui.common.ChapterAdapter;
-import com.android.example.github.ui.common.CreateFileKt;
+import com.android.example.github.ui.common.FileUtilKt;
 import com.android.example.github.ui.common.LocationLiveData;
 import com.android.example.github.ui.common.NavigationController;
 import com.android.example.github.util.AutoClearedValue;
@@ -62,7 +60,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,7 +137,7 @@ public class CreateFragment extends Fragment implements
 
     private void initStoryImageListener() {
         binding.get().createStoryImage.setOnClickListener(v -> {
-            dispatchTakePictureIntent(TAKE_STORY_PICTURE_REQUEST_CODE);
+            photoFile = FileUtilKt.dispatchTakePictureIntent(TAKE_STORY_PICTURE_REQUEST_CODE, this, photoFile);
         });
     }
 
@@ -264,7 +261,7 @@ public class CreateFragment extends Fragment implements
             if (createViewModel.getAllChapters().isEmpty()) {
                 Toast.makeText(getContext(), "No chapters to add expositions to.", Toast.LENGTH_SHORT).show();
             } else {
-                dispatchTakePictureIntent(TAKE_EXPOSITION_PICTURE_REQUEST_CODE);
+                photoFile = FileUtilKt.dispatchTakePictureIntent(TAKE_EXPOSITION_PICTURE_REQUEST_CODE, this, photoFile);
             }
         });
     }
@@ -336,27 +333,6 @@ public class CreateFragment extends Fragment implements
         mapFragment.getMapAsync(this);
 
         return dataBinding.getRoot();
-    }
-
-    private void dispatchTakePictureIntent(int requestCode) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            try {
-                photoFile = CreateFileKt.createFile(getActivity());
-            } catch (IOException ignored) {
-            }
-
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(getContext(),
-                        "com.android.example.github",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, requestCode);
-            }
-        }
     }
 
     @Override
