@@ -33,10 +33,29 @@ import com.android.example.github.vo.Story;
 public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final StoryClickCallback storyClickCallback;
+    private final ReportStoryCallback reportStoryCallback;
+    private final ShareStoryCallback shareStoryCallback;
+    private final SaveStoryCallback saveStoryCallback;
 
     public StoryListAdapter(DataBindingComponent dataBindingComponent, StoryClickCallback storyClickCallback) {
         this.dataBindingComponent = dataBindingComponent;
         this.storyClickCallback = storyClickCallback;
+        this.reportStoryCallback = null;
+        this.shareStoryCallback = null;
+        this.saveStoryCallback = null;
+    }
+
+    public StoryListAdapter(
+            DataBindingComponent dataBindingComponent,
+            StoryClickCallback storyClickCallback,
+            ReportStoryCallback reportStoryCallback,
+            SaveStoryCallback saveStoryCallback,
+            ShareStoryCallback shareStoryCallback) {
+        this.dataBindingComponent = dataBindingComponent;
+        this.storyClickCallback = storyClickCallback;
+        this.reportStoryCallback = reportStoryCallback;
+        this.saveStoryCallback = saveStoryCallback;
+        this.shareStoryCallback = shareStoryCallback;
     }
 
     @Override
@@ -57,14 +76,16 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
 
             // Set a listener so we are notified if a menu item is clicked
             popupMenu.setOnMenuItemClickListener(menuItem -> {
+                Story story = binding.getStory();
                 switch (menuItem.getItemId()) {
                     case R.id.menu_report_story:
+                        reportStoryCallback.onClick(story);
                         return true;
                     case R.id.menu_save_story:
+                        saveStoryCallback.onClick(story);
                         return true;
                     case R.id.menu_share_story:
-                        return true;
-                    case R.id.menu_hide_story:
+                        shareStoryCallback.onClick(story);
                         return true;
                 }
                 return false;
@@ -91,6 +112,18 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
     }
 
     public interface StoryClickCallback {
+        void onClick(Story story);
+    }
+
+    public interface ReportStoryCallback {
+        void onClick(Story story);
+    }
+
+    public interface SaveStoryCallback {
+        void onClick(Story story);
+    }
+
+    public interface ShareStoryCallback {
         void onClick(Story story);
     }
 }

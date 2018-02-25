@@ -85,6 +85,9 @@ public class FeedFragment extends Fragment implements Injectable {
             if (PermissionManager.checkLocationPermission(getActivity())) {
                 navigationController.navigateToOverview(story);
             }
+        }, storyToReport -> {
+        }, storyToSave -> {
+        }, storyToShare -> {
         });
 
         binding.get().repoList.setAdapter(rvAdapter);
@@ -123,6 +126,7 @@ public class FeedFragment extends Fragment implements Injectable {
                 }
             }
         });
+
     }
 
     private void fabListener() {

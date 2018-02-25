@@ -7,9 +7,6 @@
         android:id="@+id/menu_share_story"
         android:title="Share" />
     <item
-        android:id="@+id/menu_hide_story"
-        android:title="Hide" />
-    <item
         android:id="@+id/menu_report_story"
         android:title="Report" />
 </menu>
