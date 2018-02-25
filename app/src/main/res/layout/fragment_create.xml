@@ -53,25 +53,34 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/isPublishSuccessful"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/latitude_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/isPublishSuccessful"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="publish success " />
 
-            <TextView
-                android:id="@+id/longitude_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/latitude_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="latitude " />
 
-            <TextView
-                android:id="@+id/last_update_time_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/longitude_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="longitude " />
+
+                <TextView
+                    android:id="@+id/last_update_time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="last update time " />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/finish_story_inputs"
@@ -200,7 +209,8 @@
                 android:id="@+id/nav_buttons_radius"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/radius_increment_button"

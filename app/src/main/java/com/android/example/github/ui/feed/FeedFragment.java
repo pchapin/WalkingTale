@@ -22,6 +22,7 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class FeedFragment extends Fragment implements Injectable {
     AutoClearedValue<StoryListAdapter> adapter;
     private FeedViewModel feedViewModel;
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     @Nullable
     @Override
@@ -72,6 +74,7 @@ public class FeedFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         toolbar = binding.get().toolbar;
+        fab = binding.get().feedFloatingActionButton;
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setSupportActionBar(toolbar);
         menuClickListener();
@@ -123,8 +126,6 @@ public class FeedFragment extends Fragment implements Injectable {
     }
 
     private void fabListener() {
-        binding.get().feedFloatingActionButton.setOnClickListener(v -> {
-            navigationController.navigateToCreateStory();
-        });
+        fab.setOnClickListener(v -> navigationController.navigateToCreateStory());
     }
 }
