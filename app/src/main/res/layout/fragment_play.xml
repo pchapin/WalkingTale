@@ -54,9 +54,11 @@
         android:layout_height="match_parent">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/constrant_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
 
             <fragment
                 android:id="@+id/map"
@@ -65,29 +67,23 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-
-            <ToggleButton
-                android:id="@+id/view_expositions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintRight_toLeftOf="parent" />
-
-            <Button
-                android:id="@+id/next_chapter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Next Chapter"
-                app:layout_constraintRight_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_expositions" />
+            <!--<Button-->
+            <!--android:id="@+id/next_chapter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Next Chapter"-->
+            <!--app:layout_constraintBottom_toTopOf="@id/finish_play_story_btn"-->
+            <!--app:layout_constraintRight_toLeftOf="parent" />-->
 
             <Button
                 android:id="@+id/finish_play_story_btn"
                 visibleGone="@{isCurrentChapterFinal}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="148dp"
                 android:text="Finish Story"
-                app:layout_constraintRight_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/next_chapter" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/location_items"
@@ -95,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nav_buttons_create_story"
+                app:layout_constraintTop_toBottomOf="parent"
                 tools:layout_editor_absoluteX="126dp">
 
                 <TextView
@@ -114,20 +110,6 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/exposition_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                app:layoutManager="LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/next_chapter"
-                tools:listitem="@layout/item_exposition" />
 
             <include
                 layout="@layout/loading_state"
@@ -147,30 +129,42 @@
 
 
         <LinearLayout
+            android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/grey_300"
             android:orientation="vertical"
-            app:behavior_hideable="true"
             app:behavior_peekHeight="80dp"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:text="peek"
                 android:textColor="@android:color/white" />
 
-            <TextView
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/exposition_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="content"
-                android:textColor="@android:color/white" />
-
+                app:layoutManager="LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/next_chapter"
+                tools:listitem="@layout/item_exposition" />
 
         </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/next_chapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_navigate_next_black_24dp"
+            app:layout_anchor="@id/bottom_sheet"
+            app:layout_anchorGravity="top|end" />
     </android.support.design.widget.CoordinatorLayout>
 </layout>

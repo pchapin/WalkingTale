@@ -41,7 +41,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     private final String TAG = this.getClass().getSimpleName();
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
      * Put user if they do not exist
      */
     private void userSetup(Bundle savedInstanceState) {
+
         mainViewModel.getUser(getCognitoId()).observe(this, userResource -> {
             if (userResource != null) {
                 switch (userResource.status) {
@@ -88,8 +89,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     case LOADING:
                         break;
                     case SUCCESS:
-                        navigationController.navigateToStoryFeed();
-                        break;
+                        if (savedInstanceState == null) {
+                            navigationController.navigateToStoryFeed();
+                            break;
+                        }
                 }
             }
         });

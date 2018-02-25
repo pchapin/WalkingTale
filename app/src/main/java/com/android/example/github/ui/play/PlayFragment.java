@@ -25,14 +25,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.android.example.github.R;
 import com.android.example.github.binding.FragmentDataBindingComponent;
@@ -85,6 +84,7 @@ public class PlayFragment extends Fragment implements
     AutoClearedValue<ChapterAdapter> adapter;
     private PlayViewModel playViewModel;
     private GoogleMap mMap;
+    private FloatingActionButton nextChapterButton;
 
     public static PlayFragment create(Story story) {
         PlayFragment repoFragment = new PlayFragment();
@@ -129,13 +129,12 @@ public class PlayFragment extends Fragment implements
                 });
         this.adapter = new AutoClearedValue<>(this, adapter);
         binding.get().expositionList.setAdapter(adapter);
+        nextChapterButton = binding.get().nextChapter;
 
         initCurrentChapterObserver();
         initStoryObserver(storyKey);
         initLocationObserver();
         initIsCurrentFinalObserver();
-
-        initViewExpositionsListener();
         initNextChapterListener();
         initExpositionList();
         initFinishStoryListener();
@@ -188,7 +187,7 @@ public class PlayFragment extends Fragment implements
         new LocationLiveData(getContext()).observe(this, location -> {
             moveCamera(location);
             boolean isUserInNext = isUserInNextRadius(location, playViewModel.getNextChapter().getValue());
-            binding.get().nextChapter.setEnabled(isUserInNext);
+            nextChapterButton.setEnabled(isUserInNext);
         });
     }
 
@@ -200,24 +199,8 @@ public class PlayFragment extends Fragment implements
         });
     }
 
-    private void initViewExpositionsListener() {
-        RecyclerView expositionList = binding.get().expositionList;
-        ToggleButton toggle = binding.get().viewExpositions;
-        toggle.setTextOn("Hide Expositions");
-        toggle.setTextOff("View Expositions");
-        toggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                expositionList.setVisibility(View.VISIBLE);
-            } else {
-                expositionList.setVisibility(View.GONE);
-            }
-        });
-        toggle.performClick();
-        toggle.performClick();
-    }
-
     private void initNextChapterListener() {
-        binding.get().nextChapter.setOnClickListener((v) -> {
+        nextChapterButton.setOnClickListener((v) -> {
             if (!playViewModel.incrementChapter()) {
                 Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
             }
@@ -255,8 +238,8 @@ public class PlayFragment extends Fragment implements
     public void onMapReady(GoogleMap googleMap) {
         // Set map preferences
         mMap = googleMap;
-        mMap.setMinZoomPreference(16.0f);
-        mMap.setMaxZoomPreference(18.0f);
+        mMap.setMinZoomPreference(18.0f);
+        mMap.setMaxZoomPreference(20.0f);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
         mMap.setOnMarkerClickListener(this);
 
