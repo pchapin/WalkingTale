@@ -40,8 +40,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
-
-    public static final boolean DEBUG_MODE = false;
+    public static final DEBUG_STATE DEBUG_MODE = DEBUG_STATE.OFF;
     private final String TAG = this.getClass().getSimpleName();
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
@@ -51,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     ViewModelProvider.Factory viewModelFactory;
     Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
-
 
     public static String getCognitoToken() {
         return IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
@@ -72,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
         userSetup(savedInstanceState);
     }
-
 
     /**
      * Get user if they exist in the dynamo db
@@ -152,5 +149,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onResume() {
         super.onResume();
         checkPlayServices();
+    }
+
+    public enum DEBUG_STATE {
+        OFF, CREATE, PLAY
     }
 }

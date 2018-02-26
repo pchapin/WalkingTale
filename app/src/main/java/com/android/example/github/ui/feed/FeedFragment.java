@@ -42,6 +42,8 @@ import com.android.example.github.util.AutoClearedValue;
 
 import javax.inject.Inject;
 
+import static com.android.example.github.MainActivity.DEBUG_MODE;
+
 /**
  * The UI controller for the main screen of the app, the feed.
  */
@@ -120,10 +122,18 @@ public class FeedFragment extends Fragment implements Injectable {
             adapter.get().replace(result == null ? null : result.data);
             binding.get().executePendingBindings();
 
-            if (MainActivity.DEBUG_MODE) {
-                if (result != null && result.data != null && !result.data.isEmpty()) {
-                    navigationController.navigateToOverview(result.data.get(0));
-                }
+
+            switch (DEBUG_MODE) {
+                case OFF:
+                    break;
+                case CREATE:
+                    navigationController.navigateToCreateStory();
+                    break;
+                case PLAY:
+                    if (result != null && result.data != null && !result.data.isEmpty()) {
+                        navigationController.navigateToOverview(result.data.get(0));
+                    }
+                    break;
             }
         });
 

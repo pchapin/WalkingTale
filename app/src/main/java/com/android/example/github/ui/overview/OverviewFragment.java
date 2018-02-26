@@ -82,7 +82,7 @@ public class OverviewFragment extends Fragment implements Injectable {
                     binding.get().setRepoResource(resource);
                     binding.get().executePendingBindings();
 
-                    if (MainActivity.DEBUG_MODE && resource.data != null) {
+                    if (MainActivity.DEBUG_MODE == MainActivity.DEBUG_STATE.PLAY && resource.data != null) {
                         navigationController.navigateToStoryPlay(resource.data);
                     }
                 }
