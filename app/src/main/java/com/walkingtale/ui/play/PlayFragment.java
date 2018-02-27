@@ -113,7 +113,7 @@ public class PlayFragment extends Fragment implements
     private static boolean isUserInNextRadius(@NonNull Location location, @Nullable Chapter nextChapter) {
         // User is not in radius of chapter that does not exist
         if (nextChapter == null) return false;
-        double distance = distanceBetween(location, LocationUtilKt.LatLngToLocation(nextChapter.getLocation()));
+        double distance = distanceBetween(location, LocationUtilKt.latLngToLocation(nextChapter.getLocation()));
         return distance < nextChapter.getRadius();
     }
 
@@ -230,7 +230,7 @@ public class PlayFragment extends Fragment implements
     }
 
     private void moveCamera(Location currentLocation) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(LocationUtilKt.LocationToLatLng(currentLocation));
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(LocationUtilKt.locationToLatLng(currentLocation));
         mMap.animateCamera(cameraUpdate);
     }
 

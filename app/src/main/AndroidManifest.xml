@@ -68,7 +68,6 @@
             android:name="com.walkingtale.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name="com.walkingtale.testing.SingleFragmentActivity" />
         <activity android:name="com.walkingtale.ui.audiorecord.AudioRecordActivity" />
         <activity android:name="com.walkingtale.AuthenticatorActivity">
             <intent-filter>

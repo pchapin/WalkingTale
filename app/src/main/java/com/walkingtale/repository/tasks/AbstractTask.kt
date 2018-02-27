@@ -32,7 +32,7 @@ abstract class AbstractTask<out I, O>(val input: I,
                         AmazonDynamoDBClient::class.java,
                         AWSMobileClient.getInstance().credentialsProvider,
                         ClientConfiguration())
-        dynamoDBMapper = DynamoDBMapper(dynamoDBClient)
+        dynamoDBMapper = DynamoDBMapper.builder().dynamoDBClient(dynamoDBClient).build()
 
         result.postValue(Resource(Status.LOADING, null, null))
     }

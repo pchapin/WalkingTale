@@ -172,10 +172,10 @@ public class CreateFragment extends Fragment implements
 
             // TODO: 10/27/2017 get chapter name from the author
             String chapterName = "Chapter Name";
-            createViewModel.addChapter(chapterName, LocationUtilKt.LocationToLatLng(mCurrentLocation), 10);
+            createViewModel.addChapter(chapterName, LocationUtilKt.locationToLatLng(mCurrentLocation), 10);
 
             // Add marker to map
-            LatLng chapterLocation = LocationUtilKt.LocationToLatLng(mCurrentLocation);
+            LatLng chapterLocation = LocationUtilKt.locationToLatLng(mCurrentLocation);
 
             Marker newMarker = mMap.addMarker(new MarkerOptions()
                     .position(chapterLocation)
