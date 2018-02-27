@@ -54,12 +54,12 @@ import com.walkingtale.di.Injectable;
 import com.walkingtale.repository.tasks.StoryKey;
 import com.walkingtale.ui.common.ChapterAdapter;
 import com.walkingtale.ui.common.LocationLiveData;
+import com.walkingtale.ui.common.LocationUtilKt;
 import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.util.AutoClearedValue;
+import com.walkingtale.vo.Chapter;
+import com.walkingtale.vo.Exposition;
 import com.walkingtale.vo.Story;
-import com.walkingtale.walkingTale.Chapter;
-import com.walkingtale.walkingTale.Exposition;
-import com.walkingtale.walkingTale.LocationUtilKt;
 
 import java.util.Collections;
 

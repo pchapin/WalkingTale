@@ -26,7 +26,7 @@
 
         <variable
             name="chapter"
-            type="com.walkingtale.walkingTale.Chapter" />
+            type="com.walkingtale.vo.Chapter" />
     </data>
 
     <android.support.v7.widget.CardView

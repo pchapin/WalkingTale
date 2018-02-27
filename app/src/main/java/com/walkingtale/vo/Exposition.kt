@@ -1,4 +1,4 @@
-package com.walkingtale.walkingTale
+package com.walkingtale.vo
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBDocument
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMarshaller
@@ -24,4 +24,8 @@ class ExpositionTypeMarshaller : DynamoDBMarshaller<ExpositionType> {
     override fun marshall(getterReturnResult: ExpositionType?): String {
         return Gson().toJson(getterReturnResult)
     }
+}
+
+enum class ExpositionType {
+    TEXT, AUDIO, PICTURE
 }

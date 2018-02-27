@@ -10,14 +10,13 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.google.gson.annotations.SerializedName;
-import com.walkingtale.db.GithubTypeConverters;
-import com.walkingtale.walkingTale.Chapter;
+import com.walkingtale.db.WalkingTaleTypeConverters;
 
 import java.util.List;
 import java.util.Objects;
 
 @Entity(indices = {@Index("id")}, primaryKeys = {"storyName"})
-@TypeConverters(GithubTypeConverters.class)
+@TypeConverters(WalkingTaleTypeConverters.class)
 @DynamoDBTable(tableName = "walkingtale-mobilehub-466729221-Stories")
 public class Story {
 

@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import com.walkingtale.R;
 import com.walkingtale.databinding.ItemExpositionBinding;
 import com.walkingtale.util.Objects;
-import com.walkingtale.walkingTale.Exposition;
+import com.walkingtale.vo.Exposition;
 
 /**
  * A RecyclerView adapter for {@link Exposition} class.

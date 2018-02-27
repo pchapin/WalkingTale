@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import com.walkingtale.R;
 import com.walkingtale.databinding.ItemChapterBinding;
 import com.walkingtale.util.Objects;
-import com.walkingtale.walkingTale.Chapter;
+import com.walkingtale.vo.Chapter;
 
 /**
  * A RecyclerView adapter for {@link Chapter} class.

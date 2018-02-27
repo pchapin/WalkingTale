@@ -8,9 +8,9 @@ import android.support.annotation.VisibleForTesting;
 
 import com.walkingtale.repository.StoryRepository;
 import com.walkingtale.repository.tasks.StoryKey;
+import com.walkingtale.vo.Chapter;
 import com.walkingtale.vo.Resource;
 import com.walkingtale.vo.Story;
-import com.walkingtale.walkingTale.Chapter;
 
 import java.util.ArrayList;
 import java.util.Collections;

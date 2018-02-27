@@ -35,10 +35,10 @@ import com.walkingtale.di.Injectable;
 import com.walkingtale.ui.common.ExpositionAdapter;
 import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.util.AutoClearedValue;
+import com.walkingtale.vo.Chapter;
+import com.walkingtale.vo.Exposition;
 import com.walkingtale.vo.Resource;
 import com.walkingtale.vo.Story;
-import com.walkingtale.walkingTale.Chapter;
-import com.walkingtale.walkingTale.Exposition;
 
 import java.util.ArrayList;
 import java.util.Collections;

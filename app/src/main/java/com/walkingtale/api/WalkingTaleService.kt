@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.walkingtale.util;
+package com.walkingtale.api
 
-import com.walkingtale.AppExecutors;
-
-import java.util.concurrent.Executor;
-
-public class InstantAppExecutors extends AppExecutors {
-    private static Executor instant = command -> command.run();
-
-    public InstantAppExecutors() {
-        super(instant, instant, instant);
-    }
-}
+/**
+ * REST API access points
+ */
+interface WalkingTaleService

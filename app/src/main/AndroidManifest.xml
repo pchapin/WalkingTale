@@ -29,7 +29,7 @@
         android:required="true" />
 
     <application
-        android:name="com.walkingtale.GithubApp"
+        android:name="com.walkingtale.WalkingTaleApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

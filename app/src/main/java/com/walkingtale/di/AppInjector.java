@@ -23,7 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
-import com.walkingtale.GithubApp;
+import com.walkingtale.WalkingTaleApp;
 
 import dagger.android.AndroidInjection;
 import dagger.android.support.AndroidSupportInjection;
@@ -34,10 +34,11 @@ import dagger.android.support.HasSupportFragmentInjector;
  */
 public class AppInjector {
     private AppInjector() {}
-    public static void init(GithubApp githubApp) {
-        DaggerAppComponent.builder().application(githubApp)
-                .build().inject(githubApp);
-        githubApp
+
+    public static void init(WalkingTaleApp walkingTaleApp) {
+        DaggerAppComponent.builder().application(walkingTaleApp)
+                .build().inject(walkingTaleApp);
+        walkingTaleApp
                 .registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
                     @Override
                     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

@@ -1,6 +1,7 @@
-package com.walkingtale.walkingTale
+package com.walkingtale.ui.common
 
 import com.walkingtale.MainActivity
+import com.walkingtale.vo.Chapter
 import com.walkingtale.vo.Story
 import java.util.*
 

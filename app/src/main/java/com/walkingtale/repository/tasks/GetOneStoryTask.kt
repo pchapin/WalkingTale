@@ -1,11 +1,11 @@
 package com.walkingtale.repository.tasks
 
-import com.walkingtale.db.GithubDb
+import com.walkingtale.db.WalkingTaleDb
 import com.walkingtale.vo.Resource
 import com.walkingtale.vo.Status
 import com.walkingtale.vo.Story
 
-class GetOneStoryTask(val storyKey: StoryKey, val db: GithubDb) : AbstractTask<StoryKey, Story>(storyKey, db) {
+class GetOneStoryTask(val storyKey: StoryKey, val db: WalkingTaleDb) : AbstractTask<StoryKey, Story>(storyKey, db) {
 
     override fun run() {
         val response = dynamoDBMapper.load(Story::class.java, storyKey.userId, storyKey.storyId)

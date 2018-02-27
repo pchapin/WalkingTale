@@ -19,9 +19,9 @@ package com.walkingtale.repository;
 import android.arch.lifecycle.LiveData;
 
 import com.walkingtale.AppExecutors;
-import com.walkingtale.api.GithubService;
-import com.walkingtale.db.GithubDb;
+import com.walkingtale.api.WalkingTaleService;
 import com.walkingtale.db.UserDao;
+import com.walkingtale.db.WalkingTaleDb;
 import com.walkingtale.repository.tasks.GetUserTask;
 import com.walkingtale.repository.tasks.PutUserTask;
 import com.walkingtale.vo.Resource;
@@ -37,14 +37,14 @@ import javax.inject.Singleton;
 public class UserRepository {
     private final String TAG = this.getClass().getSimpleName();
     private final UserDao userDao;
-    private final GithubService githubService;
+    private final WalkingTaleService walkingTaleService;
     private final AppExecutors appExecutors;
-    private final GithubDb db;
+    private final WalkingTaleDb db;
 
     @Inject
-    UserRepository(AppExecutors appExecutors, UserDao userDao, GithubService githubService, GithubDb db) {
+    UserRepository(AppExecutors appExecutors, UserDao userDao, WalkingTaleService walkingTaleService, WalkingTaleDb db) {
         this.userDao = userDao;
-        this.githubService = githubService;
+        this.walkingTaleService = walkingTaleService;
         this.appExecutors = appExecutors;
         this.db = db;
     }

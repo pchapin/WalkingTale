@@ -19,10 +19,10 @@ package com.walkingtale.di;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
-import com.walkingtale.api.GithubService;
-import com.walkingtale.db.GithubDb;
+import com.walkingtale.api.WalkingTaleService;
 import com.walkingtale.db.StoryDao;
 import com.walkingtale.db.UserDao;
+import com.walkingtale.db.WalkingTaleDb;
 import com.walkingtale.util.LiveDataCallAdapterFactory;
 
 import javax.inject.Singleton;
@@ -35,28 +35,28 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module(includes = ViewModelModule.class)
 class AppModule {
     @Singleton @Provides
-    GithubService provideGithubService() {
+    WalkingTaleService provideGithubService() {
         // was https://api.github.com/
         return new Retrofit.Builder()
                 .baseUrl("https://yf5r4d4qsc.execute-api.us-east-1.amazonaws.com/dev/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .build()
-                .create(GithubService.class);
+                .create(WalkingTaleService.class);
     }
 
     @Singleton @Provides
-    GithubDb provideDb(Application app) {
-        return Room.databaseBuilder(app, GithubDb.class, "github.db").fallbackToDestructiveMigration().build();
+    WalkingTaleDb provideDb(Application app) {
+        return Room.databaseBuilder(app, WalkingTaleDb.class, "github.db").fallbackToDestructiveMigration().build();
     }
 
     @Singleton @Provides
-    UserDao provideUserDao(GithubDb db) {
+    UserDao provideUserDao(WalkingTaleDb db) {
         return db.userDao();
     }
 
     @Singleton @Provides
-    StoryDao provideRepoDao(GithubDb db) {
+    StoryDao provideRepoDao(WalkingTaleDb db) {
         return db.storyDao();
     }
 }

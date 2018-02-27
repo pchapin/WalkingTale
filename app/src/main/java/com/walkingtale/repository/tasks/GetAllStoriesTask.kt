@@ -1,12 +1,12 @@
 package com.walkingtale.repository.tasks
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
-import com.walkingtale.db.GithubDb
+import com.walkingtale.db.WalkingTaleDb
 import com.walkingtale.vo.Resource
 import com.walkingtale.vo.Status
 import com.walkingtale.vo.Story
 
-class GetAllStoriesTask(val nothing: String, val db: GithubDb) : AbstractTask<String, MutableList<Story>>(nothing, db) {
+class GetAllStoriesTask(val nothing: String, val db: WalkingTaleDb) : AbstractTask<String, MutableList<Story>>(nothing, db) {
 
     override fun run() {
         val response = dynamoDBMapper.scan(Story::class.java, DynamoDBScanExpression())

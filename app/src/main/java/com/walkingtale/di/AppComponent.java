@@ -18,7 +18,7 @@ package com.walkingtale.di;
 
 import android.app.Application;
 
-import com.walkingtale.GithubApp;
+import com.walkingtale.WalkingTaleApp;
 
 import javax.inject.Singleton;
 
@@ -33,7 +33,7 @@ import dagger.android.AndroidInjectionModule;
         MainActivityModule.class
 })
 public interface AppComponent {
-    void inject(GithubApp githubApp);
+    void inject(WalkingTaleApp walkingTaleApp);
     @Component.Builder
     interface Builder {
         @BindsInstance Builder application(Application application);

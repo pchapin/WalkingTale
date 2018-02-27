@@ -25,12 +25,12 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
-import com.walkingtale.db.GithubTypeConverters;
+import com.walkingtale.db.WalkingTaleTypeConverters;
 
 import java.util.List;
 
 @Entity(primaryKeys = "userId")
-@TypeConverters(GithubTypeConverters.class)
+@TypeConverters(WalkingTaleTypeConverters.class)
 @DynamoDBTable(tableName = "walkingtale-mobilehub-466729221-Users")
 public class User {
 

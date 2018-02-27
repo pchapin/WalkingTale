@@ -1,17 +1,17 @@
 package com.walkingtale.repository.tasks
 
 import com.walkingtale.aws.getTransferUtility
-import com.walkingtale.db.GithubDb
+import com.walkingtale.db.WalkingTaleDb
+import com.walkingtale.vo.ExpositionType
 import com.walkingtale.vo.Resource
 import com.walkingtale.vo.Status
 import com.walkingtale.vo.Story
-import com.walkingtale.walkingTale.ExpositionType
 import java.io.File
 
 /**
  * Uploads a file to S3
  * */
-class PutFileS3Task(private val s3Args: S3Args, val db: GithubDb) :
+class PutFileS3Task(private val s3Args: S3Args, val db: WalkingTaleDb) :
         AbstractTask<S3Args, Story>(s3Args, db) {
 
     override fun run() {

@@ -1,4 +1,4 @@
-package com.walkingtale.walkingTale
+package com.walkingtale.ui.common
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng

@@ -29,7 +29,7 @@ import dagger.android.HasActivityInjector;
 import timber.log.Timber;
 
 
-public class GithubApp extends Application implements HasActivityInjector {
+public class WalkingTaleApp extends Application implements HasActivityInjector {
 
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;

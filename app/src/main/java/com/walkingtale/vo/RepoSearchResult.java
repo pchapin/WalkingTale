@@ -21,12 +21,12 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.walkingtale.db.GithubTypeConverters;
+import com.walkingtale.db.WalkingTaleTypeConverters;
 
 import java.util.List;
 
 @Entity(primaryKeys = {"query"})
-@TypeConverters(GithubTypeConverters.class)
+@TypeConverters(WalkingTaleTypeConverters.class)
 public class RepoSearchResult {
     @NonNull
     public final String query;

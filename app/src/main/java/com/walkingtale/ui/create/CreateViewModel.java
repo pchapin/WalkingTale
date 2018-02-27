@@ -27,13 +27,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.walkingtale.MainActivity;
 import com.walkingtale.repository.StoryRepository;
 import com.walkingtale.repository.tasks.S3Args;
+import com.walkingtale.ui.common.ExampleStory;
 import com.walkingtale.util.AbsentLiveData;
+import com.walkingtale.vo.Chapter;
+import com.walkingtale.vo.Exposition;
+import com.walkingtale.vo.ExpositionType;
 import com.walkingtale.vo.Resource;
 import com.walkingtale.vo.Story;
-import com.walkingtale.walkingTale.Chapter;
-import com.walkingtale.walkingTale.ExampleStory;
-import com.walkingtale.walkingTale.Exposition;
-import com.walkingtale.walkingTale.ExpositionType;
 
 import org.jetbrains.annotations.NotNull;
 

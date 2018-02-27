@@ -20,14 +20,14 @@ import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.walkingtale.api.GithubService
+import com.walkingtale.api.WalkingTaleService
 import com.walkingtale.vo.Story
 
 
 /**
  * A task that uploads a created story to a remote database.
  */
-class GetStoriesTask internal constructor(private val githubService: GithubService) : Runnable {
+class GetStoriesTask internal constructor(private val walkingTaleService: WalkingTaleService) : Runnable {
     private val TAG = this.javaClass.simpleName
 
     override fun run() {

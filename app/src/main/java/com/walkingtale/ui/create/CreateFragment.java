@@ -52,13 +52,13 @@ import com.walkingtale.ui.audiorecord.AudioRecordActivity;
 import com.walkingtale.ui.common.ChapterAdapter;
 import com.walkingtale.ui.common.FileUtilKt;
 import com.walkingtale.ui.common.LocationLiveData;
+import com.walkingtale.ui.common.LocationUtilKt;
 import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.util.AutoClearedValue;
+import com.walkingtale.vo.Chapter;
+import com.walkingtale.vo.ExpositionType;
 import com.walkingtale.vo.Status;
 import com.walkingtale.vo.Story;
-import com.walkingtale.walkingTale.Chapter;
-import com.walkingtale.walkingTale.ExpositionType;
-import com.walkingtale.walkingTale.LocationUtilKt;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-package com.walkingtale.api
+package com.walkingtale.db;
+
+
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
+
+import com.walkingtale.vo.RepoSearchResult;
+import com.walkingtale.vo.Story;
+import com.walkingtale.vo.User;
 
 /**
- * REST API access points
+ * Main database description.
  */
-interface GithubService
+@Database(entities = {User.class, Story.class,
+        RepoSearchResult.class}, version = 3, exportSchema = false)
+public abstract class WalkingTaleDb extends RoomDatabase {
+
+    abstract public UserDao userDao();
+
+    abstract public StoryDao storyDao();
+}
