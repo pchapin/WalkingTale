@@ -31,17 +31,17 @@ fun dispatchTakePictureIntent(requestCode: Int, fragment: Fragment, photoFile: F
     var file = photoFile
     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     // Ensure that there's a camera activity to handle the intent
-    if (takePictureIntent.resolveActivity(fragment.activity.packageManager) != null) {
+    if (takePictureIntent.resolveActivity(fragment.activity!!.packageManager) != null) {
         // Create the File where the photo should go
         try {
-            file = createFile(fragment.activity)
+            file = createFile(fragment.activity!!)
         } catch (e: IOException) {
             Log.i(TAG, "" + e)
         }
 
         // Continue only if the File was successfully created
         if (file != null) {
-            val photoURI = FileProvider.getUriForFile(fragment.context,
+            val photoURI = FileProvider.getUriForFile(fragment.context!!,
                     "com.android.example.github",
                     file)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)

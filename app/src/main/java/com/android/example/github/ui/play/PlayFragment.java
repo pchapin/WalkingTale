@@ -128,7 +128,7 @@ public class PlayFragment extends Fragment implements
                 chapter -> {
                 });
         this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().expositionList.setAdapter(adapter);
+        binding.get().bottomSheetList.expositionList.setAdapter(adapter);
         nextChapterButton = binding.get().nextChapter;
 
         initCurrentChapterObserver();
