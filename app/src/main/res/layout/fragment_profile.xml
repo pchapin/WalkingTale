@@ -20,13 +20,13 @@
 
     <data>
 
-        <import type="com.github.vo.Status" />
+        <import type="com.walkingtale.vo.Status" />
 
-        <import type="com.github.vo.Resource" />
+        <import type="com.walkingtale.vo.Resource" />
 
         <variable
             name="user"
-            type="com.github.vo.User" />
+            type="com.walkingtale.vo.User" />
 
         <variable
             name="userResource"

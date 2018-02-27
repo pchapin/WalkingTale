@@ -22,11 +22,11 @@
 
         <variable
             name="story"
-            type="com.github.vo.Story" />
+            type="com.walkingtale.vo.Story" />
 
         <variable
             name="retryCallback"
-            type="com.github.ui.common.RetryCallback" />
+            type="com.walkingtale.ui.common.RetryCallback" />
     </data>
 
     <android.support.constraint.ConstraintLayout

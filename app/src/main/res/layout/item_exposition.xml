@@ -22,11 +22,11 @@
 
         <variable
             name="exposition"
-            type="com.github.walkingTale.Exposition" />
+            type="com.walkingtale.walkingTale.Exposition" />
 
         <variable
             name="exposition_type"
-            type="com.github.walkingTale.ExpositionType" />
+            type="com.walkingtale.walkingTale.ExpositionType" />
     </data>
 
     <android.support.v7.widget.CardView

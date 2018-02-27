@@ -20,13 +20,13 @@
 
     <data>
 
-        <import type="com.github.vo.Status" />
+        <import type="com.walkingtale.vo.Status" />
 
-        <import type="com.github.vo.Resource" />
+        <import type="com.walkingtale.vo.Resource" />
 
         <variable
             name="story"
-            type="com.github.vo.Story" />
+            type="com.walkingtale.vo.Story" />
 
         <variable
             name="repoResource"
@@ -42,11 +42,11 @@
 
         <variable
             name="contributorsStatus"
-            type="com.github.vo.Status" />
+            type="com.walkingtale.vo.Status" />
 
         <variable
             name="retryCallback"
-            type="com.github.ui.common.RetryCallback" />
+            type="com.walkingtale.ui.common.RetryCallback" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
