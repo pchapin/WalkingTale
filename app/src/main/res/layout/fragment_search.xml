@@ -20,13 +20,13 @@
 
     <data>
 
-        <import type="com.android.example.github.vo.Story" />
+        <import type="com.github.vo.Story" />
 
         <import type="java.util.List" />
 
-        <import type="com.android.example.github.vo.Status" />
+        <import type="com.github.vo.Status" />
 
-        <import type="com.android.example.github.vo.Resource" />
+        <import type="com.github.vo.Resource" />
 
         <variable
             name="resultCount"
@@ -46,7 +46,7 @@
 
         <variable
             name="callback"
-            type="com.android.example.github.ui.common.RetryCallback" />
+            type="com.github.ui.common.RetryCallback" />
     </data>
 
     <android.support.constraint.ConstraintLayout

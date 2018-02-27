@@ -26,7 +26,7 @@
 
         <variable
             name="story"
-            type="com.android.example.github.vo.Story" />
+            type="com.github.vo.Story" />
     </data>
 
     <android.support.v7.widget.CardView

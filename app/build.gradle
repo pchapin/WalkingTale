@@ -21,7 +21,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "com.android.example.github"
+        applicationId "com.github"
         // Note the only reason we are using such a high minSdkVersion is that
         // the aws auth ui requires it, if we used a different sign in solution
         // we could knock the min version down a few
@@ -30,7 +30,7 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        testInstrumentationRunner "com.android.example.github.util.GithubTestRunner"
+        testInstrumentationRunner "com.github.util.GithubTestRunner"
     }
     buildTypes {
         debug {

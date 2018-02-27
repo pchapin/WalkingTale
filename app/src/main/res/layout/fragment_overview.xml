@@ -20,13 +20,13 @@
 
     <data>
 
-        <import type="com.android.example.github.vo.Status" />
+        <import type="com.github.vo.Status" />
 
-        <import type="com.android.example.github.vo.Resource" />
+        <import type="com.github.vo.Resource" />
 
         <variable
             name="story"
-            type="com.android.example.github.vo.Story" />
+            type="com.github.vo.Story" />
 
         <variable
             name="repoResource"

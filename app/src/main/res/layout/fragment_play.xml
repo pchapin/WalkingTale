@@ -20,13 +20,13 @@
 
     <data>
 
-        <import type="com.android.example.github.vo.Status" />
+        <import type="com.github.vo.Status" />
 
-        <import type="com.android.example.github.vo.Resource" />
+        <import type="com.github.vo.Resource" />
 
         <variable
             name="story"
-            type="com.android.example.github.vo.Story" />
+            type="com.github.vo.Story" />
 
         <variable
             name="repoResource"
@@ -42,11 +42,11 @@
 
         <variable
             name="contributorsStatus"
-            type="com.android.example.github.vo.Status" />
+            type="com.github.vo.Status" />
 
         <variable
             name="retryCallback"
-            type="com.android.example.github.ui.common.RetryCallback" />
+            type="com.github.ui.common.RetryCallback" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
