@@ -116,4 +116,10 @@ dependencies {
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // Google Firebase
+    implementation 'com.google.firebase:firebase-crash:9.8.0'
+    implementation 'com.google.firebase:firebase-core:9.8.0'
+
 }
+apply plugin: 'com.google.gms.google-services'

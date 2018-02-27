@@ -29,10 +29,12 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.vo.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     ViewModelProvider.Factory viewModelFactory;
     Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
+    private FirebaseAnalytics analytics;
 
     public static String getCognitoToken() {
         return IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
+        // Obtain the FirebaseAnalytics instance.
+        Analytics.init(this);
         userSetup(savedInstanceState);
     }
 
@@ -86,6 +91,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     case LOADING:
                         break;
                     case SUCCESS:
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, new Date().toString());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getCognitoId());
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "user login");
+                        Analytics.getInstance().logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+
                         if (savedInstanceState == null) {
                             navigationController.navigateToStoryFeed();
                             break;
@@ -96,6 +107,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void createNewUser() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, new Date().toString());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getCognitoId());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "user created");
+        Analytics.getInstance().logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle);
+
         mainViewModel.createUser(new User(
                 getCognitoId(),
                 new ArrayList<>(),
