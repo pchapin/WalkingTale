@@ -1,7 +1,10 @@
 package com.walkingtale.ui.common
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
@@ -51,3 +54,14 @@ fun dispatchTakePictureIntent(requestCode: Int, fragment: Fragment, photoFile: F
     return file
 }
 
+fun getBitmapFromVectorDrawable(context: Context?, drawableId: Int): Bitmap {
+    val drawable = context!!.getDrawable(drawableId)
+
+    val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth,
+            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+
+    return bitmap
+}

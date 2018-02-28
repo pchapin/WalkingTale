@@ -16,6 +16,7 @@
 
 package com.walkingtale.ui.play;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
@@ -43,6 +44,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -64,6 +67,8 @@ import com.walkingtale.vo.Story;
 import java.util.Collections;
 
 import javax.inject.Inject;
+
+import static com.walkingtale.ui.common.FileUtilKt.getBitmapFromVectorDrawable;
 
 
 public class PlayFragment extends Fragment implements
@@ -161,6 +166,31 @@ public class PlayFragment extends Fragment implements
                         .icon(BitmapDescriptorFactory
                                 .fromBitmap(iconGenerator.makeIcon("" + exposition.getId())));
                 mMap.addMarker(marker);
+
+                switch (exposition.getType()) {
+                    case TEXT:
+                        GroundOverlay textOverlay;
+                        textOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_textsms_black_24dp)))
+                                .position(chapter.getLocation(), chapter.getRadius())
+                                .clickable(true));
+                        break;
+                    case AUDIO:
+                        GroundOverlay audioOverlay;
+                        audioOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_audiotrack_black_24dp)))
+                                .position(chapter.getLocation(), chapter.getRadius())
+                                .clickable(true));
+
+                        break;
+                    case PICTURE:
+                        GroundOverlay pictureOverlay;
+                        pictureOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.google_icon))
+                                .position(chapter.getLocation(), chapter.getRadius())
+                                .clickable(true));
+                        break;
+                }
             }
 
             Circle circle = mMap.addCircle(new CircleOptions()
@@ -234,6 +264,7 @@ public class PlayFragment extends Fragment implements
         mMap.animateCamera(cameraUpdate);
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Set map preferences
@@ -242,6 +273,7 @@ public class PlayFragment extends Fragment implements
         mMap.setMaxZoomPreference(20.0f);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
         mMap.setOnMarkerClickListener(this);
+        mMap.setMyLocationEnabled(true);
 
         // Change tilt
         CameraPosition cameraPosition = new CameraPosition.Builder()
