@@ -140,6 +140,8 @@ public class FeedFragment extends Fragment implements Injectable {
     }
 
     private void fabListener() {
-        fab.setOnClickListener(v -> navigationController.navigateToCreateStory());
+        if (PermissionManager.checkLocationPermission(getActivity())) {
+            fab.setOnClickListener(v -> navigationController.navigateToCreateStory());
+        }
     }
 }
