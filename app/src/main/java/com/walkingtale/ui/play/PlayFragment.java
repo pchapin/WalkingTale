@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
+import com.walkingtale.Analytics;
 import com.walkingtale.R;
 import com.walkingtale.binding.FragmentDataBindingComponent;
 import com.walkingtale.databinding.FragmentPlayBinding;
@@ -252,7 +253,10 @@ public class PlayFragment extends Fragment implements
             new AlertDialog.Builder(getContext())
                     .setTitle("Finish Story")
                     .setMessage("Do you want to finish the story?")
-                    .setPositiveButton("yes", (dialogInterface, i) -> getActivity().onBackPressed())
+                    .setPositiveButton("yes", (dialogInterface, i) -> {
+                        Analytics.INSTANCE.logEvent(Analytics.EventType.PlayedStory, TAG);
+                        getActivity().onBackPressed();
+                    })
                     .setNegativeButton("no", (dialogInterface, i) -> {
                     })
                     .create().show();

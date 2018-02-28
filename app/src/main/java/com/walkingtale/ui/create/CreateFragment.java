@@ -44,7 +44,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.walkingtale.Analytics;
 import com.walkingtale.R;
 import com.walkingtale.binding.FragmentDataBindingComponent;
@@ -72,7 +71,6 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 
 import static android.app.Activity.RESULT_OK;
-import static com.walkingtale.MainActivity.getCognitoId;
 
 
 /**
@@ -234,13 +232,7 @@ public class CreateFragment extends Fragment implements
                     createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
 
                         if (voidResource != null && voidResource.status == Status.SUCCESS) {
-
-                            Bundle bundle = new Bundle();
-                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, new Date().toString());
-                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getCognitoId());
-                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "user created");
-                            Analytics.getInstance().logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle);
-
+                            Analytics.INSTANCE.logEvent(Analytics.EventType.CreatedStory, TAG);
                             Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
                             getActivity().onBackPressed();
                         }

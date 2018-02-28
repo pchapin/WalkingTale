@@ -34,7 +34,6 @@ import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.vo.User;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         setContentView(R.layout.activity_main);
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
         // Obtain the FirebaseAnalytics instance.
-        Analytics.init(this);
+        Analytics.INSTANCE.init(this);
         userSetup(savedInstanceState);
     }
 
@@ -91,12 +90,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     case LOADING:
                         break;
                     case SUCCESS:
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, new Date().toString());
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getCognitoId());
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "user login");
-                        Analytics.getInstance().logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
-
+                        Analytics.INSTANCE.logEvent(Analytics.EventType.UserLogin, TAG);
                         if (savedInstanceState == null) {
                             navigationController.navigateToStoryFeed();
                             break;
@@ -107,11 +101,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void createNewUser() {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, new Date().toString());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getCognitoId());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "user created");
-        Analytics.getInstance().logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle);
 
         mainViewModel.createUser(new User(
                 getCognitoId(),
@@ -123,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             if (newUserResource != null) {
                 switch (newUserResource.status) {
                     case SUCCESS:
+                        Analytics.INSTANCE.logEvent(Analytics.EventType.CreatedUser, TAG);
                         navigationController.navigateToStoryFeed();
                 }
             }
