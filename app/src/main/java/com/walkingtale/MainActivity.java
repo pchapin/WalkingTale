@@ -41,7 +41,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
-    public static final DEBUG_STATE DEBUG_MODE = DEBUG_STATE.PROFILE;
+    public static final DEBUG_STATE DEBUG_MODE = DEBUG_STATE.OFF;
     private final String TAG = this.getClass().getSimpleName();
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;

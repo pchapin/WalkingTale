@@ -6,11 +6,14 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
+import com.walkingtale.MainActivity;
 import com.walkingtale.repository.StoryRepository;
+import com.walkingtale.repository.UserRepository;
 import com.walkingtale.repository.tasks.StoryKey;
 import com.walkingtale.vo.Chapter;
 import com.walkingtale.vo.Resource;
 import com.walkingtale.vo.Story;
+import com.walkingtale.vo.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +24,7 @@ import javax.inject.Inject;
 public class PlayViewModel extends ViewModel {
     private final String TAG = this.getClass().getSimpleName();
     private final StoryRepository storyRepository;
+    private final UserRepository userRepository;
     @VisibleForTesting
     LiveData<List<Chapter>> availableChapters = new MutableLiveData<>();
     private Story story;
@@ -29,9 +33,9 @@ public class PlayViewModel extends ViewModel {
     private LiveData<Boolean> isCurrentFinal = new MutableLiveData<>();
 
     @Inject
-    PlayViewModel(StoryRepository repository) {
-        storyRepository = repository;
-
+    PlayViewModel(StoryRepository repository, UserRepository userRepository) {
+        this.storyRepository = repository;
+        this.userRepository = userRepository;
         availableChapters = Transformations.map(currentChapter, (Chapter current) -> {
             if (current == null) return Collections.emptyList();
 
@@ -85,7 +89,16 @@ public class PlayViewModel extends ViewModel {
         return story != null;
     }
 
-    public LiveData<Boolean> getIsCurrentFinal() {
+    LiveData<Boolean> getIsCurrentFinal() {
         return isCurrentFinal;
+    }
+
+    LiveData<Resource<User>> getUser() {
+        return userRepository.loadUser(MainActivity.getCognitoId());
+    }
+
+    LiveData<Resource<Void>> setStoryPlayed(User user) {
+        user.playedStories.add(story.id);
+        return userRepository.putUser(user);
     }
 }

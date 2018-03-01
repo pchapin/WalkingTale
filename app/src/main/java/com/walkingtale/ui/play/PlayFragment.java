@@ -65,6 +65,7 @@ import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.util.AutoClearedValue;
 import com.walkingtale.vo.Chapter;
 import com.walkingtale.vo.Exposition;
+import com.walkingtale.vo.Status;
 import com.walkingtale.vo.Story;
 
 import java.util.Collections;
@@ -257,11 +258,23 @@ public class PlayFragment extends Fragment implements
                     .setMessage("Do you want to finish the story?")
                     .setPositiveButton("yes", (dialogInterface, i) -> {
                         Analytics.INSTANCE.logEvent(Analytics.EventType.PlayedStory, TAG);
-                        getActivity().onBackPressed();
+                        finishStoryHelper();
                     })
                     .setNegativeButton("no", (dialogInterface, i) -> {
                     })
                     .create().show();
+        });
+    }
+
+    private void finishStoryHelper() {
+        playViewModel.getUser().observe(this, userResource -> {
+            if (userResource != null && userResource.data != null) {
+                playViewModel.setStoryPlayed(userResource.data).observe(this, voidResource -> {
+                    if (voidResource != null && voidResource.status == Status.SUCCESS) {
+                        getActivity().onBackPressed();
+                    }
+                });
+            }
         });
     }
 
