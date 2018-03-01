@@ -25,12 +25,14 @@ import com.walkingtale.db.WalkingTaleDb;
 import com.walkingtale.repository.tasks.DeleteStoryTask;
 import com.walkingtale.repository.tasks.GetAllStoriesTask;
 import com.walkingtale.repository.tasks.GetOneStoryTask;
+import com.walkingtale.repository.tasks.GetPlayedStoriesTask;
 import com.walkingtale.repository.tasks.PutFileS3Task;
 import com.walkingtale.repository.tasks.S3Args;
 import com.walkingtale.repository.tasks.SaveStoryTask;
 import com.walkingtale.repository.tasks.StoryKey;
 import com.walkingtale.vo.Resource;
 import com.walkingtale.vo.Story;
+import com.walkingtale.vo.User;
 
 import java.util.List;
 
@@ -83,5 +85,11 @@ public class StoryRepository {
         DeleteStoryTask deleteStoryTask = new DeleteStoryTask(story, db);
         appExecutors.networkIO().execute(deleteStoryTask);
         return deleteStoryTask.getResult();
+    }
+
+    public LiveData<Resource<List<Story>>> getPlayedStories(User user) {
+        GetPlayedStoriesTask getPlayedStoriesTask = new GetPlayedStoriesTask(user, db);
+        appExecutors.networkIO().execute(getPlayedStoriesTask);
+        return getPlayedStoriesTask.getResult();
     }
 }

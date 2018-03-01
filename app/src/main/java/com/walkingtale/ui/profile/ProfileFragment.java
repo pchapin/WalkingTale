@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment implements Injectable {
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentProfileBinding> binding;
-    AutoClearedValue<StoryListAdapter> adapter;
+    AutoClearedValue<StoryListAdapter> playedStoriesAdapter;
     File photoFile;
     private ProfileViewModel profileViewModel;
 
@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
 
-        StoryListAdapter repoListAdapter = new StoryListAdapter(
+        StoryListAdapter storyListAdapter = new StoryListAdapter(
                 dataBindingComponent,
                 repo -> profileViewModel.setUserId(repo.username),
                 storyToDelete -> {
@@ -86,8 +86,8 @@ public class ProfileFragment extends Fragment implements Injectable {
                     // TODO: 3/1/18 notify data set has changed
                 },
                 this);
-        binding.get().playedList.setAdapter(repoListAdapter);
-        adapter = new AutoClearedValue<>(this, repoListAdapter);
+        binding.get().playedList.setAdapter(storyListAdapter);
+        playedStoriesAdapter = new AutoClearedValue<>(this, storyListAdapter);
 
         profileViewModel.setUserId(MainActivity.getCognitoId());
         profileViewModel.user.observe(this, userResource -> {
@@ -139,24 +139,23 @@ public class ProfileFragment extends Fragment implements Injectable {
     private void initRecyclerView() {
         profileViewModel.usersRepos.observe(this, result -> {
             if (result != null && result.data != null) {
-                adapter.get().replace(result.data);
+                playedStoriesAdapter.get().replace(result.data);
             }
             binding.get().executePendingBindings();
         });
     }
 
     private void profileImageListener() {
-        binding.get().avatar.setOnClickListener(v -> {
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Set profile image")
-                    .setMessage("Do you want to change your profile image?")
-                    .setPositiveButton("yes", (dialogInterface, i) ->
-                            FileUtilKt.dispatchTakePictureIntent(RC_TAKE_PROFILE_IMAGE, this, photoFile))
-                    .setNegativeButton("no", (dialogInterface, i) -> {
-                    })
-                    .create()
-                    .show();
-        });
+        binding.get().avatar.setOnClickListener(v ->
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Set profile image")
+                        .setMessage("Do you want to change your profile image?")
+                        .setPositiveButton("yes", (dialogInterface, i) ->
+                                FileUtilKt.dispatchTakePictureIntent(RC_TAKE_PROFILE_IMAGE, this, photoFile))
+                        .setNegativeButton("no", (dialogInterface, i) -> {
+                        })
+                        .create()
+                        .show());
     }
 
     @Override

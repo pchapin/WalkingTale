@@ -61,4 +61,8 @@ public class ProfileViewModel extends ViewModel {
     LiveData<Resource<Story>> deleteStory(Story story) {
         return storyRepository.deleteStory(story);
     }
+
+    LiveData<Resource<List<Story>>> getPlayedStories() {
+        return storyRepository.getPlayedStories(user.getValue().data);
+    }
 }
