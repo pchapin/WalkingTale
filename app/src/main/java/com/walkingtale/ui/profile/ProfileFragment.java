@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment implements Injectable {
                     // TODO: 3/1/18 notify data set has changed
                 },
                 this);
-        binding.get().repoList.setAdapter(repoListAdapter);
+        binding.get().playedList.setAdapter(repoListAdapter);
         adapter = new AutoClearedValue<>(this, repoListAdapter);
 
         profileViewModel.setUserId(MainActivity.getCognitoId());
@@ -127,6 +127,10 @@ public class ProfileFragment extends Fragment implements Injectable {
         binding.get().tabs.setOnTabChangedListener(s -> {
             switch (binding.get().tabs.getCurrentTab()) {
                 case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
                     break;
             }
         });
