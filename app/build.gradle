@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
 android {
@@ -120,6 +121,8 @@ dependencies {
     // Google Firebase
     implementation 'com.google.firebase:firebase-crash:9.8.0'
     implementation 'com.google.firebase:firebase-core:9.8.0'
-
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
+        transitive = true
+    }
 }
 apply plugin: 'com.google.gms.google-services'
