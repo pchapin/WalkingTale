@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="my_images"
-        path="Android/data/com.github/files/Pictures" />
+        path="Android/data/com.walkingtale/files/Pictures" />
 </paths>
