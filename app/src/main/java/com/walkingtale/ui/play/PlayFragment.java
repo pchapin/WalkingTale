@@ -46,6 +46,8 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -264,8 +266,27 @@ public class PlayFragment extends Fragment implements
     }
 
     private void moveCamera(Location currentLocation) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(LocationUtilKt.locationToLatLng(currentLocation));
+
+        LatLng currentLatLng = LocationUtilKt.locationToLatLng(currentLocation);
+        LatLng currentChapter = null;
+        LatLng nextChapter = null;
+        if (playViewModel.getCurrentChapter().getValue() != null) {
+            currentChapter = playViewModel.getCurrentChapter().getValue().getLocation();
+        }
+        if (playViewModel.getNextChapter().getValue() != null) {
+            nextChapter = playViewModel.getNextChapter().getValue().getLocation();
+        }
+
+        // Include current location, current chapter, and next chapter
+        LatLngBounds latLngBounds = LatLngBounds.builder()
+                .include(currentLatLng)
+                .include(currentChapter != null ? currentChapter : currentLatLng)
+                .include(nextChapter != null ? nextChapter : currentLatLng)
+                .build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 10);
         mMap.animateCamera(cameraUpdate);
+        // Restrict camera panning
+        mMap.setLatLngBoundsForCameraTarget(latLngBounds);
     }
 
     @SuppressLint("MissingPermission")
@@ -273,8 +294,6 @@ public class PlayFragment extends Fragment implements
     public void onMapReady(GoogleMap googleMap) {
         // Set map preferences
         mMap = googleMap;
-        mMap.setMinZoomPreference(18.0f);
-        mMap.setMaxZoomPreference(20.0f);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
         mMap.setOnMarkerClickListener(this);
         mMap.setMyLocationEnabled(true);
