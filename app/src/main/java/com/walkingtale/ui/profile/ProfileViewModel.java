@@ -35,7 +35,7 @@ import javax.inject.Inject;
 public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<User>> user = new MutableLiveData<>();
-    LiveData<Resource<List<Story>>> usersRepos = new MutableLiveData<>();
+    LiveData<Resource<List<Story>>> playedStories = new MutableLiveData<>();
     private MutableLiveData<String> userId = new MutableLiveData<>();
     private StoryRepository storyRepository;
 
@@ -47,10 +47,9 @@ public class ProfileViewModel extends ViewModel {
             else return userRepository.loadUser(input);
         });
 
-        usersRepos = Transformations.switchMap(userId, input -> {
-            if (userId == null) return AbsentLiveData.create();
-                // TODO: 1/28/18 only get the repos for a single user
-            else return repository.getAllStories();
+        playedStories = Transformations.switchMap(user, input -> {
+            if (input != null && input.data != null) return repository.getPlayedStories(input.data);
+            else return AbsentLiveData.create();
         });
     }
 

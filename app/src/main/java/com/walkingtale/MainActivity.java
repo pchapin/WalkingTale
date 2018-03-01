@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     public static String getCognitoId() {
-        if (IdentityManager.getDefaultIdentityManager().areCredentialsExpired()) {
-            IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().refreshToken();
-        }
+//        if (IdentityManager.getDefaultIdentityManager().areCredentialsExpired()) {
+//            IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().refreshToken();
+//        }
         return IdentityManager.getDefaultIdentityManager().getCachedUserID();
     }
 

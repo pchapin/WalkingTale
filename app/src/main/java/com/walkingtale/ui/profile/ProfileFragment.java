@@ -91,7 +91,9 @@ public class ProfileFragment extends Fragment implements Injectable {
 
         profileViewModel.setUserId(MainActivity.getCognitoId());
         profileViewModel.user.observe(this, userResource -> {
-            if (userResource != null) binding.get().setUser(userResource.data);
+            if (userResource != null) {
+                binding.get().setUser(userResource.data);
+            }
         });
 
         initRecyclerView();
@@ -137,7 +139,7 @@ public class ProfileFragment extends Fragment implements Injectable {
     }
 
     private void initRecyclerView() {
-        profileViewModel.usersRepos.observe(this, result -> {
+        profileViewModel.playedStories.observe(this, result -> {
             if (result != null && result.data != null) {
                 playedStoriesAdapter.get().replace(result.data);
             }
