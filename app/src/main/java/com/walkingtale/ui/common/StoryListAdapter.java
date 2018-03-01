@@ -24,6 +24,8 @@ import android.widget.PopupMenu;
 
 import com.walkingtale.R;
 import com.walkingtale.databinding.ItemStoryBinding;
+import com.walkingtale.ui.feed.FeedFragment;
+import com.walkingtale.ui.profile.ProfileFragment;
 import com.walkingtale.util.Objects;
 import com.walkingtale.vo.Story;
 
@@ -36,13 +38,17 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
     private final ReportStoryCallback reportStoryCallback;
     private final ShareStoryCallback shareStoryCallback;
     private final SaveStoryCallback saveStoryCallback;
+    private final DeleteStoryCallback deleteStoryCallback;
+    private final Object menuHost;
 
-    public StoryListAdapter(DataBindingComponent dataBindingComponent, StoryClickCallback storyClickCallback) {
+    public StoryListAdapter(DataBindingComponent dataBindingComponent, StoryClickCallback storyClickCallback, DeleteStoryCallback deleteStoryCallback, ProfileFragment profileFragment) {
         this.dataBindingComponent = dataBindingComponent;
         this.storyClickCallback = storyClickCallback;
         this.reportStoryCallback = null;
         this.shareStoryCallback = null;
         this.saveStoryCallback = null;
+        this.deleteStoryCallback = deleteStoryCallback;
+        this.menuHost = profileFragment;
     }
 
     public StoryListAdapter(
@@ -50,19 +56,22 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
             StoryClickCallback storyClickCallback,
             ReportStoryCallback reportStoryCallback,
             SaveStoryCallback saveStoryCallback,
-            ShareStoryCallback shareStoryCallback) {
+            ShareStoryCallback shareStoryCallback,
+            FeedFragment feedFragment) {
         this.dataBindingComponent = dataBindingComponent;
         this.storyClickCallback = storyClickCallback;
         this.reportStoryCallback = reportStoryCallback;
         this.saveStoryCallback = saveStoryCallback;
         this.shareStoryCallback = shareStoryCallback;
+        this.deleteStoryCallback = null;
+        this.menuHost = feedFragment;
     }
 
     @Override
     protected ItemStoryBinding createBinding(ViewGroup parent) {
-        ItemStoryBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_story,
-                        parent, false, dataBindingComponent);
+        ItemStoryBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                R.layout.item_story,
+                parent, false, dataBindingComponent);
         binding.getRoot().setOnClickListener(v -> {
             Story story = binding.getStory();
             if (story != null && storyClickCallback != null) {
@@ -72,7 +81,12 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
 
         binding.storyMenuButton.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(parent.getContext(), v);
-            popupMenu.getMenuInflater().inflate(R.menu.story_menu, popupMenu.getMenu());
+
+            if (menuHost instanceof FeedFragment) {
+                popupMenu.getMenuInflater().inflate(R.menu.story_feed_menu, popupMenu.getMenu());
+            } else if (menuHost instanceof ProfileFragment) {
+                popupMenu.getMenuInflater().inflate(R.menu.story_profile_menu, popupMenu.getMenu());
+            }
 
             // Set a listener so we are notified if a menu item is clicked
             popupMenu.setOnMenuItemClickListener(menuItem -> {
@@ -87,6 +101,8 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
                     case R.id.menu_share_story:
                         shareStoryCallback.onClick(story);
                         return true;
+                    case R.id.menu_delete_story:
+                        deleteStoryCallback.onClick(story);
                 }
                 return false;
             });
@@ -124,6 +140,10 @@ public class StoryListAdapter extends DataBoundListAdapter<Story, ItemStoryBindi
     }
 
     public interface ShareStoryCallback {
+        void onClick(Story story);
+    }
+
+    public interface DeleteStoryCallback {
         void onClick(Story story);
     }
 }

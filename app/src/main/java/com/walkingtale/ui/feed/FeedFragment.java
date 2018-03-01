@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.walkingtale.MainActivity;
 import com.walkingtale.R;
@@ -90,7 +91,7 @@ public class FeedFragment extends Fragment implements Injectable {
         }, storyToReport -> {
         }, storyToSave -> {
         }, storyToShare -> {
-        });
+        }, this);
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
@@ -105,7 +106,8 @@ public class FeedFragment extends Fragment implements Injectable {
                     navigationController.navigateToProfile();
                     break;
                 case R.id.action_search:
-                    navigationController.navigateToSearch();
+                    Toast.makeText(getContext(), "todo!", Toast.LENGTH_SHORT).show();
+//                    navigationController.navigateToSearch();
                     break;
             }
             return true;

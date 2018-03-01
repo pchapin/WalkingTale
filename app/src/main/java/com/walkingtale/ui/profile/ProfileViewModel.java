@@ -35,13 +35,13 @@ import javax.inject.Inject;
 public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<User>> user = new MutableLiveData<>();
-
     LiveData<Resource<List<Story>>> usersRepos = new MutableLiveData<>();
-
     private MutableLiveData<String> userId = new MutableLiveData<>();
+    private StoryRepository storyRepository;
 
     @Inject
     ProfileViewModel(StoryRepository repository, UserRepository userRepository) {
+        storyRepository = repository;
         user = Transformations.switchMap(userId, input -> {
             if (userId == null) return AbsentLiveData.create();
             else return userRepository.loadUser(input);
@@ -56,5 +56,9 @@ public class ProfileViewModel extends ViewModel {
 
     void setUserId(String id) {
         userId.setValue(id);
+    }
+
+    LiveData<Resource<Story>> deleteStory(Story story) {
+        return storyRepository.deleteStory(story);
     }
 }

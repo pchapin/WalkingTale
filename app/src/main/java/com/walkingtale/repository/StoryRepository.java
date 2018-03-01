@@ -22,6 +22,7 @@ import com.walkingtale.AppExecutors;
 import com.walkingtale.api.WalkingTaleService;
 import com.walkingtale.db.StoryDao;
 import com.walkingtale.db.WalkingTaleDb;
+import com.walkingtale.repository.tasks.DeleteStoryTask;
 import com.walkingtale.repository.tasks.GetAllStoriesTask;
 import com.walkingtale.repository.tasks.GetOneStoryTask;
 import com.walkingtale.repository.tasks.PutFileS3Task;
@@ -76,5 +77,11 @@ public class StoryRepository {
         PutFileS3Task putFileS3Task = new PutFileS3Task(s3Args, db);
         appExecutors.networkIO().execute(putFileS3Task);
         return putFileS3Task.getResult();
+    }
+
+    public LiveData<Resource<Story>> deleteStory(Story story) {
+        DeleteStoryTask deleteStoryTask = new DeleteStoryTask(story, db);
+        appExecutors.networkIO().execute(deleteStoryTask);
+        return deleteStoryTask.getResult();
     }
 }

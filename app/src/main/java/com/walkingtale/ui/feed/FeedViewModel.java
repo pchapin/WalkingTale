@@ -40,4 +40,6 @@ public class FeedViewModel extends ViewModel {
     LiveData<Resource<List<Story>>> getResults() {
         return storyRepository.getAllStories();
     }
+
+
 }
