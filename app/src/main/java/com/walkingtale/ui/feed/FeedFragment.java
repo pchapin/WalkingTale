@@ -136,9 +136,11 @@ public class FeedFragment extends Fragment implements Injectable {
                         navigationController.navigateToOverview(result.data.get(0));
                     }
                     break;
+                case PROFILE:
+                    navigationController.navigateToProfile();
+                    break;
             }
         });
-
     }
 
     private void fabListener() {

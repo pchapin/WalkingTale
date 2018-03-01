@@ -162,6 +162,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     public enum DEBUG_STATE {
-        OFF, CREATE, PLAY
+        OFF, CREATE, PLAY, PROFILE
     }
 }
