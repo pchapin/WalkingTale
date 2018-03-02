@@ -53,7 +53,7 @@ public class FragmentBindingAdapters {
         Glide.with(fragment)
                 .load(s3HostName + url)
                 .apply(new RequestOptions().placeholder(R.drawable.white))
-                .error(Glide.with(fragment).load(url))
+                .error(Glide.with(fragment).load(url).error(Glide.with(fragment).load(R.drawable.ic_image_black_24dp)))
                 .into(imageView);
     }
 
