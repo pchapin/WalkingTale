@@ -17,6 +17,8 @@
 package com.walkingtale.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.walkingtale.AppExecutors;
 import com.walkingtale.api.WalkingTaleService;
@@ -50,9 +52,31 @@ public class UserRepository {
     }
 
     public LiveData<Resource<User>> loadUser(String userId) {
-        GetUserTask getUserTask = new GetUserTask(userId, db);
-        appExecutors.networkIO().execute(getUserTask);
-        return getUserTask.getResult();
+        return new NetworkBoundResource<User, User>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull User item) {
+                userDao.insert(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable User data) {
+                return data == null;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<User> loadFromDb() {
+                return userDao.findByLogin(userId);
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<User>> createCall() {
+                GetUserTask getUserTask = new GetUserTask(userId, db);
+                appExecutors.networkIO().execute(getUserTask);
+                return getUserTask.getResult();
+            }
+        }.asLiveData();
     }
 
     public LiveData<Resource<Void>> putUser(User user) {

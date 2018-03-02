@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class ProfileFragment extends Fragment implements Injectable {
 
+    private final String TAG = this.getClass().getSimpleName();
     private final int RC_TAKE_PROFILE_IMAGE = 1;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -105,6 +107,7 @@ public class ProfileFragment extends Fragment implements Injectable {
         profileViewModel.setUserId(MainActivity.getCognitoId());
         profileViewModel.user.observe(this, userResource -> {
             if (userResource != null) {
+                Log.i(TAG, "" + userResource.data);
                 binding.get().setUser(userResource.data);
             }
         });
