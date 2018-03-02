@@ -98,7 +98,9 @@ public class PlayViewModel extends ViewModel {
     }
 
     LiveData<Resource<Void>> setStoryPlayed(User user) {
-        user.playedStories.add(story.id);
+        if (!user.playedStories.contains(story.id)) {
+            user.playedStories.add(story.id);
+        }
         return userRepository.putUser(user);
     }
 }

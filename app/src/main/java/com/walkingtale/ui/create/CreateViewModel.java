@@ -76,7 +76,9 @@ public class CreateViewModel extends ViewModel {
     }
 
     LiveData<Resource<Void>> setStoryCreated(User user) {
-        user.createdStories.add(story.getValue().id);
+        if (!user.createdStories.contains(story.getValue().id)) {
+            user.createdStories.add(story.getValue().id);
+        }
         return userRepository.putUser(user);
     }
 
