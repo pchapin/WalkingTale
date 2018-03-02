@@ -51,13 +51,13 @@ public class ProfileViewModel extends ViewModel {
 
         playedStories = Transformations.switchMap(user, input -> {
             if (input != null && input.data != null)
-                return repository.getPlayedStories(input.data, shouldFetch);
+                return repository.getPlayedStories(input.data, true);
             else return AbsentLiveData.create();
         });
 
         createdStories = Transformations.switchMap(user, input -> {
             if (input != null && input.data != null)
-                return repository.getCreatedStories(input.data, shouldFetch);
+                return repository.getCreatedStories(input.data, true);
             else return AbsentLiveData.create();
         });
     }
