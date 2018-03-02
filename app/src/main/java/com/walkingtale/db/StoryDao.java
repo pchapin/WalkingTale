@@ -22,7 +22,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.walkingtale.vo.RepoSearchResult;
 import com.walkingtale.vo.Story;
 
 import java.util.List;
@@ -44,22 +43,6 @@ public abstract class StoryDao {
 
     @Query("SELECT * FROM Story WHERE id = :id")
     public abstract LiveData<Story> load(String id);
-
-    @Query("SELECT * FROM Story "
-            + "WHERE id = :id")
-    public abstract LiveData<List<Story>> loadRepositories(int id);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(RepoSearchResult result);
-
-    @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
-    public abstract LiveData<RepoSearchResult> search(String query);
-
-    @Query("SELECT * FROM Story WHERE id in (:repoIds)")
-    protected abstract LiveData<List<Story>> loadById(List<Integer> repoIds);
-
-    @Query("SELECT * FROM RepoSearchResult WHERE query = :query")
-    public abstract RepoSearchResult findSearchResult(String query);
 
     @Query("SELECT * FROM Story")
     public abstract LiveData<List<Story>> loadAll();

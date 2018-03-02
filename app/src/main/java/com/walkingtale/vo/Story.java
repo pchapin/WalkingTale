@@ -15,12 +15,13 @@ import com.walkingtale.db.WalkingTaleTypeConverters;
 import java.util.List;
 import java.util.Objects;
 
-@Entity(indices = {@Index("id")}, primaryKeys = {"storyName"})
+@Entity(indices = {@Index("id")}, primaryKeys = {"id"})
 @TypeConverters(WalkingTaleTypeConverters.class)
 @DynamoDBTable(tableName = "walkingtale-mobilehub-466729221-Stories")
 public class Story {
 
     public String userId;
+    @NonNull
     public String id;
     @SerializedName("name")
     @NonNull
@@ -45,7 +46,7 @@ public class Story {
     public Story() {
     }
 
-    public Story(String id, @NonNull String storyName, String description, List<Chapter> chapters,
+    public Story(@NonNull String id, @NonNull String storyName, String description, List<Chapter> chapters,
                  String genre, List<String> tags, int duration, Double rating, String story_image, String username, String userId) {
         this.id = id;
         this.storyName = storyName;
@@ -79,11 +80,12 @@ public class Story {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
 
+    @NonNull
     @DynamoDBAttribute(attributeName = "storyName")
     public String getStoryName() {
         return storyName;

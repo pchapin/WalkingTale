@@ -20,15 +20,13 @@ package com.walkingtale.db;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import com.walkingtale.vo.RepoSearchResult;
 import com.walkingtale.vo.Story;
 import com.walkingtale.vo.User;
 
 /**
  * Main database description.
  */
-@Database(entities = {User.class, Story.class,
-        RepoSearchResult.class}, version = 3, exportSchema = false)
+@Database(entities = {User.class, Story.class}, version = 3, exportSchema = false)
 public abstract class WalkingTaleDb extends RoomDatabase {
 
     abstract public UserDao userDao();
