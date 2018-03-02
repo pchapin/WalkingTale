@@ -46,4 +46,10 @@ public abstract class StoryDao {
 
     @Query("SELECT * FROM Story")
     public abstract LiveData<List<Story>> loadAll();
+
+    @Query("SELECT * FROM Story WHERE id in (:playedIds)")
+    public abstract LiveData<List<Story>> loadPlayedStories(List<String> playedIds);
+
+    @Query("SELECT * FROM Story WHERE id in (:createdIds)")
+    public abstract LiveData<List<Story>> loadCreatedStories(List<String> createdIds);
 }

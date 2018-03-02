@@ -153,7 +153,7 @@ public class StoryRepository {
             @NonNull
             @Override
             protected LiveData<List<Story>> loadFromDb() {
-                return storyDao.loadAll();
+                return storyDao.loadPlayedStories(user.getPlayedStories());
             }
 
             @NonNull
@@ -181,7 +181,7 @@ public class StoryRepository {
             @NonNull
             @Override
             protected LiveData<List<Story>> loadFromDb() {
-                return storyDao.loadAll();
+                return storyDao.loadCreatedStories(user.getCreatedStories());
             }
 
             @NonNull
