@@ -13,7 +13,11 @@ class GetCreatedStoriesTask(val user: User, val db: WalkingTaleDb) : AbstractTas
 
         user.createdStories.forEach {
             //TODO optimize, use a single query rather than multiple loads
-            response.add(dynamoDBMapper.load(Story::class.java, user.userId, it))
+            // Result will be null if story not found
+            val result = dynamoDBMapper.load(Story::class.java, user.userId, it)
+            if (result != null) {
+                response.add(result)
+            }
         }
 
         db.beginTransaction()
