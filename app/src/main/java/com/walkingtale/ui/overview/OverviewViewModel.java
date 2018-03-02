@@ -37,6 +37,6 @@ public class OverviewViewModel extends ViewModel {
     }
 
     public LiveData<Resource<Story>> getStory(StoryKey storyKey) {
-        return storyRepository.getOneStory(storyKey);
+        return storyRepository.getOneStory(storyKey, false);
     }
 }

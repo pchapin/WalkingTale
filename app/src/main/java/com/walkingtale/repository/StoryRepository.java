@@ -17,14 +17,17 @@
 package com.walkingtale.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.walkingtale.AppExecutors;
 import com.walkingtale.api.WalkingTaleService;
 import com.walkingtale.db.StoryDao;
 import com.walkingtale.db.WalkingTaleDb;
 import com.walkingtale.repository.tasks.DeleteStoryTask;
-import com.walkingtale.repository.tasks.GetAllStoriesTask;
 import com.walkingtale.repository.tasks.GetCreatedStoriesTask;
+import com.walkingtale.repository.tasks.GetFeedStoriesTask;
 import com.walkingtale.repository.tasks.GetOneStoryTask;
 import com.walkingtale.repository.tasks.GetPlayedStoriesTask;
 import com.walkingtale.repository.tasks.PutFileS3Task;
@@ -64,17 +67,64 @@ public class StoryRepository {
         return saveStoryTask.getResult();
     }
 
-    public LiveData<Resource<List<Story>>> getAllStories() {
-        GetAllStoriesTask getAllStoriesTask = new GetAllStoriesTask("", db);
-        appExecutors.networkIO().execute(getAllStoriesTask);
-        return getAllStoriesTask.getResult();
+    public LiveData<Resource<List<Story>>> getFeedStories(boolean shouldFetch) {
+        Log.i(TAG, "fetching feed " + shouldFetch);
+
+        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull List<Story> item) {
+                storyDao.insertStories(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Story> data) {
+                return shouldFetch || data == null || data.isEmpty();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Story>> loadFromDb() {
+                return storyDao.loadAll();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<List<Story>>> createCall() {
+                GetFeedStoriesTask getFeedStoriesTask = new GetFeedStoriesTask("", db);
+                appExecutors.networkIO().execute(getFeedStoriesTask);
+                return getFeedStoriesTask.getResult();
+            }
+        }.asLiveData();
     }
 
-    public LiveData<Resource<Story>> getOneStory(StoryKey storyKey) {
-        GetOneStoryTask getOneStoryTask = new GetOneStoryTask(storyKey, db);
-        appExecutors.networkIO().execute(getOneStoryTask);
-        return getOneStoryTask.getResult();
+    public LiveData<Resource<Story>> getOneStory(StoryKey storyKey, boolean shouldFetch) {
+        return new NetworkBoundResource<Story, Story>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Story item) {
+                storyDao.insert(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable Story data) {
+                return shouldFetch || data == null;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Story> loadFromDb() {
+                return storyDao.load(storyKey.getStoryId());
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<Story>> createCall() {
+                GetOneStoryTask getOneStoryTask = new GetOneStoryTask(storyKey, db);
+                appExecutors.networkIO().execute(getOneStoryTask);
+                return getOneStoryTask.getResult();
+            }
+        }.asLiveData();
     }
+
 
     public LiveData<Resource<Story>> putFileInS3(S3Args s3Args) {
         PutFileS3Task putFileS3Task = new PutFileS3Task(s3Args, db);
@@ -88,15 +138,60 @@ public class StoryRepository {
         return deleteStoryTask.getResult();
     }
 
-    public LiveData<Resource<List<Story>>> getPlayedStories(User user) {
-        GetPlayedStoriesTask getPlayedStoriesTask = new GetPlayedStoriesTask(user, db);
-        appExecutors.networkIO().execute(getPlayedStoriesTask);
-        return getPlayedStoriesTask.getResult();
+    public LiveData<Resource<List<Story>>> getPlayedStories(User user, boolean shouldFetch) {
+        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull List<Story> item) {
+                storyDao.insertStories(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Story> data) {
+                return shouldFetch || data == null || data.isEmpty();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Story>> loadFromDb() {
+                return storyDao.loadAll();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<List<Story>>> createCall() {
+                GetPlayedStoriesTask getPlayedStoriesTask = new GetPlayedStoriesTask(user, db);
+                appExecutors.networkIO().execute(getPlayedStoriesTask);
+                return getPlayedStoriesTask.getResult();
+            }
+        }.asLiveData();
     }
 
-    public LiveData<Resource<List<Story>>> getCreatedStories(User user) {
-        GetCreatedStoriesTask getCreatedStoriesTask = new GetCreatedStoriesTask(user, db);
-        appExecutors.networkIO().execute(getCreatedStoriesTask);
-        return getCreatedStoriesTask.getResult();
+    public LiveData<Resource<List<Story>>> getCreatedStories(User user, boolean shouldFetch) {
+        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull List<Story> item) {
+                storyDao.insertStories(item);
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Story> data) {
+                return shouldFetch || data == null || data.isEmpty();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Story>> loadFromDb() {
+                return storyDao.loadAll();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<List<Story>>> createCall() {
+                GetCreatedStoriesTask getCreatedStoriesTask = new GetCreatedStoriesTask(user, db);
+                appExecutors.networkIO().execute(getCreatedStoriesTask);
+                return getCreatedStoriesTask.getResult();
+            }
+        }.asLiveData();
     }
+
 }

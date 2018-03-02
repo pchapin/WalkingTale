@@ -95,7 +95,15 @@ public class FeedFragment extends Fragment implements Injectable {
 
         binding.get().repoList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
-        binding.get().setCallback(() -> feedViewModel.getResults());
+        binding.get().setCallback(() -> feedViewModel.setShouldFetch());
+        swipeRefreshListener();
+    }
+
+    private void swipeRefreshListener() {
+        binding.get().swiperefresh.setOnRefreshListener(() -> {
+            feedViewModel.setShouldFetch();
+            binding.get().swiperefresh.setRefreshing(false);
+        });
     }
 
     private void menuClickListener() {
@@ -115,9 +123,8 @@ public class FeedFragment extends Fragment implements Injectable {
     }
 
     private void initRecyclerView() {
-        feedViewModel.getResults().observe(this, result -> {
+        feedViewModel.results.observe(this, result -> {
             Log.i(TAG, "" + result);
-            if (result != null) Log.i(TAG, "" + result.data);
             binding.get().setSearchResource(result);
             binding.get().setResultCount((result == null || result.data == null)
                     ? 0 : result.data.size());

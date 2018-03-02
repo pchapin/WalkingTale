@@ -17,6 +17,8 @@
 package com.walkingtale.ui.feed;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
 import com.walkingtale.repository.StoryRepository;
@@ -30,16 +32,18 @@ import javax.inject.Inject;
 public class FeedViewModel extends ViewModel {
 
     private final String TAG = this.getClass().getSimpleName();
+    LiveData<Resource<List<Story>>> results = new MutableLiveData<>();
     private StoryRepository storyRepository;
+    private MutableLiveData<Boolean> shouldFetch = new MutableLiveData<>();
 
     @Inject
     FeedViewModel(StoryRepository storyRepository) {
         this.storyRepository = storyRepository;
+        this.shouldFetch.setValue(false);
+        results = Transformations.switchMap(shouldFetch, storyRepository::getFeedStories);
     }
 
-    LiveData<Resource<List<Story>>> getResults() {
-        return storyRepository.getAllStories();
+    void setShouldFetch() {
+        shouldFetch.setValue(true);
     }
-
-
 }

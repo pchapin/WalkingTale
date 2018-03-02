@@ -131,7 +131,8 @@ public class CreateFragment extends Fragment implements
         });
 
         ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
-                chapter -> navigationController.navigateToExpositionViewer(repo.getValue().id));
+                chapter -> {
+                });
         this.adapter = new AutoClearedValue<>(this, adapter);
 
         binding.get().bottomSheetList.expositionList.setAdapter(adapter);

@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import com.walkingtale.MainViewModel;
-import com.walkingtale.ui.album.AlbumViewModel;
 import com.walkingtale.ui.create.CreateViewModel;
 import com.walkingtale.ui.feed.FeedViewModel;
 import com.walkingtale.ui.overview.OverviewViewModel;
@@ -38,11 +37,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PlayViewModel.class)
     abstract ViewModel bindStoryPlayViewModel(PlayViewModel playViewModel);
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(AlbumViewModel.class)
-    abstract ViewModel bindExpositionViewerViewModel(AlbumViewModel albumViewModel);
 
     @Binds
     @IntoMap

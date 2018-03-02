@@ -16,7 +16,6 @@
 
 package com.walkingtale.di;
 
-import com.walkingtale.ui.album.AlbumFragment;
 import com.walkingtale.ui.create.CreateFragment;
 import com.walkingtale.ui.feed.FeedFragment;
 import com.walkingtale.ui.overview.OverviewFragment;
@@ -41,9 +40,6 @@ public abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract PlayFragment contributeStoryPlayFragment();
-
-    @ContributesAndroidInjector
-    abstract AlbumFragment contributeExpositionViewerFragment();
 
     @ContributesAndroidInjector
     abstract SearchFragment contributeSearchFragment();

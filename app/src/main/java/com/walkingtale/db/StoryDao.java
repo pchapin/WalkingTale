@@ -37,10 +37,10 @@ public abstract class StoryDao {
     public abstract void insert(Story... stories);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertRepos(List<Story> repositories);
+    public abstract void insertStories(List<Story> repositories);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long createRepoIfNotExists(Story story);
+    public abstract long createStoryIfNotExists(Story story);
 
     @Query("SELECT * FROM Story WHERE id = :id")
     public abstract LiveData<Story> load(String id);

@@ -24,14 +24,15 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.walkingtale.AppExecutors;
-import com.walkingtale.api.ApiResponse;
 import com.walkingtale.vo.Resource;
+import com.walkingtale.vo.Status;
 
 /**
  * A generic class that can provide a resource backed by both the sqlite database and the network.
  * <p>
  * You can read more about it in the <a href="https://developer.android.com/arch">Architecture
  * Guide</a>.
+ *
  * @param <ResultType>
  * @param <RequestType>
  */
@@ -56,14 +57,14 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     }
 
     private void fetchFromNetwork(final LiveData<ResultType> dbSource) {
-        LiveData<ApiResponse<RequestType>> apiResponse = createCall();
+        LiveData<Resource<RequestType>> apiResponse = createCall();
         // we re-attach dbSource as a new source, it will dispatch its latest value quickly
         result.addSource(dbSource, newData -> result.setValue(Resource.loading(newData)));
         result.addSource(apiResponse, response -> {
             result.removeSource(apiResponse);
             result.removeSource(dbSource);
             //noinspection ConstantConditions
-            if (response.isSuccessful()) {
+            if (response.status == Status.SUCCESS) {
                 appExecutors.diskIO().execute(() -> {
                     saveCallResult(processResponse(response));
                     appExecutors.mainThread().execute(() ->
@@ -77,7 +78,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
             } else {
                 onFetchFailed();
                 result.addSource(dbSource,
-                        newData -> result.setValue(Resource.error(response.getErrorMessage(), newData)));
+                        newData -> result.setValue(Resource.error(response.message, newData)));
             }
         });
     }
@@ -90,8 +91,8 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     }
 
     @WorkerThread
-    protected RequestType processResponse(ApiResponse<RequestType> response) {
-        return response.getBody();
+    protected RequestType processResponse(Resource<RequestType> response) {
+        return response.data;
     }
 
     @WorkerThread
@@ -106,5 +107,5 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     @NonNull
     @MainThread
-    protected abstract LiveData<ApiResponse<RequestType>> createCall();
+    protected abstract LiveData<Resource<RequestType>> createCall();
 }

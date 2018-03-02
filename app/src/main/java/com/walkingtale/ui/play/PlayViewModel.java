@@ -52,7 +52,7 @@ public class PlayViewModel extends ViewModel {
     }
 
     public LiveData<Resource<Story>> getStory(StoryKey storyKey) {
-        return storyRepository.getOneStory(storyKey);
+        return storyRepository.getOneStory(storyKey, false);
     }
 
     LiveData<Chapter> getCurrentChapter() {

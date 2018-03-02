@@ -11,7 +11,6 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.walkingtale.db.WalkingTaleDb
 import com.walkingtale.vo.Resource
-import com.walkingtale.vo.Status
 import com.walkingtale.vo.Story
 
 abstract class AbstractTask<out I, O>(val input: I,
@@ -33,8 +32,6 @@ abstract class AbstractTask<out I, O>(val input: I,
                         AWSMobileClient.getInstance().credentialsProvider,
                         ClientConfiguration())
         dynamoDBMapper = DynamoDBMapper.builder().dynamoDBClient(dynamoDBClient).build()
-
-        result.postValue(Resource(Status.LOADING, null, null))
     }
 
     override fun run() {

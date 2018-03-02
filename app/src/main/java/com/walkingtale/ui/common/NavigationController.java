@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 
 import com.walkingtale.MainActivity;
 import com.walkingtale.R;
-import com.walkingtale.ui.album.AlbumFragment;
 import com.walkingtale.ui.create.CreateFragment;
 import com.walkingtale.ui.feed.FeedFragment;
 import com.walkingtale.ui.overview.OverviewFragment;
@@ -71,14 +70,6 @@ public class NavigationController {
         PlayFragment storyPlayFragment = PlayFragment.create(story);
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToExpositionViewer(String id) {
-        AlbumFragment expositionViewerFragment = AlbumFragment.create(id);
-        fragmentManager.beginTransaction()
-                .replace(containerId, expositionViewerFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
