@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.walkingtale.MainActivity;
 import com.walkingtale.repository.StoryRepository;
+import com.walkingtale.repository.UserRepository;
 import com.walkingtale.repository.tasks.S3Args;
 import com.walkingtale.ui.common.ExampleStory;
 import com.walkingtale.util.AbsentLiveData;
@@ -34,6 +35,7 @@ import com.walkingtale.vo.Exposition;
 import com.walkingtale.vo.ExpositionType;
 import com.walkingtale.vo.Resource;
 import com.walkingtale.vo.Story;
+import com.walkingtale.vo.User;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +50,7 @@ public class CreateViewModel extends ViewModel {
 
     private final String TAG = this.getClass().getSimpleName();
     private StoryRepository storyRepository;
+    private UserRepository userRepository;
     private MutableLiveData<Story> story = null;
 
     // TODO: 11/22/17 Limit the number of expositions a user can add
@@ -57,14 +60,24 @@ public class CreateViewModel extends ViewModel {
 
 
     @Inject
-    public CreateViewModel(StoryRepository repository) {
+    public CreateViewModel(StoryRepository repository, UserRepository userRepository) {
         this.storyRepository = repository;
+        this.userRepository = userRepository;
         if (story == null) {
             this.story = new MutableLiveData<>();
             Story story = ExampleStory.Companion.getStory();
             story.username = MainActivity.getCognitoUsername();
             this.story.setValue(story);
         }
+    }
+
+    LiveData<Resource<User>> getUser() {
+        return userRepository.loadUser(MainActivity.getCognitoId());
+    }
+
+    LiveData<Resource<Void>> setStoryCreated(User user) {
+        user.createdStories.add(story.getValue().id);
+        return userRepository.putUser(user);
     }
 
     LiveData<Resource<Story>> putFileInS3(S3Args s3Args) {

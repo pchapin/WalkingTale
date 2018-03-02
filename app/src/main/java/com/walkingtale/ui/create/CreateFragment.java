@@ -232,13 +232,25 @@ public class CreateFragment extends Fragment implements
                     createViewModel.finishStoryPart2(publishSuccessful.data).observe(this, voidResource -> {
 
                         if (voidResource != null && voidResource.status == Status.SUCCESS) {
-                            Analytics.INSTANCE.logEvent(Analytics.EventType.CreatedStory, TAG);
-                            Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
-                            getActivity().onBackPressed();
+                            finishStoryHelper();
                         }
                     });
                 }
             });
+        });
+    }
+
+    private void finishStoryHelper() {
+        createViewModel.getUser().observe(this, userResource -> {
+            if (userResource != null && userResource.data != null) {
+                createViewModel.setStoryCreated(userResource.data).observe(this, voidResource -> {
+                    if (voidResource != null && voidResource.status == Status.SUCCESS) {
+                        Analytics.INSTANCE.logEvent(Analytics.EventType.CreatedStory, TAG);
+                        Toast.makeText(getContext(), "Story published successfully!", Toast.LENGTH_SHORT).show();
+                        getActivity().onBackPressed();
+                    }
+                });
+            }
         });
     }
 

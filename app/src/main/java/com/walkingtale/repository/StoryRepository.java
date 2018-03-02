@@ -24,6 +24,7 @@ import com.walkingtale.db.StoryDao;
 import com.walkingtale.db.WalkingTaleDb;
 import com.walkingtale.repository.tasks.DeleteStoryTask;
 import com.walkingtale.repository.tasks.GetAllStoriesTask;
+import com.walkingtale.repository.tasks.GetCreatedStoriesTask;
 import com.walkingtale.repository.tasks.GetOneStoryTask;
 import com.walkingtale.repository.tasks.GetPlayedStoriesTask;
 import com.walkingtale.repository.tasks.PutFileS3Task;
@@ -91,5 +92,11 @@ public class StoryRepository {
         GetPlayedStoriesTask getPlayedStoriesTask = new GetPlayedStoriesTask(user, db);
         appExecutors.networkIO().execute(getPlayedStoriesTask);
         return getPlayedStoriesTask.getResult();
+    }
+
+    public LiveData<Resource<List<Story>>> getCreatedStories(User user) {
+        GetCreatedStoriesTask getCreatedStoriesTask = new GetCreatedStoriesTask(user, db);
+        appExecutors.networkIO().execute(getCreatedStoriesTask);
+        return getCreatedStoriesTask.getResult();
     }
 }

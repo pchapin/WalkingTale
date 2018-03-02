@@ -36,6 +36,7 @@ public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<User>> user = new MutableLiveData<>();
     LiveData<Resource<List<Story>>> playedStories = new MutableLiveData<>();
+    LiveData<Resource<List<Story>>> createdStories = new MutableLiveData<>();
     private MutableLiveData<String> userId = new MutableLiveData<>();
     private StoryRepository storyRepository;
 
@@ -51,6 +52,12 @@ public class ProfileViewModel extends ViewModel {
             if (input != null && input.data != null) return repository.getPlayedStories(input.data);
             else return AbsentLiveData.create();
         });
+
+        createdStories = Transformations.switchMap(user, input -> {
+            if (input != null && input.data != null)
+                return repository.getCreatedStories(input.data);
+            else return AbsentLiveData.create();
+        });
     }
 
     void setUserId(String id) {
@@ -59,9 +66,5 @@ public class ProfileViewModel extends ViewModel {
 
     LiveData<Resource<Story>> deleteStory(Story story) {
         return storyRepository.deleteStory(story);
-    }
-
-    LiveData<Resource<List<Story>>> getPlayedStories() {
-        return storyRepository.getPlayedStories(user.getValue().data);
     }
 }

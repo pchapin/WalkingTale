@@ -60,6 +60,7 @@ public class ProfileFragment extends Fragment implements Injectable {
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentProfileBinding> binding;
     AutoClearedValue<StoryListAdapter> playedStoriesAdapter;
+    AutoClearedValue<StoryListAdapter> createdStoriesAdapter;
     File photoFile;
     private ProfileViewModel profileViewModel;
 
@@ -78,7 +79,7 @@ public class ProfileFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         profileViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel.class);
 
-        StoryListAdapter storyListAdapter = new StoryListAdapter(
+        StoryListAdapter playedStoriesAdapt = new StoryListAdapter(
                 dataBindingComponent,
                 repo -> profileViewModel.setUserId(repo.username),
                 storyToDelete -> {
@@ -86,8 +87,20 @@ public class ProfileFragment extends Fragment implements Injectable {
                     // TODO: 3/1/18 notify data set has changed
                 },
                 this);
-        binding.get().playedList.setAdapter(storyListAdapter);
-        playedStoriesAdapter = new AutoClearedValue<>(this, storyListAdapter);
+        binding.get().playedList.setAdapter(playedStoriesAdapt);
+        playedStoriesAdapter = new AutoClearedValue<>(this, playedStoriesAdapt);
+
+
+        StoryListAdapter createdStoriesAdapt = new StoryListAdapter(
+                dataBindingComponent,
+                repo -> profileViewModel.setUserId(repo.username),
+                storyToDelete -> {
+                    profileViewModel.deleteStory(storyToDelete);
+                    // TODO: 3/1/18 notify data set has changed
+                },
+                this);
+        binding.get().createdList.setAdapter(createdStoriesAdapt);
+        createdStoriesAdapter = new AutoClearedValue<>(this, createdStoriesAdapt);
 
         profileViewModel.setUserId(MainActivity.getCognitoId());
         profileViewModel.user.observe(this, userResource -> {
@@ -96,7 +109,8 @@ public class ProfileFragment extends Fragment implements Injectable {
             }
         });
 
-        initRecyclerView();
+        initPlayedStories();
+        initCreatedStories();
         initTabHost();
         profileImageListener();
     }
@@ -138,10 +152,19 @@ public class ProfileFragment extends Fragment implements Injectable {
         });
     }
 
-    private void initRecyclerView() {
+    private void initPlayedStories() {
         profileViewModel.playedStories.observe(this, result -> {
             if (result != null && result.data != null) {
                 playedStoriesAdapter.get().replace(result.data);
+            }
+            binding.get().executePendingBindings();
+        });
+    }
+
+    private void initCreatedStories() {
+        profileViewModel.createdStories.observe(this, result -> {
+            if (result != null && result.data != null) {
+                createdStoriesAdapter.get().replace(result.data);
             }
             binding.get().executePendingBindings();
         });

@@ -6,12 +6,12 @@ import com.walkingtale.vo.Status
 import com.walkingtale.vo.Story
 import com.walkingtale.vo.User
 
-class GetPlayedStoriesTask(val user: User, val db: WalkingTaleDb) : AbstractTask<User, MutableList<Story>>(user, db) {
+class GetCreatedStoriesTask(val user: User, val db: WalkingTaleDb) : AbstractTask<User, MutableList<Story>>(user, db) {
 
     override fun run() {
         val response = mutableListOf<Story>()
 
-        user.playedStories.forEach {
+        user.createdStories.forEach {
             //TODO optimize, use a single query rather than multiple loads
             response.add(dynamoDBMapper.load(Story::class.java, user.userId, it))
         }
