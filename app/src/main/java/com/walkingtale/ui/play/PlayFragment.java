@@ -26,6 +26,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -49,12 +50,10 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.ui.IconGenerator;
 import com.walkingtale.Analytics;
 import com.walkingtale.R;
 import com.walkingtale.binding.FragmentDataBindingComponent;
+import com.walkingtale.databinding.BottomSheetChapterListBinding;
 import com.walkingtale.databinding.FragmentPlayBinding;
 import com.walkingtale.di.Injectable;
 import com.walkingtale.repository.tasks.StoryKey;
@@ -68,7 +67,9 @@ import com.walkingtale.vo.Exposition;
 import com.walkingtale.vo.Status;
 import com.walkingtale.vo.Story;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -78,8 +79,7 @@ import static com.walkingtale.ui.common.FileUtilKt.getBitmapFromVectorDrawable;
 public class PlayFragment extends Fragment implements
         Injectable,
         OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener,
-        GoogleMap.OnCircleClickListener {
+        GoogleMap.OnCircleClickListener, GoogleMap.OnGroundOverlayClickListener {
 
     private static final String REPO_NAME_KEY = "repo_name";
     private static final String REPO_USER_ID_KEY = "repo_userid";
@@ -91,9 +91,12 @@ public class PlayFragment extends Fragment implements
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentPlayBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
+    BottomSheetChapterListBinding bottomSheet;
     private PlayViewModel playViewModel;
     private GoogleMap mMap;
     private FloatingActionButton nextChapterButton;
+    private ArrayList<GroundOverlay> groundOverlays = new ArrayList<>();
+    private Story story;
 
     public static PlayFragment create(Story story) {
         PlayFragment repoFragment = new PlayFragment();
@@ -137,7 +140,8 @@ public class PlayFragment extends Fragment implements
                 chapter -> {
                 });
         this.adapter = new AutoClearedValue<>(this, adapter);
-        binding.get().bottomSheetList.expositionList.setAdapter(adapter);
+        bottomSheet = binding.get().bottomSheetList;
+        bottomSheet.expositionList.setAdapter(adapter);
         nextChapterButton = binding.get().nextChapter;
 
         initCurrentChapterObserver();
@@ -151,7 +155,7 @@ public class PlayFragment extends Fragment implements
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentPlayBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_play, container, false);
         binding = new AutoClearedValue<>(this, dataBinding);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -164,45 +168,38 @@ public class PlayFragment extends Fragment implements
             if (chapter == null) return;
 
             for (Exposition exposition : chapter.getExpositions()) {
-                IconGenerator iconGenerator = new IconGenerator(getContext());
-                MarkerOptions marker = new MarkerOptions()
-                        .position(chapter.getLocation())
-                        .icon(BitmapDescriptorFactory
-                                .fromBitmap(iconGenerator.makeIcon("" + exposition.getId())));
-                mMap.addMarker(marker);
 
+                GroundOverlay groundOverlay = null;
                 switch (exposition.getType()) {
                     case TEXT:
-                        GroundOverlay textOverlay;
-                        textOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        groundOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
                                 .image(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_textsms_black_24dp)))
                                 .position(chapter.getLocation(), chapter.getRadius())
                                 .clickable(true));
                         break;
                     case AUDIO:
-                        GroundOverlay audioOverlay;
-                        audioOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        groundOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
                                 .image(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_audiotrack_black_24dp)))
                                 .position(chapter.getLocation(), chapter.getRadius())
                                 .clickable(true));
 
                         break;
                     case PICTURE:
-                        GroundOverlay pictureOverlay;
-                        pictureOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        groundOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
                                 .image(BitmapDescriptorFactory.fromResource(R.drawable.google_icon))
                                 .position(chapter.getLocation(), chapter.getRadius())
                                 .clickable(true));
                         break;
                 }
+                groundOverlays.add(groundOverlay);
             }
+
 
             Circle circle = mMap.addCircle(new CircleOptions()
                     .center(chapter.getLocation())
                     .clickable(true)
                     .radius(chapter.getRadius())
-                    .strokeColor(Color.BLUE)
-                    .fillColor(Color.RED));
+                    .strokeColor(Color.BLUE));
         });
     }
 
@@ -212,6 +209,7 @@ public class PlayFragment extends Fragment implements
             binding.get().setRepoResource(resource);
             binding.get().executePendingBindings();
             if (!playViewModel.isStorySet() && resource != null && resource.data != null) {
+                story = resource.data;
                 playViewModel.setStory(resource.data);
             }
         });
@@ -308,8 +306,8 @@ public class PlayFragment extends Fragment implements
         // Set map preferences
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
-        mMap.setOnMarkerClickListener(this);
         mMap.setMyLocationEnabled(true);
+        mMap.setOnGroundOverlayClickListener(this);
 
         // Change tilt
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -328,13 +326,26 @@ public class PlayFragment extends Fragment implements
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
-        Toast.makeText(getContext(), "marker id " + marker.getId(), Toast.LENGTH_SHORT).show();
-        return false;
+    public void onCircleClick(Circle circle) {
+        Toast.makeText(getContext(), "circle id " + circle.getId(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onCircleClick(Circle circle) {
-        Toast.makeText(getContext(), "circle id " + circle.getId(), Toast.LENGTH_SHORT).show();
+    public void onGroundOverlayClick(GroundOverlay groundOverlay) {
+        for (int i = 0; i < groundOverlays.size(); ++i) {
+            if (groundOverlays.get(i).equals(groundOverlay)) {
+                List<Chapter> chapters = story.chapters;
+                for (int chapter = 0; chapter < chapters.size(); chapter++) {
+                    for (Exposition exposition : chapters.get(chapter).getExpositions()) {
+                        if (exposition.getId() == i) {
+                            BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                            bottomSheet.expositionList.smoothScrollToPosition(chapter);
+                            return;
+                        }
+                    }
+                }
+
+            }
+        }
     }
 }

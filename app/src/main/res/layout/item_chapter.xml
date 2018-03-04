@@ -21,10 +21,6 @@
     <data>
 
         <variable
-            name="showFullName"
-            type="boolean" />
-
-        <variable
             name="chapter"
             type="com.walkingtale.vo.Chapter" />
     </data>
