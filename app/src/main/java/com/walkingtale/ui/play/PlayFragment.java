@@ -57,6 +57,7 @@ import com.walkingtale.databinding.BottomSheetChapterListBinding;
 import com.walkingtale.databinding.FragmentPlayBinding;
 import com.walkingtale.di.Injectable;
 import com.walkingtale.repository.tasks.StoryKey;
+import com.walkingtale.ui.common.BetterSnapper;
 import com.walkingtale.ui.common.ChapterAdapter;
 import com.walkingtale.ui.common.LocationLiveData;
 import com.walkingtale.ui.common.LocationUtilKt;
@@ -143,6 +144,7 @@ public class PlayFragment extends Fragment implements
         bottomSheet = binding.get().bottomSheetList;
         bottomSheet.expositionList.setAdapter(adapter);
         nextChapterButton = binding.get().nextChapter;
+        new BetterSnapper().attachToRecyclerView(bottomSheet.expositionList);
 
         initCurrentChapterObserver();
         initStoryObserver(storyKey);
@@ -344,7 +346,6 @@ public class PlayFragment extends Fragment implements
                         }
                     }
                 }
-
             }
         }
     }
