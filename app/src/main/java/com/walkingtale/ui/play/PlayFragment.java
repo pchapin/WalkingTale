@@ -50,6 +50,9 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.maps.android.SphericalUtil;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 import com.walkingtale.Analytics;
 import com.walkingtale.R;
 import com.walkingtale.binding.FragmentDataBindingComponent;
@@ -71,6 +74,8 @@ import com.walkingtale.vo.Story;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
@@ -80,7 +85,12 @@ import static com.walkingtale.ui.common.FileUtilKt.getBitmapFromVectorDrawable;
 public class PlayFragment extends Fragment implements
         Injectable,
         OnMapReadyCallback,
-        GoogleMap.OnCircleClickListener, GoogleMap.OnGroundOverlayClickListener {
+        GoogleMap.OnCircleClickListener,
+        GoogleMap.OnGroundOverlayClickListener,
+        ClusterManager.OnClusterClickListener<Exposition>,
+        ClusterManager.OnClusterInfoWindowClickListener<Exposition>,
+        ClusterManager.OnClusterItemClickListener<Exposition>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Exposition> {
 
     private static final String REPO_NAME_KEY = "repo_name";
     private static final String REPO_USER_ID_KEY = "repo_userid";
@@ -93,11 +103,13 @@ public class PlayFragment extends Fragment implements
     AutoClearedValue<FragmentPlayBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
     BottomSheetChapterListBinding bottomSheet;
+    ClusterManager<Exposition> mClusterManager;
     private PlayViewModel playViewModel;
     private GoogleMap mMap;
     private FloatingActionButton nextChapterButton;
     private ArrayList<GroundOverlay> groundOverlays = new ArrayList<>();
     private Story story;
+    private Random mRandom = new Random(1984);
 
     public static PlayFragment create(Story story) {
         PlayFragment repoFragment = new PlayFragment();
@@ -194,7 +206,14 @@ public class PlayFragment extends Fragment implements
                         break;
                 }
                 groundOverlays.add(groundOverlay);
+
+                exposition.setLatLng(SphericalUtil.computeOffset(
+                        chapter.getLocation(),
+                        chapter.getRadius(),
+                        ThreadLocalRandom.current().nextDouble() * 360));
+                mClusterManager.addItem(exposition);
             }
+            mClusterManager.cluster();
 
 
             Circle circle = mMap.addCircle(new CircleOptions()
@@ -204,6 +223,7 @@ public class PlayFragment extends Fragment implements
                     .strokeColor(Color.BLUE));
         });
     }
+
 
     private void initStoryObserver(StoryKey storyKey) {
         playViewModel.getStory(storyKey).observe(this, resource -> {
@@ -325,6 +345,17 @@ public class PlayFragment extends Fragment implements
         mUiSettings.setTiltGesturesEnabled(false);
         mUiSettings.setRotateGesturesEnabled(false);
         mUiSettings.setCompassEnabled(false);
+
+
+        mClusterManager = new ClusterManager<>(getContext(), mMap);
+//        mClusterManager.setRenderer(new ExpositionRenderer());
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
     }
 
     @Override
@@ -348,5 +379,25 @@ public class PlayFragment extends Fragment implements
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Exposition> cluster) {
+        return false;
+    }
+
+    @Override
+    public void onClusterInfoWindowClick(Cluster<Exposition> cluster) {
+
+    }
+
+    @Override
+    public boolean onClusterItemClick(Exposition exposition) {
+        return false;
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(Exposition exposition) {
+
     }
 }
