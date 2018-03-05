@@ -80,7 +80,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
@@ -93,6 +92,8 @@ public class PlayFragment extends Fragment implements
 
     private static final String REPO_NAME_KEY = "repo_name";
     private static final String REPO_USER_ID_KEY = "repo_userid";
+    private static final int MARKER_HEIGHT = 100;
+    private static final int MARKER_WIDTH = 100;
     private static final String TAG = PlayFragment.class.getSimpleName();
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -180,37 +181,38 @@ public class PlayFragment extends Fragment implements
             if (chapter == null) return;
             IconGenerator iconGenerator = new IconGenerator(getContext());
             ImageView imageView = new ImageView(getContext());
-            final MarkerOptions[] markerOptions = new MarkerOptions[1];
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_WIDTH, MARKER_HEIGHT));
+            MarkerOptions markerOptions;
 
             for (Exposition exposition : chapter.getExpositions()) {
 
                 exposition.setLatLng(SphericalUtil.computeOffset(
                         chapter.getLocation(),
                         chapter.getRadius(),
-                        ThreadLocalRandom.current().nextDouble() * 360));
+                        360 / chapter.getExpositions().size() * (exposition.getId() + 1)));
 
                 switch (exposition.getType()) {
                     case TEXT:
                         imageView.setImageResource(R.drawable.ic_textsms_black_24dp);
                         iconGenerator.setContentView(imageView);
-                        markerOptions[0] = new MarkerOptions()
+                        markerOptions = new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                 .position(exposition.getPosition());
-                        markers.add(mMap.addMarker(markerOptions[0]));
+                        markers.add(mMap.addMarker(markerOptions));
                         break;
                     case AUDIO:
                         imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp);
                         iconGenerator.setContentView(imageView);
-                        markerOptions[0] = new MarkerOptions()
+                        markerOptions = new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                 .position(exposition.getPosition());
-                        markers.add(mMap.addMarker(markerOptions[0]));
+                        markers.add(mMap.addMarker(markerOptions));
                         break;
                     case PICTURE:
                         Glide.with(getContext())
                                 .asBitmap()
                                 .load(ConstantsKt.getS3HostName() + exposition.getContent())
-                                .into(new SimpleTarget<Bitmap>(100, 100) {
+                                .into(new SimpleTarget<Bitmap>(MARKER_WIDTH, MARKER_HEIGHT) {
                                     @Override
                                     public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                                         imageView.setImageBitmap(resource);
