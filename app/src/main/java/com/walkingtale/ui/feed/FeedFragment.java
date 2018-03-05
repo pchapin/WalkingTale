@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.walkingtale.R;
 import com.walkingtale.binding.FragmentDataBindingComponent;
 import com.walkingtale.databinding.FragmentFeedBinding;
 import com.walkingtale.di.Injectable;
+import com.walkingtale.ui.common.CirclePagerIndicatorDecoration;
 import com.walkingtale.ui.common.NavigationController;
 import com.walkingtale.ui.common.PermissionManager;
 import com.walkingtale.ui.common.StoryListAdapter;
@@ -94,6 +96,18 @@ public class FeedFragment extends Fragment implements Injectable {
         }, this);
 
         binding.get().repoList.setAdapter(rvAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
+        binding.get().repoList.setLayoutManager(linearLayoutManager);
+        binding.get().repoList.addItemDecoration(new CirclePagerIndicatorDecoration());
+
+
+        binding.get().topRatedList.setAdapter(rvAdapter);
+        binding.get().topRatedList.setLayoutManager(linearLayoutManager);
+
+
+        binding.get().userList.setAdapter(rvAdapter);
+        binding.get().userList.setLayoutManager(linearLayoutManager);
+
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> feedViewModel.setShouldFetch());
         swipeRefreshListener();
