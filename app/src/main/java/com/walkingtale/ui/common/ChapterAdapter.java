@@ -49,7 +49,10 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBin
             if (chapter != null && chapterClickBack != null) {
                 chapterClickBack.onClick(chapter);
             }
+            new BetterSnapper().attachToRecyclerView(binding.expositionList);
+
         });
+        new BetterSnapper().attachToRecyclerView(binding.expositionList);
         return binding;
     }
 
@@ -62,7 +65,6 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBin
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
         binding.expositionList.setLayoutManager(linearLayoutManager);
         expositionAdapter.replace(binding.getChapter().getExpositions());
-        new BetterSnapper().attachToRecyclerView(binding.expositionList);
     }
 
     @Override

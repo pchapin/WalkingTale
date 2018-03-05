@@ -186,10 +186,11 @@ public class PlayFragment extends Fragment implements
 
             for (Exposition exposition : chapter.getExpositions()) {
 
-                exposition.setLatLng(SphericalUtil.computeOffset(
+                LatLng expositionPosition = SphericalUtil.computeOffset(
                         chapter.getLocation(),
                         chapter.getRadius(),
-                        360 / chapter.getExpositions().size() * (exposition.getId() + 1)));
+                        360 / chapter.getExpositions().size() * (exposition.getId() + 1));
+
 
                 switch (exposition.getType()) {
                     case TEXT:
@@ -197,7 +198,7 @@ public class PlayFragment extends Fragment implements
                         iconGenerator.setContentView(imageView);
                         markerOptions = new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(exposition.getPosition());
+                                .position(expositionPosition);
                         markers.add(mMap.addMarker(markerOptions));
                         break;
                     case AUDIO:
@@ -205,7 +206,7 @@ public class PlayFragment extends Fragment implements
                         iconGenerator.setContentView(imageView);
                         markerOptions = new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(exposition.getPosition());
+                                .position(expositionPosition);
                         markers.add(mMap.addMarker(markerOptions));
                         break;
                     case PICTURE:
@@ -219,7 +220,7 @@ public class PlayFragment extends Fragment implements
                                         iconGenerator.setContentView(imageView);
                                         MarkerOptions markerOptions = new MarkerOptions()
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                                .position(exposition.getPosition());
+                                                .position(expositionPosition);
                                         markers.add(mMap.addMarker(markerOptions));
                                     }
                                 });
