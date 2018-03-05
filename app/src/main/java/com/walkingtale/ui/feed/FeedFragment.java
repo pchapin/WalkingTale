@@ -96,17 +96,19 @@ public class FeedFragment extends Fragment implements Injectable {
         }, this);
 
         binding.get().repoList.setAdapter(rvAdapter);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
         binding.get().repoList.setLayoutManager(linearLayoutManager);
         binding.get().repoList.addItemDecoration(new CirclePagerIndicatorDecoration());
 
 
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
         binding.get().topRatedList.setAdapter(rvAdapter);
-        binding.get().topRatedList.setLayoutManager(linearLayoutManager);
+        binding.get().topRatedList.setLayoutManager(linearLayoutManager2);
 
-
+        LinearLayoutManager linearLayoutManager3 = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
         binding.get().userList.setAdapter(rvAdapter);
-        binding.get().userList.setLayoutManager(linearLayoutManager);
+        binding.get().userList.setLayoutManager(linearLayoutManager3);
 
         adapter = new AutoClearedValue<>(this, rvAdapter);
         binding.get().setCallback(() -> feedViewModel.setShouldFetch());

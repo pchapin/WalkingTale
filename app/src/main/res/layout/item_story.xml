@@ -63,7 +63,7 @@
                 android:contentDescription="Story Image"
                 android:maxHeight="200dp"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{repo.story_image}"
+                app:imageUrl="@{story.story_image}"
                 tools:src="@mipmap/ic_launcher" />
 
             <android.support.constraint.ConstraintLayout
@@ -77,7 +77,7 @@
                     android:layout_marginBottom="4dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="20dp"
-                    android:text="@{repo.name}"
+                    android:text="@{story.storyName}"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_weight="1"
                         android:paddingBottom="8dp"
-                        android:text="@{repo.username}"
+                        android:text="@{story.username}"
                         android:textStyle="bold"
                         tools:text="author" />
 
@@ -114,7 +114,7 @@
                         android:ellipsize="middle"
                         android:paddingBottom="8dp"
                         android:singleLine="true"
-                        android:text="@{repo.genre}"
+                        android:text="@{story.genre}"
                         android:textStyle="bold"
                         tools:text="genre" />
 
@@ -124,10 +124,20 @@
                     android:id="@+id/desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{repo.description}"
+                    android:text="@{story.description}"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="60dp"
                     tools:text="this is some description more description more description" />
+
+                <ImageButton
+                    android:id="@+id/story_menu_button"
+                    android:layout_width="52dp"
+                    android:layout_height="48dp"
+                    android:background="@color/white"
+                    android:contentDescription="Story menu"
+                    android:src="@drawable/ic_more_vert_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
