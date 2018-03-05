@@ -21,6 +21,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -33,8 +34,12 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,16 +50,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.GroundOverlay;
-import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.ui.IconGenerator;
 import com.walkingtale.Analytics;
 import com.walkingtale.R;
+import com.walkingtale.aws.ConstantsKt;
 import com.walkingtale.binding.FragmentDataBindingComponent;
 import com.walkingtale.databinding.BottomSheetChapterListBinding;
 import com.walkingtale.databinding.FragmentPlayBinding;
@@ -79,18 +84,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
-import static com.walkingtale.ui.common.FileUtilKt.getBitmapFromVectorDrawable;
-
 
 public class PlayFragment extends Fragment implements
         Injectable,
         OnMapReadyCallback,
         GoogleMap.OnCircleClickListener,
-        GoogleMap.OnGroundOverlayClickListener,
-        ClusterManager.OnClusterClickListener<Exposition>,
-        ClusterManager.OnClusterInfoWindowClickListener<Exposition>,
-        ClusterManager.OnClusterItemClickListener<Exposition>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<Exposition> {
+        GoogleMap.OnMarkerClickListener {
 
     private static final String REPO_NAME_KEY = "repo_name";
     private static final String REPO_USER_ID_KEY = "repo_userid";
@@ -103,11 +102,10 @@ public class PlayFragment extends Fragment implements
     AutoClearedValue<FragmentPlayBinding> binding;
     AutoClearedValue<ChapterAdapter> adapter;
     BottomSheetChapterListBinding bottomSheet;
-    ClusterManager<Exposition> mClusterManager;
     private PlayViewModel playViewModel;
     private GoogleMap mMap;
     private FloatingActionButton nextChapterButton;
-    private ArrayList<GroundOverlay> groundOverlays = new ArrayList<>();
+    private ArrayList<Marker> markers = new ArrayList<>();
     private Story story;
     private Random mRandom = new Random(1984);
 
@@ -180,41 +178,52 @@ public class PlayFragment extends Fragment implements
     private void initCurrentChapterObserver() {
         playViewModel.getCurrentChapter().observe(this, chapter -> {
             if (chapter == null) return;
+            IconGenerator iconGenerator = new IconGenerator(getContext());
+            ImageView imageView = new ImageView(getContext());
+            final MarkerOptions[] markerOptions = new MarkerOptions[1];
 
             for (Exposition exposition : chapter.getExpositions()) {
-
-                GroundOverlay groundOverlay = null;
-                switch (exposition.getType()) {
-                    case TEXT:
-                        groundOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
-                                .image(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_textsms_black_24dp)))
-                                .position(chapter.getLocation(), chapter.getRadius())
-                                .clickable(true));
-                        break;
-                    case AUDIO:
-                        groundOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
-                                .image(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_audiotrack_black_24dp)))
-                                .position(chapter.getLocation(), chapter.getRadius())
-                                .clickable(true));
-
-                        break;
-                    case PICTURE:
-                        groundOverlay = mMap.addGroundOverlay(new GroundOverlayOptions()
-                                .image(BitmapDescriptorFactory.fromResource(R.drawable.google_icon))
-                                .position(chapter.getLocation(), chapter.getRadius())
-                                .clickable(true));
-                        break;
-                }
-                groundOverlays.add(groundOverlay);
 
                 exposition.setLatLng(SphericalUtil.computeOffset(
                         chapter.getLocation(),
                         chapter.getRadius(),
                         ThreadLocalRandom.current().nextDouble() * 360));
-                mClusterManager.addItem(exposition);
-            }
-            mClusterManager.cluster();
 
+                switch (exposition.getType()) {
+                    case TEXT:
+                        imageView.setImageResource(R.drawable.ic_textsms_black_24dp);
+                        iconGenerator.setContentView(imageView);
+                        markerOptions[0] = new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                .position(exposition.getPosition());
+                        markers.add(mMap.addMarker(markerOptions[0]));
+                        break;
+                    case AUDIO:
+                        imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp);
+                        iconGenerator.setContentView(imageView);
+                        markerOptions[0] = new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                .position(exposition.getPosition());
+                        markers.add(mMap.addMarker(markerOptions[0]));
+                        break;
+                    case PICTURE:
+                        Glide.with(getContext())
+                                .asBitmap()
+                                .load(ConstantsKt.getS3HostName() + exposition.getContent())
+                                .into(new SimpleTarget<Bitmap>(100, 100) {
+                                    @Override
+                                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                        imageView.setImageBitmap(resource);
+                                        iconGenerator.setContentView(imageView);
+                                        MarkerOptions markerOptions = new MarkerOptions()
+                                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                                .position(exposition.getPosition());
+                                        markers.add(mMap.addMarker(markerOptions));
+                                    }
+                                });
+                        break;
+                }
+            }
 
             Circle circle = mMap.addCircle(new CircleOptions()
                     .center(chapter.getLocation())
@@ -329,7 +338,7 @@ public class PlayFragment extends Fragment implements
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
         mMap.setMyLocationEnabled(true);
-        mMap.setOnGroundOverlayClickListener(this);
+        mMap.setOnMarkerClickListener(this);
 
         // Change tilt
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -345,17 +354,6 @@ public class PlayFragment extends Fragment implements
         mUiSettings.setTiltGesturesEnabled(false);
         mUiSettings.setRotateGesturesEnabled(false);
         mUiSettings.setCompassEnabled(false);
-
-
-        mClusterManager = new ClusterManager<>(getContext(), mMap);
-//        mClusterManager.setRenderer(new ExpositionRenderer());
-        mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterInfoWindowClickListener(this);
-        mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
     }
 
     @Override
@@ -364,40 +362,21 @@ public class PlayFragment extends Fragment implements
     }
 
     @Override
-    public void onGroundOverlayClick(GroundOverlay groundOverlay) {
-        for (int i = 0; i < groundOverlays.size(); ++i) {
-            if (groundOverlays.get(i).equals(groundOverlay)) {
+    public boolean onMarkerClick(Marker marker) {
+        for (int i = 0; i < markers.size(); ++i) {
+            if (markers.get(i).equals(marker)) {
                 List<Chapter> chapters = story.chapters;
                 for (int chapter = 0; chapter < chapters.size(); chapter++) {
                     for (Exposition exposition : chapters.get(chapter).getExpositions()) {
                         if (exposition.getId() == i) {
                             BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
                             bottomSheet.expositionList.smoothScrollToPosition(chapter);
-                            return;
+                            return true;
                         }
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public boolean onClusterClick(Cluster<Exposition> cluster) {
         return false;
-    }
-
-    @Override
-    public void onClusterInfoWindowClick(Cluster<Exposition> cluster) {
-
-    }
-
-    @Override
-    public boolean onClusterItemClick(Exposition exposition) {
-        return false;
-    }
-
-    @Override
-    public void onClusterItemInfoWindowClick(Exposition exposition) {
-
     }
 }
