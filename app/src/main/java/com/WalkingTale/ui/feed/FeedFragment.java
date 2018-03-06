@@ -21,6 +21,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.WalkingTale.MainActivity;
 import com.WalkingTale.R;
 import com.WalkingTale.binding.FragmentDataBindingComponent;
 import com.WalkingTale.databinding.FragmentFeedBinding;
@@ -66,10 +66,8 @@ public class FeedFragment extends Fragment implements Injectable {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentFeedBinding dataBinding = DataBindingUtil
-                .inflate(inflater, R.layout.fragment_feed, container, false,
-                        dataBindingComponent);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        FragmentFeedBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_feed, container, false, dataBindingComponent);
         binding = new AutoClearedValue<>(this, dataBinding);
         return dataBinding.getRoot();
     }
@@ -80,11 +78,10 @@ public class FeedFragment extends Fragment implements Injectable {
         feedViewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel.class);
         toolbar = binding.get().toolbar;
         fab = binding.get().feedFloatingActionButton;
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setSupportActionBar(toolbar);
         menuClickListener();
         initRecyclerView();
         fabListener();
+        navButtonListener();
 
         StoryListAdapter rvAdapter = new StoryListAdapter(dataBindingComponent, story -> {
             if (PermissionManager.checkLocationPermission(getActivity())) {
@@ -119,6 +116,12 @@ public class FeedFragment extends Fragment implements Injectable {
         binding.get().swiperefresh.setOnRefreshListener(() -> {
             feedViewModel.setShouldFetch();
             binding.get().swiperefresh.setRefreshing(false);
+        });
+    }
+
+    private void navButtonListener() {
+        binding.get().feedMenuButton.setOnClickListener(v -> {
+            binding.get().drawerLayout.openDrawer(binding.get().navView);
         });
     }
 
