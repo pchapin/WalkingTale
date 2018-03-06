@@ -27,7 +27,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ import android.widget.Toast;
 import com.WalkingTale.Analytics;
 import com.WalkingTale.R;
 import com.WalkingTale.binding.FragmentDataBindingComponent;
+import com.WalkingTale.databinding.BottomSheetChapterListBinding;
 import com.WalkingTale.databinding.FragmentCreateBinding;
 import com.WalkingTale.di.Injectable;
 import com.WalkingTale.ui.audiorecord.AudioRecordActivity;
@@ -331,6 +334,18 @@ public class CreateFragment extends Fragment implements
                 adapter.get().replace(listResource.chapters);
             } else {
                 adapter.get().replace(Collections.emptyList());
+            }
+        });
+
+        BottomSheetChapterListBinding bottomSheet = binding.get().bottomSheetList;
+        bottomSheet.expositionList.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+
+                if (velocityY < 0 && bottomSheet.expositionList.getChildAt(0).getTop() == 0) {
+                    BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+                return false;
             }
         });
     }

@@ -31,6 +31,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -281,6 +282,17 @@ public class PlayFragment extends Fragment implements
                 adapter.get().replace(listResource);
             } else {
                 adapter.get().replace(Collections.emptyList());
+            }
+        });
+
+        bottomSheet.expositionList.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+
+                if (velocityY < 0 && bottomSheet.expositionList.getChildAt(0).getTop() == 0) {
+                    BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+                return false;
             }
         });
     }
