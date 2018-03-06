@@ -269,7 +269,6 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/ic_chrome_reader_mode_black_36dp"
-            app:layout_anchor="@id/repo_list"
             app:layout_anchorGravity="bottom|right|end" />
 
     </android.support.design.widget.CoordinatorLayout>
