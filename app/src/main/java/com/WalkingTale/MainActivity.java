@@ -31,7 +31,6 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     ViewModelProvider.Factory viewModelFactory;
     Dialog playServicesErrorDialog;
     private MainViewModel mainViewModel;
-    private FirebaseAnalytics analytics;
 
     public static String getCognitoId() {
         return IdentityManager.getDefaultIdentityManager().getCachedUserID();

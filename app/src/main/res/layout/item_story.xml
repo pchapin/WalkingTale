@@ -35,20 +35,6 @@
         android:layout_height="wrap_content"
         app:cardUseCompatPadding="true">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#000000" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="2dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="2dp"
-            android:background="#FFFFFF" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -74,9 +60,8 @@
                     android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
                     android:text="@{story.storyName}"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -84,49 +69,45 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="story name" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/desc">
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="8dp"
+                    android:text="@{story.username}"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/genre"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="author" />
 
-                    <TextView
-                        android:id="@+id/author"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:paddingBottom="8dp"
-                        android:text="@{story.username}"
-                        android:textStyle="bold"
-                        tools:text="author" />
+                <TextView
+                    android:id="@+id/genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:paddingBottom="8dp"
+                    android:singleLine="true"
+                    android:text="@{story.genre}"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/name"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="genre" />
 
-                    <TextView
-                        android:id="@+id/genre"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginStart="100dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:ellipsize="middle"
-                        android:paddingBottom="8dp"
-                        android:singleLine="true"
-                        android:text="@{story.genre}"
-                        android:textStyle="bold"
-                        tools:text="genre" />
-
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="@{story.description}"
-                    tools:layout_editor_absoluteX="16dp"
-                    tools:layout_editor_absoluteY="60dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name"
                     tools:text="this is some description more description more description" />
 
                 <ImageButton
