@@ -56,6 +56,7 @@ import com.WalkingTale.vo.Exposition;
 import com.WalkingTale.vo.Status;
 import com.WalkingTale.vo.Story;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.CameraUpdate;
@@ -213,6 +214,7 @@ public class PlayFragment extends Fragment implements
                         Glide.with(getContext())
                                 .asBitmap()
                                 .load(ConstantsKt.getS3HostName() + exposition.getContent())
+                                .apply(new RequestOptions().centerCrop())
                                 .into(new SimpleTarget<Bitmap>(MARKER_WIDTH, MARKER_HEIGHT) {
                                     @Override
                                     public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
