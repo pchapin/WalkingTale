@@ -15,14 +15,14 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+//apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "com.walkingtale"
+        applicationId "com.WalkingTale"
         // Note the only reason we are using such a high minSdkVersion is that
         // the aws auth ui requires it, if we used a different sign in solution
         // we could knock the min version down a few
@@ -134,4 +134,4 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 }
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'

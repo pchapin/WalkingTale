@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 
 import com.WalkingTale.ui.common.NavigationController;
@@ -65,7 +66,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     public static String getCognitoUsername() {
-        return new JWT(getCognitoToken()).getClaim("cognito:username").asString();
+        Log.i(MainActivity.class.getSimpleName(), new JWT(getCognitoToken()).toString());
+        String username = new JWT(getCognitoToken()).getClaim("cognito:username").asString();
+        if (username == null) {
+            return new JWT(getCognitoToken()).getClaim("given_name").asString();
+        } else {
+            return username;
+        }
     }
 
     @Override
