@@ -23,6 +23,7 @@ import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -76,25 +77,26 @@ public class OverviewFragment extends Fragment implements Injectable {
         if (args != null && args.containsKey(REPO_NAME_KEY) && args.containsKey(REPO_USER_KEY)) {
             overviewViewModel.getStory(new StoryKey(args.getString(REPO_USER_KEY), args.getString(REPO_NAME_KEY))).observe(this, resource -> {
                 Log.i(TAG, "" + resource);
-                if (resource != null) {
+                if (resource != null && resource.data != null) {
                     binding.get().setStory(resource.data);
                     story = resource.data;
                     binding.get().setRepoResource(resource);
                     binding.get().executePendingBindings();
+                    binding.get().toolbar.setTitle(story.storyName);
 
-                    if (MainActivity.DEBUG_MODE == MainActivity.DEBUG_STATE.PLAY && resource.data != null) {
+                    if (MainActivity.DEBUG_MODE == MainActivity.DEBUG_STATE.PLAY) {
                         navigationController.navigateToStoryPlay(resource.data);
                     }
                 }
             });
         }
 
-        initStartStoryListener();
         initStoryLocationListener();
+        fabListener();
     }
 
-    private void initStartStoryListener() {
-        binding.get().startStoryButton.setOnClickListener((v) -> {
+    private void fabListener() {
+        binding.get().overviewFab.setOnClickListener(v -> {
             navigationController.navigateToStoryPlay(story);
         });
     }
@@ -111,7 +113,7 @@ public class OverviewFragment extends Fragment implements Injectable {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         FragmentOverviewBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_overview, container, false, dataBindingComponent);

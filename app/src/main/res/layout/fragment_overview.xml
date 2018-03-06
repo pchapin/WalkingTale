@@ -34,41 +34,127 @@
 
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@android:color/background_light"
+        android:fitsSystemWindows="true">
 
-
-        <ScrollView
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="300dp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 
-            <LinearLayout
-                android:id="@+id/header"
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                app:visibleGone="@{story != null}"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="154dp">
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorPrimary"
+                app:expandedTitleMarginEnd="64dp"
+                app:expandedTitleMarginStart="48dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
 
                 <ImageView
-                    android:id="@+id/avatar"
+                    android:id="@+id/backdrop"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="match_parent"
                     android:adjustViewBounds="false"
                     android:contentDescription="@string/a11y_user_photo"
                     android:cropToPadding="false"
-                    android:hapticFeedbackEnabled="false"
+                    android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
                     app:civ_border_color="#000000"
                     app:civ_border_width="2dp"
                     app:imageUrl="@{story.story_image}"
-                    tools:src="@color/alert" />
+                    app:layout_collapseMode="parallax"
+                    tools:src="@drawable/google_icon" />
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/story_location_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="Story Location"
+                    android:src="@drawable/ic_map_black_24dp" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@{`Duration: ` + story.duration}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{story != null}"
+                    tools:text="duration" />
+
+                <TextView
+                    android:id="@+id/tags"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{`Tags: ` + story.tags}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{story != null}"
+                    tools:text="tags" />
+
+                <TextView
+                    android:id="@+id/genre"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{`Genre: ` + story.genre}"
+                    android:textSize="24sp"
+                    app:visibleGone="@{story != null}"
+                    tools:text="genre" />
+
+                <TextView
+                    android:id="@+id/description"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
+                    android:text="@{story.description}"
+                    android:textSize="20sp"
+                    app:visibleGone="@{story != null}"
+                    tools:text="description of the story" />
 
                 <RatingBar
                     android:id="@+id/rating"
@@ -107,87 +193,18 @@
                     app:visibleGone="@{story != null}"
                     tools:text="author" />
 
-                <TextView
-                    android:id="@+id/description"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/open_sans"
-                    android:text="@{story.description}"
-                    android:textSize="20sp"
-                    app:visibleGone="@{story != null}"
-                    tools:text="description of the story" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/genre"
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="@font/open_sans"
-                        android:text="@{`Genre: ` + story.genre}"
-                        android:textSize="24sp"
-                        app:visibleGone="@{story != null}"
-                        tools:text="genre" />
-
-                    <TextView
-                        android:id="@+id/tags"
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="@font/open_sans"
-                        android:text="@{`Tags: ` + story.tags}"
-                        android:textSize="24sp"
-                        app:visibleGone="@{story != null}"
-                        tools:text="tags" />
-
-                    <TextView
-                        android:id="@+id/duration"
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="5dp"
-                        android:text="@{`Duration: ` + story.duration}"
-                        android:textSize="24sp"
-                        app:visibleGone="@{story != null}"
-                        tools:text="duration" />
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <Button
-                        android:id="@+id/start_story_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Start Story" />
-
-                    <Button
-                        android:id="@+id/story_location_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Story Location" />
-                </LinearLayout>
             </LinearLayout>
-        </ScrollView>
-    </android.support.constraint.ConstraintLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/overview_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_chevron_right_black_24dp"
+            app:layout_anchor="@id/appbar"
+            app:layout_anchorGravity="bottom|right|end" />
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
