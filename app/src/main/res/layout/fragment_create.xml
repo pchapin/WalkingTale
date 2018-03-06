@@ -19,21 +19,21 @@
 
     <data>
 
-        <import type="com.walkingtale.vo.Status" />
+        <import type="com.WalkingTale.vo.Status" />
 
-        <import type="com.walkingtale.vo.Resource" />
+        <import type="com.WalkingTale.vo.Resource" />
 
         <variable
             name="story"
-            type="com.walkingtale.vo.Story" />
+            type="com.WalkingTale.vo.Story" />
 
         <variable
             name="contributorsStatus"
-            type="com.walkingtale.vo.Status" />
+            type="com.WalkingTale.vo.Status" />
 
         <variable
             name="retryCallback"
-            type="com.walkingtale.ui.common.RetryCallback" />
+            type="com.WalkingTale.ui.common.RetryCallback" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
