@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 
 import com.WalkingTale.ui.common.NavigationController;
@@ -43,6 +42,8 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
     public static final DEBUG_STATE DEBUG_MODE = DEBUG_STATE.OFF;
+    public static final String SP_USER_ID_KEY = "SP_USER_ID_KEY";
+    public static final String SP_USERNAME_KEY = "SP_USERNAME_KEY";
     private final String TAG = this.getClass().getSimpleName();
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
@@ -54,22 +55,16 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private MainViewModel mainViewModel;
     private FirebaseAnalytics analytics;
 
-    public static String getCognitoToken() {
-        return IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
-    }
-
     public static String getCognitoId() {
-//        if (IdentityManager.getDefaultIdentityManager().areCredentialsExpired()) {
-//            IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().refreshToken();
-//        }
         return IdentityManager.getDefaultIdentityManager().getCachedUserID();
     }
 
     public static String getCognitoUsername() {
-        Log.i(MainActivity.class.getSimpleName(), new JWT(getCognitoToken()).toString());
-        String username = new JWT(getCognitoToken()).getClaim("cognito:username").asString();
+        String cognitoToken = IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken();
+        JWT jwt = new JWT(cognitoToken);
+        String username = jwt.getClaim("cognito:username").asString();
         if (username == null) {
-            return new JWT(getCognitoToken()).getClaim("given_name").asString();
+            return jwt.getClaim("given_name").asString();
         } else {
             return username;
         }
