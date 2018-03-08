@@ -21,10 +21,12 @@ import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import com.MapPost.db.AppDatabase
+import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -52,6 +54,7 @@ class MainActivity :
     internal var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
     lateinit var roomDatabase: AppDatabase
+    private lateinit var location: Location
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +64,13 @@ class MainActivity :
         mapFragment.getMapAsync(this)
         Analytics.init(this)
         userSetup(savedInstanceState)
+        locationListener()
+    }
+
+    private fun locationListener() {
+        LocationLiveData(this).observe(this, Observer {
+            if (it != null) location = it
+        })
     }
 
     /**
@@ -68,7 +78,6 @@ class MainActivity :
      * Put user if they do not exist
      */
     private fun userSetup(savedInstanceState: Bundle?) {
-
         mainViewModel.getUser(cognitoId).observe(this, Observer { userResource ->
             if (userResource != null) {
                 when (userResource.status) {
@@ -99,6 +108,8 @@ class MainActivity :
                     Status.SUCCESS -> {
                         Analytics.logEvent(Analytics.EventType.CreatedUser, TAG)
                     }
+                    Status.ERROR -> TODO()
+                    Status.LOADING -> TODO()
                 }
             }
         })
@@ -196,7 +207,11 @@ class MainActivity :
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
-        mMap.isMyLocationEnabled = true
+        if (PermissionManager.checkLocationPermission(this)) {
+            mMap.isMyLocationEnabled = true
+        } else {
+//            finish()
+        }
         mMap.setOnMarkerClickListener(this)
 
         // Change tilt
@@ -217,8 +232,6 @@ class MainActivity :
 
     companion object {
         val DEBUG_MODE = DEBUG_STATE.OFF
-        val SP_USER_ID_KEY = "SP_USER_ID_KEY"
-        val SP_USERNAME_KEY = "SP_USERNAME_KEY"
 
         val cognitoId: String
             get() = IdentityManager.getDefaultIdentityManager().cachedUserID
