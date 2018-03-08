@@ -19,13 +19,11 @@ package com.MapPost
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import com.MapPost.db.AppDatabase
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
@@ -40,6 +38,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
+import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 import java.util.*
 
 
@@ -50,21 +50,40 @@ class MainActivity :
 
     private val TAG = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
-    internal var viewModelFactory: ViewModelProvider.Factory? = null
     internal var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
-    lateinit var roomDatabase: AppDatabase
     private lateinit var location: Location
+    private var file: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         Analytics.init(this)
         userSetup(savedInstanceState)
         locationListener()
+        cameraButton()
+        audioButton()
+        textButton()
+    }
+
+    private fun textButton() {
+        text_button.setOnClickListener({
+        })
+    }
+
+    private fun audioButton() {
+        audio_button.setOnClickListener({
+
+        })
+    }
+
+    private fun cameraButton() {
+        camera_button.setOnClickListener({
+
+        })
     }
 
     private fun locationListener() {
