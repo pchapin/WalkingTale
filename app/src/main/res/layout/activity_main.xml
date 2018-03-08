@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -9,7 +10,7 @@
             type="com.MapPost.vo.User" />
     </data>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -22,27 +23,39 @@
             android:layout_height="match_parent"
             tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
-        <TextView
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/audio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="hello" />
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_audiotrack_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/camera_button"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/user_name_text_view"
-            android:layout_width="match_parent"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/camera_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@{user.userName}"
-            tools:text="Name" />
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_camera_alt_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/user_age_text_view"
-            android:layout_width="match_parent"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/text_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@{user.userId}"
-            tools:text="XX" />
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_textsms_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/camera_button" />
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </layout>
