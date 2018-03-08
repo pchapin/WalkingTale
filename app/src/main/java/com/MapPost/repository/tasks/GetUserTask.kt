@@ -1,12 +1,12 @@
 package com.MapPost.repository.tasks
 
-import com.MapPost.db.WalkingTaleDb
+import com.MapPost.db.AppDatabase
 import com.MapPost.vo.Resource
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
 
-class GetUserTask(val userId: String, val db: WalkingTaleDb) : AbstractTask<String, User>(userId, db) {
+class GetUserTask(val userId: String, val db: AppDatabase) : AbstractTask<String, User>(userId, db) {
 
     override fun run() {
         val response = dynamoDBMapper.scan(User::class.java, DynamoDBScanExpression())

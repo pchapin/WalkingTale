@@ -17,10 +17,9 @@
 package com.MapPost.repository
 
 import android.arch.lifecycle.LiveData
-
 import com.MapPost.AppExecutors
+import com.MapPost.db.AppDatabase
 import com.MapPost.db.UserDao
-import com.MapPost.db.WalkingTaleDb
 import com.MapPost.repository.tasks.GetUserTask
 import com.MapPost.repository.tasks.PutUserTask
 import com.MapPost.vo.Resource
@@ -29,7 +28,7 @@ import com.MapPost.vo.User
 /**
  * Repository that handles User objects.
  */
-class UserRepository internal constructor(private val appExecutors: AppExecutors, private val userDao: UserDao, private val db: WalkingTaleDb) {
+class UserRepository internal constructor(private val appExecutors: AppExecutors, private val userDao: UserDao, private val db: AppDatabase) {
     private val TAG = this.javaClass.simpleName
 
     fun loadUser(userId: String): LiveData<Resource<User>> {

@@ -17,11 +17,11 @@
 package com.MapPost.repository
 
 import com.MapPost.AppExecutors
+import com.MapPost.db.AppDatabase
 import com.MapPost.db.PostDao
-import com.MapPost.db.WalkingTaleDb
 
 
-class PostRepository(private val appExecutors: AppExecutors, private val db: WalkingTaleDb, private val storyDao: PostDao) {
+class PostRepository(private val appExecutors: AppExecutors, private val db: AppDatabase, private val storyDao: PostDao) {
 
     private val TAG = this.javaClass.simpleName
 }

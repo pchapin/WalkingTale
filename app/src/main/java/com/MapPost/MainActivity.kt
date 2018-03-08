@@ -21,12 +21,10 @@ import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import com.MapPost.db.WalkingTaleDb
+import com.MapPost.db.AppDatabase
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -86,14 +84,14 @@ class MainActivity :
     private var mMap: GoogleMap? = null
     internal var viewModelFactory: ViewModelProvider.Factory? = null
     internal var playServicesErrorDialog: Dialog? = null
-    private var mainViewModel: MainViewModel? = null
-    lateinit var roomDatabase: RoomDatabase
+    private lateinit var mainViewModel: MainViewModel
+    lateinit var roomDatabase: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainViewModel = ViewModelProviders.of(this, viewModelFactory!!).get(MainViewModel::class.java)
-        roomDatabase = Room.databaseBuilder(this, WalkingTaleDb::class.java, "MapPost.db").fallbackToDestructiveMigration().build()
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+//        roomDatabase = Room.databaseBuilder(this, AppDatabase::class.java, "MapPost.db").fallbackToDestructiveMigration().build()
         // Obtain the FirebaseAnalytics instance.
         Analytics.init(this)
         userSetup(savedInstanceState)
@@ -105,7 +103,7 @@ class MainActivity :
      */
     private fun userSetup(savedInstanceState: Bundle?) {
 
-        mainViewModel!!.getUser(cognitoId).observe(this, Observer { userResource ->
+        mainViewModel.getUser(cognitoId).observe(this, Observer { userResource ->
             if (userResource != null) {
                 when (userResource.status) {
                     Status.ERROR -> createNewUser()
@@ -129,7 +127,7 @@ class MainActivity :
         user.createdPosts = ArrayList()
         user.viewedPosts = ArrayList()
         user.userImage = "none"
-        mainViewModel!!.createUser(user).observe(this, Observer {
+        mainViewModel.createUser(user).observe(this, Observer {
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {

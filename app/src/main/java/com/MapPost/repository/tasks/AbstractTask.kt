@@ -3,7 +3,7 @@ package com.MapPost.repository.tasks
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
-import com.MapPost.db.WalkingTaleDb
+import com.MapPost.db.AppDatabase
 import com.MapPost.vo.Post
 import com.MapPost.vo.Resource
 import com.amazonaws.ClientConfiguration
@@ -14,7 +14,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 
 abstract class AbstractTask<out I, O>(val input: I,
-                                      val database: WalkingTaleDb) : Runnable {
+                                      val database: AppDatabase) : Runnable {
 
     val TAG = this.javaClass.simpleName
     val result = MutableLiveData<Resource<O>>()

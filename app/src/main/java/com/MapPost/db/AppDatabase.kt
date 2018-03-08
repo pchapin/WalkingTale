@@ -18,7 +18,9 @@ package com.MapPost.db
 
 
 import android.arch.persistence.room.Database
+import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.content.Context
 
 import com.MapPost.vo.Post
 import com.MapPost.vo.User
@@ -26,10 +28,26 @@ import com.MapPost.vo.User
 /**
  * Main database description.
  */
-@Database(entities = arrayOf(User::class, Post::class), version = 3, exportSchema = false)
-abstract class WalkingTaleDb : RoomDatabase() {
+@Database(entities = [(User::class), (Post::class)], version = 3, exportSchema = false)
+abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
 
     abstract fun postDao(): PostDao
+
+    companion object {
+        private var INSTANCE: AppDatabase? = null
+        @JvmStatic
+        fun getInMemoryDatabase(context: Context): AppDatabase {
+            if (INSTANCE == null) {
+                INSTANCE = Room.inMemoryDatabaseBuilder(context.applicationContext, AppDatabase::class.java).allowMainThreadQueries().build()
+            }
+            return INSTANCE!!
+        }
+
+        @JvmStatic
+        fun destroyInstance() {
+            INSTANCE = null
+        }
+    }
 }
