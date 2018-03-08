@@ -20,7 +20,7 @@ import android.app.Application;
 import android.arch.persistence.room.Room;
 
 import com.MapPost.api.WalkingTaleService;
-import com.MapPost.db.StoryDao;
+import com.MapPost.db.PostDao;
 import com.MapPost.db.UserDao;
 import com.MapPost.db.WalkingTaleDb;
 import com.MapPost.util.LiveDataCallAdapterFactory;
@@ -56,7 +56,7 @@ class AppModule {
     }
 
     @Singleton @Provides
-    StoryDao provideRepoDao(WalkingTaleDb db) {
-        return db.storyDao();
+    PostDao provideRepoDao(WalkingTaleDb db) {
+        return db.postDao();
     }
 }

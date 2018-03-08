@@ -16,26 +16,10 @@
 
 package com.MapPost.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.MapPost.AppExecutors;
 import com.MapPost.api.WalkingTaleService;
-import com.MapPost.db.StoryDao;
+import com.MapPost.db.PostDao;
 import com.MapPost.db.WalkingTaleDb;
-import com.MapPost.repository.tasks.DeleteStoryTask;
-import com.MapPost.repository.tasks.GetFeedStoriesTask;
-import com.MapPost.repository.tasks.GetOneStoryTask;
-import com.MapPost.repository.tasks.PutFileS3Task;
-import com.MapPost.repository.tasks.S3Args;
-import com.MapPost.repository.tasks.SaveStoryTask;
-import com.MapPost.repository.tasks.StoryKey;
-import com.MapPost.vo.Resource;
-import com.MapPost.vo.Story;
-
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,93 +29,16 @@ public class PostRepository {
 
     private final String TAG = this.getClass().getSimpleName();
     private final WalkingTaleDb db;
-    private final StoryDao storyDao;
+    private final PostDao storyDao;
     private final WalkingTaleService walkingTaleService;
     private final AppExecutors appExecutors;
 
     @Inject
-    public PostRepository(AppExecutors appExecutors, WalkingTaleDb db, StoryDao storyDao,
+    public PostRepository(AppExecutors appExecutors, WalkingTaleDb db, PostDao storyDao,
                           WalkingTaleService walkingTaleService) {
         this.db = db;
         this.storyDao = storyDao;
         this.walkingTaleService = walkingTaleService;
         this.appExecutors = appExecutors;
-    }
-
-    public LiveData<Resource<Void>> publishStory(Story story) {
-        SaveStoryTask saveStoryTask = new SaveStoryTask(story, db);
-        appExecutors.networkIO().execute(saveStoryTask);
-        return saveStoryTask.getResult();
-    }
-
-    public LiveData<Resource<List<Story>>> getFeedStories(boolean shouldFetch) {
-        Log.i(TAG, "fetching feed " + shouldFetch);
-
-        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull List<Story> item) {
-                storyDao.insertStories(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Story> data) {
-                return shouldFetch || data == null || data.isEmpty();
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Story>> loadFromDb() {
-                return storyDao.loadAll();
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Resource<List<Story>>> createCall() {
-                GetFeedStoriesTask getFeedStoriesTask = new GetFeedStoriesTask("", db);
-                appExecutors.networkIO().execute(getFeedStoriesTask);
-                return getFeedStoriesTask.getResult();
-            }
-        }.asLiveData();
-    }
-
-    public LiveData<Resource<Story>> getOneStory(StoryKey storyKey, boolean shouldFetch) {
-        return new NetworkBoundResource<Story, Story>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull Story item) {
-                storyDao.insert(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable Story data) {
-                return shouldFetch || data == null;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Story> loadFromDb() {
-                return storyDao.load(storyKey.getStoryId());
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Resource<Story>> createCall() {
-                GetOneStoryTask getOneStoryTask = new GetOneStoryTask(storyKey, db);
-                appExecutors.networkIO().execute(getOneStoryTask);
-                return getOneStoryTask.getResult();
-            }
-        }.asLiveData();
-    }
-
-
-    public LiveData<Resource<Story>> putFileInS3(S3Args s3Args) {
-        PutFileS3Task putFileS3Task = new PutFileS3Task(s3Args, db);
-        appExecutors.networkIO().execute(putFileS3Task);
-        return putFileS3Task.getResult();
-    }
-
-    public LiveData<Resource<Story>> deleteStory(Story story) {
-        DeleteStoryTask deleteStoryTask = new DeleteStoryTask(story, db);
-        appExecutors.networkIO().execute(deleteStoryTask);
-        return deleteStoryTask.getResult();
     }
 }

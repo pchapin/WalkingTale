@@ -26,7 +26,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -37,19 +36,16 @@ import android.widget.ImageView;
 import com.MapPost.R;
 import com.MapPost.aws.ConstantsKt;
 import com.MapPost.binding.FragmentDataBindingComponent;
-import com.MapPost.databinding.BottomSheetChapterListBinding;
 import com.MapPost.databinding.FragmentPlayBinding;
 import com.MapPost.di.Injectable;
-import com.MapPost.repository.tasks.StoryKey;
 import com.MapPost.ui.common.BetterSnapper;
-import com.MapPost.ui.common.ChapterAdapter;
 import com.MapPost.ui.common.LocationLiveData;
 import com.MapPost.ui.common.LocationUtilKt;
 import com.MapPost.ui.common.NavigationController;
 import com.MapPost.util.AutoClearedValue;
 import com.MapPost.vo.Chapter;
 import com.MapPost.vo.Post;
-import com.MapPost.vo.Story;
+import com.WalkingTale.databinding.BottomSheetChapterListBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -68,8 +64,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -91,23 +85,12 @@ public class PlayFragment extends Fragment implements
     NavigationController navigationController;
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentPlayBinding> binding;
-    AutoClearedValue<ChapterAdapter> adapter;
     BottomSheetChapterListBinding bottomSheet;
     private PlayViewModel playViewModel;
     private GoogleMap mMap;
     private FloatingActionButton nextChapterButton;
     private ArrayList<Marker> markers = new ArrayList<>();
-    private Story story;
     private Random mRandom = new Random(1984);
-
-    public static PlayFragment create(Story story) {
-        PlayFragment repoFragment = new PlayFragment();
-        Bundle args = new Bundle();
-        args.putString(REPO_NAME_KEY, story.id);
-        args.putString(REPO_USER_ID_KEY, story.userId);
-        repoFragment.setArguments(args);
-        return repoFragment;
-    }
 
     /**
      * Distance in meters between two locations
@@ -135,14 +118,6 @@ public class PlayFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         playViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayViewModel.class);
-        Bundle args = getArguments();
-        StoryKey storyKey = new StoryKey(args.getString(REPO_USER_ID_KEY), args.getString(REPO_NAME_KEY));
-
-        ChapterAdapter adapter = new ChapterAdapter(dataBindingComponent,
-                chapter -> {
-                });
-        this.adapter = new AutoClearedValue<>(this, adapter);
-        bottomSheet.expositionList.setAdapter(adapter);
         nextChapterButton = binding.get().nextChapter;
         new BetterSnapper().attachToRecyclerView(bottomSheet.expositionList);
 
@@ -245,20 +220,6 @@ public class PlayFragment extends Fragment implements
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        for (int i = 0; i < markers.size(); ++i) {
-            if (markers.get(i).equals(marker)) {
-                List<Chapter> chapters = story.chapters;
-                for (int chapter = 0; chapter < chapters.size(); chapter++) {
-                    for (Post post : chapters.get(chapter).getPosts()) {
-                        if (Objects.equals(post.getPostId(), "" + i)) {
-                            BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
-                            bottomSheet.expositionList.smoothScrollToPosition(chapter);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
         return false;
     }
 }

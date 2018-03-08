@@ -20,16 +20,16 @@ package com.MapPost.db;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import com.MapPost.vo.Story;
+import com.MapPost.vo.Post;
 import com.MapPost.vo.User;
 
 /**
  * Main database description.
  */
-@Database(entities = {User.class, Story.class}, version = 3, exportSchema = false)
+@Database(entities = {User.class, Post.class}, version = 3, exportSchema = false)
 public abstract class WalkingTaleDb extends RoomDatabase {
 
     abstract public UserDao userDao();
 
-    abstract public StoryDao storyDao();
+    abstract public PostDao postDao();
 }

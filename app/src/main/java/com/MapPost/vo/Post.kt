@@ -1,11 +1,14 @@
 package com.MapPost.vo
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
 import android.support.annotation.NonNull
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*
 import com.google.gson.Gson
 
 
 @DynamoDBTable(tableName = "mappost-mobilehub-452475001-Posts")
+@Entity(indices = [(Index("userId"))], primaryKeys = ["userId"])
 class Post {
     @get:DynamoDBHashKey(attributeName = "userId")
     @get:DynamoDBAttribute(attributeName = "userId")

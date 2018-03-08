@@ -25,12 +25,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
-import com.MapPost.ui.common.ExampleData;
 import com.MapPost.ui.common.NavigationController;
+import com.MapPost.vo.User;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -112,7 +114,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void createNewUser() {
-        mainViewModel.createUser(ExampleData.Companion.getUser()).observe(this, newUserResource -> {
+        User user = new User();
+        user.setUserId(getCognitoId());
+        user.setUserName(getCognitoUsername());
+        user.setCreatedPosts(new ArrayList<>());
+        user.setViewedPosts(new ArrayList<>());
+        user.setUserImage("none");
+        mainViewModel.createUser(user).observe(this, newUserResource -> {
             if (newUserResource != null) {
                 switch (newUserResource.status) {
                     case SUCCESS:

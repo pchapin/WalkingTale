@@ -20,12 +20,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.MapPost.MainActivity;
 import com.MapPost.R;
-import com.MapPost.ui.feed.FeedFragment;
-import com.MapPost.ui.overview.OverviewFragment;
 import com.MapPost.ui.play.PlayFragment;
-import com.MapPost.ui.profile.ProfileFragment;
-import com.MapPost.ui.search.SearchFragment;
-import com.MapPost.vo.Story;
 
 import javax.inject.Inject;
 
@@ -42,41 +37,10 @@ public class NavigationController {
         this.fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void navigateToOverview(Story s) {
-        OverviewFragment fragment = OverviewFragment.create(s);
-        fragmentManager.beginTransaction()
-                .replace(containerId, fragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToStoryFeed() {
-        FeedFragment storyFeedFragment = new FeedFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, storyFeedFragment)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToStoryPlay(Story story) {
-        PlayFragment storyPlayFragment = PlayFragment.create(story);
+    public void navigateToStoryPlay() {
+        PlayFragment storyPlayFragment = new PlayFragment();
         fragmentManager.beginTransaction()
                 .replace(containerId, storyPlayFragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToSearch() {
-        SearchFragment searchFragment = new SearchFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, searchFragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToProfile() {
-        ProfileFragment profileFragment = new ProfileFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, profileFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

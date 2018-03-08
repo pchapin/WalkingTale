@@ -22,14 +22,14 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.MapPost.R;
-import com.MapPost.databinding.ItemExpositionBinding;
+import com.MapPost.databinding.ItemPostBinding;
 import com.MapPost.util.Objects;
 import com.MapPost.vo.Post;
 
 /**
  * A RecyclerView adapter for {@link Post} class.
  */
-public class PostAdapter extends DataBoundListAdapter<Post, ItemExpositionBinding> {
+public class PostAdapter extends DataBoundListAdapter<Post, ItemPostBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final ExpositionClickBack expositionClickBack;
 
@@ -39,10 +39,10 @@ public class PostAdapter extends DataBoundListAdapter<Post, ItemExpositionBindin
     }
 
     @Override
-    protected ItemExpositionBinding createBinding(ViewGroup parent) {
-        ItemExpositionBinding binding = DataBindingUtil.inflate(
+    protected ItemPostBinding createBinding(ViewGroup parent) {
+        ItemPostBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
-                R.layout.item_exposition,
+                R.layout.item_post,
                 parent,
                 false,
                 dataBindingComponent);
@@ -56,7 +56,7 @@ public class PostAdapter extends DataBoundListAdapter<Post, ItemExpositionBindin
     }
 
     @Override
-    protected void bind(ItemExpositionBinding binding, Post item) {
+    protected void bind(ItemPostBinding binding, Post item) {
         binding.setPost(item);
     }
 

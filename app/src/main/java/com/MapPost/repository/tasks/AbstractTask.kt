@@ -4,8 +4,8 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import com.MapPost.db.WalkingTaleDb
+import com.MapPost.vo.Post
 import com.MapPost.vo.Resource
-import com.MapPost.vo.Story
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
@@ -39,4 +39,4 @@ abstract class AbstractTask<out I, O>(val input: I,
     }
 }
 
-data class S3Args(val story: Story, val context: Context)
+data class S3Args(val post: Post, val context: Context)

@@ -22,34 +22,34 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.MapPost.vo.Story;
+import com.MapPost.vo.Post;
 
 import java.util.List;
 
 /**
- * Interface for database access on Story related operations.
+ * Interface for database access on Post related operations.
  */
 @Dao
-public abstract class StoryDao {
+public abstract class PostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Story... stories);
+    public abstract void insert(Post... stories);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertStories(List<Story> repositories);
+    public abstract void insertStories(List<Post> repositories);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long createStoryIfNotExists(Story story);
+    public abstract long createPostIfNotExists(Post Post);
 
-    @Query("SELECT * FROM Story WHERE id = :id")
-    public abstract LiveData<Story> load(String id);
+    @Query("SELECT * FROM Post WHERE postId = :id")
+    public abstract LiveData<Post> load(String id);
 
-    @Query("SELECT * FROM Story")
-    public abstract LiveData<List<Story>> loadAll();
+    @Query("SELECT * FROM Post")
+    public abstract LiveData<List<Post>> loadAll();
 
-    @Query("SELECT * FROM Story WHERE id in (:playedIds)")
-    public abstract LiveData<List<Story>> loadPlayedStories(List<String> playedIds);
+    @Query("SELECT * FROM Post WHERE postId in (:playedIds)")
+    public abstract LiveData<List<Post>> loadPlayedStories(List<String> playedIds);
 
-    @Query("SELECT * FROM Story WHERE id in (:createdIds)")
-    public abstract LiveData<List<Story>> loadCreatedStories(List<String> createdIds);
+    @Query("SELECT * FROM Post WHERE postId in (:createdIds)")
+    public abstract LiveData<List<Post>> loadCreatedStories(List<String> createdIds);
 }

@@ -26,5 +26,5 @@ class User {
     @get:DynamoDBAttribute(attributeName = "userImage")
     var userImage: String? = null
     @get:DynamoDBAttribute(attributeName = "viewedPosts")
-    var viewedPosts: String? = null
+    var viewedPosts: List<String>? = null
 }

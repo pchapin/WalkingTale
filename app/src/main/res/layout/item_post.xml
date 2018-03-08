@@ -25,7 +25,7 @@
             type="com.MapPost.vo.Post" />
 
         <variable
-            name="exposition_type"
+            name="post_type"
             type="com.MapPost.vo.PostType" />
     </data>
 
@@ -41,7 +41,7 @@
 
             <Button
                 android:id="@+id/play_audio_button"
-                visibleGone="@{post.type==exposition_type.AUDIO}"
+                visibleGone="@{post.type==post_type.AUDIO}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Play Audio"
@@ -50,8 +50,8 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/exposition_image"
-                visibleGone="@{post.type==exposition_type.PICTURE}"
+                android:id="@+id/post_image"
+                visibleGone="@{post.type==post_type.PICTURE}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/a11y_user_photo"
@@ -62,8 +62,8 @@
                 tools:src="@color/alert" />
 
             <TextView
-                android:id="@+id/exposition_text"
-                visibleGone="@{post.type==exposition_type.TEXT}"
+                android:id="@+id/post_text"
+                visibleGone="@{post.type==post_type.TEXT}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="272dp"
                 android:layout_marginTop="8dp"
-                android:text="@{`post `+(post.postId + 1)}"
+                android:text=""
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_goneMarginStart="20dp"

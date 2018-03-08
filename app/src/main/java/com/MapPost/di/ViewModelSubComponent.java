@@ -16,7 +16,6 @@
 
 package com.MapPost.di;
 
-import com.MapPost.ui.overview.OverviewViewModel;
 
 import dagger.Subcomponent;
 
@@ -27,7 +26,6 @@ import dagger.Subcomponent;
  */
 @Subcomponent
 public interface ViewModelSubComponent {
-    OverviewViewModel repoViewModel();
 
     @Subcomponent.Builder
     interface Builder {

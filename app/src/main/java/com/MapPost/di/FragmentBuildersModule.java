@@ -16,11 +16,7 @@
 
 package com.MapPost.di;
 
-import com.MapPost.ui.feed.FeedFragment;
-import com.MapPost.ui.overview.OverviewFragment;
 import com.MapPost.ui.play.PlayFragment;
-import com.MapPost.ui.profile.ProfileFragment;
-import com.MapPost.ui.search.SearchFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -28,17 +24,5 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
-    abstract OverviewFragment contributeRepoFragment();
-
-    @ContributesAndroidInjector
-    abstract FeedFragment contributeStoryFeedFragment();
-
-    @ContributesAndroidInjector
     abstract PlayFragment contributeStoryPlayFragment();
-
-    @ContributesAndroidInjector
-    abstract SearchFragment contributeSearchFragment();
-
-    @ContributesAndroidInjector
-    abstract ProfileFragment contributeProfileFragment();
 }
