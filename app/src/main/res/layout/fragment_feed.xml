@@ -20,13 +20,13 @@
 
     <data>
 
-        <import type="com.WalkingTale.vo.Story" />
+        <import type="com.MapPost.vo.Story" />
 
         <import type="java.util.List" />
 
-        <import type="com.WalkingTale.vo.Status" />
+        <import type="com.MapPost.vo.Status" />
 
-        <import type="com.WalkingTale.vo.Resource" />
+        <import type="com.MapPost.vo.Resource" />
 
         <variable
             name="resultCount"
@@ -46,7 +46,7 @@
 
         <variable
             name="callback"
-            type="com.WalkingTale.ui.common.RetryCallback" />
+            type="com.MapPost.ui.common.RetryCallback" />
     </data>
 
     <android.support.v4.widget.DrawerLayout

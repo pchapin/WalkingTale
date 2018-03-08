@@ -22,11 +22,11 @@
 
         <variable
             name="story"
-            type="com.WalkingTale.vo.Story" />
+            type="com.MapPost.vo.Story" />
 
         <variable
             name="retryCallback"
-            type="com.WalkingTale.ui.common.RetryCallback" />
+            type="com.MapPost.ui.common.RetryCallback" />
     </data>
 
     <android.support.constraint.ConstraintLayout

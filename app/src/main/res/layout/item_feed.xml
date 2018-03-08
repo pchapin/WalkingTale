@@ -26,7 +26,7 @@
 
         <variable
             name="story"
-            type="com.WalkingTale.vo.Story" />
+            type="com.MapPost.vo.Story" />
     </data>
 
 

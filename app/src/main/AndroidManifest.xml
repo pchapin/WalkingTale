@@ -15,7 +15,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.WalkingTale">
+    package="com.MapPost">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -29,7 +29,7 @@
         android:required="true" />
 
     <application
-        android:name="com.WalkingTale.WalkingTaleApp"
+        android:name="com.MapPost.WalkingTaleApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -44,7 +44,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.WalkingTale"
+            android:authorities="com.MapPost"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -65,11 +65,11 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name="com.WalkingTale.MainActivity"
+            android:name="com.MapPost.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name="com.WalkingTale.ui.audiorecord.AudioRecordActivity" />
-        <activity android:name="com.WalkingTale.AuthenticatorActivity">
+        <activity android:name="com.MapPost.ui.audiorecord.AudioRecordActivity" />
+        <activity android:name="com.MapPost.AuthenticatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

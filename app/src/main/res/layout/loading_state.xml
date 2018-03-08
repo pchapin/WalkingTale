@@ -19,14 +19,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
 
-        <import type="com.WalkingTale.vo.Resource" />
+        <import type="com.MapPost.vo.Resource" />
 
-        <import type="com.WalkingTale.vo.Status" />
+        <import type="com.MapPost.vo.Status" />
         <variable name="resource" type="Resource"/>
 
         <variable
             name="callback"
-            type="com.WalkingTale.ui.common.RetryCallback" />
+            type="com.MapPost.ui.common.RetryCallback" />
     </data>
 
     <LinearLayout
