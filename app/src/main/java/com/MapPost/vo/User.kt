@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.TypeConverters
 import android.support.annotation.NonNull
-import com.MapPost.db.WalkingTaleTypeConverters
+import com.MapPost.db.AppTypeConverters
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey
@@ -12,7 +12,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable
 
 @DynamoDBTable(tableName = "mappost-mobilehub-452475001-Users")
 @Entity(indices = [(Index("userId"))], primaryKeys = ["userId"])
-@TypeConverters(WalkingTaleTypeConverters::class)
+@TypeConverters(AppTypeConverters::class)
 class User {
     @get:DynamoDBHashKey(attributeName = "userId")
     @get:DynamoDBAttribute(attributeName = "userId")

@@ -34,54 +34,20 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import java.util.*
 
 
-//todo
-//
-//reuse code as much as possible
-//so turn play fragment into the main map fragment since it already
-//knows how to show images on the map
-//
-//also will need to create a separate aws mobile hub project
-//bc posts will need a location field
-
 class MainActivity :
         AppCompatActivity(),
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-
-    override fun onMarkerClick(p0: Marker?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onMapReady(googleMap: GoogleMap?) {
-        mMap = googleMap
-        mMap!!.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
-        mMap!!.isMyLocationEnabled = true
-        mMap!!.setOnMarkerClickListener(this)
-
-        // Change tilt
-        val cameraPosition = CameraPosition.Builder()
-                .target(mMap!!.cameraPosition.target)
-                .tilt(60f).build()
-        mMap!!.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
-        val mUiSettings = mMap!!.uiSettings
-        mUiSettings.isMapToolbarEnabled = false
-        mUiSettings.isZoomControlsEnabled = false
-        mUiSettings.isScrollGesturesEnabled = true
-        mUiSettings.isZoomGesturesEnabled = true
-        mUiSettings.isTiltGesturesEnabled = false
-        mUiSettings.isRotateGesturesEnabled = false
-        mUiSettings.isCompassEnabled = false
-    }
+        OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener {
 
     private val TAG = this.javaClass.simpleName
-    private var mMap: GoogleMap? = null
+    private lateinit var mMap: GoogleMap
     internal var viewModelFactory: ViewModelProvider.Factory? = null
     internal var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
@@ -91,8 +57,8 @@ class MainActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-//        roomDatabase = Room.databaseBuilder(this, AppDatabase::class.java, "MapPost.db").fallbackToDestructiveMigration().build()
-        // Obtain the FirebaseAnalytics instance.
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
         Analytics.init(this)
         userSetup(savedInstanceState)
     }
@@ -220,6 +186,33 @@ class MainActivity :
 //            }
 //
 //        })
+    }
+
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        return false
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onMapReady(googleMap: GoogleMap?) {
+        mMap = googleMap!!
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+        mMap.isMyLocationEnabled = true
+        mMap.setOnMarkerClickListener(this)
+
+        // Change tilt
+        val cameraPosition = CameraPosition.Builder()
+                .target(mMap.cameraPosition.target)
+                .tilt(60f).build()
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
+        val mUiSettings = mMap.uiSettings
+        mUiSettings.isMapToolbarEnabled = false
+        mUiSettings.isZoomControlsEnabled = false
+        mUiSettings.isScrollGesturesEnabled = true
+        mUiSettings.isZoomGesturesEnabled = true
+        mUiSettings.isTiltGesturesEnabled = false
+        mUiSettings.isRotateGesturesEnabled = false
+        mUiSettings.isCompassEnabled = false
     }
 
     companion object {

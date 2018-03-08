@@ -21,7 +21,7 @@ import com.MapPost.vo.Chapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-object WalkingTaleTypeConverters {
+object AppTypeConverters {
     private val gson = Gson()
 
     @TypeConverter
