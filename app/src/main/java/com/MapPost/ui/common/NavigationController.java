@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 
 import com.MapPost.MainActivity;
 import com.MapPost.R;
-import com.MapPost.ui.create.CreateFragment;
 import com.MapPost.ui.feed.FeedFragment;
 import com.MapPost.ui.overview.OverviewFragment;
 import com.MapPost.ui.play.PlayFragment;
@@ -47,14 +46,6 @@ public class NavigationController {
         OverviewFragment fragment = OverviewFragment.create(s);
         fragmentManager.beginTransaction()
                 .replace(containerId, fragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-    public void navigateToCreateStory() {
-        CreateFragment storyCreateFragment = new CreateFragment();
-        fragmentManager.beginTransaction()
-                .replace(containerId, storyCreateFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

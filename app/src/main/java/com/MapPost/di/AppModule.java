@@ -47,7 +47,7 @@ class AppModule {
 
     @Singleton @Provides
     WalkingTaleDb provideDb(Application app) {
-        return Room.databaseBuilder(app, WalkingTaleDb.class, "github.db").fallbackToDestructiveMigration().build();
+        return Room.databaseBuilder(app, WalkingTaleDb.class, "MapPost.db").fallbackToDestructiveMigration().build();
     }
 
     @Singleton @Provides

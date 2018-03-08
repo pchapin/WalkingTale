@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import com.MapPost.MainViewModel;
-import com.MapPost.ui.create.CreateViewModel;
 import com.MapPost.ui.feed.FeedViewModel;
 import com.MapPost.ui.overview.OverviewViewModel;
 import com.MapPost.ui.play.PlayViewModel;
@@ -22,11 +21,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(OverviewViewModel.class)
     abstract ViewModel bindRepoViewModel(OverviewViewModel overviewViewModel);
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CreateViewModel.class)
-    abstract ViewModel bindStoryCreateViewModel(CreateViewModel createViewModel);
 
     @Binds
     @IntoMap

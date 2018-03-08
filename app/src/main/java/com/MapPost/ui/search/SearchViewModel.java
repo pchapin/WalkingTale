@@ -23,7 +23,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-import com.MapPost.repository.StoryRepository;
+import com.MapPost.repository.PostRepository;
 import com.MapPost.util.AbsentLiveData;
 import com.MapPost.util.Objects;
 import com.MapPost.vo.Resource;
@@ -40,7 +40,7 @@ public class SearchViewModel extends ViewModel {
     private final LiveData<Resource<List<Story>>> results;
 
     @Inject
-    SearchViewModel(StoryRepository storyRepository) {
+    SearchViewModel(PostRepository postRepository) {
         results = Transformations.switchMap(query, search -> {
             if (search == null || search.trim().length() == 0) {
                 return AbsentLiveData.create();

@@ -16,7 +16,6 @@
 
 package com.MapPost.di;
 
-import com.MapPost.ui.create.CreateFragment;
 import com.MapPost.ui.feed.FeedFragment;
 import com.MapPost.ui.overview.OverviewFragment;
 import com.MapPost.ui.play.PlayFragment;
@@ -30,10 +29,6 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract OverviewFragment contributeRepoFragment();
-
-
-    @ContributesAndroidInjector
-    abstract CreateFragment contributeStoryCreateFragment();
 
     @ContributesAndroidInjector
     abstract FeedFragment contributeStoryFeedFragment();

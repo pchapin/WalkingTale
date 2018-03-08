@@ -21,7 +21,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
-import com.MapPost.repository.StoryRepository;
+import com.MapPost.repository.PostRepository;
 import com.MapPost.repository.UserRepository;
 import com.MapPost.util.AbsentLiveData;
 import com.MapPost.vo.Resource;
@@ -39,26 +39,14 @@ public class ProfileViewModel extends ViewModel {
     LiveData<Resource<List<Story>>> createdStories = new MutableLiveData<>();
     boolean shouldFetch = false;
     private MutableLiveData<String> userId = new MutableLiveData<>();
-    private StoryRepository storyRepository;
+    private PostRepository postRepository;
 
     @Inject
-    ProfileViewModel(StoryRepository repository, UserRepository userRepository) {
-        storyRepository = repository;
+    ProfileViewModel(PostRepository repository, UserRepository userRepository) {
+        postRepository = repository;
         user = Transformations.switchMap(userId, input -> {
             if (userId == null) return AbsentLiveData.create();
             else return userRepository.loadUser(input);
-        });
-
-        playedStories = Transformations.switchMap(user, input -> {
-            if (input != null && input.data != null)
-                return repository.getPlayedStories(input.data, true);
-            else return AbsentLiveData.create();
-        });
-
-        createdStories = Transformations.switchMap(user, input -> {
-            if (input != null && input.data != null)
-                return repository.getCreatedStories(input.data, true);
-            else return AbsentLiveData.create();
         });
     }
 
@@ -67,6 +55,6 @@ public class ProfileViewModel extends ViewModel {
     }
 
     LiveData<Resource<Story>> deleteStory(Story story) {
-        return storyRepository.deleteStory(story);
+        return postRepository.deleteStory(story);
     }
 }

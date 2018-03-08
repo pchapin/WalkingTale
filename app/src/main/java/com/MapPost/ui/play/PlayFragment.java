@@ -22,7 +22,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,15 +29,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.MapPost.Analytics;
 import com.MapPost.R;
 import com.MapPost.aws.ConstantsKt;
 import com.MapPost.binding.FragmentDataBindingComponent;
@@ -53,14 +48,12 @@ import com.MapPost.ui.common.LocationUtilKt;
 import com.MapPost.ui.common.NavigationController;
 import com.MapPost.util.AutoClearedValue;
 import com.MapPost.vo.Chapter;
-import com.MapPost.vo.Exposition;
-import com.MapPost.vo.Status;
+import com.MapPost.vo.Post;
 import com.MapPost.vo.Story;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -68,19 +61,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -89,7 +78,6 @@ import javax.inject.Inject;
 public class PlayFragment extends Fragment implements
         Injectable,
         OnMapReadyCallback,
-        GoogleMap.OnCircleClickListener,
         GoogleMap.OnMarkerClickListener {
 
     private static final String REPO_NAME_KEY = "repo_name";
@@ -154,18 +142,12 @@ public class PlayFragment extends Fragment implements
                 chapter -> {
                 });
         this.adapter = new AutoClearedValue<>(this, adapter);
-        bottomSheet = binding.get().bottomSheetList;
         bottomSheet.expositionList.setAdapter(adapter);
         nextChapterButton = binding.get().nextChapter;
         new BetterSnapper().attachToRecyclerView(bottomSheet.expositionList);
 
         initCurrentChapterObserver();
-        initStoryObserver(storyKey);
         initLocationObserver();
-        initIsCurrentFinalObserver();
-        initNextChapterListener();
-        initExpositionList();
-        initFinishStoryListener();
     }
 
     @Nullable
@@ -179,28 +161,24 @@ public class PlayFragment extends Fragment implements
     }
 
     private void initCurrentChapterObserver() {
-        playViewModel.getCurrentChapter().observe(this, chapter -> {
-            if (chapter == null) return;
-            IconGenerator iconGenerator = new IconGenerator(getContext());
-            ImageView imageView = new ImageView(getContext());
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_WIDTH, MARKER_HEIGHT));
-            MarkerOptions markerOptions;
+        playViewModel.getPosts().observe(this, listResource -> {
+            if (listResource == null || listResource.data == null) return;
 
-            for (Exposition exposition : chapter.getExpositions()) {
+            for (Post post : listResource.data) {
 
-                LatLng expositionPosition = SphericalUtil.computeOffset(
-                        chapter.getLocation(),
-                        chapter.getRadius(),
-                        360 / chapter.getExpositions().size() * (exposition.getId() + 1));
+                IconGenerator iconGenerator = new IconGenerator(getContext());
+                ImageView imageView = new ImageView(getContext());
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_WIDTH, MARKER_HEIGHT));
+                MarkerOptions markerOptions;
+                LatLng location = new LatLng(post.getLatitude(), post.getLongitude());
 
-
-                switch (exposition.getType()) {
+                switch (post.getType()) {
                     case TEXT:
                         imageView.setImageResource(R.drawable.ic_textsms_black_24dp);
                         iconGenerator.setContentView(imageView);
                         markerOptions = new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(expositionPosition);
+                                .position(location);
                         markers.add(mMap.addMarker(markerOptions));
                         break;
                     case AUDIO:
@@ -208,13 +186,13 @@ public class PlayFragment extends Fragment implements
                         iconGenerator.setContentView(imageView);
                         markerOptions = new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(expositionPosition);
+                                .position(location);
                         markers.add(mMap.addMarker(markerOptions));
                         break;
                     case PICTURE:
                         Glide.with(getContext())
                                 .asBitmap()
-                                .load(ConstantsKt.getS3HostName() + exposition.getContent())
+                                .load(ConstantsKt.getS3HostName() + post.getContent())
                                 .apply(new RequestOptions().centerCrop())
                                 .into(new SimpleTarget<Bitmap>(MARKER_WIDTH, MARKER_HEIGHT) {
                                     @Override
@@ -223,7 +201,7 @@ public class PlayFragment extends Fragment implements
                                         iconGenerator.setContentView(imageView);
                                         MarkerOptions markerOptions = new MarkerOptions()
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                                .position(expositionPosition);
+                                                .position(location);
                                         markers.add(mMap.addMarker(markerOptions));
                                     }
                                 });
@@ -231,121 +209,13 @@ public class PlayFragment extends Fragment implements
                 }
             }
 
-            Circle circle = mMap.addCircle(new CircleOptions()
-                    .center(chapter.getLocation())
-                    .clickable(true)
-                    .radius(chapter.getRadius())
-                    .strokeColor(Color.BLUE));
-        });
-    }
-
-
-    private void initStoryObserver(StoryKey storyKey) {
-        playViewModel.getStory(storyKey).observe(this, resource -> {
-            binding.get().setStory(resource == null ? null : resource.data);
-            binding.get().setRepoResource(resource);
-            binding.get().executePendingBindings();
-            if (!playViewModel.isStorySet() && resource != null && resource.data != null) {
-                story = resource.data;
-                playViewModel.setStory(resource.data);
-            }
         });
     }
 
     private void initLocationObserver() {
         new LocationLiveData(getContext()).observe(this, location -> {
-            moveCamera(location);
-            boolean isUserInNext = isUserInNextRadius(location, playViewModel.getNextChapter().getValue());
-            nextChapterButton.setEnabled(isUserInNext);
+
         });
-    }
-
-    private void initIsCurrentFinalObserver() {
-        playViewModel.getIsCurrentFinal().observe(this, isFinalChapter -> {
-            if (isFinalChapter != null) {
-                binding.get().setIsCurrentChapterFinal(isFinalChapter);
-            }
-        });
-    }
-
-    private void initNextChapterListener() {
-        nextChapterButton.setOnClickListener((v) -> {
-            if (!playViewModel.incrementChapter()) {
-                Toast.makeText(getContext(), "No more chapters!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void initExpositionList() {
-        playViewModel.availableChapters.observe(this, listResource -> {
-            if (listResource != null) {
-                adapter.get().replace(listResource);
-            } else {
-                adapter.get().replace(Collections.emptyList());
-            }
-        });
-
-        bottomSheet.expositionList.setOnFlingListener(new RecyclerView.OnFlingListener() {
-            @Override
-            public boolean onFling(int velocityX, int velocityY) {
-
-                if (velocityY < 0 && bottomSheet.expositionList.getChildAt(0).getTop() == 0) {
-                    BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
-                }
-                return false;
-            }
-        });
-    }
-
-    private void initFinishStoryListener() {
-        binding.get().finishPlayStoryBtn.setOnClickListener(view -> {
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Finish Story")
-                    .setMessage("Do you want to finish the story?")
-                    .setPositiveButton("yes", (dialogInterface, i) -> {
-                        Analytics.INSTANCE.logEvent(Analytics.EventType.PlayedStory, TAG);
-                        finishStoryHelper();
-                    })
-                    .setNegativeButton("no", (dialogInterface, i) -> {
-                    })
-                    .create().show();
-        });
-    }
-
-    private void finishStoryHelper() {
-        playViewModel.getUser().observe(this, userResource -> {
-            if (userResource != null && userResource.data != null) {
-                playViewModel.setStoryPlayed(userResource.data).observe(this, voidResource -> {
-                    if (voidResource != null && voidResource.status == Status.SUCCESS) {
-                        getActivity().onBackPressed();
-                    }
-                });
-            }
-        });
-    }
-
-    private void moveCamera(Location currentLocation) {
-
-        LatLng currentLatLng = LocationUtilKt.locationToLatLng(currentLocation);
-        LatLng currentChapter = null;
-        LatLng nextChapter = null;
-        if (playViewModel.getCurrentChapter().getValue() != null) {
-            currentChapter = playViewModel.getCurrentChapter().getValue().getLocation();
-        }
-        if (playViewModel.getNextChapter().getValue() != null) {
-            nextChapter = playViewModel.getNextChapter().getValue().getLocation();
-        }
-
-        // Include current location, current chapter, and next chapter
-        LatLngBounds latLngBounds = LatLngBounds.builder()
-                .include(currentLatLng)
-                .include(currentChapter != null ? currentChapter : currentLatLng)
-                .include(nextChapter != null ? nextChapter : currentLatLng)
-                .build();
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 10);
-        mMap.animateCamera(cameraUpdate);
-        // Restrict camera panning
-        mMap.setLatLngBoundsForCameraTarget(latLngBounds);
     }
 
     @SuppressLint("MissingPermission")
@@ -374,18 +244,13 @@ public class PlayFragment extends Fragment implements
     }
 
     @Override
-    public void onCircleClick(Circle circle) {
-        Toast.makeText(getContext(), "circle id " + circle.getId(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public boolean onMarkerClick(Marker marker) {
         for (int i = 0; i < markers.size(); ++i) {
             if (markers.get(i).equals(marker)) {
                 List<Chapter> chapters = story.chapters;
                 for (int chapter = 0; chapter < chapters.size(); chapter++) {
-                    for (Exposition exposition : chapters.get(chapter).getExpositions()) {
-                        if (exposition.getId() == i) {
+                    for (Post post : chapters.get(chapter).getPosts()) {
+                        if (Objects.equals(post.getPostId(), "" + i)) {
                             BottomSheetBehavior.from(bottomSheet.bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
                             bottomSheet.expositionList.smoothScrollToPosition(chapter);
                             return true;

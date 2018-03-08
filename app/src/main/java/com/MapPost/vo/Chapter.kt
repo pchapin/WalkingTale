@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 
 @DynamoDBDocument
-data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
+data class Chapter(var posts: ArrayList<Post> = ArrayList(),
                    var name: String,
                    @DynamoDBMarshalling(marshallerClass = LatLngMarshaller::class)
                    var location: LatLng,
@@ -15,7 +15,7 @@ data class Chapter(var expositions: ArrayList<Exposition> = ArrayList(),
                    var radius: Int) {
 
     // Zero arg constructor needed for ddb mapper
-    constructor() : this(arrayListOf<Exposition>(), "", LatLng(0.0, 0.0), 0, 0)
+    constructor() : this(arrayListOf<Post>(), "", LatLng(0.0, 0.0), 0, 0)
 }
 
 

@@ -21,7 +21,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
-import com.MapPost.repository.StoryRepository;
+import com.MapPost.repository.PostRepository;
 import com.MapPost.vo.Resource;
 import com.MapPost.vo.Story;
 
@@ -33,14 +33,14 @@ public class FeedViewModel extends ViewModel {
 
     private final String TAG = this.getClass().getSimpleName();
     LiveData<Resource<List<Story>>> results = new MutableLiveData<>();
-    private StoryRepository storyRepository;
+    private PostRepository postRepository;
     private MutableLiveData<Boolean> shouldFetch = new MutableLiveData<>();
 
     @Inject
-    FeedViewModel(StoryRepository storyRepository) {
-        this.storyRepository = storyRepository;
+    FeedViewModel(PostRepository postRepository) {
+        this.postRepository = postRepository;
         this.shouldFetch.setValue(false);
-        results = Transformations.switchMap(shouldFetch, storyRepository::getFeedStories);
+        results = Transformations.switchMap(shouldFetch, postRepository::getFeedStories);
     }
 
     void setShouldFetch() {

@@ -16,7 +16,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.MapPost.ui.common.createFile
-import com.MapPost.ui.create.CreateFragment
 import java.io.File
 import java.io.IOException
 
@@ -111,8 +110,8 @@ class AudioRecordActivity : AppCompatActivity() {
         audioFile = createFile(this)
 
         val bundle = intent.extras
-        chapterKey = bundle!!.getString(CreateFragment.AUDIO_KEY_CHAPTER)
-        expositionKey = bundle.getString(CreateFragment.AUDIO_KEY_EXPOSITION)
+        chapterKey = bundle!!.getString("todo")
+        expositionKey = bundle.getString("todo")
         Log.i("chapterkey", chapterKey)
         Log.i("expositionKey", expositionKey)
 

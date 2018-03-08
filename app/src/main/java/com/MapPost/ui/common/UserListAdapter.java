@@ -64,7 +64,7 @@ public class UserListAdapter extends DataBoundListAdapter<User, ItemUserBinding>
 
     @Override
     protected boolean areContentsTheSame(User oldItem, User newItem) {
-        return Objects.equals(oldItem.userId, newItem.userId);
+        return Objects.equals(oldItem.getUserId(), newItem.getUserId());
     }
 
     public interface UserClickCallback {

@@ -24,16 +24,16 @@ import android.view.ViewGroup;
 import com.MapPost.R;
 import com.MapPost.databinding.ItemExpositionBinding;
 import com.MapPost.util.Objects;
-import com.MapPost.vo.Exposition;
+import com.MapPost.vo.Post;
 
 /**
- * A RecyclerView adapter for {@link Exposition} class.
+ * A RecyclerView adapter for {@link Post} class.
  */
-public class ExpositionAdapter extends DataBoundListAdapter<Exposition, ItemExpositionBinding> {
+public class PostAdapter extends DataBoundListAdapter<Post, ItemExpositionBinding> {
     private final DataBindingComponent dataBindingComponent;
     private final ExpositionClickBack expositionClickBack;
 
-    public ExpositionAdapter(DataBindingComponent dataBindingComponent, ExpositionClickBack expositionClickBack) {
+    public PostAdapter(DataBindingComponent dataBindingComponent, ExpositionClickBack expositionClickBack) {
         this.dataBindingComponent = dataBindingComponent;
         this.expositionClickBack = expositionClickBack;
     }
@@ -47,30 +47,30 @@ public class ExpositionAdapter extends DataBoundListAdapter<Exposition, ItemExpo
                 false,
                 dataBindingComponent);
         binding.getRoot().setOnClickListener(v -> {
-            Exposition exposition = binding.getExposition();
-            if (exposition != null && expositionClickBack != null) {
-                expositionClickBack.onClick(exposition);
+            Post post = binding.getPost();
+            if (post != null && expositionClickBack != null) {
+                expositionClickBack.onClick(post);
             }
         });
         return binding;
     }
 
     @Override
-    protected void bind(ItemExpositionBinding binding, Exposition item) {
-        binding.setExposition(item);
+    protected void bind(ItemExpositionBinding binding, Post item) {
+        binding.setPost(item);
     }
 
     @Override
-    protected boolean areItemsTheSame(Exposition oldItem, Exposition newItem) {
-        return Objects.equals(oldItem.getId(), newItem.getId());
+    protected boolean areItemsTheSame(Post oldItem, Post newItem) {
+        return Objects.equals(oldItem.getPostId(), newItem.getPostId());
     }
 
     @Override
-    protected boolean areContentsTheSame(Exposition oldItem, Exposition newItem) {
-        return Objects.equals(oldItem.getId(), newItem.getId());
+    protected boolean areContentsTheSame(Post oldItem, Post newItem) {
+        return Objects.equals(oldItem.getPostId(), newItem.getPostId());
     }
 
     public interface ExpositionClickBack {
-        void onClick(Exposition exposition);
+        void onClick(Post post);
     }
 }

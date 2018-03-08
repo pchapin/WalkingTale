@@ -25,14 +25,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
+import com.MapPost.ui.common.ExampleData;
 import com.MapPost.ui.common.NavigationController;
-import com.MapPost.vo.User;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.auth0.android.jwt.JWT;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -47,7 +45,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 //knows how to show images on the map
 //
 //also will need to create a separate aws mobile hub project
-//bc expositions will need a location field
+//bc posts will need a location field
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
     public static final DEBUG_STATE DEBUG_MODE = DEBUG_STATE.OFF;
@@ -114,14 +112,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void createNewUser() {
-
-        mainViewModel.createUser(new User(
-                getCognitoId(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                getCognitoUsername(),
-                "none"
-        )).observe(this, newUserResource -> {
+        mainViewModel.createUser(ExampleData.Companion.getUser()).observe(this, newUserResource -> {
             if (newUserResource != null) {
                 switch (newUserResource.status) {
                     case SUCCESS:
@@ -130,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 }
             }
         });
-
     }
 
     @Override

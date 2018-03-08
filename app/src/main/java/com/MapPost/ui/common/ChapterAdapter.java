@@ -60,11 +60,11 @@ public class ChapterAdapter extends DataBoundListAdapter<Chapter, ItemChapterBin
     protected void bind(ItemChapterBinding binding, Chapter item) {
         binding.setChapter(item);
 
-        ExpositionAdapter expositionAdapter = new ExpositionAdapter(dataBindingComponent, null);
+        PostAdapter expositionAdapter = new PostAdapter(dataBindingComponent, null);
         binding.expositionList.setAdapter(expositionAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(null, LinearLayoutManager.HORIZONTAL, false);
         binding.expositionList.setLayoutManager(linearLayoutManager);
-        expositionAdapter.replace(binding.getChapter().getExpositions());
+        expositionAdapter.replace(binding.getChapter().getPosts());
     }
 
     @Override

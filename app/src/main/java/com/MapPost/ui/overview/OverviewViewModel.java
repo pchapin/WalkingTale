@@ -20,7 +20,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 
-import com.MapPost.repository.StoryRepository;
+import com.MapPost.repository.PostRepository;
 import com.MapPost.repository.tasks.StoryKey;
 import com.MapPost.vo.Resource;
 import com.MapPost.vo.Story;
@@ -29,14 +29,14 @@ import javax.inject.Inject;
 
 public class OverviewViewModel extends ViewModel {
     @VisibleForTesting
-    private final StoryRepository storyRepository;
+    private final PostRepository postRepository;
 
     @Inject
-    public OverviewViewModel(StoryRepository repository) {
-        this.storyRepository = repository;
+    public OverviewViewModel(PostRepository repository) {
+        this.postRepository = repository;
     }
 
     public LiveData<Resource<Story>> getStory(StoryKey storyKey) {
-        return storyRepository.getOneStory(storyKey, false);
+        return postRepository.getOneStory(storyKey, false);
     }
 }

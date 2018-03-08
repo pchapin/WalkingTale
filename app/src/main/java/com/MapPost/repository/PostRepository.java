@@ -34,7 +34,6 @@ import com.MapPost.repository.tasks.SaveStoryTask;
 import com.MapPost.repository.tasks.StoryKey;
 import com.MapPost.vo.Resource;
 import com.MapPost.vo.Story;
-import com.MapPost.vo.User;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class StoryRepository {
+public class PostRepository {
 
     private final String TAG = this.getClass().getSimpleName();
     private final WalkingTaleDb db;
@@ -51,8 +50,8 @@ public class StoryRepository {
     private final AppExecutors appExecutors;
 
     @Inject
-    public StoryRepository(AppExecutors appExecutors, WalkingTaleDb db, StoryDao storyDao,
-                           WalkingTaleService walkingTaleService) {
+    public PostRepository(AppExecutors appExecutors, WalkingTaleDb db, StoryDao storyDao,
+                          WalkingTaleService walkingTaleService) {
         this.db = db;
         this.storyDao = storyDao;
         this.walkingTaleService = walkingTaleService;
@@ -135,61 +134,4 @@ public class StoryRepository {
         appExecutors.networkIO().execute(deleteStoryTask);
         return deleteStoryTask.getResult();
     }
-
-    public LiveData<Resource<List<Story>>> getPlayedStories(User user, boolean shouldFetch) {
-        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull List<Story> item) {
-                storyDao.insertStories(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Story> data) {
-                return shouldFetch || data == null || data.isEmpty();
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Story>> loadFromDb() {
-                return storyDao.loadPlayedStories(user.getPlayedStories());
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Resource<List<Story>>> createCall() {
-                GetPlayedStoriesTask getPlayedStoriesTask = new GetPlayedStoriesTask(user, db);
-                appExecutors.networkIO().execute(getPlayedStoriesTask);
-                return getPlayedStoriesTask.getResult();
-            }
-        }.asLiveData();
-    }
-
-    public LiveData<Resource<List<Story>>> getCreatedStories(User user, boolean shouldFetch) {
-        return new NetworkBoundResource<List<Story>, List<Story>>(appExecutors) {
-            @Override
-            protected void saveCallResult(@NonNull List<Story> item) {
-                storyDao.insertStories(item);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Story> data) {
-                return shouldFetch || data == null || data.isEmpty();
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<List<Story>> loadFromDb() {
-                return storyDao.loadCreatedStories(user.getCreatedStories());
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Resource<List<Story>>> createCall() {
-                GetCreatedStoriesTask getCreatedStoriesTask = new GetCreatedStoriesTask(user, db);
-                appExecutors.networkIO().execute(getCreatedStoriesTask);
-                return getCreatedStoriesTask.getResult();
-            }
-        }.asLiveData();
-    }
-
 }

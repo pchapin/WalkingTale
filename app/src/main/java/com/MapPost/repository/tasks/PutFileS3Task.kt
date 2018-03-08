@@ -2,7 +2,7 @@ package com.MapPost.repository.tasks
 
 import com.MapPost.aws.getTransferUtility
 import com.MapPost.db.WalkingTaleDb
-import com.MapPost.vo.ExpositionType
+import com.MapPost.vo.PostType
 import com.MapPost.vo.Resource
 import com.MapPost.vo.Status
 import com.MapPost.vo.Story
@@ -18,14 +18,14 @@ class PutFileS3Task(private val s3Args: S3Args, val db: WalkingTaleDb) :
         val transferUtility = getTransferUtility(s3Args.context)
 
         val expositions = s3Args.story.chapters
-                .flatMap { it.expositions }
-                .filter { it.type == ExpositionType.AUDIO || it.type == ExpositionType.PICTURE }
+                .flatMap { it.posts }
+                .filter { it.type == PostType.AUDIO || it.type == PostType.PICTURE }
 
-        // Upload expositions
+        // Upload posts
         expositions.forEach {
-            val s3Path = "${s3Args.story.id}/${it.id}"
+            val s3Path = "${s3Args.story.id}/${it.postId}"
             transferUtility.upload(s3Path, File(it.content))
-            // Change expositions from local paths to s3 paths
+            // Change posts from local paths to s3 paths
             it.content = s3Path
         }
 

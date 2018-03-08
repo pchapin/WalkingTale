@@ -21,12 +21,12 @@
     <data>
 
         <variable
-            name="exposition"
-            type="com.MapPost.vo.Exposition" />
+            name="post"
+            type="com.MapPost.vo.Post" />
 
         <variable
             name="exposition_type"
-            type="com.MapPost.vo.ExpositionType" />
+            type="com.MapPost.vo.PostType" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -41,33 +41,33 @@
 
             <Button
                 android:id="@+id/play_audio_button"
-                visibleGone="@{exposition.type==exposition_type.AUDIO}"
+                visibleGone="@{post.type==exposition_type.AUDIO}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Play Audio"
-                app:audioUrl="@{exposition.content}"
+                app:audioUrl="@{post.content}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/exposition_image"
-                visibleGone="@{exposition.type==exposition_type.PICTURE}"
+                visibleGone="@{post.type==exposition_type.PICTURE}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/a11y_user_photo"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{exposition.content}"
+                app:imageUrl="@{post.content}"
                 app:layout_constraintStart_toEndOf="@id/play_audio_button"
                 app:layout_constraintTop_toTopOf="@id/play_audio_button"
                 tools:src="@color/alert" />
 
             <TextView
                 android:id="@+id/exposition_text"
-                visibleGone="@{exposition.type==exposition_type.TEXT}"
+                visibleGone="@{post.type==exposition_type.TEXT}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="@{exposition.content}"
+                android:text="@{post.content}"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -81,12 +81,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="272dp"
                 android:layout_marginTop="8dp"
-                android:text="@{`exposition `+(exposition.id + 1)}"
+                android:text="@{`post `+(post.postId + 1)}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_goneMarginStart="20dp"
                 tools:layout_editor_absoluteY="7dp"
-                tools:text="exposition id" />
+                tools:text="post id" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

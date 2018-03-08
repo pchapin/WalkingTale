@@ -154,9 +154,6 @@ public class FeedFragment extends Fragment implements Injectable {
             switch (DEBUG_MODE) {
                 case OFF:
                     break;
-                case CREATE:
-                    navigationController.navigateToCreateStory();
-                    break;
                 case PLAY:
                     if (result != null && result.data != null && !result.data.isEmpty()) {
                         navigationController.navigateToOverview(result.data.get(0));
@@ -171,7 +168,6 @@ public class FeedFragment extends Fragment implements Injectable {
 
     private void fabListener() {
         if (PermissionManager.checkLocationPermission(getActivity())) {
-            fab.setOnClickListener(v -> navigationController.navigateToCreateStory());
         }
     }
 }
