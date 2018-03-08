@@ -41,29 +41,24 @@
 
             <Button
                 android:id="@+id/play_audio_button"
-                visibleGone="@{post.type==post_type.AUDIO}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Play Audio"
-                app:audioUrl="@{post.content}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/post_image"
-                visibleGone="@{post.type==post_type.PICTURE}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/a11y_user_photo"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{post.content}"
                 app:layout_constraintStart_toEndOf="@id/play_audio_button"
                 app:layout_constraintTop_toTopOf="@id/play_audio_button"
                 tools:src="@color/alert" />
 
             <TextView
                 android:id="@+id/post_text"
-                visibleGone="@{post.type==post_type.TEXT}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"

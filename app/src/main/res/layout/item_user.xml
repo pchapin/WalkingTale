@@ -41,7 +41,6 @@
                 android:contentDescription="User Image"
                 android:maxHeight="50dp"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{user.userImage}"
                 tools:src="@mipmap/ic_launcher" />
 
             <TextView
