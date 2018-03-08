@@ -24,14 +24,15 @@ public class User {
     private String userImage;
     private String viewedPosts;
 
+    @NonNull
     @DynamoDBHashKey(attributeName = "userId")
     @DynamoDBAttribute(attributeName = "userId")
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(final String _userId) {
-        this.userId = _userId;
+    public void setUserId(@NonNull final String userId) {
+        this.userId = userId;
     }
 
     @DynamoDBRangeKey(attributeName = "userName")
@@ -40,8 +41,8 @@ public class User {
         return userName;
     }
 
-    public void setUserName(final String _userName) {
-        this.userName = _userName;
+    public void setUserName(final String userName) {
+        this.userName = userName;
     }
 
     @DynamoDBAttribute(attributeName = "createdPosts")
@@ -49,8 +50,8 @@ public class User {
         return createdPosts;
     }
 
-    public void setCreatedPosts(final List<String> _createdPosts) {
-        this.createdPosts = _createdPosts;
+    public void setCreatedPosts(final List<String> createdPosts) {
+        this.createdPosts = createdPosts;
     }
 
     @DynamoDBAttribute(attributeName = "userImage")
@@ -58,8 +59,8 @@ public class User {
         return userImage;
     }
 
-    public void setUserImage(final String _userImage) {
-        this.userImage = _userImage;
+    public void setUserImage(final String userImage) {
+        this.userImage = userImage;
     }
 
     @DynamoDBAttribute(attributeName = "viewedPosts")
@@ -67,8 +68,8 @@ public class User {
         return viewedPosts;
     }
 
-    public void setViewedPosts(final String _viewedPosts) {
-        this.viewedPosts = _viewedPosts;
+    public void setViewedPosts(final String viewedPosts) {
+        this.viewedPosts = viewedPosts;
     }
 
 }

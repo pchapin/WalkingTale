@@ -27,7 +27,7 @@ import com.MapPost.MainActivity;
 import com.MapPost.repository.StoryRepository;
 import com.MapPost.repository.UserRepository;
 import com.MapPost.repository.tasks.S3Args;
-import com.MapPost.ui.common.ExampleStory;
+import com.MapPost.ui.common.ExampleData;
 import com.MapPost.util.AbsentLiveData;
 import com.MapPost.vo.Chapter;
 import com.MapPost.vo.Exposition;
@@ -65,7 +65,7 @@ public class CreateViewModel extends ViewModel {
         this.userRepository = userRepository;
         if (story == null) {
             this.story = new MutableLiveData<>();
-            Story story = ExampleStory.Companion.getStory();
+            Story story = ExampleData.Companion.getStory();
             story.username = MainActivity.getCognitoUsername();
             this.story.setValue(story);
         }
