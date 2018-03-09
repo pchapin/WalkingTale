@@ -36,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import kotlinx.android.synthetic.main.activity_main.*
@@ -52,7 +53,7 @@ class MainActivity :
     private lateinit var mMap: GoogleMap
     internal var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var location: Location
+    private lateinit var location: LatLng
     private var file: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,14 +64,15 @@ class MainActivity :
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         Analytics.init(this)
         userSetup(savedInstanceState)
-        locationListener()
         cameraButton()
         audioButton()
         textButton()
+        myLocationButton()
     }
 
     private fun textButton() {
         text_button.setOnClickListener({
+
         })
     }
 
@@ -86,9 +88,15 @@ class MainActivity :
         })
     }
 
+    private fun myLocationButton() {
+        my_location_button.setOnClickListener({
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
+        })
+    }
+
     private fun locationListener() {
         LocationLiveData(this).observe(this, Observer {
-            if (it != null) location = it
+            if (it != null) location = locationToLatLng(it)
         })
     }
 
@@ -228,6 +236,7 @@ class MainActivity :
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         if (PermissionManager.checkLocationPermission(this)) {
             mMap.isMyLocationEnabled = true
+            locationListener()
         } else {
 //            finish()
         }
@@ -247,9 +256,23 @@ class MainActivity :
         mUiSettings.isTiltGesturesEnabled = false
         mUiSettings.isRotateGesturesEnabled = false
         mUiSettings.isCompassEnabled = false
+        mUiSettings.isMyLocationButtonEnabled = false
     }
 
     companion object {
+
+        fun locationToLatLng(location: Location): LatLng {
+            return LatLng(location.latitude, location.longitude)
+        }
+
+        fun latLngToLocation(latLng: LatLng): Location {
+            val location = Location("")
+            location.latitude = latLng.latitude
+            location.longitude = latLng.longitude
+            return location
+        }
+
+        val DEFAULT_ZOOM = 18f
         val DEBUG_MODE = DEBUG_STATE.OFF
 
         val cognitoId: String
