@@ -20,10 +20,15 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.location.Location
 import android.os.Bundle
+import android.support.design.widget.BottomSheetDialog
+import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
@@ -40,6 +45,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_sheet_chapter_list.*
 import java.io.File
 import java.util.*
 
@@ -55,6 +61,8 @@ class MainActivity :
     private lateinit var mainViewModel: MainViewModel
     private lateinit var location: LatLng
     private var file: File? = null
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var editText: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +70,9 @@ class MainActivity :
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
+        editText = bottomSheetDialog.findViewById<TextInputEditText>(R.id.post_edit_text)!!
         Analytics.init(this)
         userSetup(savedInstanceState)
         cameraButton()
@@ -72,7 +83,9 @@ class MainActivity :
 
     private fun textButton() {
         text_button.setOnClickListener({
-
+            bottomSheetDialog.show()
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(editText, SHOW_IMPLICIT)
         })
     }
 

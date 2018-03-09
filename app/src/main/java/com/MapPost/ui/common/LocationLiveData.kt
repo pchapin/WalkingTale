@@ -13,13 +13,9 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 
 class LocationLiveData(context: Context) : LiveData<Location>(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private val googleApiClient: GoogleApiClient
-
-    init {
-        googleApiClient = GoogleApiClient.Builder(context, this, this)
-                .addApi(LocationServices.API)
-                .build()
-    }
+    private val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(context, this, this)
+            .addApi(LocationServices.API)
+            .build()
 
     override fun onActive() {
         // Wait for the GoogleApiClient to be connected
