@@ -16,12 +16,38 @@
 
 package com.MapPost.repository
 
+import android.arch.lifecycle.LiveData
 import com.MapPost.AppExecutors
-import com.MapPost.db.AppDatabase
-import com.MapPost.db.PostDao
+import com.MapPost.repository.tasks.AbstractTask
+import com.MapPost.vo.Post
+import com.MapPost.vo.Resource
+import com.MapPost.vo.Status
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
 
 
-class PostRepository(private val appExecutors: AppExecutors, private val db: AppDatabase, private val storyDao: PostDao) {
+object PostRepository {
 
     private val TAG = this.javaClass.simpleName
+    private val appExecutors: AppExecutors = AppExecutors()
+
+    fun getNearbyPosts(): LiveData<Resource<List<Post>>> {
+        val result = object : AbstractTask<String, List<Post>>("") {
+            override fun run() {
+                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.scan(Post::class.java, DynamoDBScanExpression()), ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
+    }
+
+    fun addPost(post: Post): LiveData<Resource<Unit>> {
+        val result = object : AbstractTask<Post, Unit>(post) {
+            override fun run() {
+                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.save(post), ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
+    }
+
 }

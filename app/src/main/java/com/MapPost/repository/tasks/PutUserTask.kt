@@ -5,7 +5,7 @@ import com.MapPost.vo.Resource
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
 
-class PutUserTask(val user: User, db: AppDatabase) : AbstractTask<User, Void>(user, db) {
+class PutUserTask(val user: User, db: AppDatabase) : AbstractTask<User, Void>(user) {
 
     override fun run() {
         dynamoDBMapper.save(user)

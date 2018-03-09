@@ -20,16 +20,16 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
-import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import com.MapPost.ui.common.LocationLiveData
+import com.MapPost.vo.Post
+import com.MapPost.vo.PostType
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -79,13 +79,34 @@ class MainActivity :
         audioButton()
         textButton()
         myLocationButton()
+        nearbyPosts()
+    }
+
+    private fun nearbyPosts() {
+        mainViewModel.getNearbyPosts().observe(this, Observer {
+
+        })
     }
 
     private fun textButton() {
         text_button.setOnClickListener({
-            bottomSheetDialog.show()
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(editText, SHOW_IMPLICIT)
+            //            bottomSheetDialog.show()
+//            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//            imm.showSoftInput(editText, SHOW_IMPLICIT)
+            val post = Post()
+            post.postId = UUID.randomUUID().toString()
+            post.userId = MainActivity.cognitoId
+            post.content = "nice"
+            post.type = PostType.TEXT
+            post.latitude = location.latitude
+            post.longitude = location.longitude
+            post.dateTime = Date().time.toString()
+            Log.i(TAG, post.toString())
+            mainViewModel.putPost(post).observe(this, Observer {
+                if (it != null && it.status == Status.SUCCESS) {
+                    mainViewModel.
+                }
+            })
         })
     }
 
@@ -139,10 +160,10 @@ class MainActivity :
         val user = User()
         user.userId = cognitoId
         user.userName = cognitoUsername
-        user.createdPosts = ArrayList()
-        user.viewedPosts = ArrayList()
+        user.createdPosts = listOf()
+        user.viewedPosts = listOf()
         user.userImage = "none"
-        mainViewModel.createUser(user).observe(this, Observer {
+        mainViewModel.putUser(user).observe(this, Observer {
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {
