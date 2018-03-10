@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
@@ -27,6 +28,9 @@ import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.vo.Post
 import com.MapPost.vo.PostType
@@ -34,16 +38,19 @@ import com.MapPost.vo.Status
 import com.MapPost.vo.User
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.auth0.android.jwt.JWT
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.*
+import com.google.maps.android.ui.IconGenerator
+import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_chapter_list.*
 import java.io.File
@@ -63,6 +70,9 @@ class MainActivity :
     private var file: File? = null
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var editText: TextInputEditText
+    private val markers = mutableListOf<Marker>()
+    private val MARKER_WIDTH = 100
+    private val MARKER_HEIGHT = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +95,52 @@ class MainActivity :
     private fun nearbyPosts() {
         mainViewModel.getNearbyPosts().observe(this, Observer {
 
+            if (it?.data == null) return@Observer
+
+            markers.map { it.remove() }
+
+            for (post in it.data) {
+
+                val iconGenerator = IconGenerator(this)
+                val imageView = ImageView(this)
+                imageView.layoutParams = ViewGroup.LayoutParams(MARKER_WIDTH, MARKER_HEIGHT)
+                var markerOptions: MarkerOptions
+                val location = LatLng(post.latitude!!, post.longitude!!)
+
+                when (post.type) {
+                    PostType.TEXT -> {
+                        imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
+                        iconGenerator.setContentView(imageView)
+                        markerOptions = MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                .position(location)
+                        markers.add(mMap.addMarker(markerOptions))
+                    }
+                    PostType.AUDIO -> {
+                        imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
+                        iconGenerator.setContentView(imageView)
+                        markerOptions = MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                .position(location)
+                        markers.add(mMap.addMarker(markerOptions))
+                    }
+                    PostType.PICTURE ->
+                        Glide.with(this)
+                                .asBitmap()
+                                .load(s3HostName + post.content)
+                                .apply(RequestOptions().centerCrop())
+                                .into(object : SimpleTarget<Bitmap>(MARKER_WIDTH, MARKER_HEIGHT) {
+                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
+                                        imageView.setImageBitmap(resource)
+                                        iconGenerator.setContentView(imageView)
+                                        markerOptions = MarkerOptions()
+                                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                                .position(location)
+                                        markers.add(mMap.addMarker(markerOptions))
+                                    }
+                                })
+                }
+            }
         })
     }
 
@@ -104,7 +160,9 @@ class MainActivity :
             Log.i(TAG, post.toString())
             mainViewModel.putPost(post).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
-                    mainViewModel.putUser(mainViewModel.currentUser!!)
+                    mainViewModel.putUser(mainViewModel.currentUser!!).observe(this, Observer {
+                        if (it != null) Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                    })
                 }
             })
         })
@@ -211,52 +269,7 @@ class MainActivity :
     }
 
     private fun initCurrentChapterObserver() {
-//        playViewModel!!.posts.observe(this, Observer { listResource ->
-//            if (listResource == null || listResource!!.data == null) return@Observer
-//
-//            for (post in listResource!!.data!!) {
-//
-//                val iconGenerator = IconGenerator(this)
-//                val imageView = ImageView(this)
-//                imageView.layoutParams = ViewGroup.LayoutParams(PlayFragment.MARKER_WIDTH, PlayFragment.MARKER_HEIGHT)
-//                val markerOptions: MarkerOptions
-//                val location = LatLng(post.latitude!!, post.longitude!!)
-//
-//                when (post.type) {
-//                    PostType.TEXT -> {
-//                        imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
-//                        iconGenerator.setContentView(imageView)
-//                        markerOptions = MarkerOptions()
-//                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-//                                .position(location)
-//                        markers.add(mMap!!.addMarker(markerOptions))
-//                    }
-//                    PostType.AUDIO -> {
-//                        imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
-//                        iconGenerator.setContentView(imageView)
-//                        markerOptions = MarkerOptions()
-//                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-//                                .position(location)
-//                        markers.add(mMap!!.addMarker(markerOptions))
-//                    }
-////                    PostType.PICTURE -> Glide.with(this!!)
-////                            .asBitmap()
-////                            .load(s3HostName + post.content!!)
-////                            .apply(RequestOptions().centerCrop())
-////                            .into<Bitmap>(object : SimpleTarget<Bitmap>(MARKER_WIDTH, MARKER_HEIGHT) {
-////                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
-////                                    imageView.setImageBitmap(resource)
-////                                    iconGenerator.setContentView(imageView)
-////                                    val markerOptions = MarkerOptions()
-////                                            .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-////                                            .position(location)
-////                                    markers.add(mMap!!.addMarker(markerOptions))
-////                                }
-////                            })
-//                }
-//            }
-//
-//        })
+
     }
 
     override fun onMarkerClick(p0: Marker?): Boolean {
