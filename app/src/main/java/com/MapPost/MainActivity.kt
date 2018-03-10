@@ -73,6 +73,7 @@ class MainActivity :
     private val markers = mutableListOf<Marker>()
     private val MARKER_WIDTH = 100
     private val MARKER_HEIGHT = 100
+    private var cameraOnUserOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,12 +85,21 @@ class MainActivity :
         bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
         editText = bottomSheetDialog.findViewById<TextInputEditText>(R.id.post_edit_text)!!
         Analytics.init(this)
-        userSetup()
-        cameraButton()
-        audioButton()
-        textButton()
-        myLocationButton()
-        nearbyPosts()
+
+        val lld = LocationLiveData(this)
+        lld.observe(this, Observer {
+            if (it != null) {
+                location = locationToLatLng(it)
+                locationListener()
+                userSetup()
+                cameraButton()
+                audioButton()
+                textButton()
+                myLocationButton()
+                nearbyPosts()
+                lld.removeObservers(this)
+            }
+        })
     }
 
     private fun nearbyPosts() {
@@ -188,7 +198,13 @@ class MainActivity :
 
     private fun locationListener() {
         LocationLiveData(this).observe(this, Observer {
-            if (it != null) location = locationToLatLng(it)
+            if (it != null) {
+                if (!cameraOnUserOnce) {
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
+                    cameraOnUserOnce = true
+                }
+                location = locationToLatLng(it)
+            }
         })
     }
 
@@ -282,7 +298,6 @@ class MainActivity :
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         if (PermissionManager.checkLocationPermission(this)) {
             mMap.isMyLocationEnabled = true
-            locationListener()
         } else {
 //            finish()
         }
