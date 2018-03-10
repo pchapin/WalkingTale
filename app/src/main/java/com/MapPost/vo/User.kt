@@ -13,18 +13,21 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable
 @DynamoDBTable(tableName = "mappost-mobilehub-452475001-Users")
 @Entity(indices = [(Index("userId"))], primaryKeys = ["userId"])
 @TypeConverters(AppTypeConverters::class)
-class User {
-    @get:DynamoDBHashKey(attributeName = "userId")
-    @get:DynamoDBAttribute(attributeName = "userId")
-    @NonNull
-    var userId: String? = null
-    @get:DynamoDBRangeKey(attributeName = "userName")
-    @get:DynamoDBAttribute(attributeName = "userName")
-    var userName: String? = null
-    @get:DynamoDBAttribute(attributeName = "createdPosts")
-    var createdPosts: List<String>? = null
-    @get:DynamoDBAttribute(attributeName = "userImage")
-    var userImage: String? = null
-    @get:DynamoDBAttribute(attributeName = "viewedPosts")
-    var viewedPosts: List<String>? = null
+data class User(
+        @get:DynamoDBHashKey(attributeName = "userId")
+        @get:DynamoDBAttribute(attributeName = "userId")
+        @NonNull
+        var userId: String,
+        @get:DynamoDBRangeKey(attributeName = "userName")
+        @get:DynamoDBAttribute(attributeName = "userName")
+        var userName: String,
+        @get:DynamoDBAttribute(attributeName = "createdPosts")
+        var createdPosts: MutableList<String>,
+        @get:DynamoDBAttribute(attributeName = "userImage")
+        var userImage: String,
+        @get:DynamoDBAttribute(attributeName = "viewedPosts")
+        var viewedPosts: MutableList<String>
+) {
+    // Just to make DDB mapper happy
+    constructor() : this("none", "none", mutableListOf(), "none", mutableListOf())
 }

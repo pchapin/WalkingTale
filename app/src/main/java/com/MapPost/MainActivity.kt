@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -57,6 +56,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_chapter_list.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 
 class MainActivity :
@@ -64,7 +64,7 @@ class MainActivity :
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
 
-    private val TAG = this.javaClass.simpleName
+    private val tag = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
     private var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
@@ -73,11 +73,11 @@ class MainActivity :
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var editText: TextInputEditText
     private val markers = mutableListOf<Marker>()
-    private val MARKER_WIDTH = 100
-    private val MARKER_HEIGHT = 100
+    private val markerWidth = 100
+    private val markerHeight = 100
     private var cameraOnUserOnce = false
-    private val RC_AUDIO = 123
-    private val RC_PICTURE = 1234
+    private val rcAudio = 123
+    private val rcPicture = 1234
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +87,7 @@ class MainActivity :
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
-        editText = bottomSheetDialog.findViewById<TextInputEditText>(R.id.post_edit_text)!!
+        editText = bottomSheetDialog.findViewById(R.id.post_edit_text)!!
         Analytics.init(this)
 
         val lld = LocationLiveData(this)
@@ -117,9 +117,10 @@ class MainActivity :
 
                 val iconGenerator = IconGenerator(this)
                 val imageView = ImageView(this)
-                imageView.layoutParams = ViewGroup.LayoutParams(MARKER_WIDTH, MARKER_HEIGHT)
+                imageView.layoutParams = ViewGroup.LayoutParams(markerWidth, markerHeight)
                 var markerOptions: MarkerOptions
-                val location = LatLng(post.latitude!!, post.longitude!!)
+                val random = ThreadLocalRandom.current().nextDouble(-.00000000000001, 1.00000000000000000001)
+                val location = LatLng(post.latitude!! * random, post.longitude!! * random)
 
                 when (post.type) {
                     PostType.TEXT -> {
@@ -143,7 +144,7 @@ class MainActivity :
                                 .asBitmap()
                                 .load(s3HostName + post.content)
                                 .apply(RequestOptions().centerCrop())
-                                .into(object : SimpleTarget<Bitmap>(MARKER_WIDTH, MARKER_HEIGHT) {
+                                .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
                                         imageView.setImageBitmap(resource)
                                         iconGenerator.setContentView(imageView)
@@ -171,10 +172,14 @@ class MainActivity :
             post.latitude = location.latitude
             post.longitude = location.longitude
             post.dateTime = Date().time.toString()
-            Log.i(TAG, post.toString())
             mainViewModel.putPost(post).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
-                    mainViewModel.putUser(mainViewModel.currentUser!!).observe(this, Observer {
+                    val user = mainViewModel.currentUser!!
+                    if (!user.createdPosts.contains(post.postId!!)) {
+                        user.createdPosts.add(post.postId!!)
+                    }
+                    mainViewModel.currentUser = user
+                    mainViewModel.putUser(user).observe(this, Observer {
                         if (it != null) Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
                     })
                 }
@@ -190,7 +195,7 @@ class MainActivity :
 
     private fun cameraButton() {
         camera_button.setOnClickListener({
-            file = dispatchTakePictureIntent(RC_PICTURE, this, file)
+            file = dispatchTakePictureIntent(rcPicture, this, file)
         })
     }
 
@@ -225,7 +230,7 @@ class MainActivity :
                     }
                     Status.SUCCESS -> {
                         mainViewModel.currentUser = userResource.data
-                        Analytics.logEvent(Analytics.EventType.UserLogin, TAG)
+                        Analytics.logEvent(Analytics.EventType.UserLogin, tag)
                     }
                 }
             }
@@ -233,21 +238,18 @@ class MainActivity :
     }
 
     private fun createNewUser() {
-        val user = User()
-        user.userId = cognitoId
-        user.userName = cognitoUsername
-        user.createdPosts = listOf<String>()
-        user.viewedPosts = listOf<String>()
-        user.userImage = "none"
+        val user = User(cognitoId, cognitoUsername, mutableListOf(), "none", mutableListOf())
         mainViewModel.currentUser = user
         mainViewModel.putUser(user).observe(this, Observer {
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {
-                        Analytics.logEvent(Analytics.EventType.CreatedUser, TAG)
+                        Analytics.logEvent(Analytics.EventType.CreatedUser, tag)
                     }
-                    Status.ERROR -> TODO()
-                    Status.LOADING -> TODO()
+                    Status.ERROR -> {
+                    }
+                    Status.LOADING -> {
+                    }
                 }
             }
         })
@@ -284,14 +286,6 @@ class MainActivity :
         checkPlayServices()
     }
 
-    enum class DEBUG_STATE {
-        OFF, CREATE, PLAY, PROFILE
-    }
-
-    private fun initCurrentChapterObserver() {
-
-    }
-
     override fun onMarkerClick(p0: Marker?): Boolean {
         return false
     }
@@ -315,7 +309,7 @@ class MainActivity :
 
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
-        mUiSettings.isZoomControlsEnabled = false
+        mUiSettings.isZoomControlsEnabled = true
         mUiSettings.isScrollGesturesEnabled = true
         mUiSettings.isZoomGesturesEnabled = true
         mUiSettings.isTiltGesturesEnabled = false
@@ -325,27 +319,35 @@ class MainActivity :
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RC_PICTURE && resultCode == RESULT_OK) {
+        if (requestCode == rcPicture && resultCode == RESULT_OK) {
             val post = Post()
             post.postId = UUID.randomUUID().toString()
             post.userId = MainActivity.cognitoId
             post.content = file!!.absolutePath
-            post.type = PostType.TEXT
+            post.type = PostType.PICTURE
             post.latitude = location.latitude
             post.longitude = location.longitude
             post.dateTime = Date().time.toString()
+            // Put the file in S3
             mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
-                    mainViewModel.putPost(it.data!!).observe(this, Observer {
+                    val newPost = it.data!!
+                    // Add the post to DDB
+                    mainViewModel.putPost(newPost).observe(this, Observer {
                         if (it != null && it.status == Status.SUCCESS) {
-                            Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                            val user = mainViewModel.currentUser!!
+                            if (!user.createdPosts.contains(newPost.content)) {
+                                user.createdPosts.add(newPost.content!!)
+                            }
+                            // Update the users set of created posts
+                            mainViewModel.putUser(user).observe(this, Observer {
+                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                            })
                         }
                     })
                 }
             })
-
-//            createViewModel.addExposition(PostType.PICTURE, file!!.absolutePath)
-        } else if (requestCode == RC_AUDIO && resultCode == RESULT_OK) {
+        } else if (requestCode == rcAudio && resultCode == RESULT_OK) {
 //            createViewModel.addExposition(PostType.AUDIO, data!!.data!!.path)
         }
     }
@@ -363,18 +365,16 @@ class MainActivity :
             return location
         }
 
-        val DEFAULT_ZOOM = 18f
-        val DEBUG_MODE = DEBUG_STATE.OFF
-
+        const val DEFAULT_ZOOM = 18f
         val cognitoId: String
             get() = IdentityManager.getDefaultIdentityManager().cachedUserID
 
-        val cognitoUsername: String?
+        val cognitoUsername: String
             get() {
                 val cognitoToken = IdentityManager.getDefaultIdentityManager().currentIdentityProvider.token
                 val jwt = JWT(cognitoToken)
                 val username = jwt.getClaim("cognito:username").asString()
-                return username ?: jwt.getClaim("given_name").asString()
+                return username ?: jwt.getClaim("given_name").asString()!!
             }
     }
 }
