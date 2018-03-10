@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Environment
 import android.provider.MediaStore
-import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
 import android.util.Log
 import java.io.File
@@ -30,25 +29,25 @@ fun createFile(activity: Activity): File {
     )
 }
 
-fun dispatchTakePictureIntent(requestCode: Int, fragment: Fragment, photoFile: File?): File? {
+fun dispatchTakePictureIntent(requestCode: Int, activity: Activity, photoFile: File?): File? {
     var file = photoFile
     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     // Ensure that there's a camera activity to handle the intent
-    if (takePictureIntent.resolveActivity(fragment.activity!!.packageManager) != null) {
+    if (takePictureIntent.resolveActivity(activity.packageManager) != null) {
         // Create the File where the photo should go
         try {
-            file = createFile(fragment.activity!!)
+            file = createFile(activity)
         } catch (e: IOException) {
             Log.i(TAG, "" + e)
         }
 
         // Continue only if the File was successfully created
         if (file != null) {
-            val photoURI = FileProvider.getUriForFile(fragment.context!!,
+            val photoURI = FileProvider.getUriForFile(activity.applicationContext,
                     "com.MapPost",
                     file)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-            fragment.startActivityForResult(takePictureIntent, requestCode)
+            activity.startActivityForResult(takePictureIntent, requestCode)
         }
     }
     return file

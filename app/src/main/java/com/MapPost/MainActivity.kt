@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
@@ -32,6 +33,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.MapPost.ui.common.LocationLiveData
+import com.MapPost.ui.common.dispatchTakePictureIntent
 import com.MapPost.vo.Post
 import com.MapPost.vo.PostType
 import com.MapPost.vo.Status
@@ -64,7 +66,7 @@ class MainActivity :
 
     private val TAG = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
-    internal var playServicesErrorDialog: Dialog? = null
+    private var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
     private lateinit var location: LatLng
     private var file: File? = null
@@ -74,6 +76,8 @@ class MainActivity :
     private val MARKER_WIDTH = 100
     private val MARKER_HEIGHT = 100
     private var cameraOnUserOnce = false
+    private val RC_AUDIO = 123
+    private val RC_PICTURE = 1234
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,7 +190,7 @@ class MainActivity :
 
     private fun cameraButton() {
         camera_button.setOnClickListener({
-
+            file = dispatchTakePictureIntent(RC_PICTURE, this, file)
         })
     }
 
@@ -318,6 +322,32 @@ class MainActivity :
         mUiSettings.isRotateGesturesEnabled = false
         mUiSettings.isCompassEnabled = false
         mUiSettings.isMyLocationButtonEnabled = false
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RC_PICTURE && resultCode == RESULT_OK) {
+            val post = Post()
+            post.postId = UUID.randomUUID().toString()
+            post.userId = MainActivity.cognitoId
+            post.content = file!!.absolutePath
+            post.type = PostType.TEXT
+            post.latitude = location.latitude
+            post.longitude = location.longitude
+            post.dateTime = Date().time.toString()
+            mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
+                if (it != null && it.status == Status.SUCCESS) {
+                    mainViewModel.putPost(it.data!!).observe(this, Observer {
+                        if (it != null && it.status == Status.SUCCESS) {
+                            Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            })
+
+//            createViewModel.addExposition(PostType.PICTURE, file!!.absolutePath)
+        } else if (requestCode == RC_AUDIO && resultCode == RESULT_OK) {
+//            createViewModel.addExposition(PostType.AUDIO, data!!.data!!.path)
+        }
     }
 
     companion object {

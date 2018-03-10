@@ -17,12 +17,18 @@
 package com.MapPost.repository
 
 import android.arch.lifecycle.LiveData
+import android.content.Context
 import com.MapPost.AppExecutors
 import com.MapPost.repository.tasks.AbstractTask
 import com.MapPost.vo.Post
 import com.MapPost.vo.Resource
 import com.MapPost.vo.Status
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
+import com.amazonaws.services.s3.AmazonS3Client
+import com.s3BucketName
+import java.io.File
 
 
 object PostRepository {
@@ -50,4 +56,28 @@ object PostRepository {
         return result.getResult()
     }
 
+    fun putFile(pair: Pair<Post, Context>): LiveData<Resource<Post>> {
+        val result = object : AbstractTask<Pair<Post, Context>, Post>(pair) {
+            override fun run() {
+                val post = pair.first
+                val transferUtility = getTransferUtility(pair.second)
+                val s3Path = "${post.postId}"
+                transferUtility.upload(s3Path, File(post.content))
+                post.content = s3Path
+                result.postValue(Resource(Status.SUCCESS, post, null))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
+
+    }
+
+    fun getTransferUtility(context: Context): TransferUtility {
+        return TransferUtility.builder()
+                .defaultBucket(s3BucketName)
+                .awsConfiguration(AWSMobileClient.getInstance().configuration)
+                .s3Client(AmazonS3Client(AWSMobileClient.getInstance().credentialsProvider))
+                .context(context)
+                .build()
+    }
 }

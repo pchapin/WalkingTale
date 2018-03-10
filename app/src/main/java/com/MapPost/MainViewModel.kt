@@ -2,6 +2,7 @@ package com.MapPost
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
+import android.content.Context
 import com.MapPost.repository.PostRepository
 import com.MapPost.repository.UserRepository
 import com.MapPost.vo.Post
@@ -31,4 +32,7 @@ class MainViewModel : ViewModel() {
         return postRepository.addPost(post)
     }
 
+    fun putFile(pair: Pair<Post, Context>): LiveData<Resource<Post>> {
+        return postRepository.putFile(pair)
+    }
 }
