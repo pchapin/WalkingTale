@@ -74,7 +74,7 @@ class MainActivity :
         bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
         editText = bottomSheetDialog.findViewById<TextInputEditText>(R.id.post_edit_text)!!
         Analytics.init(this)
-        userSetup(savedInstanceState)
+        userSetup()
         cameraButton()
         audioButton()
         textButton()
@@ -104,7 +104,7 @@ class MainActivity :
             Log.i(TAG, post.toString())
             mainViewModel.putPost(post).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
-                    mainViewModel.
+                    mainViewModel.putUser(mainViewModel.currentUser!!)
                 }
             })
         })
@@ -138,7 +138,7 @@ class MainActivity :
      * Get user if they exist in the dynamo db
      * Put user if they do not exist
      */
-    private fun userSetup(savedInstanceState: Bundle?) {
+    private fun userSetup() {
         mainViewModel.getUser(cognitoId).observe(this, Observer { userResource ->
             if (userResource != null) {
                 when (userResource.status) {
@@ -146,10 +146,8 @@ class MainActivity :
                     Status.LOADING -> {
                     }
                     Status.SUCCESS -> {
+                        mainViewModel.currentUser = userResource.data
                         Analytics.logEvent(Analytics.EventType.UserLogin, TAG)
-                        if (savedInstanceState == null) {
-
-                        }
                     }
                 }
             }
@@ -160,9 +158,10 @@ class MainActivity :
         val user = User()
         user.userId = cognitoId
         user.userName = cognitoUsername
-        user.createdPosts = listOf()
-        user.viewedPosts = listOf()
+        user.createdPosts = listOf<String>()
+        user.viewedPosts = listOf<String>()
         user.userImage = "none"
+        mainViewModel.currentUser = user
         mainViewModel.putUser(user).observe(this, Observer {
             if (it != null) {
                 when (it.status) {

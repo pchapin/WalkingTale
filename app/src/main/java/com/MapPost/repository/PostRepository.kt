@@ -28,7 +28,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpr
 object PostRepository {
 
     private val TAG = this.javaClass.simpleName
-    private val appExecutors: AppExecutors = AppExecutors()
+    private val appExecutors: AppExecutors = AppExecutors
 
     fun getNearbyPosts(): LiveData<Resource<List<Post>>> {
         val result = object : AbstractTask<String, List<Post>>("") {

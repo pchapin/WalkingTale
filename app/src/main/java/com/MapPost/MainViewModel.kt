@@ -1,9 +1,9 @@
 package com.MapPost
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.MapPost.repository.PostRepository
+import com.MapPost.repository.UserRepository
 import com.MapPost.vo.Post
 import com.MapPost.vo.Resource
 import com.MapPost.vo.User
@@ -12,13 +12,15 @@ import com.MapPost.vo.User
 class MainViewModel : ViewModel() {
 
     private val postRepository = PostRepository
+    private val userRepository = UserRepository
+    var currentUser: User? = null
 
     fun getUser(userId: String): LiveData<Resource<User>> {
-        return MutableLiveData()
+        return userRepository.loadUser(userId)
     }
 
-    fun putUser(user: User): LiveData<Resource<Void>> {
-        return MutableLiveData()
+    fun putUser(user: User): LiveData<Resource<Unit>> {
+        return userRepository.putUser(user)
     }
 
     fun getNearbyPosts(): LiveData<Resource<List<Post>>> {

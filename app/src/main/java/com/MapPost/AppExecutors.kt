@@ -30,10 +30,11 @@ import java.util.concurrent.Executors
  * Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait behind
  * webservice requests).
  */
-class AppExecutors(private val diskIO: Executor, private val networkIO: Executor, private val mainThread: Executor) {
+object AppExecutors {
 
-    constructor() : this(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(3),
-            MainThreadExecutor())
+    private val diskIO: Executor = Executors.newSingleThreadExecutor()
+    private val networkIO: Executor = Executors.newFixedThreadPool(3)
+    private val mainThread: Executor = MainThreadExecutor()
 
     fun diskIO(): Executor {
         return diskIO

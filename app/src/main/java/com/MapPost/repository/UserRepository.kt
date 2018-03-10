@@ -18,44 +18,44 @@ package com.MapPost.repository
 
 import android.arch.lifecycle.LiveData
 import com.MapPost.AppExecutors
-import com.MapPost.db.AppDatabase
-import com.MapPost.db.UserDao
-import com.MapPost.repository.tasks.GetUserTask
-import com.MapPost.repository.tasks.PutUserTask
+import com.MapPost.repository.tasks.AbstractTask
 import com.MapPost.vo.Resource
+import com.MapPost.vo.Status
 import com.MapPost.vo.User
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression
 
 /**
  * Repository that handles User objects.
  */
-class UserRepository internal constructor(private val appExecutors: AppExecutors, private val userDao: UserDao, private val db: AppDatabase) {
+object UserRepository {
     private val TAG = this.javaClass.simpleName
+    private val appExecutors: AppExecutors = AppExecutors
 
     fun loadUser(userId: String): LiveData<Resource<User>> {
-        return object : NetworkBoundResource<User, User>(appExecutors) {
-            override fun saveCallResult(item: User) {
-                userDao.insert(item)
+        val result = object : AbstractTask<String, User>(userId) {
+            override fun run() {
+                try {
+                    val user = User()
+                    user.userId = userId
+                    val query = DynamoDBQueryExpression<User>().withHashKeyValues(user)
+                    val response = dynamoDBMapper.query(User::class.java, query).first { it.userId == userId }
+                    result.postValue(Resource(Status.SUCCESS, response, ""))
+                } catch (e: NoSuchElementException) {
+                    result.postValue(Resource(Status.ERROR, null, ""))
+                }
             }
-
-            override fun shouldFetch(data: User?): Boolean {
-                return data == null
-            }
-
-            override fun loadFromDb(): LiveData<User> {
-                return userDao.findByLogin(userId)
-            }
-
-            override fun createCall(): LiveData<Resource<User>> {
-                val getUserTask = GetUserTask(userId, db)
-                appExecutors.networkIO().execute(getUserTask)
-                return getUserTask.result
-            }
-        }.asLiveData()
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
     }
 
-    fun putUser(user: User): LiveData<Resource<Void>> {
-        val putUserTask = PutUserTask(user, db)
-        appExecutors.networkIO().execute(putUserTask)
-        return putUserTask.result
+    fun putUser(user: User): LiveData<Resource<Unit>> {
+        val result = object : AbstractTask<String, Unit>("") {
+            override fun run() {
+                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.save(user), ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
     }
 }
