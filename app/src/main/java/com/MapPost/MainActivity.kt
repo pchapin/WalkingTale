@@ -120,7 +120,7 @@ class MainActivity :
                 imageView.layoutParams = ViewGroup.LayoutParams(markerWidth, markerHeight)
                 var markerOptions: MarkerOptions
                 val random = ThreadLocalRandom.current().nextDouble(-.00000000000001, 1.00000000000000000001)
-                val location = LatLng(post.latitude!! * random, post.longitude!! * random)
+                val location = LatLng(post.latitude * random, post.longitude * random)
 
                 when (post.type) {
                     PostType.TEXT -> {
@@ -164,19 +164,21 @@ class MainActivity :
             //            bottomSheetDialog.show()
 //            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 //            imm.showSoftInput(editText, SHOW_IMPLICIT)
-            val post = Post()
-            post.postId = UUID.randomUUID().toString()
-            post.userId = MainActivity.cognitoId
-            post.content = "nice"
-            post.type = PostType.TEXT
-            post.latitude = location.latitude
-            post.longitude = location.longitude
-            post.dateTime = Date().time.toString()
+            val post = Post(
+                    cognitoId,
+                    UUID.randomUUID().toString(),
+                    Date().time.toString(),
+                    location.latitude,
+                    location.longitude,
+                    mutableListOf(),
+                    PostType.TEXT,
+                    "nice"
+            )
             mainViewModel.putPost(post).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
                     val user = mainViewModel.currentUser!!
-                    if (!user.createdPosts.contains(post.postId!!)) {
-                        user.createdPosts.add(post.postId!!)
+                    if (!user.createdPosts.contains(post.postId)) {
+                        user.createdPosts.add(post.postId)
                     }
                     mainViewModel.currentUser = user
                     mainViewModel.putUser(user).observe(this, Observer {
@@ -337,7 +339,7 @@ class MainActivity :
                         if (it != null && it.status == Status.SUCCESS) {
                             val user = mainViewModel.currentUser!!
                             if (!user.createdPosts.contains(newPost.content)) {
-                                user.createdPosts.add(newPost.content!!)
+                                user.createdPosts.add(newPost.content)
                             }
                             // Update the users set of created posts
                             mainViewModel.putUser(user).observe(this, Observer {

@@ -28,6 +28,9 @@ data class User(
         @get:DynamoDBAttribute(attributeName = "viewedPosts")
         var viewedPosts: MutableList<String>
 ) {
-    // Just to make DDB mapper happy
+    /**
+     * Do not use this constructor!
+     * Just to make DDB mapper happy
+     * */
     constructor() : this("none", "none", mutableListOf(), "none", mutableListOf())
 }

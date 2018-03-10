@@ -61,7 +61,7 @@ object PostRepository {
             override fun run() {
                 val post = pair.first
                 val transferUtility = getTransferUtility(pair.second)
-                val s3Path = "${post.postId}"
+                val s3Path = post.postId
                 transferUtility.upload(s3Path, File(post.content))
                 post.content = s3Path
                 result.postValue(Resource(Status.SUCCESS, post, null))
