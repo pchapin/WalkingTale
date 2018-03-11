@@ -18,38 +18,52 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" />
 
+        <VideoView
+            android:id="@+id/video_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/audio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="@dimen/fab_bottom"
             android:src="@drawable/ic_audiotrack_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/camera_button"
+            app:layout_constraintEnd_toStartOf="@id/camera_button"
             app:layout_constraintStart_toStartOf="parent" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/camera_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="@dimen/fab_bottom"
             android:src="@drawable/ic_camera_alt_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/video_button"
+            app:layout_constraintStart_toEndOf="@+id/audio_button" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/video_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fab_bottom"
+            android:src="@drawable/ic_videocam_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_button"
+            app:layout_constraintStart_toEndOf="@+id/camera_button" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/text_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="@dimen/fab_bottom"
             android:src="@drawable/ic_textsms_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/camera_button" />
+            app:layout_constraintStart_toEndOf="@id/video_button" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/my_location_button"

@@ -6,10 +6,13 @@ import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import com.MapPost.MainActivity.Companion.rcLocation
 
 object PermissionManager {
-    private const val REQUEST_PERMSSION_CODE = 1
 
+    /**
+     * Returns true if location permission was given, otherwise returns false
+     * */
     fun checkLocationPermission(activity: Activity): Boolean {
         if (ContextCompat.checkSelfPermission(activity,
                         Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -28,7 +31,7 @@ object PermissionManager {
                             //Prompt the user once explanation has been shown
                             ActivityCompat.requestPermissions(activity,
                                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                                    REQUEST_PERMSSION_CODE)
+                                    rcLocation)
                         }
                         .create()
                         .show()
@@ -37,7 +40,7 @@ object PermissionManager {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(activity,
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        REQUEST_PERMSSION_CODE)
+                        rcLocation)
             }
             return false
         } else {

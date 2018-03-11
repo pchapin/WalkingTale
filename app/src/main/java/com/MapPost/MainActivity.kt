@@ -21,9 +21,12 @@ import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
@@ -79,6 +82,7 @@ class MainActivity :
     private var cameraOnUserOnce = false
     private val rcAudio = 123
     private val rcPicture = 1234
+    private val rcVideo = 12345
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,14 +94,22 @@ class MainActivity :
         bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
         editText = bottomSheetDialog.findViewById(R.id.post_edit_text)!!
         Analytics.init(this)
+        if (PermissionManager.checkLocationPermission(this)) {
+            init()
+        }
+    }
 
+    @SuppressLint("MissingPermission")
+    fun init() {
         val lld = LocationLiveData(this)
         lld.observe(this, Observer {
             if (it != null) {
                 location = locationToLatLng(it)
+                mMap.isMyLocationEnabled = true
                 locationListener()
                 userSetup()
                 cameraButton()
+                videoButton()
                 audioButton()
                 textButton()
                 myLocationButton()
@@ -105,6 +117,18 @@ class MainActivity :
                 lld.removeObservers(this)
             }
         })
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == rcLocation) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                init()
+            } else {
+                Toast.makeText(this, "Please enable location permissions for this app.", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
     }
 
     private fun nearbyPosts() {
@@ -204,6 +228,15 @@ class MainActivity :
         })
     }
 
+    private fun videoButton() {
+        video_button.setOnClickListener({
+            val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            if (takeVideoIntent.resolveActivity(packageManager) != null) {
+                startActivityForResult(takeVideoIntent, rcVideo)
+            }
+        })
+    }
+
     private fun myLocationButton() {
         my_location_button.setOnClickListener({
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
@@ -299,11 +332,6 @@ class MainActivity :
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
-        if (PermissionManager.checkLocationPermission(this)) {
-            mMap.isMyLocationEnabled = true
-        } else {
-//            finish()
-        }
         mMap.setOnMarkerClickListener(this)
 
         // Change tilt
@@ -381,6 +409,38 @@ class MainActivity :
                     })
                 }
             })
+        } else if (requestCode == rcVideo && resultCode == RESULT_OK) {
+            val videoUri: Uri = intent.data
+//                val post = Post(
+//                        cognitoId,
+//                        getRandomPostId(),
+//                        getDate(),
+//                        location.latitude,
+//                        location.longitude,
+//                        mutableListOf<String>(),
+//                        PostType.VIDEO,
+//                        data!!.data.path
+//                )
+//                mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
+//                    if (it != null && it.status == Status.SUCCESS) {
+//                        val newPost = it.data!!
+//                        // Add the post to DDB
+//                        mainViewModel.putPost(newPost).observe(this, Observer {
+//                            if (it != null && it.status == Status.SUCCESS) {
+//                                val user = mainViewModel.currentUser!!
+//                                if (!user.createdPosts.contains(newPost.content)) {
+//                                    user.createdPosts.add(newPost.content)
+//                                }
+//                                // Update the users set of created posts
+//                                mainViewModel.putUser(user).observe(this, Observer {
+//                                    Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+//                                })
+//                            }
+//                        })
+//                    }
+//                })
+            video_view.setVideoURI(videoUri)
+            video_view.start()
         }
     }
 
@@ -406,6 +466,7 @@ class MainActivity :
         }
 
         const val DEFAULT_ZOOM = 18f
+        val rcLocation = 1
         val cognitoId: String
             get() = IdentityManager.getDefaultIdentityManager().cachedUserID
 

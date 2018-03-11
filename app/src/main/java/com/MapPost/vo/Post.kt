@@ -51,5 +51,5 @@ class PostTypeMarshaller : DynamoDBMarshaller<PostType> {
 }
 
 enum class PostType {
-    TEXT, AUDIO, PICTURE
+    TEXT, AUDIO, PICTURE, VIDEO
 }
