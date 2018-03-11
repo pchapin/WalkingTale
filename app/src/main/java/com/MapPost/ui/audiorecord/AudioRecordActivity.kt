@@ -26,18 +26,10 @@ class AudioRecordActivity : AppCompatActivity() {
 
     private var mRecordButton: RecordButton? = null
     private var mRecorder: MediaRecorder? = null
-
     private var mPlayButton: PlayButton? = null
     private var mPlayer: MediaPlayer? = null
-
     private var mFinishButton: FinishButton? = null
-
-    private var chapterKey: String? = null
-    private var expositionKey: String? = null
-
     lateinit var audioFile: File
-
-
     // Requesting permission to RECORD_AUDIO
     private var permissionToRecordAccepted = false
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
@@ -108,13 +100,6 @@ class AudioRecordActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         audioFile = createFile(this)
-
-        val bundle = intent.extras
-        chapterKey = bundle!!.getString("todo")
-        expositionKey = bundle.getString("todo")
-        Log.i("chapterkey", chapterKey)
-        Log.i("expositionKey", expositionKey)
-
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
 
         val ll = LinearLayout(this)

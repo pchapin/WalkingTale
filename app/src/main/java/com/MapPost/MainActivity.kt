@@ -31,6 +31,7 @@ import android.view.Menu
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
 import com.MapPost.vo.Post
@@ -191,7 +192,9 @@ class MainActivity :
 
     private fun audioButton() {
         audio_button.setOnClickListener({
-
+            val intent = Intent(this, AudioRecordActivity::class.java)
+            intent.type = "audio/mpeg4-generic"
+            startActivityForResult(intent, rcAudio)
         })
     }
 
@@ -350,11 +353,46 @@ class MainActivity :
                 }
             })
         } else if (requestCode == rcAudio && resultCode == RESULT_OK) {
-//            createViewModel.addExposition(PostType.AUDIO, data!!.data!!.path)
+            val post = Post(
+                    cognitoId,
+                    getRandomPostId(),
+                    getDate(),
+                    location.latitude,
+                    location.longitude,
+                    mutableListOf<String>(),
+                    PostType.AUDIO,
+                    data!!.data.path
+            )
+            mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
+                if (it != null && it.status == Status.SUCCESS) {
+                    val newPost = it.data!!
+                    // Add the post to DDB
+                    mainViewModel.putPost(newPost).observe(this, Observer {
+                        if (it != null && it.status == Status.SUCCESS) {
+                            val user = mainViewModel.currentUser!!
+                            if (!user.createdPosts.contains(newPost.content)) {
+                                user.createdPosts.add(newPost.content)
+                            }
+                            // Update the users set of created posts
+                            mainViewModel.putUser(user).observe(this, Observer {
+                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                            })
+                        }
+                    })
+                }
+            })
         }
     }
 
     companion object {
+
+        fun getDate(): String {
+            return Date().time.toString()
+        }
+
+        fun getRandomPostId(): String {
+            return UUID.randomUUID().toString()
+        }
 
         fun locationToLatLng(location: Location): LatLng {
             return LatLng(location.latitude, location.longitude)
