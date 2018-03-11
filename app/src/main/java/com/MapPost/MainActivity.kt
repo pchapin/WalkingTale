@@ -16,6 +16,7 @@
 
 package com.MapPost
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.arch.lifecycle.Observer
@@ -24,7 +25,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.BottomSheetDialog
@@ -94,13 +94,16 @@ class MainActivity :
         bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
         editText = bottomSheetDialog.findViewById(R.id.post_edit_text)!!
         Analytics.init(this)
-        if (PermissionManager.checkLocationPermission(this)) {
-            init()
+        if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
+            initLocation()
+        }
+        if (PermissionManager.checkLocationPermission(this, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
+            initAudio()
         }
     }
 
     @SuppressLint("MissingPermission")
-    fun init() {
+    fun initLocation() {
         val lld = LocationLiveData(this)
         lld.observe(this, Observer {
             if (it != null) {
@@ -109,8 +112,6 @@ class MainActivity :
                 locationListener()
                 userSetup()
                 cameraButton()
-                videoButton()
-                audioButton()
                 textButton()
                 myLocationButton()
                 nearbyPosts()
@@ -119,14 +120,28 @@ class MainActivity :
         })
     }
 
+    fun initAudio() {
+        videoButton()
+        audioButton()
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == rcLocation) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                init()
-            } else {
-                Toast.makeText(this, "Please enable location permissions for this app.", Toast.LENGTH_SHORT).show()
-                finish()
+        when (requestCode) {
+            rcLocation -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initLocation()
+                } else {
+                    Toast.makeText(this, "Please enable location permissions for this app.", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            }
+            rcAudio -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initAudio()
+                } else {
+                    Toast.makeText(this, "Please enable audio permissions for this app.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -410,37 +425,12 @@ class MainActivity :
                 }
             })
         } else if (requestCode == rcVideo && resultCode == RESULT_OK) {
-            val videoUri: Uri = intent.data
-//                val post = Post(
-//                        cognitoId,
-//                        getRandomPostId(),
-//                        getDate(),
-//                        location.latitude,
-//                        location.longitude,
-//                        mutableListOf<String>(),
-//                        PostType.VIDEO,
-//                        data!!.data.path
-//                )
-//                mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
-//                    if (it != null && it.status == Status.SUCCESS) {
-//                        val newPost = it.data!!
-//                        // Add the post to DDB
-//                        mainViewModel.putPost(newPost).observe(this, Observer {
-//                            if (it != null && it.status == Status.SUCCESS) {
-//                                val user = mainViewModel.currentUser!!
-//                                if (!user.createdPosts.contains(newPost.content)) {
-//                                    user.createdPosts.add(newPost.content)
-//                                }
-//                                // Update the users set of created posts
-//                                mainViewModel.putUser(user).observe(this, Observer {
-//                                    Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-//                                })
-//                            }
-//                        })
-//                    }
-//                })
+            val videoUri = intent.data
             video_view.setVideoURI(videoUri)
-            video_view.start()
+            video_view.setOnPreparedListener({
+                it.isLooping = true
+                video_view.start()
+            })
         }
     }
 
