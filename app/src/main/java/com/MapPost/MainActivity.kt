@@ -25,6 +25,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -34,7 +36,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
@@ -84,6 +85,7 @@ class MainActivity :
     private val rcPicture = 1234
     private val rcVideo = 12345
     private val visiblePosts = mutableListOf<Post>()
+    private val mediaPlayer = MediaPlayer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +94,7 @@ class MainActivity :
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         bottomSheetDialog = BottomSheetDialog(this)
+        mediaPlayer.setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
         Analytics.init(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
@@ -359,11 +362,17 @@ class MainActivity :
             if (post.postId == marker!!.title) {
                 when (post.type) {
                     TEXT -> {
-                        val view = TextView(this)
-                        view.text = post.content
+                        Toast.makeText(this, post.content, Toast.LENGTH_SHORT).show()
                     }
                     AUDIO -> {
-
+                        if (mediaPlayer.isPlaying) {
+                            mediaPlayer.stop()
+                        } else {
+                            mediaPlayer.reset()
+                            mediaPlayer.setDataSource(s3HostName + post.content)
+                            mediaPlayer.prepareAsync()
+                            mediaPlayer.setOnPreparedListener(MediaPlayer::start)
+                        }
                     }
                     PICTURE -> {
                         Glide.with(this).load(s3HostName + post.content).into(post_image_view)
@@ -372,8 +381,6 @@ class MainActivity :
                         loopVideo(Uri.parse(s3HostName + post.content))
                     }
                 }
-//                bottom_sheet_include.bottom_sheet.addView(view)
-                bottomSheetDialog.show()
                 return true
             }
         }
