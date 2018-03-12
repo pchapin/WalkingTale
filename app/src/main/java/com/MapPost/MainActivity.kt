@@ -25,13 +25,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -357,18 +357,19 @@ class MainActivity :
     override fun onMarkerClick(marker: Marker?): Boolean {
         for (post in visiblePosts) {
             if (post.postId == marker!!.title) {
-                var view = View(this)
                 when (post.type) {
                     TEXT -> {
-                        view = TextView(this)
+                        val view = TextView(this)
                         view.text = post.content
                     }
                     AUDIO -> {
+
                     }
                     PICTURE -> {
                         Glide.with(this).load(s3HostName + post.content).into(post_image_view)
                     }
                     VIDEO -> {
+                        loopVideo(Uri.parse(s3HostName + post.content))
                     }
                 }
 //                bottom_sheet_include.bottom_sheet.addView(view)
@@ -456,11 +457,7 @@ class MainActivity :
         } else if (requestCode == rcVideo && resultCode == RESULT_OK) {
             val videoUri = data!!.data
             val videoFile = File(UriUtil.getPath(this, videoUri))
-            video_view.setVideoURI(videoUri)
-            video_view.setOnPreparedListener({
-                it.isLooping = true
-                video_view.start()
-            })
+            loopVideo(videoUri)
             val post = Post(
                     cognitoId,
                     getRandomPostId(),
@@ -490,6 +487,14 @@ class MainActivity :
                 }
             })
         }
+    }
+
+    private fun loopVideo(uri: Uri) {
+        video_view.setVideoURI(uri)
+        video_view.setOnPreparedListener({
+            it.isLooping = true
+            video_view.start()
+        })
     }
 
     companion object {
