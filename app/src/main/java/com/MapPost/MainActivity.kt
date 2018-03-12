@@ -146,7 +146,8 @@ class MainActivity :
     }
 
     private fun nearbyPosts() {
-        mainViewModel.getNearbyPosts().observe(this, Observer {
+        mainViewModel.getNewPosts()
+        mainViewModel.localPosts.observe(this, Observer {
 
             if (it?.data == null) return@Observer
 
@@ -215,9 +216,6 @@ class MainActivity :
 
     private fun textButton() {
         text_button.setOnClickListener({
-            //            bottomSheetDialog.show()
-//            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//            imm.showSoftInput(editText, SHOW_IMPLICIT)
             val post = Post(
                     cognitoId,
                     UUID.randomUUID().toString(),
@@ -236,7 +234,10 @@ class MainActivity :
                     }
                     mainViewModel.currentUser = user
                     mainViewModel.putUser(user).observe(this, Observer {
-                        if (it != null) Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                        if (it != null) {
+                            Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                            mainViewModel.getNewPosts()
+                        }
                     })
                 }
             })
@@ -280,7 +281,7 @@ class MainActivity :
         LocationLiveData(this).observe(this, Observer {
             if (it != null) {
                 if (!cameraOnUserOnce) {
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
+                    mMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
                     cameraOnUserOnce = true
                 }
                 location = locationToLatLng(it)
@@ -427,6 +428,7 @@ class MainActivity :
                             // Update the users set of created posts
                             mainViewModel.putUser(user).observe(this, Observer {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                                mainViewModel.getNewPosts()
                             })
                         }
                     })
@@ -456,6 +458,7 @@ class MainActivity :
                             // Update the users set of created posts
                             mainViewModel.putUser(user).observe(this, Observer {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                                mainViewModel.getNewPosts()
                             })
                         }
                     })
@@ -488,6 +491,7 @@ class MainActivity :
                             // Update the users set of created posts
                             mainViewModel.putUser(user).observe(this, Observer {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                                mainViewModel.getNewPosts()
                             })
                         }
                     })
