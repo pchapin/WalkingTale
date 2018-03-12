@@ -17,7 +17,6 @@ object Analytics {
     fun logEvent(eventType: EventType, TAG: String, message: String) {
         val bundle = Bundle()
         bundle.putString(TAG, message)
-        bundle.putString("user_id", MainActivity.cognitoId)
         mFirebaseAnalytics.logEvent(eventType.toString(), bundle)
     }
 

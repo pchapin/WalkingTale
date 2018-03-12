@@ -31,7 +31,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.ViewGroup
@@ -76,7 +75,6 @@ class MainActivity :
     private lateinit var location: LatLng
     private var file: File? = null
     private lateinit var bottomSheetDialog: BottomSheetDialog
-    private lateinit var editText: TextInputEditText
     private val markers = mutableListOf<Marker>()
     private val markerWidth = 100
     private val markerHeight = 100
@@ -506,6 +504,19 @@ class MainActivity :
             it.isLooping = true
             video_view.start()
         })
+    }
+
+
+    /**
+     * This is needed because the aws credentials only last < 1hr
+     * */
+    override fun onStart() {
+        if (IdentityManager.getDefaultIdentityManager() == null) {
+            val intent = Intent(this, AuthenticatorActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        super.onStart()
     }
 
     companion object {
