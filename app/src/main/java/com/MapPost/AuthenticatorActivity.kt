@@ -11,7 +11,7 @@ class AuthenticatorActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authenticator)
 
-        AWSMobileClient.getInstance().initialize(this) { awsStartupResult ->
+        AWSMobileClient.getInstance().initialize(this) {
             val signin = AWSMobileClient
                     .getInstance()
                     .getClient(this@AuthenticatorActivity, SignInUI::class.java) as SignInUI

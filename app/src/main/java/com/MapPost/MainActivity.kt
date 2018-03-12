@@ -96,15 +96,10 @@ class MainActivity :
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
-        if (PermissionManager.checkLocationPermission(this, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
-            initAudio()
-        }
-        if (PermissionManager.checkLocationPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, rcVideo, "Storage", "Give permission to access storage?")) {
-        }
     }
 
     @SuppressLint("MissingPermission")
-    fun initLocation() {
+    private fun initLocation() {
         val lld = LocationLiveData(this)
         lld.observe(this, Observer {
             if (it != null) {
@@ -116,14 +111,11 @@ class MainActivity :
                 textButton()
                 myLocationButton()
                 nearbyPosts()
+                videoButton()
+                audioButton()
                 lld.removeObservers(this)
             }
         })
-    }
-
-    fun initAudio() {
-        videoButton()
-        audioButton()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -139,9 +131,12 @@ class MainActivity :
             }
             rcAudio -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initAudio()
-                } else {
-                    Toast.makeText(this, "Please enable audio permissions for this app.", Toast.LENGTH_SHORT).show()
+                    audio_button.performClick()
+                }
+            }
+            rcVideo -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    video_button.performClick()
                 }
             }
         }
@@ -247,9 +242,11 @@ class MainActivity :
 
     private fun audioButton() {
         audio_button.setOnClickListener({
-            val intent = Intent(this, AudioRecordActivity::class.java)
-            intent.type = "audio/mpeg4-generic"
-            startActivityForResult(intent, rcAudio)
+            if (PermissionManager.checkLocationPermission(this, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
+                val intent = Intent(this, AudioRecordActivity::class.java)
+                intent.type = "audio/mpeg4-generic"
+                startActivityForResult(intent, rcAudio)
+            }
         })
     }
 
@@ -261,9 +258,11 @@ class MainActivity :
 
     private fun videoButton() {
         video_button.setOnClickListener({
-            val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-            if (takeVideoIntent.resolveActivity(packageManager) != null) {
-                startActivityForResult(takeVideoIntent, rcVideo)
+            if (PermissionManager.checkLocationPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, rcVideo, "Storage", "Give permission to access storage?")) {
+                val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                if (takeVideoIntent.resolveActivity(packageManager) != null) {
+                    startActivityForResult(takeVideoIntent, rcVideo)
+                }
             }
         })
     }
