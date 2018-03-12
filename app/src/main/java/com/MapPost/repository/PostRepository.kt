@@ -18,6 +18,7 @@ package com.MapPost.repository
 
 import android.arch.lifecycle.LiveData
 import android.content.Context
+import android.util.Log
 import com.MapPost.AppExecutors
 import com.MapPost.repository.tasks.AbstractTask
 import com.MapPost.vo.Post
@@ -25,15 +26,19 @@ import com.MapPost.vo.Resource
 import com.MapPost.vo.Status
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.S3ClientOptions
 import com.s3BucketName
 import java.io.File
+import java.lang.Exception
 
 
 object PostRepository {
 
-    private val TAG = this.javaClass.simpleName
+    private val tag = "PostRepository"
     private val appExecutors: AppExecutors = AppExecutors
 
     fun getNearbyPosts(): LiveData<Resource<List<Post>>> {
@@ -62,7 +67,19 @@ object PostRepository {
                 val post = pair.first
                 val transferUtility = getTransferUtility(pair.second)
                 val s3Path = post.postId
-                transferUtility.upload(s3Path, File(post.content))
+                transferUtility.upload(s3Path, File(post.content)).setTransferListener(object : TransferListener {
+                    override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
+                        Log.i(tag, "" + bytesCurrent)
+                    }
+
+                    override fun onStateChanged(id: Int, state: TransferState?) {
+                        Log.i(tag, "" + state)
+                    }
+
+                    override fun onError(id: Int, ex: Exception?) {
+                        Log.i(tag, "" + ex)
+                    }
+                })
                 post.content = s3Path
                 result.postValue(Resource(Status.SUCCESS, post, null))
             }
@@ -73,10 +90,12 @@ object PostRepository {
     }
 
     fun getTransferUtility(context: Context): TransferUtility {
+        val amazonS3 = AmazonS3Client(AWSMobileClient.getInstance().credentialsProvider)
+        amazonS3.setS3ClientOptions(S3ClientOptions.builder().disableChunkedEncoding().build())
         return TransferUtility.builder()
                 .defaultBucket(s3BucketName)
                 .awsConfiguration(AWSMobileClient.getInstance().configuration)
-                .s3Client(AmazonS3Client(AWSMobileClient.getInstance().credentialsProvider))
+                .s3Client(amazonS3)
                 .context(context)
                 .build()
     }

@@ -99,6 +99,8 @@ class MainActivity :
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
             initAudio()
         }
+        if (PermissionManager.checkLocationPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, rcVideo, "Storage", "Give permission to access storage?")) {
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -454,6 +456,7 @@ class MainActivity :
             })
         } else if (requestCode == rcVideo && resultCode == RESULT_OK) {
             val videoUri = data!!.data
+            val videoFile = File(UriUtil.getPath(this, videoUri))
             video_view.setVideoURI(videoUri)
             video_view.setOnPreparedListener({
                 it.isLooping = true
@@ -467,8 +470,7 @@ class MainActivity :
                     location.longitude,
                     mutableListOf<String>(),
                     VIDEO,
-                    UriUtil.getPath(this, videoUri)
-
+                    videoFile.absolutePath
             )
             mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
