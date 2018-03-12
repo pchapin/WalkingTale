@@ -31,14 +31,16 @@ import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
 import com.MapPost.vo.Post
-import com.MapPost.vo.PostType
+import com.MapPost.vo.PostType.*
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -57,10 +59,8 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
 import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_sheet_chapter_list.*
 import java.io.File
 import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 
 
 class MainActivity :
@@ -83,6 +83,7 @@ class MainActivity :
     private val rcAudio = 123
     private val rcPicture = 1234
     private val rcVideo = 12345
+    private val visiblePosts = mutableListOf<Post>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,8 +92,6 @@ class MainActivity :
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         bottomSheetDialog = BottomSheetDialog(this)
-        bottomSheetDialog.setContentView(this.layoutInflater.inflate(R.layout.bottom_sheet_chapter_list, bottom_sheet))
-        editText = bottomSheetDialog.findViewById(R.id.post_edit_text)!!
         Analytics.init(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
@@ -152,6 +151,8 @@ class MainActivity :
             if (it?.data == null) return@Observer
 
             markers.map { it.remove() }
+            visiblePosts.clear()
+            visiblePosts.addAll(it.data)
 
             for (post in it.data) {
 
@@ -159,27 +160,30 @@ class MainActivity :
                 val imageView = ImageView(this)
                 imageView.layoutParams = ViewGroup.LayoutParams(markerWidth, markerHeight)
                 var markerOptions: MarkerOptions
-                val random = ThreadLocalRandom.current().nextDouble(-.00000000000001, 1.00000000000000000001)
+//                val random = ThreadLocalRandom.current().nextDouble(-.00000000000001, 1.00000000000000000001)
+                val random = 1
                 val location = LatLng(post.latitude * random, post.longitude * random)
 
                 when (post.type) {
-                    PostType.TEXT -> {
+                    TEXT -> {
                         imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
                         iconGenerator.setContentView(imageView)
                         markerOptions = MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                 .position(location)
+                                .title(post.postId)
                         markers.add(mMap.addMarker(markerOptions))
                     }
-                    PostType.AUDIO -> {
+                    AUDIO -> {
                         imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
                         iconGenerator.setContentView(imageView)
                         markerOptions = MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                 .position(location)
+                                .title(post.postId)
                         markers.add(mMap.addMarker(markerOptions))
                     }
-                    PostType.PICTURE ->
+                    PICTURE ->
                         Glide.with(this)
                                 .asBitmap()
                                 .load(s3HostName + post.content)
@@ -191,9 +195,19 @@ class MainActivity :
                                         markerOptions = MarkerOptions()
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                                 .position(location)
+                                                .title(post.postId)
                                         markers.add(mMap.addMarker(markerOptions))
                                     }
                                 })
+                    VIDEO -> {
+                        imageView.setImageResource(R.drawable.ic_videocam_black_24dp)
+                        iconGenerator.setContentView(imageView)
+                        markerOptions = MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                .position(location)
+                                .title(post.postId)
+                        markers.add(mMap.addMarker(markerOptions))
+                    }
                 }
             }
         })
@@ -211,7 +225,7 @@ class MainActivity :
                     location.latitude,
                     location.longitude,
                     mutableListOf(),
-                    PostType.TEXT,
+                    TEXT,
                     "nice"
             )
             mainViewModel.putPost(post).observe(this, Observer {
@@ -339,7 +353,28 @@ class MainActivity :
         checkPlayServices()
     }
 
-    override fun onMarkerClick(p0: Marker?): Boolean {
+    override fun onMarkerClick(marker: Marker?): Boolean {
+        for (post in visiblePosts) {
+            if (post.postId == marker!!.title) {
+                var view = View(this)
+                when (post.type) {
+                    TEXT -> {
+                        view = TextView(this)
+                        view.text = post.content
+                    }
+                    AUDIO -> {
+                    }
+                    PICTURE -> {
+                        Glide.with(this).load(s3HostName + post.content).into(post_image_view)
+                    }
+                    VIDEO -> {
+                    }
+                }
+//                bottom_sheet_include.bottom_sheet.addView(view)
+                bottomSheetDialog.show()
+                return true
+            }
+        }
         return false
     }
 
@@ -348,13 +383,6 @@ class MainActivity :
         mMap = googleMap!!
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         mMap.setOnMarkerClickListener(this)
-
-        // Change tilt
-        val cameraPosition = CameraPosition.Builder()
-                .target(mMap.cameraPosition.target)
-                .tilt(60f).build()
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
         mUiSettings.isZoomControlsEnabled = true
@@ -372,7 +400,7 @@ class MainActivity :
             post.postId = UUID.randomUUID().toString()
             post.userId = MainActivity.cognitoId
             post.content = file!!.absolutePath
-            post.type = PostType.PICTURE
+            post.type = PICTURE
             post.latitude = location.latitude
             post.longitude = location.longitude
             post.dateTime = Date().time.toString()
@@ -403,7 +431,7 @@ class MainActivity :
                     location.latitude,
                     location.longitude,
                     mutableListOf<String>(),
-                    PostType.AUDIO,
+                    AUDIO,
                     data!!.data.path
             )
             mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
@@ -425,11 +453,40 @@ class MainActivity :
                 }
             })
         } else if (requestCode == rcVideo && resultCode == RESULT_OK) {
-            val videoUri = intent.data
+            val videoUri = data!!.data
             video_view.setVideoURI(videoUri)
             video_view.setOnPreparedListener({
                 it.isLooping = true
                 video_view.start()
+            })
+            val post = Post(
+                    cognitoId,
+                    getRandomPostId(),
+                    getDate(),
+                    location.latitude,
+                    location.longitude,
+                    mutableListOf<String>(),
+                    VIDEO,
+                    UriUtil.getPath(this, videoUri)
+
+            )
+            mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
+                if (it != null && it.status == Status.SUCCESS) {
+                    val newPost = it.data!!
+                    // Add the post to DDB
+                    mainViewModel.putPost(newPost).observe(this, Observer {
+                        if (it != null && it.status == Status.SUCCESS) {
+                            val user = mainViewModel.currentUser!!
+                            if (!user.createdPosts.contains(newPost.content)) {
+                                user.createdPosts.add(newPost.content)
+                            }
+                            // Update the users set of created posts
+                            mainViewModel.putUser(user).observe(this, Observer {
+                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                            })
+                        }
+                    })
+                }
             })
         }
     }
