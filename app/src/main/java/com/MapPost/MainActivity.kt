@@ -33,11 +33,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.CardView
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import com.MapPost.databinding.ActivityMainBinding
 import com.MapPost.ui.audiorecord.AudioRecordActivity
@@ -88,7 +88,7 @@ class MainActivity :
     private val visiblePosts = mutableListOf<Post>()
     private val mediaPlayer = MediaPlayer()
     private lateinit var binding: ActivityMainBinding
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
