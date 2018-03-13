@@ -402,6 +402,9 @@ class MainActivity :
                 mediaPlayer.setDataSource(s3HostName + binding.post!!.content)
                 mediaPlayer.prepareAsync()
                 mediaPlayer.setOnPreparedListener(MediaPlayer::start)
+                mediaPlayer.setOnCompletionListener {
+                    post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
+                }
                 post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
             }
         })
