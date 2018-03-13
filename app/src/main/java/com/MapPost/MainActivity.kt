@@ -358,6 +358,11 @@ class MainActivity :
     }
 
     override fun onResume() {
+        if (IdentityManager.getDefaultIdentityManager() == null) {
+            val intent = Intent(this, AuthenticatorActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         super.onResume()
         checkPlayServices()
     }
@@ -525,19 +530,6 @@ class MainActivity :
             it.isLooping = true
             video_view.start()
         })
-    }
-
-
-    /**
-     * This is needed because the aws credentials only last < 1hr
-     * */
-    override fun onStart() {
-        if (IdentityManager.getDefaultIdentityManager() == null) {
-            val intent = Intent(this, AuthenticatorActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        super.onStart()
     }
 
     companion object {
