@@ -121,6 +121,7 @@ class MainActivity :
                 audioButton()
                 bottomSheetClick()
                 postAudioButton()
+                flagButton()
                 lld.removeObservers(this)
             }
         })
@@ -403,6 +404,12 @@ class MainActivity :
                 mediaPlayer.setOnPreparedListener(MediaPlayer::start)
                 post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
             }
+        })
+    }
+
+    private fun flagButton() {
+        flag_post_button.setOnClickListener({
+            // stuff
         })
     }
 
