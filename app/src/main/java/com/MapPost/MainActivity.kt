@@ -70,7 +70,8 @@ import java.util.*
 class MainActivity :
         AppCompatActivity(),
         OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMarkerDragListener {
 
     private val tag = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
@@ -166,28 +167,23 @@ class MainActivity :
                 val iconGenerator = IconGenerator(this)
                 val imageView = ImageView(this)
                 imageView.layoutParams = ViewGroup.LayoutParams(markerWidth, markerHeight)
-                var markerOptions: MarkerOptions
-//                val random = ThreadLocalRandom.current().nextDouble(-.00000000000001, 1.00000000000000000001)
-                val random = 1
-                val location = LatLng(post.latitude * random, post.longitude * random)
+                val location = LatLng(post.latitude, post.longitude)
+                val markerOptions = MarkerOptions()
+                        .draggable(true)
+                        .position(location)
+                        .title(post.postId)
 
                 when (post.type) {
                     TEXT -> {
                         imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
                         iconGenerator.setContentView(imageView)
-                        markerOptions = MarkerOptions()
-                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(location)
-                                .title(post.postId)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                         markers.add(mMap.addMarker(markerOptions))
                     }
                     AUDIO -> {
                         imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
                         iconGenerator.setContentView(imageView)
-                        markerOptions = MarkerOptions()
-                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(location)
-                                .title(post.postId)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                         markers.add(mMap.addMarker(markerOptions))
                     }
                     PICTURE ->
@@ -199,20 +195,15 @@ class MainActivity :
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
                                         imageView.setImageBitmap(resource)
                                         iconGenerator.setContentView(imageView)
-                                        markerOptions = MarkerOptions()
+                                        markerOptions
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                                .position(location)
-                                                .title(post.postId)
                                         markers.add(mMap.addMarker(markerOptions))
                                     }
                                 })
                     VIDEO -> {
                         imageView.setImageResource(R.drawable.ic_videocam_black_24dp)
                         iconGenerator.setContentView(imageView)
-                        markerOptions = MarkerOptions()
-                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                .position(location)
-                                .title(post.postId)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                         markers.add(mMap.addMarker(markerOptions))
                     }
                 }
@@ -428,6 +419,15 @@ class MainActivity :
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onMarkerDragEnd(p0: Marker?) {
+    }
+
+    override fun onMarkerDragStart(p0: Marker?) {
+    }
+
+    override fun onMarkerDrag(p0: Marker?) {
     }
 
     @SuppressLint("MissingPermission")
