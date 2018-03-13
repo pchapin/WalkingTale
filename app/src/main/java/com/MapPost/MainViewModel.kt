@@ -46,4 +46,8 @@ class MainViewModel : ViewModel() {
     fun getNewPosts() {
         getPosts.value = true
     }
+
+    fun deletePost(post: Post): LiveData<Resource<Unit>> {
+        return postRepository.deletePost(post)
+    }
 }

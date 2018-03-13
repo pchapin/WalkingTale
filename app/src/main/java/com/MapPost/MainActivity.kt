@@ -34,6 +34,7 @@ import android.provider.MediaStore
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
@@ -123,6 +124,7 @@ class MainActivity :
                 bottomSheetClick()
                 postAudioButton()
                 flagButton()
+                deletePostButton()
                 lld.removeObservers(this)
             }
         })
@@ -407,6 +409,25 @@ class MainActivity :
         })
     }
 
+    private fun deletePostButton() {
+        delete_post_button.setOnClickListener({
+            mainViewModel.deletePost(binding.post!!).observe(this, Observer {
+                if (it != null && it.status == Status.SUCCESS) {
+                    val user = mainViewModel.currentUser
+                    user!!.createdPosts.remove(binding.post!!.postId)
+                    mainViewModel.putUser(user).observe(this, Observer {
+                        if (it != null && it.status == Status.SUCCESS) {
+                            mainViewModel.currentUser = user
+                            mainViewModel.getNewPosts()
+                            onBackPressed()
+                            Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            })
+        })
+    }
+
     private fun bottomSheetClick() {
         bottom_sheet.setOnClickListener({
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -428,6 +449,7 @@ class MainActivity :
     }
 
     override fun onMarkerDrag(p0: Marker?) {
+        Log.i(tag, "" + p0!!.position)
     }
 
     @SuppressLint("MissingPermission")
@@ -435,6 +457,7 @@ class MainActivity :
         mMap = googleMap!!
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         mMap.setOnMarkerClickListener(this)
+        mMap.setOnMarkerDragListener(this)
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
         mUiSettings.isZoomControlsEnabled = true
@@ -483,7 +506,7 @@ class MainActivity :
                     getDate(),
                     location.latitude,
                     location.longitude,
-                    mutableListOf<String>(),
+                    mutableListOf(),
                     AUDIO,
                     data!!.data.path
             )
@@ -564,15 +587,8 @@ class MainActivity :
             return LatLng(location.latitude, location.longitude)
         }
 
-        fun latLngToLocation(latLng: LatLng): Location {
-            val location = Location("")
-            location.latitude = latLng.latitude
-            location.longitude = latLng.longitude
-            return location
-        }
-
         const val DEFAULT_ZOOM = 18f
-        val rcLocation = 1
+        const val rcLocation = 1
         val cognitoId: String
             get() = IdentityManager.getDefaultIdentityManager().cachedUserID
 

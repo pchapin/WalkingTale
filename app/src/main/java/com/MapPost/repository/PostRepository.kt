@@ -86,7 +86,16 @@ object PostRepository {
         }
         appExecutors.networkIO().execute(result)
         return result.getResult()
+    }
 
+    fun deletePost(post: Post): LiveData<Resource<Unit>> {
+        val result = object : AbstractTask<Post, Unit>(post) {
+            override fun run() {
+                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.delete(post), ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
     }
 
     fun getTransferUtility(context: Context): TransferUtility {
