@@ -6,11 +6,9 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
 object Analytics {
-    private lateinit var instance: Analytics
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     fun init(context: Context) {
-        instance = Analytics
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
     }
 

@@ -23,6 +23,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.location.Location
 import android.media.AudioAttributes
@@ -30,12 +31,14 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.design.widget.BottomSheetDialog
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
+import com.MapPost.databinding.ActivityMainBinding
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
@@ -74,7 +77,6 @@ class MainActivity :
     private lateinit var mainViewModel: MainViewModel
     private lateinit var location: LatLng
     private var file: File? = null
-    private lateinit var bottomSheetDialog: BottomSheetDialog
     private val markers = mutableListOf<Marker>()
     private val markerWidth = 100
     private val markerHeight = 100
@@ -84,14 +86,17 @@ class MainActivity :
     private val rcVideo = 12345
     private val visiblePosts = mutableListOf<Post>()
     private val mediaPlayer = MediaPlayer()
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         mediaPlayer.setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
         Analytics.init(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
@@ -114,6 +119,7 @@ class MainActivity :
                 nearbyPosts()
                 videoButton()
                 audioButton()
+                bottomSheetClick()
                 lld.removeObservers(this)
             }
         })
@@ -359,6 +365,7 @@ class MainActivity :
     override fun onMarkerClick(marker: Marker?): Boolean {
         for (post in visiblePosts) {
             if (post.postId == marker!!.title) {
+                binding.post = post
                 when (post.type) {
                     TEXT -> {
                         Toast.makeText(this, post.content, Toast.LENGTH_SHORT).show()
@@ -380,10 +387,17 @@ class MainActivity :
                         loopVideo(Uri.parse(s3HostName + post.content))
                     }
                 }
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 return true
             }
         }
         return false
+    }
+
+    private fun bottomSheetClick() {
+        bottom_sheet.setOnClickListener({
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        })
     }
 
     @SuppressLint("MissingPermission")
