@@ -34,6 +34,7 @@ import android.provider.MediaStore
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -78,8 +79,8 @@ class MainActivity :
     private lateinit var location: LatLng
     private var file: File? = null
     private val markers = mutableListOf<Marker>()
-    private val markerWidth = 100
-    private val markerHeight = 100
+    private val markerWidth = 200
+    private val markerHeight = 200
     private var cameraOnUserOnce = false
     private val rcAudio = 123
     private val rcPicture = 1234
@@ -91,7 +92,6 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -368,7 +368,6 @@ class MainActivity :
                 binding.post = post
                 when (post.type) {
                     TEXT -> {
-                        Toast.makeText(this, post.content, Toast.LENGTH_SHORT).show()
                     }
                     AUDIO -> {
                         if (mediaPlayer.isPlaying) {
@@ -398,6 +397,14 @@ class MainActivity :
         bottom_sheet.setOnClickListener({
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         })
+    }
+
+    override fun onBackPressed() {
+        if (bottom_sheet.visibility == View.VISIBLE) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        } else {
+            super.onBackPressed()
+        }
     }
 
     @SuppressLint("MissingPermission")
