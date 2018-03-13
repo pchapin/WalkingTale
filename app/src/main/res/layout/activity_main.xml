@@ -15,6 +15,7 @@
     </data>
 
     <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -109,7 +110,6 @@
                 tools:src="@drawable/google_icon" />
 
             <TextView
-                android:id="@+id/tv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -124,6 +124,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:visibleGone="@{post.type == postType.VIDEO}" />
+
+            <ImageButton
+                android:id="@+id/post_audio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="play/stop button"
+                android:src="@drawable/ic_play_arrow_black_24dp" />
 
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>

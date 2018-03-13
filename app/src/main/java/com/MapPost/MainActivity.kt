@@ -120,6 +120,7 @@ class MainActivity :
                 videoButton()
                 audioButton()
                 bottomSheetClick()
+                postAudioButton()
                 lld.removeObservers(this)
             }
         })
@@ -375,14 +376,6 @@ class MainActivity :
                     TEXT -> {
                     }
                     AUDIO -> {
-                        if (mediaPlayer.isPlaying) {
-                            mediaPlayer.stop()
-                        } else {
-                            mediaPlayer.reset()
-                            mediaPlayer.setDataSource(s3HostName + post.content)
-                            mediaPlayer.prepareAsync()
-                            mediaPlayer.setOnPreparedListener(MediaPlayer::start)
-                        }
                     }
                     PICTURE -> {
                         Glide.with(this).load(s3HostName + post.content).into(post_image_view)
@@ -396,6 +389,21 @@ class MainActivity :
             }
         }
         return false
+    }
+
+    private fun postAudioButton() {
+        post_audio_button.setOnClickListener({
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+                post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
+            } else {
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(s3HostName + binding.post!!.content)
+                mediaPlayer.prepareAsync()
+                mediaPlayer.setOnPreparedListener(MediaPlayer::start)
+                post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
+            }
+        })
     }
 
     private fun bottomSheetClick() {
