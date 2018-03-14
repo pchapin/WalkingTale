@@ -34,7 +34,6 @@ import android.provider.MediaStore
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
-import android.util.Log
 import android.view.Menu
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -194,6 +193,7 @@ class MainActivity :
                         markers.add(mMap.addMarker(markerOptions))
                     }
                     PICTURE ->
+                        // Note: This can take a while
                         Glide.with(this)
                                 .asBitmap()
                                 .load(s3HostName + post.content)
@@ -362,9 +362,10 @@ class MainActivity :
             val intent = Intent(this, AuthenticatorActivity::class.java)
             startActivity(intent)
             finish()
+        } else {
+            super.onResume()
+            checkPlayServices()
         }
-        super.onResume()
-        checkPlayServices()
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
@@ -454,7 +455,6 @@ class MainActivity :
     }
 
     override fun onMarkerDrag(p0: Marker?) {
-        Log.i(tag, "" + p0!!.position)
     }
 
     @SuppressLint("MissingPermission")
