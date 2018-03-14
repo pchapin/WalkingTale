@@ -91,6 +91,8 @@ class MainActivity :
     private val mediaPlayer = MediaPlayer()
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
+    private var linkMode = LinkMode.NOT_LINKING
+    private var linkedPosts = mutableListOf<Post>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -229,7 +231,8 @@ class MainActivity :
                     location.longitude,
                     mutableListOf(),
                     TEXT,
-                    "nice"
+                    "nice",
+                    mutableListOf()
             )
             mainViewModel.putPost(post).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
@@ -284,7 +287,11 @@ class MainActivity :
 
     private fun linkButton() {
         link_button.setOnClickListener({
+            Toast.makeText(this, "Touch a post then another to make a link.", Toast.LENGTH_SHORT).show()
+            linkMode = LinkMode.NONE_PRESSED
+            // Add something to each icon to make them linkable
 
+            // The next two marker clicks will add a link
         })
     }
 
@@ -379,6 +386,27 @@ class MainActivity :
         for (post in visiblePosts) {
             if (post.postId == marker!!.title) {
                 binding.post = post
+
+                if (linkMode == LinkMode.NONE_PRESSED) {
+                    linkedPosts.add(post)
+                    linkMode = LinkMode.ONE_PRESSED
+                    return true
+                } else if (linkMode == LinkMode.ONE_PRESSED) {
+                    linkedPosts.add(post)
+                    val p = linkedPosts[0]
+                    if (!p.linkedPosts.contains(linkedPosts[1].postId)) {
+                        p.linkedPosts.add(linkedPosts[1].postId)
+                    }
+                    mainViewModel.putPost(p).observe(this, Observer {
+                        if (it != null && it.status == Status.SUCCESS) {
+                            Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                    linkMode = LinkMode.NONE_PRESSED
+                    linkedPosts.clear()
+                    return true
+                }
+
                 when (post.type) {
                     TEXT -> {
                     }
@@ -522,7 +550,8 @@ class MainActivity :
                     location.longitude,
                     mutableListOf(),
                     AUDIO,
-                    data!!.data.path
+                    data!!.data.path,
+                    mutableListOf()
             )
             mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
@@ -553,9 +582,10 @@ class MainActivity :
                     getDate(),
                     location.latitude,
                     location.longitude,
-                    mutableListOf<String>(),
+                    mutableListOf(),
                     VIDEO,
-                    videoFile.absolutePath
+                    videoFile.absolutePath,
+                    mutableListOf()
             )
             mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
@@ -585,6 +615,15 @@ class MainActivity :
             it.isLooping = true
             video_view.start()
         })
+    }
+
+    private enum class LinkMode {
+        // Before the user clicks the link button
+        NOT_LINKING,
+        // After they click it once, but before they click a post
+        NONE_PRESSED,
+        // After they click it once, and after they click a post
+        ONE_PRESSED
     }
 
     companion object {

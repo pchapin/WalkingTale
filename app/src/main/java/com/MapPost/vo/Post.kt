@@ -31,13 +31,15 @@ data class Post(
         @DynamoDBMarshalling(marshallerClass = PostTypeMarshaller::class)
         var type: PostType,
         @get:DynamoDBAttribute(attributeName = "content")
-        var content: String
+        var content: String,
+        @get:DynamoDBAttribute(attributeName = "linkedPosts")
+        var linkedPosts: MutableList<String>
 ) {
     /**
      * Do not use this constructor!
      * Just to make DDB mapper happy
      * */
-    constructor() : this("", "", "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "")
+    constructor() : this("", "", "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", mutableListOf())
 }
 
 class PostTypeMarshaller : DynamoDBMarshaller<PostType> {
