@@ -93,6 +93,7 @@ class MainActivity :
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
     private var linkMode = LinkMode.NOT_LINKING
     private var linkedPosts = mutableListOf<Post>()
+    private var polyLines = mutableListOf<Polyline>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,6 +169,9 @@ class MainActivity :
             if (it?.data == null) return@Observer
 
             markers.map { it.remove() }
+            markers.clear()
+            polyLines.map { it.remove() }
+            polyLines.clear()
             visiblePosts.clear()
             visiblePosts.addAll(it.data)
 
@@ -206,8 +210,7 @@ class MainActivity :
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
                                         imageView.setImageBitmap(resource)
                                         iconGenerator.setContentView(imageView)
-                                        markerOptions
-                                                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                         markers.add(mMap.addMarker(markerOptions))
                                     }
                                 })
@@ -227,7 +230,7 @@ class MainActivity :
                         if (link in markers.map { it.title }) {
                             val polylineOptions = PolylineOptions()
                             polylineOptions.add(LatLng(post.latitude, post.longitude), markers.first { it.title == link }.position)
-                            mMap.addPolyline(polylineOptions)
+                            polyLines.add(mMap.addPolyline(polylineOptions))
                         }
                     }
                 }
