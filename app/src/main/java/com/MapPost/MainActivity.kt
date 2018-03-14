@@ -32,6 +32,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
 import android.view.Menu
@@ -59,7 +60,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.maps.android.SphericalUtil
 import com.google.maps.android.ui.IconGenerator
 import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
@@ -179,7 +179,8 @@ class MainActivity :
                 val location = LatLng(post.latitude, post.longitude)
                 val markerOptions = MarkerOptions()
                         .draggable(true)
-                        .position(SphericalUtil.computeOffset(location, 20.0, random(0.0, 359.0)))
+//                        .position(SphericalUtil.computeOffset(location, 20.0, random(0.0, 359.0)))
+                        .position(location)
                         .title(post.postId)
 
                 when (post.type) {
@@ -215,6 +216,19 @@ class MainActivity :
                         iconGenerator.setContentView(imageView)
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                         markers.add(mMap.addMarker(markerOptions))
+                    }
+                }
+            }
+
+            // Draw links
+            for (post in it.data) {
+                if (post.linkedPosts.isNotEmpty()) {
+                    for (link in post.linkedPosts) {
+                        if (link in markers.map { it.title }) {
+                            val polylineOptions = PolylineOptions()
+                            polylineOptions.add(LatLng(post.latitude, post.longitude), markers.first { it.title == link }.position)
+                            mMap.addPolyline(polylineOptions)
+                        }
                     }
                 }
             }
@@ -287,11 +301,15 @@ class MainActivity :
 
     private fun linkButton() {
         link_button.setOnClickListener({
-            Toast.makeText(this, "Touch a post then another to make a link.", Toast.LENGTH_SHORT).show()
-            linkMode = LinkMode.NONE_PRESSED
-            // Add something to each icon to make them linkable
-
-            // The next two marker clicks will add a link
+            if (linkMode == LinkMode.NOT_LINKING) {
+                Toast.makeText(this, "Touch a post then another to make a link.", Toast.LENGTH_SHORT).show()
+                linkMode = LinkMode.NONE_PRESSED
+                link_button.size = FloatingActionButton.SIZE_MINI
+            } else {
+                linkMode = LinkMode.NOT_LINKING
+                Toast.makeText(this, "Link mode off.", Toast.LENGTH_SHORT).show()
+                link_button.size = FloatingActionButton.SIZE_NORMAL
+            }
         })
     }
 
@@ -390,8 +408,13 @@ class MainActivity :
                 if (linkMode == LinkMode.NONE_PRESSED) {
                     linkedPosts.add(post)
                     linkMode = LinkMode.ONE_PRESSED
+                    Toast.makeText(this, "Touch another to finish the link.", Toast.LENGTH_SHORT).show()
                     return true
                 } else if (linkMode == LinkMode.ONE_PRESSED) {
+                    if (post == linkedPosts[0]) {
+                        Toast.makeText(this, "Cannot link a post to itself!", Toast.LENGTH_SHORT).show()
+                        return true
+                    }
                     linkedPosts.add(post)
                     val p = linkedPosts[0]
                     if (!p.linkedPosts.contains(linkedPosts[1].postId)) {
@@ -400,9 +423,11 @@ class MainActivity :
                     mainViewModel.putPost(p).observe(this, Observer {
                         if (it != null && it.status == Status.SUCCESS) {
                             Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
+                            mainViewModel.getNewPosts()
                         }
                     })
-                    linkMode = LinkMode.NONE_PRESSED
+                    link_button.size = FloatingActionButton.SIZE_NORMAL
+                    linkMode = LinkMode.NOT_LINKING
                     linkedPosts.clear()
                     return true
                 }
