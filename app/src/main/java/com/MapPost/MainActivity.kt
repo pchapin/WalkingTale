@@ -60,11 +60,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.SphericalUtil
 import com.google.maps.android.ui.IconGenerator
 import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 
 class MainActivity :
@@ -153,6 +155,10 @@ class MainActivity :
         }
     }
 
+    private fun random(min: Double, max: Double): Double {
+        return ThreadLocalRandom.current().nextDouble() * (max - min) + min
+    }
+
     private fun nearbyPosts() {
         mainViewModel.getNewPosts()
         mainViewModel.localPosts.observe(this, Observer {
@@ -171,7 +177,7 @@ class MainActivity :
                 val location = LatLng(post.latitude, post.longitude)
                 val markerOptions = MarkerOptions()
                         .draggable(true)
-                        .position(location)
+                        .position(SphericalUtil.computeOffset(location, 20.0, random(0.0, 359.0)))
                         .title(post.postId)
 
                 when (post.type) {
