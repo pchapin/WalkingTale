@@ -36,7 +36,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
 import android.util.Log
 import android.view.Menu
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -435,7 +434,7 @@ class MainActivity :
     }
 
     override fun onBackPressed() {
-        if (bottom_sheet.visibility == View.VISIBLE) {
+        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             super.onBackPressed()
@@ -492,8 +491,10 @@ class MainActivity :
                             }
                             // Update the users set of created posts
                             mainViewModel.putUser(user).observe(this, Observer {
-                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.getNewPosts()
+                                if (it != null && it.status == Status.SUCCESS) {
+                                    Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                                    mainViewModel.getNewPosts()
+                                }
                             })
                         }
                     })
