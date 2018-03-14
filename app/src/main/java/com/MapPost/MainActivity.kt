@@ -125,6 +125,7 @@ class MainActivity :
                 postAudioButton()
                 flagButton()
                 deletePostButton()
+                linkButton()
                 lld.removeObservers(this)
             }
         })
@@ -278,6 +279,12 @@ class MainActivity :
     private fun myLocationButton() {
         my_location_button.setOnClickListener({
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
+        })
+    }
+
+    private fun linkButton() {
+        link_button.setOnClickListener({
+
         })
     }
 
