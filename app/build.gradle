@@ -79,8 +79,6 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$gms_version"
     implementation "com.android.support:support-v4:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation "com.android.support:support-v4:$support_version"
-    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
 
     // Circle Image view
     implementation 'de.hdodenhof:circleimageview:2.2.0'
@@ -100,7 +98,6 @@ dependencies {
     implementation "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
     implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
     implementation("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    implementation "com.android.support:appcompat-v7:$aws_version"
     implementation("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
     implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
 
