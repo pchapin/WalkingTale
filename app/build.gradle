@@ -72,7 +72,7 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation "android.arch.persistence.room:runtime:$arch_version"
     implementation "android.arch.lifecycle:runtime:$arch_version"
-    implementation "android.arch.lifecycle:extensions:$arch_version"
+    implementation "android.arch.lifecycle:extensions:1.1.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
@@ -91,15 +91,15 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$gms_version"
 
     // Amazon Web Services
-    implementation "com.amazonaws:aws-android-sdk-core:$aws_version"
-    implementation "com.amazonaws:aws-android-sdk-auth-core:2.6.16"
-    implementation "com.amazonaws:aws-android-sdk-auth-userpools:2.6.16"
-    implementation "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
-    implementation "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
-    implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    implementation("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    implementation("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
-    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
+    compile "com.amazonaws:aws-android-sdk-core:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-auth-core:2.6.16"
+    compile "com.amazonaws:aws-android-sdk-auth-userpools:2.6.16"
+    compile "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
+    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
+    compile("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
+    compile("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
+    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
 
     // Google sign in
     implementation("com.amazonaws:aws-android-sdk-auth-google:$aws_version") { transitive = true }
