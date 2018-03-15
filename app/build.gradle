@@ -93,16 +93,16 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$gms_version"
 
     // Amazon Web Services
-    compile "com.amazonaws:aws-android-sdk-core:$aws_version"
-    compile "com.amazonaws:aws-android-sdk-auth-core:2.6.16"
-    compile "com.amazonaws:aws-android-sdk-auth-userpools:2.6.16"
-    compile "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
-    compile "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
-    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    compile("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    compile "com.android.support:appcompat-v7:$aws_version"
-    compile("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
-    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
+    implementation "com.amazonaws:aws-android-sdk-core:$aws_version"
+    implementation "com.amazonaws:aws-android-sdk-auth-core:2.6.16"
+    implementation "com.amazonaws:aws-android-sdk-auth-userpools:2.6.16"
+    implementation "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
+    implementation "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
+    implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
+    implementation("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
+    implementation "com.android.support:appcompat-v7:$aws_version"
+    implementation("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
 
     // Google sign in
     implementation("com.amazonaws:aws-android-sdk-auth-google:$aws_version") { transitive = true }
@@ -110,13 +110,13 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:$arch_version"
 
     // Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     kapt 'com.android.databinding:compiler:3.0.1'
 
     // Google Firebase
     implementation "com.google.firebase:firebase-crash:$gms_version"
     implementation "com.google.firebase:firebase-core:$gms_version"
-    compile('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
         transitive = true
     }
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
