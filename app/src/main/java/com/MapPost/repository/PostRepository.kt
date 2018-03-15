@@ -22,6 +22,7 @@ import android.util.Log
 import com.MapPost.AppExecutors
 import com.MapPost.repository.tasks.AbstractTask
 import com.MapPost.vo.Post
+import com.MapPost.vo.PostType
 import com.MapPost.vo.Resource
 import com.MapPost.vo.Status
 import com.amazonaws.mobile.client.AWSMobileClient
@@ -32,6 +33,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.S3ClientOptions
 import com.s3BucketName
+import id.zelory.compressor.Compressor
 import java.io.File
 import java.lang.Exception
 
@@ -65,9 +67,13 @@ object PostRepository {
         val result = object : AbstractTask<Pair<Post, Context>, Post>(pair) {
             override fun run() {
                 val post = pair.first
+                var file = File(pair.first.content)
+                if (post.type == PostType.PICTURE) {
+                    file = Compressor(pair.second).compressToFile(file)
+                }
                 val transferUtility = getTransferUtility(pair.second)
                 val s3Path = post.postId
-                transferUtility.upload(s3Path, File(post.content)).setTransferListener(object : TransferListener {
+                transferUtility.upload(s3Path, file).setTransferListener(object : TransferListener {
                     override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
                         Log.i(tag, "" + bytesCurrent)
                     }
