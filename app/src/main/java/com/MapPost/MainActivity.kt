@@ -72,14 +72,11 @@ import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 
 
 class MainActivity :
         AppCompatActivity(),
         OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener,
-        GoogleMap.OnMarkerDragListener,
         ClusterManager.OnClusterClickListener<Post>,
         ClusterManager.OnClusterInfoWindowClickListener<Post>,
         ClusterManager.OnClusterItemClickListener<Post>,
@@ -91,14 +88,12 @@ class MainActivity :
     private lateinit var mainViewModel: MainViewModel
     private lateinit var location: LatLng
     private var file: File? = null
-    private val markers = mutableListOf<Marker>()
     private val markerWidth = 200
     private val markerHeight = 200
     private var cameraOnUserOnce = false
     private val rcAudio = 123
     private val rcPicture = 1234
     private val rcVideo = 12345
-    private val visiblePosts = mutableListOf<Post>()
     private val mediaPlayer = MediaPlayer()
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
@@ -188,8 +183,52 @@ class MainActivity :
     override fun onClusterInfoWindowClick(p0: Cluster<Post>?) {
     }
 
-    override fun onClusterItemClick(p0: Post?): Boolean {
-        return false
+    override fun onClusterItemClick(marker: Post?): Boolean {
+        val post = marker!!
+        binding.post = post
+
+        // Handle linking
+        if (linkMode == LinkMode.NONE_PRESSED) {
+            linkedPosts.add(post)
+            linkMode = LinkMode.ONE_PRESSED
+            Toast.makeText(this, "Touch another to finish the link.", Toast.LENGTH_SHORT).show()
+            return true
+        } else if (linkMode == LinkMode.ONE_PRESSED) {
+            if (post == linkedPosts[0]) {
+                Toast.makeText(this, "Cannot link a post to itself!", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            linkedPosts.add(post)
+            val p = linkedPosts[0]
+            if (!p.linkedPosts.contains(linkedPosts[1].postId)) {
+                p.linkedPosts.add(linkedPosts[1].postId)
+            }
+            mainViewModel.putPost(p).observe(this, Observer {
+                if (it != null && it.status == Status.SUCCESS) {
+                    Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
+                    mainViewModel.getNewPosts()
+                }
+            })
+            link_button.size = FloatingActionButton.SIZE_NORMAL
+            linkMode = LinkMode.NOT_LINKING
+            linkedPosts.clear()
+            return true
+        }
+
+        when (post.type) {
+            TEXT -> {
+            }
+            AUDIO -> {
+            }
+            PICTURE -> {
+                Glide.with(this).load(s3HostName + post.content).into(post_image_view)
+            }
+            VIDEO -> {
+                loopVideo(Uri.parse(s3HostName + post.content))
+            }
+        }
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        return true
     }
 
     override fun onClusterItemInfoWindowClick(p0: Post?) {
@@ -216,13 +255,6 @@ class MainActivity :
 
         override fun onBeforeClusterItemRendered(post: Post?, markerOptions: MarkerOptions?) {
             // Draw a single Post.
-            // Set the info window to show their name.
-//            imageView.setImageResource(Post!!.profilePhoto)
-//            imageView.setImageResource(R.drawable.google_icon)
-//            val icon = iconGenerator.makeIcon()
-//            markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(Post!!.title)
-
-
             when (post!!.type) {
                 TEXT -> {
                     imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
@@ -252,6 +284,7 @@ class MainActivity :
                                 }
                             })
             }
+            markerOptions!!.title(post.postId)
         }
 
         override fun onBeforeClusterRendered(cluster: Cluster<Post>, markerOptions: MarkerOptions) {
@@ -264,13 +297,12 @@ class MainActivity :
             for (p in cluster.items) {
                 // Draw 4 at most.
                 if (profilePhotos.size == 4) break
-//                val drawable = resources.getDrawable(p.profilePhoto)
-                val drawable = when (p.type) {
-                    TEXT -> resources.getDrawable(R.drawable.ic_textsms_black_24dp)
-                    AUDIO -> resources.getDrawable(R.drawable.ic_audiotrack_black_24dp)
-                    PICTURE -> resources.getDrawable(R.drawable.ic_camera_alt_black_24dp)
-                    VIDEO -> resources.getDrawable(R.drawable.ic_videocam_black_24dp)
-                }
+                val drawable = resources.getDrawable(when (p.type) {
+                    TEXT -> R.drawable.ic_textsms_black_24dp
+                    AUDIO -> R.drawable.ic_audiotrack_black_24dp
+                    PICTURE -> R.drawable.ic_camera_alt_black_24dp
+                    VIDEO -> R.drawable.ic_videocam_black_24dp
+                }, theme)
                 drawable.setBounds(0, 0, width, height)
                 profilePhotos.add(drawable)
             }
@@ -310,10 +342,6 @@ class MainActivity :
                 }
             }
         }
-    }
-
-    private fun random(min: Double, max: Double): Double {
-        return ThreadLocalRandom.current().nextDouble() * (max - min) + min
     }
 
     private fun nearbyPosts() {
@@ -505,57 +533,6 @@ class MainActivity :
         }
     }
 
-    override fun onMarkerClick(marker: Marker?): Boolean {
-        for (post in visiblePosts) {
-            if (post.postId == marker!!.title) {
-                binding.post = post
-
-                if (linkMode == LinkMode.NONE_PRESSED) {
-                    linkedPosts.add(post)
-                    linkMode = LinkMode.ONE_PRESSED
-                    Toast.makeText(this, "Touch another to finish the link.", Toast.LENGTH_SHORT).show()
-                    return true
-                } else if (linkMode == LinkMode.ONE_PRESSED) {
-                    if (post == linkedPosts[0]) {
-                        Toast.makeText(this, "Cannot link a post to itself!", Toast.LENGTH_SHORT).show()
-                        return true
-                    }
-                    linkedPosts.add(post)
-                    val p = linkedPosts[0]
-                    if (!p.linkedPosts.contains(linkedPosts[1].postId)) {
-                        p.linkedPosts.add(linkedPosts[1].postId)
-                    }
-                    mainViewModel.putPost(p).observe(this, Observer {
-                        if (it != null && it.status == Status.SUCCESS) {
-                            Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
-                            mainViewModel.getNewPosts()
-                        }
-                    })
-                    link_button.size = FloatingActionButton.SIZE_NORMAL
-                    linkMode = LinkMode.NOT_LINKING
-                    linkedPosts.clear()
-                    return true
-                }
-
-                when (post.type) {
-                    TEXT -> {
-                    }
-                    AUDIO -> {
-                    }
-                    PICTURE -> {
-                        Glide.with(this).load(s3HostName + post.content).into(post_image_view)
-                    }
-                    VIDEO -> {
-                        loopVideo(Uri.parse(s3HostName + post.content))
-                    }
-                }
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                return true
-            }
-        }
-        return false
-    }
-
     private fun postAudioButton() {
         post_audio_button.setOnClickListener({
             if (mediaPlayer.isPlaying) {
@@ -584,12 +561,13 @@ class MainActivity :
         delete_post_button.setOnClickListener({
             mainViewModel.deletePost(binding.post!!).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
+                    mClusterManager.removeItem(binding.post!!)
+                    mClusterManager.cluster()
                     val user = mainViewModel.currentUser
                     user!!.createdPosts.remove(binding.post!!.postId)
                     mainViewModel.putUser(user).observe(this, Observer {
                         if (it != null && it.status == Status.SUCCESS) {
                             mainViewModel.currentUser = user
-                            mainViewModel.getNewPosts()
                             onBackPressed()
                             Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
                         }
@@ -613,21 +591,10 @@ class MainActivity :
         }
     }
 
-    override fun onMarkerDragEnd(p0: Marker?) {
-    }
-
-    override fun onMarkerDragStart(p0: Marker?) {
-    }
-
-    override fun onMarkerDrag(p0: Marker?) {
-    }
-
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
-        mMap.setOnMarkerClickListener(this)
-        mMap.setOnMarkerDragListener(this)
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
         mUiSettings.isZoomControlsEnabled = true
