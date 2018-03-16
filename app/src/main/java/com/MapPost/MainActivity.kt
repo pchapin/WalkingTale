@@ -196,9 +196,9 @@ class MainActivity :
     }
 
     private inner class PostRenderer : DefaultClusterRenderer<Post>(applicationContext, mMap, mClusterManager) {
-        private val mIconGenerator = IconGenerator(applicationContext)
+        private val iconGenerator = IconGenerator(applicationContext)
         private val mClusterIconGenerator = IconGenerator(applicationContext)
-        private val mImageView: ImageView
+        private val imageView: ImageView
         private val mClusterImageView: ImageView
         private val mDimension: Int
 
@@ -206,21 +206,52 @@ class MainActivity :
             val multiProfile = layoutInflater.inflate(R.layout.multi_profile, null)
             mClusterIconGenerator.setContentView(multiProfile)
             mClusterImageView = multiProfile.findViewById(R.id.image)
-            mImageView = ImageView(applicationContext)
+            imageView = ImageView(applicationContext)
             mDimension = resources.getDimension(R.dimen.custom_profile_image).toInt()
-            mImageView.layoutParams = ViewGroup.LayoutParams(mDimension, mDimension)
+            imageView.layoutParams = ViewGroup.LayoutParams(mDimension, mDimension)
             val padding = resources.getDimension(R.dimen.custom_profile_padding).toInt()
-            mImageView.setPadding(padding, padding, padding, padding)
-            mIconGenerator.setContentView(mImageView)
+            imageView.setPadding(padding, padding, padding, padding)
+            iconGenerator.setContentView(imageView)
         }
 
-        override fun onBeforeClusterItemRendered(Post: Post?, markerOptions: MarkerOptions?) {
+        override fun onBeforeClusterItemRendered(post: Post?, markerOptions: MarkerOptions?) {
             // Draw a single Post.
             // Set the info window to show their name.
-//            mImageView.setImageResource(Post!!.profilePhoto)
-            mImageView.setImageResource(R.drawable.google_icon)
-            val icon = mIconGenerator.makeIcon()
-            markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(Post!!.title)
+//            imageView.setImageResource(Post!!.profilePhoto)
+//            imageView.setImageResource(R.drawable.google_icon)
+//            val icon = iconGenerator.makeIcon()
+//            markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(Post!!.title)
+
+
+            when (post!!.type) {
+                TEXT -> {
+                    imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
+                    iconGenerator.setContentView(imageView)
+                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                }
+                AUDIO -> {
+                    imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
+                    iconGenerator.setContentView(imageView)
+                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                }
+                VIDEO -> {
+                    imageView.setImageResource(R.drawable.ic_videocam_black_24dp)
+                    iconGenerator.setContentView(imageView)
+                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                }
+                PICTURE ->
+                    Glide.with(applicationContext)
+                            .asBitmap()
+                            .load(s3HostName + post.content)
+                            .apply(RequestOptions().centerCrop())
+                            .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
+                                    imageView.setImageBitmap(resource)
+                                    iconGenerator.setContentView(imageView)
+                                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                                }
+                            })
+            }
         }
 
         override fun onBeforeClusterRendered(cluster: Cluster<Post>, markerOptions: MarkerOptions) {
@@ -234,7 +265,12 @@ class MainActivity :
                 // Draw 4 at most.
                 if (profilePhotos.size == 4) break
 //                val drawable = resources.getDrawable(p.profilePhoto)
-                val drawable = resources.getDrawable(R.drawable.google_icon)
+                val drawable = when (p.type) {
+                    TEXT -> resources.getDrawable(R.drawable.ic_textsms_black_24dp)
+                    AUDIO -> resources.getDrawable(R.drawable.ic_audiotrack_black_24dp)
+                    PICTURE -> resources.getDrawable(R.drawable.ic_camera_alt_black_24dp)
+                    VIDEO -> resources.getDrawable(R.drawable.ic_videocam_black_24dp)
+                }
                 drawable.setBounds(0, 0, width, height)
                 profilePhotos.add(drawable)
             }
@@ -286,73 +322,21 @@ class MainActivity :
 
             if (it?.data == null) return@Observer
 
-            markers.map { it.remove() }
-            markers.clear()
-            polyLines.map { it.remove() }
-            polyLines.clear()
-            visiblePosts.clear()
-            visiblePosts.addAll(it.data)
-
-            for (post in it.data) {
-
-                val iconGenerator = IconGenerator(this)
-                val imageView = ImageView(this)
-                imageView.layoutParams = ViewGroup.LayoutParams(markerWidth, markerHeight)
-                val location = LatLng(post.latitude, post.longitude)
-                val markerOptions = MarkerOptions()
-                        .draggable(true)
-//                        .position(SphericalUtil.computeOffset(location, 200.0, random(0.0, 359.0)))
-                        .position(location)
-                        .title(post.postId)
-
-                when (post.type) {
-                    TEXT -> {
-                        imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
-                        iconGenerator.setContentView(imageView)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                    }
-                    AUDIO -> {
-                        imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
-                        iconGenerator.setContentView(imageView)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                    }
-                    PICTURE ->
-                        // Note: This can take a while
-                        Glide.with(this)
-                                .asBitmap()
-                                .load(s3HostName + post.content)
-                                .apply(RequestOptions().centerCrop())
-                                .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
-                                        imageView.setImageBitmap(resource)
-                                        iconGenerator.setContentView(imageView)
-                                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                        markers.add(mMap.addMarker(markerOptions))
-                                    }
-                                })
-                    VIDEO -> {
-                        imageView.setImageResource(R.drawable.ic_videocam_black_24dp)
-                        iconGenerator.setContentView(imageView)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                    }
-                }
-            }
-
             mClusterManager.addItems(it.data)
             mClusterManager.cluster()
 
-            // Draw links
-            for (post in it.data) {
-                if (post.linkedPosts.isNotEmpty()) {
-                    for (link in post.linkedPosts) {
-                        if (link in markers.map { it.title }) {
-                            val polylineOptions = PolylineOptions()
-                            polylineOptions.add(LatLng(post.latitude, post.longitude), markers.first { it.title == link }.position)
-                            polyLines.add(mMap.addPolyline(polylineOptions))
-                        }
-                    }
-                }
-            }
+//            // Draw links
+//            for (post in it.data) {
+//                if (post.linkedPosts.isNotEmpty()) {
+//                    for (link in post.linkedPosts) {
+//                        if (link in markers.map { it.title }) {
+//                            val polylineOptions = PolylineOptions()
+//                            polylineOptions.add(LatLng(post.latitude, post.longitude), markers.first { it.title == link }.position)
+//                            polyLines.add(mMap.addPolyline(polylineOptions))
+//                        }
+//                    }
+//                }
+//            }
         })
     }
 
