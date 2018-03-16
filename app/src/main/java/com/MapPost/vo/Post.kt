@@ -4,7 +4,9 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.support.annotation.NonNull
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.google.maps.android.clustering.ClusterItem
 
 
 @DynamoDBTable(tableName = "mappost-mobilehub-452475001-Posts")
@@ -34,7 +36,22 @@ data class Post(
         var content: String,
         @get:DynamoDBAttribute(attributeName = "linkedPosts")
         var linkedPosts: MutableList<String>
-) {
+) : ClusterItem {
+    @DynamoDBIgnore
+    override fun getSnippet(): String {
+        return ""
+    }
+
+    @DynamoDBIgnore
+    override fun getTitle(): String {
+        return ""
+    }
+
+    @DynamoDBIgnore
+    override fun getPosition(): LatLng {
+        return LatLng(latitude, longitude)
+    }
+
     /**
      * Do not use this constructor!
      * Just to make DDB mapper happy

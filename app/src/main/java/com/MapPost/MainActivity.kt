@@ -26,6 +26,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.media.AudioAttributes
 import android.media.MediaMetadataRetriever
@@ -63,6 +64,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.clustering.Cluster
+import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
 import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
@@ -75,7 +79,11 @@ class MainActivity :
         AppCompatActivity(),
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
-        GoogleMap.OnMarkerDragListener {
+        GoogleMap.OnMarkerDragListener,
+        ClusterManager.OnClusterClickListener<Post>,
+        ClusterManager.OnClusterInfoWindowClickListener<Post>,
+        ClusterManager.OnClusterItemClickListener<Post>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Post> {
 
     private val tag = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
@@ -97,6 +105,7 @@ class MainActivity :
     private var linkMode = LinkMode.NOT_LINKING
     private var linkedPosts = mutableListOf<Post>()
     private var polyLines = mutableListOf<Polyline>()
+    private lateinit var mClusterManager: ClusterManager<Post>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,9 +141,115 @@ class MainActivity :
                 flagButton()
                 deletePostButton()
                 linkButton()
+
+                mClusterManager = ClusterManager(this, mMap)
+                mClusterManager.renderer = PostRenderer()
+                mMap.setOnCameraIdleListener(mClusterManager)
+                mMap.setOnMarkerClickListener(mClusterManager)
+                mMap.setOnInfoWindowClickListener(mClusterManager)
+                mClusterManager.setOnClusterClickListener(this)
+                mClusterManager.setOnClusterInfoWindowClickListener(this)
+                mClusterManager.setOnClusterItemClickListener(this)
+                mClusterManager.setOnClusterItemInfoWindowClickListener(this)
+
+
                 lld.removeObservers(this)
             }
         })
+    }
+
+    override fun onClusterClick(cluster: Cluster<Post>?): Boolean {
+
+        // Show a toast with some info when the cluster is clicked.
+        val firstName = cluster!!.items.iterator().next().title
+        Toast.makeText(this, "" + cluster.size + " (including " + firstName + ")", Toast.LENGTH_SHORT).show()
+
+        // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
+        // inside of bounds, then animate to center of the bounds.
+
+        // Create the builder to collect all essential cluster items for the bounds.
+        val builder = LatLngBounds.builder()
+        for (item in cluster.items) {
+            builder.include(item.position)
+        }
+        // Get the LatLngBounds
+        val bounds = builder.build()
+
+        // Animate camera to the bounds
+        try {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return true
+    }
+
+    override fun onClusterInfoWindowClick(p0: Cluster<Post>?) {
+    }
+
+    override fun onClusterItemClick(p0: Post?): Boolean {
+        return false
+    }
+
+    override fun onClusterItemInfoWindowClick(p0: Post?) {
+    }
+
+    private inner class PostRenderer : DefaultClusterRenderer<Post>(applicationContext, mMap, mClusterManager) {
+        private val mIconGenerator = IconGenerator(applicationContext)
+        private val mClusterIconGenerator = IconGenerator(applicationContext)
+        private val mImageView: ImageView
+        private val mClusterImageView: ImageView
+        private val mDimension: Int
+
+        init {
+            val multiProfile = layoutInflater.inflate(R.layout.multi_profile, null)
+            mClusterIconGenerator.setContentView(multiProfile)
+            mClusterImageView = multiProfile.findViewById(R.id.image)
+            mImageView = ImageView(applicationContext)
+            mDimension = resources.getDimension(R.dimen.custom_profile_image).toInt()
+            mImageView.layoutParams = ViewGroup.LayoutParams(mDimension, mDimension)
+            val padding = resources.getDimension(R.dimen.custom_profile_padding).toInt()
+            mImageView.setPadding(padding, padding, padding, padding)
+            mIconGenerator.setContentView(mImageView)
+        }
+
+        override fun onBeforeClusterItemRendered(Post: Post?, markerOptions: MarkerOptions?) {
+            // Draw a single Post.
+            // Set the info window to show their name.
+//            mImageView.setImageResource(Post!!.profilePhoto)
+            mImageView.setImageResource(R.drawable.google_icon)
+            val icon = mIconGenerator.makeIcon()
+            markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(Post!!.title)
+        }
+
+        override fun onBeforeClusterRendered(cluster: Cluster<Post>, markerOptions: MarkerOptions) {
+            // Draw multiple people.
+            // Note: this method runs on the UI thread. Don't spend too much time in here (like in this example).
+            val profilePhotos = ArrayList<Drawable>(Math.min(4, cluster.size))
+            val width = mDimension
+            val height = mDimension
+
+            for (p in cluster.items) {
+                // Draw 4 at most.
+                if (profilePhotos.size == 4) break
+//                val drawable = resources.getDrawable(p.profilePhoto)
+                val drawable = resources.getDrawable(R.drawable.google_icon)
+                drawable.setBounds(0, 0, width, height)
+                profilePhotos.add(drawable)
+            }
+            val multiDrawable = MultiDrawable(profilePhotos)
+            multiDrawable.setBounds(0, 0, width, height)
+
+            mClusterImageView.setImageDrawable(multiDrawable)
+            val icon = mClusterIconGenerator.makeIcon(cluster.size.toString())
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon))
+        }
+
+        override fun shouldRenderAsCluster(cluster: Cluster<Post>?): Boolean {
+            // Always render clusters.
+            return cluster!!.size > 1
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -186,7 +301,7 @@ class MainActivity :
                 val location = LatLng(post.latitude, post.longitude)
                 val markerOptions = MarkerOptions()
                         .draggable(true)
-//                        .position(SphericalUtil.computeOffset(location, 20.0, random(0.0, 359.0)))
+//                        .position(SphericalUtil.computeOffset(location, 200.0, random(0.0, 359.0)))
                         .position(location)
                         .title(post.postId)
 
@@ -195,13 +310,11 @@ class MainActivity :
                         imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
                         iconGenerator.setContentView(imageView)
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                        markers.add(mMap.addMarker(markerOptions))
                     }
                     AUDIO -> {
                         imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
                         iconGenerator.setContentView(imageView)
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                        markers.add(mMap.addMarker(markerOptions))
                     }
                     PICTURE ->
                         // Note: This can take a while
@@ -221,10 +334,12 @@ class MainActivity :
                         imageView.setImageResource(R.drawable.ic_videocam_black_24dp)
                         iconGenerator.setContentView(imageView)
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                        markers.add(mMap.addMarker(markerOptions))
                     }
                 }
             }
+
+            mClusterManager.addItems(it.data)
+            mClusterManager.cluster()
 
             // Draw links
             for (post in it.data) {
