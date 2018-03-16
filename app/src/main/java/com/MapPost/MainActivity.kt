@@ -18,6 +18,7 @@ package com.MapPost
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -44,6 +45,7 @@ import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
 import com.MapPost.vo.Post
+import com.MapPost.vo.PostType
 import com.MapPost.vo.PostType.*
 import com.MapPost.vo.Status
 import com.MapPost.vo.User
@@ -538,104 +540,62 @@ class MainActivity :
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == rcPicture && resultCode == RESULT_OK) {
-            val post = Post()
-            post.postId = UUID.randomUUID().toString()
-            post.userId = MainActivity.cognitoId
-            post.content = file!!.absolutePath
-            post.type = PICTURE
-            post.latitude = location.latitude
-            post.longitude = location.longitude
-            post.dateTime = Date().time.toString()
-            // Put the file in S3
-            mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
-                if (it != null && it.status == Status.SUCCESS) {
-                    val newPost = it.data!!
-                    // Add the post to DDB
-                    mainViewModel.putPost(newPost).observe(this, Observer {
-                        if (it != null && it.status == Status.SUCCESS) {
-                            val user = mainViewModel.currentUser!!
-                            if (!user.createdPosts.contains(newPost.content)) {
-                                user.createdPosts.add(newPost.content)
-                            }
-                            // Update the users set of created posts
-                            mainViewModel.putUser(user).observe(this, Observer {
-                                if (it != null && it.status == Status.SUCCESS) {
-                                    Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                    mainViewModel.getNewPosts()
-                                }
-                            })
-                        }
-                    })
-                }
-            })
-        } else if (requestCode == rcAudio && resultCode == RESULT_OK) {
-            val post = Post(
-                    cognitoId,
-                    getRandomPostId(),
-                    getDate(),
-                    location.latitude,
-                    location.longitude,
-                    mutableListOf(),
-                    AUDIO,
-                    data!!.data.path,
-                    mutableListOf()
-            )
-            mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
-                if (it != null && it.status == Status.SUCCESS) {
-                    val newPost = it.data!!
-                    // Add the post to DDB
-                    mainViewModel.putPost(newPost).observe(this, Observer {
-                        if (it != null && it.status == Status.SUCCESS) {
-                            val user = mainViewModel.currentUser!!
-                            if (!user.createdPosts.contains(newPost.content)) {
-                                user.createdPosts.add(newPost.content)
-                            }
-                            // Update the users set of created posts
-                            mainViewModel.putUser(user).observe(this, Observer {
-                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.getNewPosts()
-                            })
-                        }
-                    })
-                }
-            })
-        } else if (requestCode == rcVideo && resultCode == RESULT_OK) {
-            val videoUri = data!!.data
-            val videoFile = File(UriUtil.getPath(this, videoUri))
-            loopVideo(videoUri)
-            val post = Post(
-                    cognitoId,
-                    getRandomPostId(),
-                    getDate(),
-                    location.latitude,
-                    location.longitude,
-                    mutableListOf(),
-                    VIDEO,
-                    videoFile.absolutePath,
-                    mutableListOf()
-            )
-            mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
-                if (it != null && it.status == Status.SUCCESS) {
-                    val newPost = it.data!!
-                    // Add the post to DDB
-                    mainViewModel.putPost(newPost).observe(this, Observer {
-                        if (it != null && it.status == Status.SUCCESS) {
-                            val user = mainViewModel.currentUser!!
-                            if (!user.createdPosts.contains(newPost.content)) {
-                                user.createdPosts.add(newPost.content)
-                            }
-                            // Update the users set of created posts
-                            mainViewModel.putUser(user).observe(this, Observer {
-                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.getNewPosts()
-                            })
-                        }
-                    })
-                }
-            })
+        if (resultCode != Activity.RESULT_OK) return
+
+        var postType: PostType? = null
+        var content: String? = null
+        when (requestCode) {
+            rcPicture -> {
+                content = file!!.absolutePath
+                postType = PICTURE
+            }
+            rcAudio -> {
+                content = data!!.data.path
+                postType = AUDIO
+            }
+            rcVideo -> {
+                val videoUri = data!!.data
+                val videoFile = File(UriUtil.getPath(this, videoUri))
+                content = videoFile.absolutePath
+                postType = VIDEO
+            }
         }
+        val post = Post(
+                cognitoId,
+                getRandomPostId(),
+                getDate(),
+                location.latitude,
+                location.longitude,
+                mutableListOf(),
+                postType!!,
+                content!!,
+                mutableListOf()
+        )
+
+        // Put the file in S3
+        mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
+            if (it != null && it.status == Status.SUCCESS) {
+                val newPost = it.data!!
+                // Add the post to DDB
+                mainViewModel.putPost(newPost).observe(this, Observer {
+                    if (it != null && it.status == Status.SUCCESS) {
+                        val user = mainViewModel.currentUser!!
+                        if (!user.createdPosts.contains(newPost.content)) {
+                            user.createdPosts.add(newPost.content)
+                        }
+                        // Update the users set of created posts
+                        mainViewModel.putUser(user).observe(this, Observer {
+                            if (it != null && it.status == Status.SUCCESS) {
+                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                                mainViewModel.getNewPosts()
+                            }
+                        })
+                    }
+                })
+            }
+        })
     }
+
 
     private fun loopVideo(uri: Uri) {
         video_view.setVideoURI(uri)
