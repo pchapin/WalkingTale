@@ -28,6 +28,7 @@ import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.location.Location
 import android.media.AudioAttributes
+import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -558,6 +559,17 @@ class MainActivity :
                 val videoFile = File(UriUtil.getPath(this, videoUri))
                 content = videoFile.absolutePath
                 postType = VIDEO
+
+                val retriever = MediaMetadataRetriever()
+                // use one of overloaded setDataSource() functions to set your data source
+                retriever.setDataSource(this, Uri.fromFile(videoFile))
+                val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                retriever.release()
+                val timeMilliseconds = time.toLong()
+                if (timeMilliseconds > 6000) {
+                    Toast.makeText(this, "Videos must be at most 6 seconds.", Toast.LENGTH_SHORT).show()
+                    return
+                }
             }
         }
         val post = Post(
