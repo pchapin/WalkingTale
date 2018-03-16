@@ -38,7 +38,6 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
-import android.view.Menu
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -101,6 +100,7 @@ class MainActivity :
     private var linkedPosts = mutableListOf<Post>()
     private var polyLines = mutableListOf<Polyline>()
     private lateinit var mClusterManager: ClusterManager<Post>
+    private var lastLatLngBoundsCenter = LatLng(0.0, 0.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -147,7 +147,6 @@ class MainActivity :
                 mClusterManager.setOnClusterItemClickListener(this)
                 mClusterManager.setOnClusterItemInfoWindowClickListener(this)
 
-
                 lld.removeObservers(this)
             }
         })
@@ -170,9 +169,16 @@ class MainActivity :
         // Get the LatLngBounds
         val bounds = builder.build()
 
+        // Show a special marker if the bounds has not changed and
+        // the markers are still clustered
+        if (bounds.center == lastLatLngBoundsCenter) {
+            Toast.makeText(this, "Show special marker", Toast.LENGTH_SHORT).show()
+        }
+
         // Animate camera to the bounds
         try {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+            lastLatLngBoundsCenter = bounds.center
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -353,18 +359,7 @@ class MainActivity :
             mClusterManager.addItems(it.data)
             mClusterManager.cluster()
 
-//            // Draw links
-//            for (post in it.data) {
-//                if (post.linkedPosts.isNotEmpty()) {
-//                    for (link in post.linkedPosts) {
-//                        if (link in markers.map { it.title }) {
-//                            val polylineOptions = PolylineOptions()
-//                            polylineOptions.add(LatLng(post.latitude, post.longitude), markers.first { it.title == link }.position)
-//                            polyLines.add(mMap.addPolyline(polylineOptions))
-//                        }
-//                    }
-//                }
-//            }
+            // Draw links: todo
         })
     }
 
@@ -494,11 +489,6 @@ class MainActivity :
                 }
             }
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
     }
 
     /**
