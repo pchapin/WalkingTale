@@ -24,7 +24,7 @@ object PermissionManager {
                 AlertDialog.Builder(activity)
                         .setTitle("Location Permissions")
                         .setMessage("This app needs location permissions to run.")
-                        .setPositiveButton("ok") { dialogInterface, i ->
+                        .setPositiveButton("ok") { _, _ ->
                             //Prompt the user once explanation has been shown
                             ActivityCompat.requestPermissions(activity,
                                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),

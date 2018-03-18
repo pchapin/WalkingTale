@@ -39,10 +39,15 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.MapPost.databinding.ActivityMainBinding
+import com.MapPost.db.MyAdapter
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
@@ -104,6 +109,10 @@ class MainActivity :
     private var lastLatLngBoundsCenter = LatLng(0.0, 0.0)
     private var selectedFilterItems = mutableListOf<Int>()
     private lateinit var selectedFilterItemsBoolean: BooleanArray
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +127,9 @@ class MainActivity :
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
+
+        viewManager = GridLayoutManager(this, 3)
+        viewAdapter = MyAdapter(arrayOf())
     }
 
     @SuppressLint("MissingPermission")
@@ -178,6 +190,17 @@ class MainActivity :
         // the markers are still clustered
         if (bounds.center == lastLatLngBoundsCenter) {
             Toast.makeText(this, "Show special marker", Toast.LENGTH_SHORT).show()
+            Log.i(tag, "cluster size " + cluster.items.size)
+            viewAdapter = MyAdapter(cluster.items.toTypedArray())
+            viewAdapter.notifyDataSetChanged()
+            my_recycler_view.visibility = View.VISIBLE
+            recyclerView = my_recycler_view.apply {
+                // use a linear layout manager
+                layoutManager = viewManager
+
+                // specify an viewAdapter (see also next example)
+                adapter = viewAdapter
+            }
         }
 
         // Animate camera to the bounds
