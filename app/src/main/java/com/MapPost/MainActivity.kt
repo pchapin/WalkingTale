@@ -19,6 +19,7 @@ package com.MapPost
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -101,6 +102,8 @@ class MainActivity :
     private var polyLines = mutableListOf<Polyline>()
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastLatLngBoundsCenter = LatLng(0.0, 0.0)
+    private var selectedFilterItems = mutableListOf<Int>()
+    private lateinit var selectedFilterItemsBoolean: BooleanArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +113,7 @@ class MainActivity :
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         mediaPlayer.setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
+        selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
         Analytics.init(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
@@ -136,6 +140,7 @@ class MainActivity :
                 flagButton()
                 deletePostButton()
                 linkButton()
+                filterButton()
 
                 mClusterManager = ClusterManager(this, mMap)
                 mClusterManager.renderer = PostRenderer()
@@ -438,6 +443,27 @@ class MainActivity :
                 Toast.makeText(this, "Link mode off.", Toast.LENGTH_SHORT).show()
                 link_button.size = FloatingActionButton.SIZE_NORMAL
             }
+        })
+    }
+
+    private fun filterButton() {
+        filter_button.setOnClickListener({
+            AlertDialog.Builder(this)
+                    .setTitle("Filter posts")
+                    .setMultiChoiceItems(
+                            R.array.genre_array,
+                            selectedFilterItemsBoolean,
+                            { dialog, which, isChecked ->
+                                if (isChecked) {
+                                    selectedFilterItems.add(which)
+                                } else if (selectedFilterItems.contains(which)) {
+                                    selectedFilterItems.remove(which)
+                                }
+                            }).setPositiveButton("ok") { _, _ ->
+                        {
+                        }
+                    }
+                    .show()
         })
     }
 
