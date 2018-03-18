@@ -539,12 +539,12 @@ class MainActivity :
     }
 
     override fun onResume() {
+        super.onResume()
         if (IdentityManager.getDefaultIdentityManager() == null) {
             val intent = Intent(this, AuthenticatorActivity::class.java)
             startActivity(intent)
             finish()
         } else {
-            super.onResume()
             checkPlayServices()
         }
     }
