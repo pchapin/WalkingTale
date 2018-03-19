@@ -1,11 +1,10 @@
-package com.MapPost.db
+package com.MapPost
 
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.MapPost.R
 import com.MapPost.vo.Post
 import kotlinx.android.synthetic.main.my_text_view.view.*
 
@@ -25,7 +24,7 @@ class MyAdapter(private val myDataset: Array<Post>) :
     }
 
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // create a new view
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.my_text_view, parent, false) as CardView

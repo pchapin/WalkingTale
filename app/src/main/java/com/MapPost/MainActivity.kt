@@ -47,7 +47,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.MapPost.databinding.ActivityMainBinding
-import com.MapPost.db.MyAdapter
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
@@ -128,8 +127,22 @@ class MainActivity :
             initLocation()
         }
 
+    }
+
+    private fun recyclerView() {
         viewManager = GridLayoutManager(this, 3)
         viewAdapter = MyAdapter(arrayOf())
+        my_recycler_view.setOnClickListener {
+            var child = false
+            for (i in 0..my_recycler_view.childCount) {
+                if (my_recycler_view.getChildAt(i) == it) {
+                    child = true
+                }
+            }
+            if (!child) {
+                my_recycler_view.visibility = View.GONE
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -153,6 +166,7 @@ class MainActivity :
                 deletePostButton()
                 linkButton()
                 filterButton()
+                recyclerView()
 
                 mClusterManager = ClusterManager(this, mMap)
                 mClusterManager.renderer = PostRenderer()
@@ -193,7 +207,6 @@ class MainActivity :
             Log.i(tag, "cluster size " + cluster.items.size)
             viewAdapter = MyAdapter(cluster.items.toTypedArray())
             viewAdapter.notifyDataSetChanged()
-            my_recycler_view.visibility = View.VISIBLE
             recyclerView = my_recycler_view.apply {
                 // use a linear layout manager
                 layoutManager = viewManager
@@ -201,6 +214,7 @@ class MainActivity :
                 // specify an viewAdapter (see also next example)
                 adapter = viewAdapter
             }
+            expandBottomSheet()
         }
 
         // Animate camera to the bounds
@@ -218,6 +232,10 @@ class MainActivity :
     }
 
     override fun onClusterItemClick(marker: Post?): Boolean {
+        return publicClusterItemClick(marker)
+    }
+
+    fun publicClusterItemClick(marker: Post?): Boolean {
         val post = marker!!
         binding.post = post
 
@@ -261,7 +279,7 @@ class MainActivity :
                 loopVideo(Uri.parse(s3HostName + post.content))
             }
         }
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        expandBottomSheet()
         return true
     }
 
@@ -616,9 +634,18 @@ class MainActivity :
         })
     }
 
+    private fun expandBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun collapseBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        binding.post = null
+    }
+
     private fun bottomSheetClick() {
         bottom_sheet.setOnClickListener({
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            collapseBottomSheet()
         })
     }
 
