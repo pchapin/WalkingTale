@@ -8,17 +8,18 @@ import android.view.ViewGroup
 import com.MapPost.vo.Post
 import kotlinx.android.synthetic.main.my_text_view.view.*
 
-class MyAdapter(private val myDataset: Array<Post>) :
+class MyAdapter(private val myDataset: Array<Post>, val callback: PostCallback) :
         RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class ViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardView) {
+    class ViewHolder(val cardView: CardView, callback: PostCallback, myDataset: Array<Post>) : RecyclerView.ViewHolder(cardView) {
         init {
             cardView.setOnClickListener {
-                Log.i(this.javaClass.simpleName, "clicked $cardView")
+                Log.i(this.javaClass.simpleName, "clicked $layoutPosition $cardView")
+                callback.onClick(myDataset[layoutPosition])
             }
         }
     }
@@ -29,7 +30,7 @@ class MyAdapter(private val myDataset: Array<Post>) :
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.my_text_view, parent, false) as CardView
         // set the view's size, margins, paddings and layout parameters
-        return ViewHolder(view)
+        return ViewHolder(view, callback, myDataset)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -42,4 +43,9 @@ class MyAdapter(private val myDataset: Array<Post>) :
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = myDataset.size
+
+
+    interface PostCallback {
+        fun onClick(post: Post)
+    }
 }

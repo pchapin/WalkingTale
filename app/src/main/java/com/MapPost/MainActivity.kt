@@ -42,7 +42,6 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -131,18 +130,6 @@ class MainActivity :
 
     private fun recyclerView() {
         viewManager = GridLayoutManager(this, 3)
-        viewAdapter = MyAdapter(arrayOf())
-        my_recycler_view.setOnClickListener {
-            var child = false
-            for (i in 0..my_recycler_view.childCount) {
-                if (my_recycler_view.getChildAt(i) == it) {
-                    child = true
-                }
-            }
-            if (!child) {
-                my_recycler_view.visibility = View.GONE
-            }
-        }
     }
 
     @SuppressLint("MissingPermission")
@@ -205,7 +192,11 @@ class MainActivity :
         if (bounds.center == lastLatLngBoundsCenter) {
             Toast.makeText(this, "Show special marker", Toast.LENGTH_SHORT).show()
             Log.i(tag, "cluster size " + cluster.items.size)
-            viewAdapter = MyAdapter(cluster.items.toTypedArray())
+            viewAdapter = MyAdapter(cluster.items.toTypedArray(), object : MyAdapter.PostCallback {
+                override fun onClick(post: Post) {
+                    publicClusterItemClick(post)
+                }
+            })
             viewAdapter.notifyDataSetChanged()
             recyclerView = my_recycler_view.apply {
                 // use a linear layout manager
@@ -651,7 +642,7 @@ class MainActivity :
 
     override fun onBackPressed() {
         if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            collapseBottomSheet()
         } else {
             super.onBackPressed()
         }
