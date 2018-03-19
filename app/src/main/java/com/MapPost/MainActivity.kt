@@ -75,6 +75,7 @@ import com.s3HostName
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.*
+import kotlin.concurrent.thread
 
 
 class MainActivity :
@@ -126,6 +127,13 @@ class MainActivity :
             initLocation()
         }
 
+
+        thread {
+            while (true) {
+//             // update marker icons
+                Thread.sleep(10000)
+            }
+        }
     }
 
     private fun recyclerView() {
@@ -137,6 +145,7 @@ class MainActivity :
         val lld = LocationLiveData(this)
         lld.observe(this, Observer {
             if (it != null) {
+                lld.removeObservers(this)
                 location = locationToLatLng(it)
                 mMap.isMyLocationEnabled = true
                 locationListener()
@@ -165,7 +174,6 @@ class MainActivity :
                 mClusterManager.setOnClusterItemClickListener(this)
                 mClusterManager.setOnClusterItemInfoWindowClickListener(this)
 
-                lld.removeObservers(this)
             }
         })
     }

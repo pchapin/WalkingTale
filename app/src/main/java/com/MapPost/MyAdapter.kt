@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.MapPost.vo.Post
+import com.MapPost.vo.PostType.*
 import kotlinx.android.synthetic.main.my_text_view.view.*
 
 class MyAdapter(private val myDataset: Array<Post>, val callback: PostCallback) :
@@ -37,8 +38,21 @@ class MyAdapter(private val myDataset: Array<Post>, val callback: PostCallback) 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-//        holder.cardView.setimag = myDataset[position]
-        holder.cardView.card_view_image.setImageResource(R.drawable.ic_videocam_black_24dp)
+        val post: Post = myDataset[position]
+        when (post.type) {
+            TEXT -> {
+                holder.cardView.card_view_image.setImageResource(R.drawable.ic_textsms_black_24dp)
+            }
+            AUDIO -> {
+                holder.cardView.card_view_image.setImageResource(R.drawable.ic_audiotrack_black_24dp)
+            }
+            PICTURE -> {
+                holder.cardView.card_view_image.setImageResource(R.drawable.ic_camera_alt_black_24dp)
+            }
+            VIDEO -> {
+                holder.cardView.card_view_image.setImageResource(R.drawable.ic_videocam_black_24dp)
+            }
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
