@@ -111,7 +111,9 @@ class MainActivity :
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-
+    private lateinit var iconGenerator: IconGenerator
+    private lateinit var iconThread: Thread
+    private lateinit var postList: List<Post>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,15 +124,39 @@ class MainActivity :
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         mediaPlayer.setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
         selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
+        iconGenerator = IconGenerator(this)
         Analytics.init(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
 
-
-        thread {
+        iconThread = thread(false) {
             while (true) {
-//             // update marker icons
+                Log.i(tag, "Updating icons on icon thread")
+                runOnUiThread {
+                    for (post in postList) {
+                        if (post.type in listOf(AUDIO, TEXT)) continue
+                        var marker: Marker?
+                        try {
+                            marker = mClusterManager.markerCollection.markers.toList().first { it.title == post.postId }
+                        } catch (e: NoSuchElementException) {
+                            continue
+                        }
+                        Glide.with(applicationContext)
+                                .asBitmap()
+                                .load(s3HostName + post.content)
+                                .apply(RequestOptions().centerCrop())
+                                .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
+                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
+                                        val imageView = ImageView(this@MainActivity)
+                                        imageView.setImageBitmap(resource)
+                                        iconGenerator.setContentView(imageView)
+                                        marker.setIcon(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).icon)
+                                        mClusterManager.cluster()
+                                    }
+                                })
+                    }
+                }
                 Thread.sleep(10000)
             }
         }
@@ -173,23 +199,18 @@ class MainActivity :
                 mClusterManager.setOnClusterInfoWindowClickListener(this)
                 mClusterManager.setOnClusterItemClickListener(this)
                 mClusterManager.setOnClusterItemInfoWindowClickListener(this)
-
             }
         })
     }
 
     override fun onClusterClick(cluster: Cluster<Post>?): Boolean {
 
-        // Show a toast with some info when the cluster is clicked.
-        val firstName = cluster!!.items.iterator().next().title
-        Toast.makeText(this, "" + cluster.size + " (including " + firstName + ")", Toast.LENGTH_SHORT).show()
-
         // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
         // inside of bounds, then animate to center of the bounds.
 
         // Create the builder to collect all essential cluster items for the bounds.
         val builder = LatLngBounds.builder()
-        for (item in cluster.items) {
+        for (item in cluster!!.items) {
             builder.include(item.position)
         }
         // Get the LatLngBounds
@@ -306,36 +327,15 @@ class MainActivity :
 
         override fun onBeforeClusterItemRendered(post: Post?, markerOptions: MarkerOptions?) {
             // Draw a single Post.
-            when (post!!.type) {
-                TEXT -> {
-                    imageView.setImageResource(R.drawable.ic_textsms_black_24dp)
-                    iconGenerator.setContentView(imageView)
-                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                }
-                AUDIO -> {
-                    imageView.setImageResource(R.drawable.ic_audiotrack_black_24dp)
-                    iconGenerator.setContentView(imageView)
-                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                }
-                VIDEO -> {
-                    imageView.setImageResource(R.drawable.ic_videocam_black_24dp)
-                    iconGenerator.setContentView(imageView)
-                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                }
-                PICTURE ->
-                    Glide.with(applicationContext)
-                            .asBitmap()
-                            .load(s3HostName + post.content)
-                            .apply(RequestOptions().centerCrop())
-                            .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
-                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
-                                    imageView.setImageBitmap(resource)
-                                    iconGenerator.setContentView(imageView)
-                                    markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                                }
-                            })
-            }
-            markerOptions!!.title(post.postId)
+            imageView.setImageResource(when (post!!.type) {
+                TEXT -> R.drawable.ic_textsms_black_24dp
+                AUDIO -> R.drawable.ic_audiotrack_black_24dp
+                PICTURE -> R.drawable.ic_camera_alt_black_24dp
+                VIDEO -> R.drawable.ic_videocam_black_24dp
+            })
+            iconGenerator.setContentView(imageView)
+            markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+            markerOptions.title(post.postId)
         }
 
         override fun onBeforeClusterRendered(cluster: Cluster<Post>, markerOptions: MarkerOptions) {
@@ -403,7 +403,10 @@ class MainActivity :
 
             mClusterManager.addItems(it.data)
             mClusterManager.cluster()
-
+            if (iconThread.state == Thread.State.NEW) {
+                postList = it.data
+                iconThread.start()
+            }
             // Draw links: todo
         })
     }
@@ -651,6 +654,7 @@ class MainActivity :
     override fun onBackPressed() {
         if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             collapseBottomSheet()
+            binding.post = null
         } else {
             super.onBackPressed()
         }
