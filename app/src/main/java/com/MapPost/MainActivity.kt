@@ -130,6 +130,7 @@ class MainActivity :
             initLocation()
         }
 
+        // Update marker icons after they have been placed
         iconThread = thread(false) {
             while (true) {
                 Log.i(tag, "Updating icons on icon thread")
@@ -152,7 +153,6 @@ class MainActivity :
                                         imageView.setImageBitmap(resource)
                                         iconGenerator.setContentView(imageView)
                                         marker.setIcon(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).icon)
-                                        mClusterManager.cluster()
                                     }
                                 })
                     }
@@ -287,17 +287,8 @@ class MainActivity :
             return true
         }
 
-        when (post.type) {
-            TEXT -> {
-            }
-            AUDIO -> {
-            }
-            PICTURE -> {
-                Glide.with(this).load(s3HostName + post.content).into(post_image_view)
-            }
-            VIDEO -> {
-                loopVideo(Uri.parse(s3HostName + post.content))
-            }
+        if (post.type == VIDEO) {
+            loopVideo(Uri.parse(s3HostName + post.content))
         }
         expandBottomSheet()
         return true

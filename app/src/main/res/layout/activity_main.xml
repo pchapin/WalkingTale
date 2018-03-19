@@ -121,6 +121,7 @@
 
                 <ImageView
                     android:id="@+id/post_image_view"
+                    imageUrl="@{post}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="post image"
@@ -191,7 +192,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="32dp"
-                    tools:listitem="@layout/my_text_view" />
+                    tools:listitem="@layout/item_post" />
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
     </android.support.design.widget.CoordinatorLayout>
