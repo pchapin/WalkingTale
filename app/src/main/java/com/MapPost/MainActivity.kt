@@ -159,7 +159,6 @@ class MainActivity :
             if (it != null) {
                 lld.removeObservers(this)
                 location = locationToLatLng(it)
-                mMap.isMyLocationEnabled = true
                 locationListener()
                 userSetup()
                 cameraButton()
@@ -203,6 +202,9 @@ class MainActivity :
         // Show a special marker if the bounds has not changed and
         // the markers are still clustered
         if (bounds.center == lastLatLngBoundsCenter) {
+
+            if (!insideRadius(bounds.center)) return true
+
             viewAdapter = MyAdapter(cluster.items.toTypedArray(), object : MyAdapter.PostCallback {
                 override fun onClick(post: Post) {
                     onClusterItemClick(post)
@@ -226,14 +228,19 @@ class MainActivity :
     override fun onClusterInfoWindowClick(p0: Cluster<Post>?) {
     }
 
+    private fun insideRadius(latLng: LatLng): Boolean {
+        val distanceFromPost = SphericalUtil.computeDistanceBetween(location, latLng)
+        if (distanceFromPost > minPostDistanceMeters) {
+            Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
     override fun onClusterItemClick(marker: Post?): Boolean {
         val post = marker!!
 
-        val distanceFromPost = SphericalUtil.computeDistanceBetween(location, post.position)
-        if (distanceFromPost > minPostDistanceMeters) {
-            Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
-            return true
-        }
+        if (!insideRadius(post.position)) return true
 
         binding.post = post
 
