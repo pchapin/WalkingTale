@@ -110,7 +110,6 @@ class MainActivity :
     private lateinit var selectedFilterItemsBoolean: BooleanArray
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
     private lateinit var postList: List<Post>
@@ -163,7 +162,6 @@ class MainActivity :
     }
 
     private fun recyclerView() {
-        viewManager = GridLayoutManager(this, 3)
     }
 
     @SuppressLint("MissingPermission")
@@ -205,9 +203,6 @@ class MainActivity :
 
     override fun onClusterClick(cluster: Cluster<Post>?): Boolean {
 
-        // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
-        // inside of bounds, then animate to center of the bounds.
-
         // Create the builder to collect all essential cluster items for the bounds.
         val builder = LatLngBounds.builder()
         for (item in cluster!!.items) {
@@ -219,32 +214,23 @@ class MainActivity :
         // Show a special marker if the bounds has not changed and
         // the markers are still clustered
         if (bounds.center == lastLatLngBoundsCenter) {
-            Toast.makeText(this, "Show special marker", Toast.LENGTH_SHORT).show()
-            Log.i(tag, "cluster size " + cluster.items.size)
             viewAdapter = MyAdapter(cluster.items.toTypedArray(), object : MyAdapter.PostCallback {
                 override fun onClick(post: Post) {
-                    publicClusterItemClick(post)
+                    onClusterItemClick(post)
                 }
             })
             viewAdapter.notifyDataSetChanged()
             recyclerView = my_recycler_view.apply {
-                // use a linear layout manager
-                layoutManager = viewManager
-
-                // specify an viewAdapter (see also next example)
+                layoutManager = GridLayoutManager(this@MainActivity, 3)
                 adapter = viewAdapter
             }
+            binding.post = null
             expandBottomSheet()
         }
 
         // Animate camera to the bounds
-        try {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-            lastLatLngBoundsCenter = bounds.center
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+        lastLatLngBoundsCenter = bounds.center
         return true
     }
 
@@ -252,10 +238,6 @@ class MainActivity :
     }
 
     override fun onClusterItemClick(marker: Post?): Boolean {
-        return publicClusterItemClick(marker)
-    }
-
-    fun publicClusterItemClick(marker: Post?): Boolean {
         val post = marker!!
         binding.post = post
 
@@ -392,13 +374,22 @@ class MainActivity :
 
             if (it?.data == null) return@Observer
 
+            postList = it.data
             mClusterManager.addItems(it.data)
             mClusterManager.cluster()
             if (iconThread.state == Thread.State.NEW) {
-                postList = it.data
                 iconThread.start()
             }
-            // Draw links: todo
+            // Draw links
+            for (post in postList) {
+                val markers = mClusterManager.markerCollection.markers.filter { it.title == post.postId }
+                if (markers.isEmpty()) continue
+                val marker = markers.first()
+                val linkedPosts = postList.filter { it.postId in post.linkedPosts }.map { LatLng(it.latitude, it.longitude) }
+                for (lng in linkedPosts) {
+                    polyLines.add(mMap.addPolyline(PolylineOptions().add(lng).add(LatLng(post.latitude, post.longitude))))
+                }
+            }
         })
     }
 
