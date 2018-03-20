@@ -187,6 +187,7 @@ class MainActivity :
                 linkButton()
                 filterButton()
                 recyclerView()
+                videoView()
 
                 mClusterManager = ClusterManager(this, mMap)
                 mClusterManager.renderer = PostRenderer()
@@ -270,7 +271,8 @@ class MainActivity :
         }
 
         if (post.type == VIDEO) {
-            loopVideo(Uri.parse(s3HostName + post.content))
+            video_view.setVideoURI(Uri.parse(s3HostName + post.content))
+            prepareVideo()
         }
         expandBottomSheet()
         return true
@@ -382,9 +384,6 @@ class MainActivity :
             }
             // Draw links
             for (post in postList) {
-                val markers = mClusterManager.markerCollection.markers.filter { it.title == post.postId }
-                if (markers.isEmpty()) continue
-                val marker = markers.first()
                 val linkedPosts = postList.filter { it.postId in post.linkedPosts }.map { LatLng(it.latitude, it.longitude) }
                 for (lng in linkedPosts) {
                     polyLines.add(mMap.addPolyline(PolylineOptions().add(lng).add(LatLng(post.latitude, post.longitude))))
@@ -725,13 +724,18 @@ class MainActivity :
         })
     }
 
-
-    private fun loopVideo(uri: Uri) {
-        video_view.setVideoURI(uri)
+    private fun prepareVideo() {
         video_view.setOnPreparedListener({
             it.isLooping = true
             video_view.start()
         })
+    }
+
+    private fun videoView() {
+        video_view.setOnClickListener {
+            if (video_view.isPlaying) video_view.pause()
+            else video_view.resume()
+        }
     }
 
     private enum class LinkMode {
