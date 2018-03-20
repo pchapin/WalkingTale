@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2017 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.MapPost
 
 import android.Manifest
@@ -68,6 +52,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.SphericalUtil
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -91,6 +76,7 @@ class MainActivity :
     private lateinit var mMap: GoogleMap
     private var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
+    /**The users current location*/
     private lateinit var location: LatLng
     private var file: File? = null
     private val markerWidth = 200
@@ -99,6 +85,7 @@ class MainActivity :
     private val rcAudio = 123
     private val rcPicture = 1234
     private val rcVideo = 12345
+    private val minPostDistanceMeters = 30
     private val mediaPlayer = MediaPlayer()
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
@@ -241,6 +228,13 @@ class MainActivity :
 
     override fun onClusterItemClick(marker: Post?): Boolean {
         val post = marker!!
+
+        val distanceFromPost = SphericalUtil.computeDistanceBetween(location, post.position)
+        if (distanceFromPost > minPostDistanceMeters) {
+            Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
+            return true
+        }
+
         binding.post = post
 
         // Handle linking
@@ -478,14 +472,14 @@ class MainActivity :
                     .setMultiChoiceItems(
                             R.array.genre_array,
                             selectedFilterItemsBoolean,
-                            { dialog, which, isChecked ->
+                            { _, which, isChecked ->
                                 if (isChecked) {
                                     selectedFilterItems.add(which)
                                 } else if (selectedFilterItems.contains(which)) {
                                     selectedFilterItems.remove(which)
                                 }
                             }).setPositiveButton("ok") { _, _ ->
-                        {
+                        run {
                         }
                     }
                     .show()
@@ -730,19 +724,19 @@ class MainActivity :
             it.isLooping = true
             video_view.start()
         })
-        video_view.onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
-            run {
-                if (v.visibility != View.VISIBLE) {
-                    video_view.pause()
-                }
-            }
-        }
     }
 
     private fun videoView() {
         video_view.setOnClickListener {
             if (video_view.isPlaying) video_view.pause()
             else video_view.resume()
+        }
+        video_view.onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
+            run {
+                if (v.visibility != View.VISIBLE) {
+                    video_view.pause()
+                }
+            }
         }
     }
 
