@@ -42,6 +42,7 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -729,6 +730,13 @@ class MainActivity :
             it.isLooping = true
             video_view.start()
         })
+        video_view.onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
+            run {
+                if (v.visibility != View.VISIBLE) {
+                    video_view.pause()
+                }
+            }
+        }
     }
 
     private fun videoView() {
