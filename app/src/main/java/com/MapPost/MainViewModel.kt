@@ -19,11 +19,11 @@ class MainViewModel : ViewModel() {
     private val userRepository = UserRepository
     var currentUser: User? = null
     var localPosts: LiveData<Resource<List<Post>>> = MutableLiveData()
-    var getPosts: MutableLiveData<Boolean> = MutableLiveData()
+    private var getPosts: MutableLiveData<PostRepository.CornerLatLng> = MutableLiveData()
 
     init {
         localPosts = Transformations.switchMap(getPosts, Function {
-            return@Function postRepository.getNearbyPosts()
+            return@Function postRepository.getNearbyPosts(it)
         })
     }
 
@@ -43,8 +43,8 @@ class MainViewModel : ViewModel() {
         return postRepository.putFile(pair)
     }
 
-    fun getNewPosts() {
-        getPosts.value = true
+    fun getNewPosts(cornerLatLng: PostRepository.CornerLatLng) {
+        getPosts.value = cornerLatLng
     }
 
     fun deletePost(post: Post): LiveData<Resource<Unit>> {

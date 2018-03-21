@@ -31,6 +31,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.MapPost.databinding.ActivityMainBinding
+import com.MapPost.repository.PostRepository
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
@@ -91,6 +92,7 @@ class MainActivity :
     private var polyLines = mutableListOf<Polyline>()
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastLatLngBoundsCenter = LatLng(0.0, 0.0)
+    private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
     private var selectedFilterItems = mutableListOf<Int>()
     private lateinit var selectedFilterItemsBoolean: BooleanArray
     private lateinit var recyclerView: RecyclerView
@@ -113,7 +115,9 @@ class MainActivity :
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
+    }
 
+    private fun iconThread() {
         // Update marker icons after they have been placed
         iconThread = thread(false) {
             while (true) {
@@ -141,12 +145,12 @@ class MainActivity :
                                 })
                     }
                 }
+
+                // todo: if location has changed, get new posts
+
                 Thread.sleep(10000)
             }
         }
-    }
-
-    private fun recyclerView() {
     }
 
     @SuppressLint("MissingPermission")
@@ -170,8 +174,8 @@ class MainActivity :
                 deletePostButton()
                 linkButton()
                 filterButton()
-                recyclerView()
                 videoView()
+                iconThread()
 
                 mClusterManager = ClusterManager(this, mMap)
                 mClusterManager.renderer = PostRenderer()
@@ -260,7 +264,7 @@ class MainActivity :
             mainViewModel.putPost(p).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
                     Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
-                    mainViewModel.getNewPosts()
+                    mainViewModel.getNewPosts(lastCornerLatLng)
                 }
             })
             link_button.size = FloatingActionButton.SIZE_NORMAL
@@ -360,7 +364,6 @@ class MainActivity :
     }
 
     private fun nearbyPosts() {
-        mainViewModel.getNewPosts()
         mainViewModel.localPosts.observe(this, Observer {
 
             if (it?.data == null) return@Observer
@@ -404,7 +407,7 @@ class MainActivity :
                     mainViewModel.putUser(user).observe(this, Observer {
                         if (it != null) {
                             Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                            mainViewModel.getNewPosts()
+                            mainViewModel.getNewPosts(lastCornerLatLng)
                         }
                     })
                 }
@@ -486,8 +489,17 @@ class MainActivity :
                 if (!cameraOnUserOnce) {
                     mMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
                     cameraOnUserOnce = true
+                    lastCornerLatLng = PostRepository.CornerLatLng(
+                            mMap.projection.visibleRegion.latLngBounds.northeast,
+                            mMap.projection.visibleRegion.latLngBounds.southwest
+                    )
+                    mainViewModel.getNewPosts(lastCornerLatLng)
                 }
                 location = locationToLatLng(it)
+                lastCornerLatLng = PostRepository.CornerLatLng(
+                        mMap.projection.visibleRegion.latLngBounds.northeast,
+                        mMap.projection.visibleRegion.latLngBounds.southwest
+                )
             }
         })
     }
@@ -704,7 +716,7 @@ class MainActivity :
                         mainViewModel.putUser(user).observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.getNewPosts()
+                                mainViewModel.getNewPosts(lastCornerLatLng)
                             }
                         })
                     }

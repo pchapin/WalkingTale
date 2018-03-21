@@ -30,8 +30,10 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpr
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
+import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.S3ClientOptions
+import com.google.android.gms.maps.model.LatLng
 import com.s3BucketName
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -40,13 +42,29 @@ import java.lang.Exception
 
 object PostRepository {
 
-    private val tag = "PostRepository"
+    private val tag = PostRepository.javaClass.simpleName
     private val appExecutors: AppExecutors = AppExecutors
 
-    fun getNearbyPosts(): LiveData<Resource<List<Post>>> {
+    data class CornerLatLng(val northEast: LatLng, val southWest: LatLng)
+
+    fun getNearbyPosts(cornerLatLng: CornerLatLng): LiveData<Resource<List<Post>>> {
         val result = object : AbstractTask<String, List<Post>>("") {
             override fun run() {
-                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.scan(Post::class.java, DynamoDBScanExpression()), ""))
+
+                val expressionAttributeValues = HashMap<String, AttributeValue>()
+                expressionAttributeValues[":neLat"] = AttributeValue().withN(cornerLatLng.northEast.latitude.toString())
+                expressionAttributeValues[":neLong"] = AttributeValue().withN(cornerLatLng.northEast.longitude.toString())
+                expressionAttributeValues[":swLat"] = AttributeValue().withN(cornerLatLng.southWest.latitude.toString())
+                expressionAttributeValues[":swLong"] = AttributeValue().withN(cornerLatLng.southWest.longitude.toString())
+
+                val scanExpression = DynamoDBScanExpression()
+                        .withFilterExpression("latitude <= :neLat and longitude <= :neLong and latitude >= :swLat and longitude >= :swLong")
+                        .withExpressionAttributeValues(expressionAttributeValues)
+
+                Log.i(tag, "" + scanExpression)
+                Log.i(tag, "" + cornerLatLng)
+
+                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.scan(Post::class.java, scanExpression), ""))
             }
         }
         appExecutors.networkIO().execute(result)
