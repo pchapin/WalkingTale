@@ -91,7 +91,10 @@ class MainActivity :
     private var linkedPosts = mutableListOf<Post>()
     private var polyLines = mutableListOf<Polyline>()
     private lateinit var mClusterManager: ClusterManager<Post>
-    private var lastLatLngBoundsCenter = LatLng(0.0, 0.0)
+    private var lastClusterCenter = LatLng(0.0, 0.0)
+    /** Used to get new posts if camera moves too far */
+    private lateinit var lastCameraCenter: LatLng
+    /** Needed to filter ddb results */
     private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
     private var selectedFilterItems = mutableListOf<Int>()
     private lateinit var selectedFilterItemsBoolean: BooleanArray
@@ -145,9 +148,6 @@ class MainActivity :
                                 })
                     }
                 }
-
-                // todo: if location has changed, get new posts
-
                 Thread.sleep(10000)
             }
         }
@@ -177,7 +177,13 @@ class MainActivity :
                 videoView()
                 iconThread()
 
-                mClusterManager = ClusterManager(this, mMap)
+                class CustomClusterManager : ClusterManager<Post>(this, mMap) {
+                    override fun onCameraIdle() {
+                        super.onCameraIdle()
+                        possiblyGetNewPosts()
+                    }
+                }
+                mClusterManager = CustomClusterManager()
                 mClusterManager.renderer = PostRenderer()
                 mMap.setOnCameraIdleListener(mClusterManager)
                 mMap.setOnMarkerClickListener(mClusterManager)
@@ -188,6 +194,15 @@ class MainActivity :
                 mClusterManager.setOnClusterItemInfoWindowClickListener(this)
             }
         })
+    }
+
+    //todo: refine this
+    private fun possiblyGetNewPosts() {
+        // If camera has moved too far, get new posts
+        if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 1000) {
+            lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
+            mainViewModel.getNewPosts(lastCornerLatLng)
+        }
     }
 
     override fun onClusterClick(cluster: Cluster<Post>?): Boolean {
@@ -202,7 +217,7 @@ class MainActivity :
 
         // Show a special marker if the bounds has not changed and
         // the markers are still clustered
-        if (bounds.center == lastLatLngBoundsCenter) {
+        if (bounds.center == lastClusterCenter) {
 
             if (!insideRadius(bounds.center)) return true
 
@@ -222,7 +237,7 @@ class MainActivity :
 
         // Animate camera to the bounds
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-        lastLatLngBoundsCenter = bounds.center
+        lastClusterCenter = bounds.center
         return true
     }
 
@@ -493,6 +508,7 @@ class MainActivity :
                             mMap.projection.visibleRegion.latLngBounds.northeast,
                             mMap.projection.visibleRegion.latLngBounds.southwest
                     )
+                    lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
                     mainViewModel.getNewPosts(lastCornerLatLng)
                 }
                 location = locationToLatLng(it)

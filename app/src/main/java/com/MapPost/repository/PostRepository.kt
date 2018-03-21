@@ -60,10 +60,6 @@ object PostRepository {
                 val scanExpression = DynamoDBScanExpression()
                         .withFilterExpression("latitude <= :neLat and longitude <= :neLong and latitude >= :swLat and longitude >= :swLong")
                         .withExpressionAttributeValues(expressionAttributeValues)
-
-                Log.i(tag, "" + scanExpression)
-                Log.i(tag, "" + cornerLatLng)
-
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.scan(Post::class.java, scanExpression), ""))
             }
         }
