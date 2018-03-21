@@ -3,6 +3,7 @@ package com.MapPost.vo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.support.annotation.NonNull
+import com.MapPost.R
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -71,4 +72,13 @@ class PostTypeMarshaller : DynamoDBMarshaller<PostType> {
 
 enum class PostType {
     TEXT, AUDIO, PICTURE, VIDEO
+}
+
+fun getDrawableForPost(post: Post): Int {
+    return when (post.type) {
+        PostType.TEXT -> R.drawable.ic_textsms_black_24dp
+        PostType.AUDIO -> R.drawable.ic_audiotrack_black_24dp
+        PostType.PICTURE -> R.drawable.ic_camera_alt_black_24dp
+        PostType.VIDEO -> R.drawable.ic_videocam_black_24dp
+    }
 }

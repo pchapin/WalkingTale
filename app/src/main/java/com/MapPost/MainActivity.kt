@@ -34,11 +34,8 @@ import com.MapPost.databinding.ActivityMainBinding
 import com.MapPost.ui.audiorecord.AudioRecordActivity
 import com.MapPost.ui.common.LocationLiveData
 import com.MapPost.ui.common.dispatchTakePictureIntent
-import com.MapPost.vo.Post
-import com.MapPost.vo.PostType
+import com.MapPost.vo.*
 import com.MapPost.vo.PostType.*
-import com.MapPost.vo.Status
-import com.MapPost.vo.User
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.auth0.android.jwt.JWT
 import com.bumptech.glide.Glide
@@ -304,12 +301,7 @@ class MainActivity :
 
         override fun onBeforeClusterItemRendered(post: Post?, markerOptions: MarkerOptions?) {
             // Draw a single Post.
-            imageView.setImageResource(when (post!!.type) {
-                TEXT -> R.drawable.ic_textsms_black_24dp
-                AUDIO -> R.drawable.ic_audiotrack_black_24dp
-                PICTURE -> R.drawable.ic_camera_alt_black_24dp
-                VIDEO -> R.drawable.ic_videocam_black_24dp
-            })
+            imageView.setImageResource(getDrawableForPost(post!!))
             iconGenerator.setContentView(imageView)
             markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
             markerOptions.title(post.postId)
@@ -325,12 +317,7 @@ class MainActivity :
             for (p in cluster.items) {
                 // Draw 4 at most.
                 if (profilePhotos.size == 4) break
-                val drawable = resources.getDrawable(when (p.type) {
-                    TEXT -> R.drawable.ic_textsms_black_24dp
-                    AUDIO -> R.drawable.ic_audiotrack_black_24dp
-                    PICTURE -> R.drawable.ic_camera_alt_black_24dp
-                    VIDEO -> R.drawable.ic_videocam_black_24dp
-                }, theme)
+                val drawable = resources.getDrawable(getDrawableForPost(p), theme)
                 drawable.setBounds(0, 0, width, height)
                 profilePhotos.add(drawable)
             }
