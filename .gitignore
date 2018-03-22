@@ -12,3 +12,5 @@ google-services.json
 awsconfiguration.json
 .git.bfg-report
 Constants.kt
+google_maps_api.xml
+gradle.properties
