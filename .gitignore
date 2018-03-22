@@ -8,3 +8,6 @@ build/
 .externalNativeBuild
 app/build
 build
+googles-services.json
+awsconfiguration.json
+.git.bfg-report
