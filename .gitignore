@@ -8,6 +8,7 @@ build/
 .externalNativeBuild
 app/build
 build
-googles-services.json
+google-services.json
 awsconfiguration.json
 .git.bfg-report
+Constants.kt
