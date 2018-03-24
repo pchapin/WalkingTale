@@ -5,7 +5,6 @@ import android.databinding.BindingAdapter;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.ConstantsKt;
 import com.bumptech.glide.Glide;
 import com.talkingwhale.vo.Post;
 import com.talkingwhale.vo.PostType;

@@ -28,9 +28,9 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.S3ClientOptions
 import com.google.android.gms.maps.model.LatLng
-import com.s3BucketName
 import com.talkingwhale.AppExecutors
 import com.talkingwhale.repository.tasks.AbstractTask
+import com.talkingwhale.s3BucketName
 import com.talkingwhale.vo.Post
 import com.talkingwhale.vo.PostType
 import com.talkingwhale.vo.Resource

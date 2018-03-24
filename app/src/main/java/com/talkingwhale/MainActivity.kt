@@ -48,7 +48,6 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
-import com.s3HostName
 import com.talkingwhale.databinding.ActivityMainBinding
 import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.ui.audiorecord.AudioRecordActivity
