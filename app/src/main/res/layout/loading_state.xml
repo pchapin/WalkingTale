@@ -18,14 +18,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
 
-        <import type="com.MapPost.vo.Resource" />
+        <import type="com.talkingwhale.vo.Resource" />
 
-        <import type="com.MapPost.vo.Status" />
+        <import type="com.talkingwhale.vo.Status" />
         <variable name="resource" type="Resource"/>
 
         <variable
             name="callback"
-            type="com.MapPost.ui.common.RetryCallback" />
+            type="com.talkingwhale.ui.common.RetryCallback" />
     </data>
 
     <LinearLayout

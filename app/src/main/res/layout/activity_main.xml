@@ -7,11 +7,11 @@
 
         <variable
             name="post"
-            type="com.MapPost.vo.Post" />
+            type="com.talkingwhale.vo.Post" />
 
         <variable
             name="postType"
-            type="com.MapPost.vo.PostType" />
+            type="com.talkingwhale.vo.PostType" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
