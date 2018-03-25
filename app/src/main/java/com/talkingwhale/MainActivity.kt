@@ -92,7 +92,7 @@ class MainActivity :
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastClusterCenter = LatLng(0.0, 0.0)
     /** Used to get new posts if camera moves too far */
-    private lateinit var lastCameraCenter: LatLng
+    private var lastCameraCenter: LatLng? = null
     /** Needed to filter ddb results */
     private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
     private var selectedFilterItems = mutableListOf<Int>()
@@ -175,6 +175,7 @@ class MainActivity :
                 filterButton()
                 videoView()
                 iconThread()
+                postTextButton()
 
                 class CustomClusterManager : ClusterManager<Post>(this, mMap) {
                     override fun onCameraIdle() {
@@ -197,6 +198,7 @@ class MainActivity :
 
     //todo: refine this
     private fun possiblyGetNewPosts() {
+        if (lastCameraCenter == null) return
         // If camera has moved too far, get new posts
         if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 1000) {
             lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
@@ -231,6 +233,7 @@ class MainActivity :
                 adapter = viewAdapter
             }
             binding.post = null
+            binding.bottomSheetDisplay = BottomSheetDisplay.OVERFLOW
             expandBottomSheet()
         }
 
@@ -398,8 +401,15 @@ class MainActivity :
         })
     }
 
-    private fun textButton() {
-        text_button.setOnClickListener({
+    private fun postTextButton() {
+        button_text_post_submit.setOnClickListener {
+            val text = binding.postTextEditText.text.toString().trim()
+            if (text.isBlank()) {
+                Toast.makeText(this, "Text cannot be blank", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            post_text_edit_text.setText("")
             val post = Post(
                     cognitoId,
                     UUID.randomUUID().toString(),
@@ -408,7 +418,7 @@ class MainActivity :
                     location.longitude,
                     mutableListOf(),
                     TEXT,
-                    "nice",
+                    text,
                     mutableListOf()
             )
             mainViewModel.putPost(post).observe(this, Observer {
@@ -422,10 +432,18 @@ class MainActivity :
                         if (it != null) {
                             Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
                             mainViewModel.getNewPosts(lastCornerLatLng)
+                            collapseBottomSheet()
                         }
                     })
                 }
             })
+        }
+    }
+
+    private fun textButton() {
+        text_button.setOnClickListener({
+            binding.bottomSheetDisplay = BottomSheetDisplay.TEXT_INPUT
+            expandBottomSheet()
         })
     }
 
@@ -768,6 +786,13 @@ class MainActivity :
         NONE_PRESSED,
         // After they click it once, and after they click a post
         ONE_PRESSED
+    }
+
+    enum class BottomSheetDisplay {
+        // Shown when there are too many posts to show on the map
+        OVERFLOW,
+        // Show a fullscreen edit text
+        TEXT_INPUT
     }
 
     companion object {
