@@ -23,7 +23,7 @@ public class MapPostBindingAdapters {
         if (post == null) return;
         if (post.getType() == PostType.PICTURE || post.getType() == PostType.VIDEO) {
             Context context = imageView.getContext();
-            Glide.with(context).load(ConstantsKt.getS3HostName() + post.getContent()).into(imageView);
+            Glide.with(context).load(context.getResources().getString(R.string.s3_hostname) + post.getContent()).into(imageView);
         }
     }
 

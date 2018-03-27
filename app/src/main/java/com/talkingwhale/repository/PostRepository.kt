@@ -29,8 +29,8 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.S3ClientOptions
 import com.google.android.gms.maps.model.LatLng
 import com.talkingwhale.AppExecutors
+import com.talkingwhale.R
 import com.talkingwhale.repository.tasks.AbstractTask
-import com.talkingwhale.s3BucketName
 import com.talkingwhale.vo.Post
 import com.talkingwhale.vo.PostType
 import com.talkingwhale.vo.Resource
@@ -122,7 +122,7 @@ object PostRepository {
         val amazonS3 = AmazonS3Client(AWSMobileClient.getInstance().credentialsProvider)
         amazonS3.setS3ClientOptions(S3ClientOptions.builder().disableChunkedEncoding().build())
         return TransferUtility.builder()
-                .defaultBucket(s3BucketName)
+                .defaultBucket(context.resources.getString(R.string.s3_bucket))
                 .awsConfiguration(AWSMobileClient.getInstance().configuration)
                 .s3Client(amazonS3)
                 .context(context)

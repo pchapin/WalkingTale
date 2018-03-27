@@ -141,7 +141,7 @@ class AudioRecordActivity : AppCompatActivity() {
     internal inner class RecordButton(ctx: Context) : android.support.v7.widget.AppCompatButton(ctx) {
         var mStartRecording = true
 
-        var clicker = { v: View ->
+        var clicker = { _: View ->
             onRecord(mStartRecording)
             if (mStartRecording) {
                 text = "Stop recording"
@@ -160,7 +160,7 @@ class AudioRecordActivity : AppCompatActivity() {
     internal inner class PlayButton(ctx: Context) : android.support.v7.widget.AppCompatButton(ctx) {
         var mStartPlaying = true
 
-        var clicker = { v: View ->
+        var clicker = { _: View ->
             onPlay(mStartPlaying)
             if (mStartPlaying) {
                 text = "Stop playing"
@@ -178,7 +178,7 @@ class AudioRecordActivity : AppCompatActivity() {
 
     internal inner class FinishButton(ctx: Context) : android.support.v7.widget.AppCompatButton(ctx) {
 
-        var clicker = { v: View ->
+        var clicker = { _: View ->
             val result = Intent()
             var resultData: Uri? = null
             try {

@@ -135,7 +135,7 @@ class MainActivity :
                         }
                         Glide.with(applicationContext)
                                 .asBitmap()
-                                .load(s3HostName + post.content)
+                                .load(resources.getString(R.string.s3_hostname) + post.content)
                                 .apply(RequestOptions().centerCrop())
                                 .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
@@ -291,7 +291,7 @@ class MainActivity :
         }
 
         if (post.type == VIDEO) {
-            video_view.setVideoURI(Uri.parse(s3HostName + post.content))
+            video_view.setVideoURI(Uri.parse(resources.getString(R.string.s3_hostname) + post.content))
             prepareVideo()
         }
         expandBottomSheet()
@@ -614,7 +614,7 @@ class MainActivity :
                 post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
             } else {
                 mediaPlayer.reset()
-                mediaPlayer.setDataSource(s3HostName + binding.post!!.content)
+                mediaPlayer.setDataSource(resources.getString(R.string.s3_hostname) + binding.post!!.content)
                 mediaPlayer.prepareAsync()
                 mediaPlayer.setOnPreparedListener(MediaPlayer::start)
                 mediaPlayer.setOnCompletionListener {

@@ -15,3 +15,4 @@ awsconfiguration.json
 Constants.kt
 google_maps_api.xml
 gradle.properties
+aws_constants.xml
