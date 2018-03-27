@@ -309,6 +309,7 @@ class MainActivity :
         private val mDimension: Int
 
         init {
+            @SuppressLint("InflateParams")
             val multiProfile = layoutInflater.inflate(R.layout.multi_profile, null)
             mClusterIconGenerator.setContentView(multiProfile)
             mClusterImageView = multiProfile.findViewById(R.id.image)

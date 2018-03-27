@@ -68,10 +68,14 @@
             android:name="com.talkingwhale.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name="com.talkingwhale.ui.audiorecord.AudioRecordActivity" />
+        <activity
+            android:name="com.talkingwhale.ui.audiorecord.AudioRecordActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name="com.talkingwhale.AuthenticatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

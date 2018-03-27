@@ -2,7 +2,6 @@ package com.talkingwhale.ui.audiorecord
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
@@ -12,10 +11,9 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
+import com.talkingwhale.R
 import com.talkingwhale.ui.common.createFile
+import kotlinx.android.synthetic.main.activity_audio_record.*
 import java.io.File
 import java.io.IOException
 
@@ -24,23 +22,21 @@ import java.io.IOException
  */
 class AudioRecordActivity : AppCompatActivity() {
 
-    private var mRecordButton: RecordButton? = null
     private var mRecorder: MediaRecorder? = null
-    private var mPlayButton: PlayButton? = null
     private var mPlayer: MediaPlayer? = null
-    private var mFinishButton: FinishButton? = null
-    lateinit var audioFile: File
+    private lateinit var audioFile: File
     // Requesting permission to RECORD_AUDIO
     private var permissionToRecordAccepted = false
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private var mStartRecording = true
+    private var mStartPlaying = true
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_RECORD_AUDIO_PERMISSION -> permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
         if (!permissionToRecordAccepted) finish()
-
     }
 
     private fun onRecord(start: Boolean) {
@@ -99,30 +95,13 @@ class AudioRecordActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_audio_record)
         audioFile = createFile(this)
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
 
-        val ll = LinearLayout(this)
-        mRecordButton = RecordButton(this)
-        ll.addView(mRecordButton,
-                LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0f))
-        mPlayButton = PlayButton(this)
-        ll.addView(mPlayButton,
-                LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0f))
-
-        mFinishButton = FinishButton(this)
-        ll.addView(mFinishButton,
-                LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0f))
-        setContentView(ll)
+        recordButton()
+        playButton()
+        finishButton()
     }
 
     public override fun onStop() {
@@ -138,47 +117,32 @@ class AudioRecordActivity : AppCompatActivity() {
         }
     }
 
-    internal inner class RecordButton(ctx: Context) : android.support.v7.widget.AppCompatButton(ctx) {
-        var mStartRecording = true
-
-        var clicker = { _: View ->
+    private fun recordButton() {
+        button_audio_record.setOnClickListener {
             onRecord(mStartRecording)
             if (mStartRecording) {
-                text = "Stop recording"
+                button_audio_record.text = getString(R.string.stop_recording)
             } else {
-                text = "Start recording"
+                button_audio_record.text = getString(R.string.start_recording)
             }
             mStartRecording = !mStartRecording
         }
-
-        init {
-            text = "Start recording"
-            setOnClickListener(clicker)
-        }
     }
 
-    internal inner class PlayButton(ctx: Context) : android.support.v7.widget.AppCompatButton(ctx) {
-        var mStartPlaying = true
-
-        var clicker = { _: View ->
+    private fun playButton() {
+        button_audio_play.setOnClickListener {
             onPlay(mStartPlaying)
             if (mStartPlaying) {
-                text = "Stop playing"
+                button_audio_play.text = getString(R.string.stop_playing)
             } else {
-                text = "Start playing"
+                button_audio_play.text = getString(R.string.start_recording)
             }
             mStartPlaying = !mStartPlaying
         }
-
-        init {
-            text = "Start playing"
-            setOnClickListener(clicker)
-        }
     }
 
-    internal inner class FinishButton(ctx: Context) : android.support.v7.widget.AppCompatButton(ctx) {
-
-        var clicker = { _: View ->
+    private fun finishButton() {
+        button_audio_finish.setOnClickListener {
             val result = Intent()
             var resultData: Uri? = null
             try {
@@ -191,11 +155,6 @@ class AudioRecordActivity : AppCompatActivity() {
             result.data = resultData
             setResult(Activity.RESULT_OK, result)
             finish()
-        }
-
-        init {
-            text = "Finish"
-            setOnClickListener(clicker)
         }
     }
 
