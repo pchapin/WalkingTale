@@ -51,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:padding="8dp"
             android:text="@{post.content}"
             android:textSize="16sp" />
 
