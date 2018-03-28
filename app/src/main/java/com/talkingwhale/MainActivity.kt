@@ -26,7 +26,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -125,7 +124,6 @@ class MainActivity :
         // Update marker icons after they have been placed
         iconThread = thread(false) {
             while (true) {
-                Log.i(tag, "Updating icons on icon thread")
                 runOnUiThread {
                     for (post in postList) {
                         if (post.type in listOf(AUDIO, TEXT)) continue
@@ -202,7 +200,7 @@ class MainActivity :
     private fun possiblyGetNewPosts() {
         if (lastCameraCenter == null) return
         // If camera has moved too far, get new posts
-        if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 1000) {
+        if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 250) {
             lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
             mainViewModel.getNewPosts(lastCornerLatLng)
         }
@@ -641,7 +639,6 @@ class MainActivity :
             mainViewModel.deletePost(binding.post!!).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
                     mClusterManager.removeItem(binding.post!!)
-                    mClusterManager.cluster()
                     val user = mainViewModel.currentUser
                     user!!.createdPosts.remove(binding.post!!.postId)
                     mainViewModel.putUser(user).observe(this, Observer {
@@ -649,6 +646,8 @@ class MainActivity :
                             mainViewModel.currentUser = user
                             onBackPressed()
                             Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
+                            mainViewModel.getNewPosts(lastCornerLatLng)
+                            mClusterManager.cluster()
                         }
                     })
                 }
