@@ -44,7 +44,7 @@ fun dispatchTakePictureIntent(requestCode: Int, activity: Activity, photoFile: F
         // Continue only if the File was successfully created
         if (file != null) {
             val photoURI = FileProvider.getUriForFile(activity.applicationContext,
-                    "com.MapPost",
+                    "com.talkingwhale",
                     file)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             activity.startActivityForResult(takePictureIntent, requestCode)

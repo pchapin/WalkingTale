@@ -26,7 +26,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -261,8 +260,6 @@ class MainActivity :
         val post = marker!!
         if (!insideRadius(post.position)) return true
         binding.post = post
-
-        Log.i(tag, "\npost $post \nuser $currentUser\n")
 
         // Handle linking
         if (linkMode == LinkMode.NONE_PRESSED) {
