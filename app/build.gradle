@@ -20,7 +20,26 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
@@ -30,10 +49,11 @@ android {
         // we could knock the min version down a few
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "4.0"
         multiDexEnabled true
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        signingConfig signingConfigs.config
     }
     buildTypes {
         debug {
@@ -42,6 +62,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     dataBinding {
@@ -58,6 +79,8 @@ android {
     lintOptions {
         lintConfig rootProject.file('lint.xml')
     }
+    productFlavors {
+    }
 }
 
 jacoco {
@@ -72,7 +95,7 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation "android.arch.persistence.room:runtime:$arch_version"
     implementation "android.arch.lifecycle:runtime:$arch_version"
-    implementation "android.arch.lifecycle:extensions:1.1.0"
+    implementation 'android.arch.lifecycle:extensions:1.1.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
@@ -95,8 +118,8 @@ dependencies {
 
     // Amazon Web Services
     compile "com.amazonaws:aws-android-sdk-core:$aws_version"
-    compile "com.amazonaws:aws-android-sdk-auth-core:2.6.16"
-    compile "com.amazonaws:aws-android-sdk-auth-userpools:2.6.16"
+    compile 'com.amazonaws:aws-android-sdk-auth-core:2.6.16'
+    compile 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.16'
     compile "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
     compile "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
     compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
