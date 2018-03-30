@@ -30,6 +30,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.MediaController
 import android.widget.Toast
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.auth0.android.jwt.JWT
@@ -168,7 +169,6 @@ class MainActivity :
                 nearbyPosts()
                 videoButton()
                 audioButton()
-                bottomSheetClick()
                 postAudioButton()
                 flagButton()
                 deletePostButton()
@@ -177,6 +177,7 @@ class MainActivity :
                 videoView()
                 iconThread()
                 postTextButton()
+//                postBackButton()
 
                 class CustomClusterManager : ClusterManager<Post>(this, mMap) {
                     override fun onCameraIdle() {
@@ -196,6 +197,12 @@ class MainActivity :
             }
         })
     }
+//
+//    private fun postBackButton() {
+//        post_back_button.setOnClickListener {
+//            onBackPressed()
+//        }
+//    }
 
     //todo: refine this
     private fun possiblyGetNewPosts() {
@@ -661,20 +668,16 @@ class MainActivity :
         binding.post = null
     }
 
-    private fun bottomSheetClick() {
-        bottom_sheet.setOnClickListener({
-            collapseBottomSheet()
-        })
-    }
-
     override fun onBackPressed() {
         if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            collapseBottomSheet()
+//            collapseBottomSheet()
             binding.post = null
         } else {
             super.onBackPressed()
         }
     }
+
+    fun onBackPressed(view: View) = onBackPressed()
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -766,10 +769,7 @@ class MainActivity :
     }
 
     private fun videoView() {
-        video_view.setOnClickListener {
-            if (video_view.isPlaying) video_view.pause()
-            else video_view.resume()
-        }
+        video_view.setMediaController(MediaController(this))
         video_view.onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
             run {
                 if (v.visibility != View.VISIBLE) {
