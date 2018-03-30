@@ -10,6 +10,10 @@
             type="com.talkingwhale.vo.Post" />
 
         <variable
+            name="user"
+            type="com.talkingwhale.vo.User" />
+
+        <variable
             name="postType"
             type="com.talkingwhale.vo.PostType" />
 
@@ -201,7 +205,7 @@
                     <ImageButton
                         android:id="@+id/delete_post_button"
                         style="@android:style/Widget.Material.Light.Button.Borderless"
-                        visibleGone="@{post != null}"
+                        visibleGone="@{post != null &amp;&amp; post.userId.equals(user.userId)}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@color/white"

@@ -26,6 +26,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -103,6 +104,7 @@ class MainActivity :
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
     private lateinit var postList: List<Post>
+    private lateinit var currentUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,7 +162,7 @@ class MainActivity :
                 lld.removeObservers(this)
                 location = locationToLatLng(it)
                 locationListener()
-                userSetup()
+                userObserver()
                 cameraButton()
                 textButton()
                 myLocationButton()
@@ -202,7 +204,7 @@ class MainActivity :
         // If camera has moved too far, get new posts
         if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 250) {
             lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
-            mainViewModel.getNewPosts(lastCornerLatLng)
+            mainViewModel.setPostBounds(lastCornerLatLng)
         }
     }
 
@@ -257,10 +259,10 @@ class MainActivity :
 
     override fun onClusterItemClick(marker: Post?): Boolean {
         val post = marker!!
-
         if (!insideRadius(post.position)) return true
-
         binding.post = post
+
+        Log.i(tag, "\npost $post \nuser $currentUser\n")
 
         // Handle linking
         if (linkMode == LinkMode.NONE_PRESSED) {
@@ -281,7 +283,7 @@ class MainActivity :
             mainViewModel.putPost(p).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
                     Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
-                    mainViewModel.getNewPosts(lastCornerLatLng)
+                    mainViewModel.setPostBounds(lastCornerLatLng)
                 }
             })
             link_button.size = FloatingActionButton.SIZE_NORMAL
@@ -426,15 +428,13 @@ class MainActivity :
                 if (it != null && it.status == Status.SUCCESS) {
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(bottom_sheet.windowToken, 0)
-                    val user = mainViewModel.currentUser!!
-                    if (!user.createdPosts.contains(post.postId)) {
-                        user.createdPosts.add(post.postId)
+                    if (!currentUser.createdPosts.contains(post.postId)) {
+                        currentUser.createdPosts.add(post.postId)
                     }
-                    mainViewModel.currentUser = user
-                    mainViewModel.putUser(user).observe(this, Observer {
+                    mainViewModel.putUser(currentUser).observe(this, Observer {
                         if (it != null) {
                             Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                            mainViewModel.getNewPosts(lastCornerLatLng)
+                            mainViewModel.setPostBounds(lastCornerLatLng)
                             collapseBottomSheet()
                         }
                     })
@@ -529,7 +529,7 @@ class MainActivity :
                             mMap.projection.visibleRegion.latLngBounds.southwest
                     )
                     lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
-                    mainViewModel.getNewPosts(lastCornerLatLng)
+                    mainViewModel.setPostBounds(lastCornerLatLng)
                 }
                 location = locationToLatLng(it)
                 lastCornerLatLng = PostRepository.CornerLatLng(
@@ -544,30 +544,32 @@ class MainActivity :
      * Get user if they exist in the dynamo db
      * Put user if they do not exist
      */
-    private fun userSetup() {
-        mainViewModel.getUser(cognitoId).observe(this, Observer { userResource ->
-            if (userResource != null) {
-                when (userResource.status) {
+    private fun userObserver() {
+        mainViewModel.currentUser.observe(this, Observer {
+            if (it != null) {
+                when (it.status) {
                     Status.ERROR -> createNewUser()
                     Status.LOADING -> {
                     }
                     Status.SUCCESS -> {
-                        mainViewModel.currentUser = userResource.data
+                        binding.user = it.data
+                        currentUser = it.data!!
                         Analytics.logEvent(Analytics.EventType.UserLogin, tag)
                     }
                 }
             }
         })
+        mainViewModel.setUserId(cognitoId)
     }
 
     private fun createNewUser() {
         val user = User(cognitoId, cognitoUsername, mutableListOf(), "none", mutableListOf())
-        mainViewModel.currentUser = user
         mainViewModel.putUser(user).observe(this, Observer {
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {
                         Analytics.logEvent(Analytics.EventType.CreatedUser, tag)
+                        mainViewModel.setUserId(cognitoId)
                     }
                     Status.ERROR -> {
                     }
@@ -639,14 +641,12 @@ class MainActivity :
             mainViewModel.deletePost(binding.post!!).observe(this, Observer {
                 if (it != null && it.status == Status.SUCCESS) {
                     mClusterManager.removeItem(binding.post!!)
-                    val user = mainViewModel.currentUser
-                    user!!.createdPosts.remove(binding.post!!.postId)
-                    mainViewModel.putUser(user).observe(this, Observer {
+                    currentUser.createdPosts.remove(binding.post!!.postId)
+                    mainViewModel.putUser(currentUser).observe(this, Observer {
                         if (it != null && it.status == Status.SUCCESS) {
-                            mainViewModel.currentUser = user
                             onBackPressed()
                             Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
-                            mainViewModel.getNewPosts(lastCornerLatLng)
+                            mainViewModel.setPostBounds(lastCornerLatLng)
                             mClusterManager.cluster()
                         }
                     })
@@ -745,15 +745,14 @@ class MainActivity :
                 // Add the post to DDB
                 mainViewModel.putPost(newPost).observe(this, Observer {
                     if (it != null && it.status == Status.SUCCESS) {
-                        val user = mainViewModel.currentUser!!
-                        if (!user.createdPosts.contains(newPost.content)) {
-                            user.createdPosts.add(newPost.content)
+                        if (!currentUser.createdPosts.contains(newPost.content)) {
+                            currentUser.createdPosts.add(newPost.content)
                         }
                         // Update the users set of created posts
-                        mainViewModel.putUser(user).observe(this, Observer {
+                        mainViewModel.putUser(currentUser).observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.getNewPosts(lastCornerLatLng)
+                                mainViewModel.setPostBounds(lastCornerLatLng)
                             }
                         })
                     }
