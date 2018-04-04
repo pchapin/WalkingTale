@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.talkingwhale.vo.Post
 
-class MyAdapter(private val myDataset: Array<Post>, val callback: PostCallback) :
-        RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+class PostAdapter(private val myDataset: Array<Post>, val callback: PostCallback) :
+        RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and

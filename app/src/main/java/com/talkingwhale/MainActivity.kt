@@ -7,7 +7,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
@@ -26,7 +25,6 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -48,6 +46,8 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
 import com.talkingwhale.PostViewActivity.Companion.POST_KEY
+import com.talkingwhale.TextInputActivity.Companion.LATITUDE_KEY
+import com.talkingwhale.TextInputActivity.Companion.LONGITUDE_KEY
 import com.talkingwhale.databinding.ActivityMainBinding
 import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.repository.PostRepository
@@ -80,9 +80,10 @@ class MainActivity :
     private val markerWidth = 200
     private val markerHeight = 200
     private var cameraOnUserOnce = false
-    private val rcAudio = 123
-    private val rcPicture = 1234
-    private val rcVideo = 12345
+    private val rcAudio = 1
+    private val rcPicture = 2
+    private val rcVideo = 3
+    private val rcText = 4
     private val minPostDistanceMeters = 30
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
@@ -171,8 +172,6 @@ class MainActivity :
                 linkButton()
                 filterButton()
                 iconThread()
-                postTextButton()
-//                postBackButton()
 
                 class CustomClusterManager : ClusterManager<Post>(this, mMap) {
                     override fun onCameraIdle() {
@@ -219,7 +218,7 @@ class MainActivity :
 
             if (!insideRadius(bounds.center)) return true
 
-            viewAdapter = MyAdapter(cluster.items.toTypedArray(), object : MyAdapter.PostCallback {
+            viewAdapter = PostAdapter(cluster.items.toTypedArray(), object : PostAdapter.PostCallback {
                 override fun onClick(post: Post) {
                     onClusterItemClick(post)
                 }
@@ -396,49 +395,13 @@ class MainActivity :
         })
     }
 
-    private fun postTextButton() {
-        button_text_post_submit.setOnClickListener {
-            val text = binding.postTextEditText.text.toString().trim()
-            if (text.isBlank()) {
-                Toast.makeText(this, "Text cannot be blank", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            post_text_edit_text.setText("")
-            val post = Post(
-                    cognitoId,
-                    UUID.randomUUID().toString(),
-                    Date().time.toString(),
-                    location.latitude,
-                    location.longitude,
-                    mutableListOf(),
-                    TEXT,
-                    text,
-                    mutableListOf()
-            )
-            mainViewModel.putPost(post).observe(this, Observer {
-                if (it != null && it.status == Status.SUCCESS) {
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(bottom_sheet.windowToken, 0)
-                    if (!currentUser.createdPosts.contains(post.postId)) {
-                        currentUser.createdPosts.add(post.postId)
-                    }
-                    mainViewModel.putUser(currentUser).observe(this, Observer {
-                        if (it != null) {
-                            Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                            mainViewModel.setPostBounds(lastCornerLatLng)
-                            collapseBottomSheet()
-                        }
-                    })
-                }
-            })
-        }
-    }
 
     private fun textButton() {
         text_button.setOnClickListener({
-            binding.bottomSheetDisplay = BottomSheetDisplay.TEXT_INPUT
-            expandBottomSheet()
+            val intent = Intent(this, TextInputActivity::class.java)
+            intent.putExtra(LATITUDE_KEY, location.latitude)
+            intent.putExtra(LONGITUDE_KEY, location.longitude)
+            startActivityForResult(intent, rcText)
         })
     }
 
@@ -604,8 +567,6 @@ class MainActivity :
         }
     }
 
-
-
     private fun expandBottomSheet() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
@@ -671,6 +632,10 @@ class MainActivity :
                     Toast.makeText(this, "Videos must be at most 6 seconds.", Toast.LENGTH_SHORT).show()
                     return
                 }
+            }
+            rcText -> {
+                content = data!!.getStringExtra(TextInputActivity.TEXT_KEY)
+                postType = TEXT
             }
         }
         val post = Post(

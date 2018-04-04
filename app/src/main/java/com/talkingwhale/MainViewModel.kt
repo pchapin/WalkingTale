@@ -8,9 +8,7 @@ import android.arch.lifecycle.ViewModel
 import android.content.Context
 import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.repository.UserRepository
-import com.talkingwhale.vo.Post
-import com.talkingwhale.vo.Resource
-import com.talkingwhale.vo.User
+import com.talkingwhale.vo.*
 
 
 class MainViewModel : ViewModel() {
@@ -44,6 +42,11 @@ class MainViewModel : ViewModel() {
     }
 
     fun putFile(pair: Pair<Post, Context>): LiveData<Resource<Post>> {
+        if (pair.first.type == PostType.TEXT) {
+            val result: MutableLiveData<Resource<Post>> = MutableLiveData()
+            result.value = Resource(Status.SUCCESS, pair.first, "")
+            return result
+        }
         return postRepository.putFile(pair)
     }
 

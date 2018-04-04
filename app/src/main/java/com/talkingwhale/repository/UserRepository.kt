@@ -28,7 +28,6 @@ import com.talkingwhale.vo.User
  * Repository that handles User objects.
  */
 object UserRepository {
-    private val TAG = this.javaClass.simpleName
     private val appExecutors: AppExecutors = AppExecutors
 
     fun loadUser(userId: String): LiveData<Resource<User>> {
