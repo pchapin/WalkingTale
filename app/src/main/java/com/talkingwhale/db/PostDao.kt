@@ -31,7 +31,7 @@ abstract class PostDao {
     abstract fun insert(vararg stories: Post)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertStories(repositories: List<Post>)
+    abstract fun insertPosts(repositories: List<Post>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun createPostIfNotExists(Post: Post): Long
@@ -43,10 +43,7 @@ abstract class PostDao {
     abstract fun loadAll(): LiveData<List<Post>>
 
     @Query("SELECT * FROM Post WHERE postId in (:playedIds)")
-    abstract fun loadPlayedStories(playedIds: List<String>): LiveData<List<Post>>
-
-    @Query("SELECT * FROM Post WHERE postId in (:createdIds)")
-    abstract fun loadCreatedStories(createdIds: List<String>): LiveData<List<Post>>
+    abstract fun loadPosts(playedIds: List<String>): LiveData<List<Post>>
 
     @Delete()
     abstract fun delete(post: Post)

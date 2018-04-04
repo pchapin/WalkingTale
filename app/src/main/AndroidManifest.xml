@@ -88,6 +88,10 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".OverflowActivity"
+            android:label="@string/title_activity_overflow"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
-
 </manifest>

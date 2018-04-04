@@ -17,13 +17,8 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.CardView
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -45,6 +40,7 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
+import com.talkingwhale.OverflowActivity.Companion.POST_LIST_KEY
 import com.talkingwhale.PostViewActivity.Companion.POST_KEY
 import com.talkingwhale.TextInputActivity.Companion.LATITUDE_KEY
 import com.talkingwhale.TextInputActivity.Companion.LONGITUDE_KEY
@@ -86,7 +82,6 @@ class MainActivity :
     private val rcText = 4
     private val minPostDistanceMeters = 30
     private lateinit var binding: ActivityMainBinding
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
     private var linkMode = LinkMode.NOT_LINKING
     private var linkedPosts = mutableListOf<Post>()
     private var polyLines = mutableListOf<Polyline>()
@@ -98,8 +93,6 @@ class MainActivity :
     private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
     private var selectedFilterItems = mutableListOf<Int>()
     private lateinit var selectedFilterItemsBoolean: BooleanArray
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
     private lateinit var postList: List<Post>
@@ -112,7 +105,6 @@ class MainActivity :
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
         iconGenerator = IconGenerator(this)
         Analytics.init(this)
@@ -218,19 +210,10 @@ class MainActivity :
 
             if (!insideRadius(bounds.center)) return true
 
-            viewAdapter = PostAdapter(cluster.items.toTypedArray(), object : PostAdapter.PostCallback {
-                override fun onClick(post: Post) {
-                    onClusterItemClick(post)
-                }
-            })
-            viewAdapter.notifyDataSetChanged()
-            recyclerView = my_recycler_view.apply {
-                layoutManager = GridLayoutManager(this@MainActivity, 3)
-                adapter = viewAdapter
-            }
-            binding.post = null
-            binding.bottomSheetDisplay = BottomSheetDisplay.OVERFLOW
-            expandBottomSheet()
+            db.postDao().insertPosts(cluster.items.toList())
+            val intent = Intent(this, OverflowActivity::class.java)
+            intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
+            startActivity(intent)
         }
 
         // Animate camera to the bounds
@@ -566,26 +549,6 @@ class MainActivity :
             checkPlayServices()
         }
     }
-
-    private fun expandBottomSheet() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-    private fun collapseBottomSheet() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        binding.post = null
-    }
-
-    override fun onBackPressed() {
-        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-//            collapseBottomSheet()
-            binding.post = null
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    fun onBackPressed(view: View) = onBackPressed()
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {

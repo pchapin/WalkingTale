@@ -61,6 +61,8 @@
     <string name="title_activity_text_input">Text Post</string>
 
     <!--Note View Activity-->
-    <string name="title_activity_note_view">Note</string>
+    <string name="title_activity_note_view">Post</string>
 
+    <!--Overflow activity-->
+    <string name="title_activity_overflow">Posts</string>
 </resources>
