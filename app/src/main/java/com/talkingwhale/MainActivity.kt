@@ -80,6 +80,7 @@ class MainActivity :
     private val rcPicture = 2
     private val rcVideo = 3
     private val rcText = 4
+    private val rcLocation = 5
     private val minPostDistanceMeters = 30
     private lateinit var binding: ActivityMainBinding
     private var linkMode = LinkMode.NOT_LINKING
@@ -667,7 +668,6 @@ class MainActivity :
         }
 
         const val DEFAULT_ZOOM = 18f
-        const val rcLocation = 1
         val cognitoId: String
             get() = IdentityManager.getDefaultIdentityManager().cachedUserID
 
