@@ -1,6 +1,5 @@
 package com.talkingwhale.activities
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -30,10 +29,13 @@ class OverflowActivity : AppCompatActivity() {
     }
 
     private fun recyclerView() {
+        val postIds = intent.getStringArrayExtra(POST_LIST_KEY).toList()
+        val allPosts = db.postDao().loadAll()
         val posts = db.postDao().loadPosts(intent.getStringArrayExtra(POST_LIST_KEY).toList())
-        posts.observe(this, Observer {
-            if (it != null) {
-                viewAdapter = PostAdapter(it.toTypedArray(), object : PostAdapter.PostCallback {
+//        posts.observe(this, Observer {
+//            if (it != null) {
+//                val test = it
+        viewAdapter = PostAdapter(posts.toTypedArray(), object : PostAdapter.PostCallback {
                     override fun onClick(post: Post) {
                         val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
                         intent.putExtra(PostViewActivity.POST_KEY, post.postId)
@@ -41,11 +43,11 @@ class OverflowActivity : AppCompatActivity() {
                     }
                 })
                 recyclerView = my_recycler_view.apply {
-                    layoutManager = GridLayoutManager(this@OverflowActivity, 3)
+                    layoutManager = GridLayoutManager(this@OverflowActivity, 2)
                     adapter = viewAdapter
                 }
-            }
-        })
+//            }
+//        })
     }
 
     companion object {

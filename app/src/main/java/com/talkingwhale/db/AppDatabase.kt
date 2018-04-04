@@ -50,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getAppDatabase(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
+                        context,
                         AppDatabase::class.java,
                         "walkingtale.db")
                         .allowMainThreadQueries()

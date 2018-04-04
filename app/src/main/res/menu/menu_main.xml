@@ -2,13 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_black_36dp"
-        android:title="search"
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_help_black_24dp"
+        android:title="help"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/action_profile"
-        android:icon="@drawable/ic_account_box_black_36dp"
-        android:title="profile"
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_directions_walk_black_24dp"
+        android:title="about"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="settings"
         app:showAsAction="ifRoom|withText" />
 </menu>

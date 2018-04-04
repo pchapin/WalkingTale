@@ -18,7 +18,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -103,15 +105,43 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
         iconGenerator = IconGenerator(this)
         Analytics.init(this)
+        navigationDrawer()
         db = AppDatabase.getAppDatabase(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+            when (item.itemId) {
+                android.R.id.home -> {
+                    // Open the navigation drawer when the home icon is selected from the toolbar.
+                    drawer_layout.openDrawer(GravityCompat.START)
+                    true
+                }
+                else -> super.onOptionsItemSelected(item)
+            }
+
+    private fun navigationDrawer() {
+        nav_view.setNavigationItemSelectedListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.action_help -> {
+                }
+                R.id.action_about -> {
+                }
+                R.id.action_settings -> {
+                }
+            }
+            return@setNavigationItemSelectedListener true
         }
     }
 
@@ -210,7 +240,10 @@ class MainActivity :
 
             if (!insideRadius(bounds.center)) return true
 
+            db.postDao().deleteAll()
+            val stuff = cluster.items.toTypedArray()
             db.postDao().insertPosts(cluster.items.toList())
+            val items = db.postDao().loadPosts(cluster.items.map { it.postId })
             val intent = Intent(this, OverflowActivity::class.java)
             intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
             startActivity(intent)

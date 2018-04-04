@@ -28,10 +28,10 @@ import com.talkingwhale.pojos.Post
 abstract class PostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(vararg stories: Post)
+    abstract fun insert(vararg posts: Post)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertPosts(repositories: List<Post>)
+    abstract fun insertPosts(posts: List<Post>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun createPostIfNotExists(Post: Post): Long
@@ -40,11 +40,14 @@ abstract class PostDao {
     abstract fun load(id: String): LiveData<Post>
 
     @Query("SELECT * FROM Post")
-    abstract fun loadAll(): LiveData<List<Post>>
+    abstract fun loadAll(): List<Post>
 
-    @Query("SELECT * FROM Post WHERE postId in (:playedIds)")
-    abstract fun loadPosts(playedIds: List<String>): LiveData<List<Post>>
+    @Query("SELECT * FROM Post WHERE postId IN(:ids)")
+    abstract fun loadPosts(ids: List<String>): List<Post>
 
     @Delete()
     abstract fun delete(post: Post)
+
+    @Query("DELETE FROM Post")
+    abstract fun deleteAll()
 }
