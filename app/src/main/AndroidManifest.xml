@@ -61,12 +61,6 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.audiorecord.AudioRecordActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AuthenticatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,6 +70,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.audiorecord.AudioRecordActivity"
+            android:label="@string/title_activity_audio_record"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".PostViewActivity"
             android:label="@string/title_activity_note_view"
             android:parentActivityName=".MainActivity"
@@ -84,7 +86,8 @@
             android:name=".TextInputActivity"
             android:label="@string/title_activity_text_input"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateVisible" />
     </application>
 
 </manifest>

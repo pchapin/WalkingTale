@@ -98,7 +98,8 @@ class AudioRecordActivity : AppCompatActivity() {
         setContentView(R.layout.activity_audio_record)
         audioFile = createFile(this)
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
-
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         recordButton()
         playButton()
         finishButton()

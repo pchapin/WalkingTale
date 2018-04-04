@@ -54,7 +54,13 @@
     <string name="done">Done</string>
     <string name="stop_recording">Stop recording</string>
     <string name="stop_playing">Stop playing</string>
-    <string name="title_activity_note_view">NoteViewActivity</string>
-    <string name="title_activity_text_input">TextInputActivity</string>
+    <string name="title_activity_audio_record">Audio Post</string>
+
+
+    <!--Text input activity-->
+    <string name="title_activity_text_input">Text Post</string>
+
+    <!--Note View Activity-->
+    <string name="title_activity_note_view">Note</string>
 
 </resources>
