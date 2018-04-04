@@ -20,8 +20,9 @@ import android.arch.persistence.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.talkingwhale.vo.Chapter
+import com.talkingwhale.vo.PostType
 
-object AppTypeConverters {
+class AppTypeConverters {
     private val gson = Gson()
 
     @TypeConverter
@@ -53,4 +54,15 @@ object AppTypeConverters {
 
         }.type)
     }
+
+    @TypeConverter
+    fun toJson(postType: PostType): String? {
+        return Gson().toJson(postType)
+    }
+
+    @TypeConverter
+    fun fromJson(string: String): PostType? {
+        return Gson().fromJson(string, PostType::class.java)
+    }
+
 }

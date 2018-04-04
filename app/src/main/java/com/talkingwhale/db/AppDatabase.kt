@@ -40,14 +40,23 @@ abstract class AppDatabase : RoomDatabase() {
         @JvmStatic
         fun getInMemoryDatabase(context: Context): AppDatabase {
             if (INSTANCE == null) {
-                INSTANCE = Room.inMemoryDatabaseBuilder(context.applicationContext, AppDatabase::class.java).allowMainThreadQueries().build()
+                INSTANCE = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+                        .allowMainThreadQueries()
+                        .build()
             }
             return INSTANCE!!
         }
 
-        @JvmStatic
-        fun destroyInstance() {
-            INSTANCE = null
+        fun getAppDatabase(context: Context): AppDatabase {
+            if (INSTANCE == null) {
+                INSTANCE = Room.databaseBuilder(
+                        context.applicationContext,
+                        AppDatabase::class.java,
+                        "walkingtale.db")
+                        .allowMainThreadQueries()
+                        .build()
+            }
+            return INSTANCE!!
         }
     }
 }
