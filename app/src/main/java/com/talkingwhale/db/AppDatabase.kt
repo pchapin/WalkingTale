@@ -22,8 +22,8 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 
-import com.talkingwhale.vo.Post
-import com.talkingwhale.vo.User
+import com.talkingwhale.pojos.Post
+import com.talkingwhale.pojos.User
 
 /**
  * Main database description.

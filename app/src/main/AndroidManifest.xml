@@ -61,7 +61,7 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".AuthenticatorActivity">
+        <activity android:name=".activities.AuthenticatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -70,28 +70,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.audiorecord.AudioRecordActivity"
+            android:name=".activities.AudioRecordActivity"
             android:label="@string/title_activity_audio_record"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".PostViewActivity"
+            android:name=".activities.PostViewActivity"
             android:label="@string/title_activity_note_view"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".TextInputActivity"
+            android:name=".activities.TextInputActivity"
             android:label="@string/title_activity_text_input"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name=".OverflowActivity"
+            android:name=".activities.OverflowActivity"
             android:label="@string/title_activity_overflow"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 </manifest>

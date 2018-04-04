@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package com.talkingwhale.db
-
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
-
-import com.talkingwhale.pojos.User
+package com.talkingwhale.ui
 
 /**
- * Interface for database access for User related operations.
+ * Generic interface for retry buttons.
  */
-@Dao
-interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User)
-
-    @Query("SELECT * FROM user WHERE userId = :userId")
-    fun findByLogin(userId: String): LiveData<User>
+interface RetryCallback {
+    fun retry()
 }

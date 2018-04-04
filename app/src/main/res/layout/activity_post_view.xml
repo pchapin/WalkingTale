@@ -7,17 +7,17 @@
 
         <variable
             name="post"
-            type="com.talkingwhale.vo.Post" />
+            type="com.talkingwhale.pojos.Post" />
 
         <variable
             name="postType"
-            type="com.talkingwhale.vo.PostType" />
+            type="com.talkingwhale.pojos.PostType" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".PostViewActivity">
+        tools:context=".activities.PostViewActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"

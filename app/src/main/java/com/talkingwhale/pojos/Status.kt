@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package com.talkingwhale.db
-
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
-
-import com.talkingwhale.pojos.User
+package com.talkingwhale.pojos
 
 /**
- * Interface for database access for User related operations.
+ * Status of a resource that is provided to the UI.
+ *
+ *
+ * These are usually created by the Repository classes where they return
+ * `LiveData<Resource<T>>` to pass back the latest data to the UI with its fetch status.
  */
-@Dao
-interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User)
-
-    @Query("SELECT * FROM user WHERE userId = :userId")
-    fun findByLogin(userId: String): LiveData<User>
+enum class Status {
+    SUCCESS,
+    ERROR,
+    LOADING
 }

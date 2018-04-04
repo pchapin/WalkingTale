@@ -18,14 +18,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
 
-        <import type="com.talkingwhale.vo.Resource" />
+        <import type="com.talkingwhale.pojos.Resource" />
 
-        <import type="com.talkingwhale.vo.Status" />
-        <variable name="resource" type="Resource"/>
+        <import type="com.talkingwhale.pojos.Status" />
+
+        <variable
+            name="resource"
+            type="com.talkingwhale.pojos.Resource" />
 
         <variable
             name="callback"
-            type="com.talkingwhale.ui.common.RetryCallback" />
+            type="com.talkingwhale.ui.RetryCallback" />
     </data>
 
     <LinearLayout

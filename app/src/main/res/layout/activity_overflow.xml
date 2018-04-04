@@ -7,18 +7,18 @@
 
         <variable
             name="post"
-            type="com.talkingwhale.vo.Post" />
+            type="com.talkingwhale.pojos.Post" />
 
         <variable
             name="postType"
-            type="com.talkingwhale.vo.PostType" />
+            type="com.talkingwhale.pojos.PostType" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".OverflowActivity">
+        tools:context=".activities.OverflowActivity">
 
 
         <android.support.design.widget.AppBarLayout

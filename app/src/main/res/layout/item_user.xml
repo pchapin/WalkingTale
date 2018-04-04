@@ -22,7 +22,7 @@
 
         <variable
             name="user"
-            type="com.talkingwhale.vo.User" />
+            type="com.talkingwhale.pojos.User" />
     </data>
 
     <android.support.v7.widget.CardView

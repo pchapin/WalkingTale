@@ -6,19 +6,15 @@
 
         <variable
             name="post"
-            type="com.talkingwhale.vo.Post" />
+            type="com.talkingwhale.pojos.Post" />
 
         <variable
             name="user"
-            type="com.talkingwhale.vo.User" />
+            type="com.talkingwhale.pojos.User" />
 
         <variable
             name="postType"
-            type="com.talkingwhale.vo.PostType" />
-
-        <variable
-            name="bottomSheetDisplay"
-            type="com.talkingwhale.MainActivity.BottomSheetDisplay" />
+            type="com.talkingwhale.pojos.PostType" />
     </data>
 
     <android.support.constraint.ConstraintLayout

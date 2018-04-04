@@ -18,11 +18,10 @@ package com.talkingwhale.repository
 
 import android.arch.lifecycle.LiveData
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression
-import com.talkingwhale.AppExecutors
-import com.talkingwhale.repository.tasks.AbstractTask
-import com.talkingwhale.vo.Resource
-import com.talkingwhale.vo.Status
-import com.talkingwhale.vo.User
+import com.talkingwhale.pojos.Resource
+import com.talkingwhale.pojos.Status
+import com.talkingwhale.pojos.User
+import com.talkingwhale.util.AppExecutors
 
 /**
  * Repository that handles User objects.

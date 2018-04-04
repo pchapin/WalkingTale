@@ -7,7 +7,7 @@
 
         <variable
             name="post"
-            type="com.talkingwhale.vo.Post" />
+            type="com.talkingwhale.pojos.Post" />
 
     </data>
 
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".TextInputActivity">
+        tools:context=".activities.TextInputActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"

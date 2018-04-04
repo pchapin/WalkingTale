@@ -19,7 +19,7 @@ package com.talkingwhale.db
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
-import com.talkingwhale.vo.Post
+import com.talkingwhale.pojos.Post
 
 /**
  * Interface for database access on Post related operations.

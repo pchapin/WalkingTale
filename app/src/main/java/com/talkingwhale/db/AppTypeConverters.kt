@@ -19,29 +19,10 @@ package com.talkingwhale.db
 import android.arch.persistence.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.talkingwhale.vo.Chapter
-import com.talkingwhale.vo.PostType
+import com.talkingwhale.pojos.PostType
 
 class AppTypeConverters {
     private val gson = Gson()
-
-    @TypeConverter
-    fun stringToChapterList(data: String?): List<Chapter> {
-        if (data == null) {
-            return emptyList()
-        }
-
-        val listType = object : TypeToken<List<Chapter>>() {
-
-        }.type
-
-        return gson.fromJson(data, listType)
-    }
-
-    @TypeConverter
-    fun chapterListToString(chapters: List<Chapter>): String {
-        return gson.toJson(chapters)
-    }
 
     @TypeConverter
     fun listOfStringToString(stringList: List<String>): String {

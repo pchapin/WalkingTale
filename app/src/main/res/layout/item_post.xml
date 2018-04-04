@@ -22,11 +22,11 @@
 
         <variable
             name="post"
-            type="com.talkingwhale.vo.Post" />
+            type="com.talkingwhale.pojos.Post" />
 
         <variable
             name="postType"
-            type="com.talkingwhale.vo.PostType" />
+            type="com.talkingwhale.pojos.PostType" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -44,7 +44,7 @@
             app:imageType="@{post}"
             app:imageUrl="@{post}"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:src="@drawable/google_icon" />
+            tools:src="@drawable/ic_arrow_back_black_24dp" />
 
         <TextView
             visibleGone="@{post.type == postType.TEXT}"
