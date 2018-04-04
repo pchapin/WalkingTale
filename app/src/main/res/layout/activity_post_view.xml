@@ -63,7 +63,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="@id/post_control_layout"
                 app:visibleGone="@{post.type == postType.VIDEO}" />
 
             <ImageButton
@@ -74,7 +73,6 @@
                 android:layout_margin="50dp"
                 android:contentDescription="play/stop button"
                 android:src="@drawable/ic_play_arrow_black_24dp"
-                app:layout_constraintBottom_toBottomOf="@id/post_control_layout"
                 app:visibleGone="@{post.type == postType.AUDIO}" />
 
         </android.support.constraint.ConstraintLayout>

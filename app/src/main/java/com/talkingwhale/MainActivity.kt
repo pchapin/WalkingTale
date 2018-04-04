@@ -14,9 +14,7 @@ import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.media.AudioAttributes
 import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -30,7 +28,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import android.widget.MediaController
 import android.widget.Toast
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.auth0.android.jwt.JWT
@@ -87,7 +84,6 @@ class MainActivity :
     private val rcPicture = 1234
     private val rcVideo = 12345
     private val minPostDistanceMeters = 30
-    private val mediaPlayer = MediaPlayer()
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CardView>
     private var linkMode = LinkMode.NOT_LINKING
@@ -116,7 +112,6 @@ class MainActivity :
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
-        mediaPlayer.setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
         selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
         iconGenerator = IconGenerator(this)
         Analytics.init(this)
@@ -173,12 +168,8 @@ class MainActivity :
                 nearbyPosts()
                 videoButton()
                 audioButton()
-                postAudioButton()
-                flagButton()
-                deletePostButton()
                 linkButton()
                 filterButton()
-                videoView()
                 iconThread()
                 postTextButton()
 //                postBackButton()
@@ -292,11 +283,6 @@ class MainActivity :
             linkMode = LinkMode.NOT_LINKING
             linkedPosts.clear()
             return true
-        }
-
-        if (post.type == VIDEO) {
-            video_view.setVideoURI(Uri.parse(resources.getString(R.string.s3_hostname) + post.content))
-            prepareVideo()
         }
 
         db.postDao().insert(post)
@@ -618,48 +604,7 @@ class MainActivity :
         }
     }
 
-    private fun postAudioButton() {
-        post_audio_button.setOnClickListener({
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.stop()
-                post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
-            } else {
-                mediaPlayer.reset()
-                mediaPlayer.setDataSource(resources.getString(R.string.s3_hostname) + binding.post!!.content)
-                mediaPlayer.prepareAsync()
-                mediaPlayer.setOnPreparedListener(MediaPlayer::start)
-                mediaPlayer.setOnCompletionListener {
-                    post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
-                }
-                post_audio_button.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
-            }
-        })
-    }
 
-    private fun flagButton() {
-        flag_post_button.setOnClickListener({
-            // stuff
-        })
-    }
-
-    private fun deletePostButton() {
-        delete_post_button.setOnClickListener({
-            mainViewModel.deletePost(binding.post!!).observe(this, Observer {
-                if (it != null && it.status == Status.SUCCESS) {
-                    mClusterManager.removeItem(binding.post!!)
-                    currentUser.createdPosts.remove(binding.post!!.postId)
-                    mainViewModel.putUser(currentUser).observe(this, Observer {
-                        if (it != null && it.status == Status.SUCCESS) {
-                            onBackPressed()
-                            Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
-                            mainViewModel.setPostBounds(lastCornerLatLng)
-                            mClusterManager.cluster()
-                        }
-                    })
-                }
-            })
-        })
-    }
 
     private fun expandBottomSheet() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -761,24 +706,6 @@ class MainActivity :
                 })
             }
         })
-    }
-
-    private fun prepareVideo() {
-        video_view.setOnPreparedListener({
-            it.isLooping = true
-            video_view.start()
-        })
-    }
-
-    private fun videoView() {
-        video_view.setMediaController(MediaController(this))
-        video_view.onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
-            run {
-                if (v.visibility != View.VISIBLE) {
-                    video_view.pause()
-                }
-            }
-        }
     }
 
     private enum class LinkMode {
