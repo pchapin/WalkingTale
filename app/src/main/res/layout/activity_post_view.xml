@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="post"
+            type="com.talkingwhale.vo.Post" />
+
+        <variable
+            name="postType"
+            type="com.talkingwhale.vo.PostType" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".PostViewActivity">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom">
+
+            <ImageView
+                android:id="@+id/post_image_view"
+                imageUrl="@{post}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="post image"
+                android:scaleType="centerCrop"
+                app:visibleGone="@{post.type == postType.PICTURE}"
+                tools:src="@drawable/ic_arrow_back_black_24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@{post.content}"
+                android:textSize="24sp"
+                app:visibleGone="@{post.type == postType.TEXT}"
+                tools:text="@string/lorem_ipsum" />
+
+            <VideoView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/post_control_layout"
+                app:visibleGone="@{post.type == postType.VIDEO}" />
+
+            <ImageButton
+                android:id="@+id/post_audio_button"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="50dp"
+                android:contentDescription="play/stop button"
+                android:src="@drawable/ic_play_arrow_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@id/post_control_layout"
+                app:visibleGone="@{post.type == postType.AUDIO}" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</layout>

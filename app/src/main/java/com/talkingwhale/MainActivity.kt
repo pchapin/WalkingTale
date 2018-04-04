@@ -50,7 +50,9 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
+import com.talkingwhale.PostViewActivity.Companion.POST_KEY
 import com.talkingwhale.databinding.ActivityMainBinding
+import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.ui.audiorecord.AudioRecordActivity
 import com.talkingwhale.ui.common.LocationLiveData
@@ -105,6 +107,7 @@ class MainActivity :
     private lateinit var iconThread: Thread
     private lateinit var postList: List<Post>
     private lateinit var currentUser: User
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +120,7 @@ class MainActivity :
         selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
         iconGenerator = IconGenerator(this)
         Analytics.init(this)
+        db = AppDatabase.getAppDatabase(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
@@ -197,12 +201,6 @@ class MainActivity :
             }
         })
     }
-//
-//    private fun postBackButton() {
-//        post_back_button.setOnClickListener {
-//            onBackPressed()
-//        }
-//    }
 
     //todo: refine this
     private fun possiblyGetNewPosts() {
@@ -300,7 +298,11 @@ class MainActivity :
             video_view.setVideoURI(Uri.parse(resources.getString(R.string.s3_hostname) + post.content))
             prepareVideo()
         }
-        expandBottomSheet()
+
+        db.postDao().insert(post)
+        val intent = Intent(this, PostViewActivity::class.java)
+        intent.putExtra(POST_KEY, post.postId)
+        startActivity(intent)
         return true
     }
 

@@ -54,5 +54,6 @@
     <string name="done">Done</string>
     <string name="stop_recording">Stop recording</string>
     <string name="stop_playing">Stop playing</string>
+    <string name="title_activity_note_view">NoteViewActivity</string>
 
 </resources>
