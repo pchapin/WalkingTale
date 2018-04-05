@@ -98,7 +98,7 @@ class MainActivity :
     private lateinit var selectedFilterItemsBoolean: BooleanArray
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
-    private lateinit var postList: List<Post>
+    private var postList: List<Post>? = null
     private lateinit var currentUser: User
     private lateinit var db: AppDatabase
 
@@ -150,7 +150,7 @@ class MainActivity :
         iconThread = thread(false) {
             while (true) {
                 runOnUiThread {
-                    for (post in postList) {
+                    for (post in postList!!) {
                         if (post.type in listOf(AUDIO, TEXT)) continue
                         var marker: Marker?
                         try {
@@ -200,6 +200,7 @@ class MainActivity :
                     override fun onCameraIdle() {
                         super.onCameraIdle()
                         possiblyGetNewPosts()
+                        if (postList != null) drawLinks()
                     }
                 }
                 mClusterManager = CustomClusterManager()
@@ -387,27 +388,40 @@ class MainActivity :
         }
     }
 
+    private fun showAllPosts() {
+        mClusterManager.clearItems()
+        mClusterManager.addItems(postList)
+        mClusterManager.cluster()
+    }
+
+    private fun showOnlyUsersPosts() {
+        mClusterManager.clearItems()
+        val usersPosts = postList!!.filter { it.userId == cognitoId }
+        mClusterManager.addItems(usersPosts)
+        mClusterManager.cluster()
+    }
+
     private fun nearbyPosts() {
         mainViewModel.localPosts.observe(this, Observer {
 
             if (it?.data == null) return@Observer
 
             postList = it.data
-            mClusterManager.addItems(it.data)
-            mClusterManager.cluster()
+            showAllPosts()
             if (iconThread.state == Thread.State.NEW) {
                 iconThread.start()
-            }
-            // Draw links
-            for (post in postList) {
-                val linkedPosts = postList.filter { it.postId in post.linkedPosts }.map { LatLng(it.latitude, it.longitude) }
-                for (lng in linkedPosts) {
-                    polyLines.add(mMap.addPolyline(PolylineOptions().add(lng).add(LatLng(post.latitude, post.longitude))))
-                }
             }
         })
     }
 
+    private fun drawLinks() {
+        for (post in postList!!) {
+            val linkedPosts = postList!!.filter { it.postId in post.linkedPosts }.map { LatLng(it.latitude, it.longitude) }
+            for (lng in linkedPosts) {
+                polyLines.add(mMap.addPolyline(PolylineOptions().add(lng).add(LatLng(post.latitude, post.longitude))))
+            }
+        }
+    }
 
     private fun textButton() {
         text_button.setOnClickListener({
@@ -457,10 +471,12 @@ class MainActivity :
                 Toast.makeText(this, "Touch a post then another to make a link.", Toast.LENGTH_SHORT).show()
                 linkMode = LinkMode.NONE_PRESSED
                 link_button.size = FloatingActionButton.SIZE_MINI
+                showOnlyUsersPosts()
             } else {
                 linkMode = LinkMode.NOT_LINKING
                 Toast.makeText(this, "Link mode off.", Toast.LENGTH_SHORT).show()
                 link_button.size = FloatingActionButton.SIZE_NORMAL
+                showAllPosts()
             }
         })
     }
