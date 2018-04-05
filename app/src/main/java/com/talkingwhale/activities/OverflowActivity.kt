@@ -29,25 +29,18 @@ class OverflowActivity : AppCompatActivity() {
     }
 
     private fun recyclerView() {
-        val postIds = intent.getStringArrayExtra(POST_LIST_KEY).toList()
-        val allPosts = db.postDao().loadAll()
         val posts = db.postDao().loadPosts(intent.getStringArrayExtra(POST_LIST_KEY).toList())
-//        posts.observe(this, Observer {
-//            if (it != null) {
-//                val test = it
         viewAdapter = PostAdapter(posts.toTypedArray(), object : PostAdapter.PostCallback {
-                    override fun onClick(post: Post) {
-                        val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
-                        intent.putExtra(PostViewActivity.POST_KEY, post.postId)
-                        startActivity(intent)
-                    }
-                })
-                recyclerView = my_recycler_view.apply {
-                    layoutManager = GridLayoutManager(this@OverflowActivity, 2)
-                    adapter = viewAdapter
-                }
-//            }
-//        })
+            override fun onClick(post: Post) {
+                val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
+                intent.putExtra(PostViewActivity.POST_KEY, post.postId)
+                startActivity(intent)
+            }
+        })
+        recyclerView = my_recycler_view.apply {
+            layoutManager = GridLayoutManager(this@OverflowActivity, 2)
+            adapter = viewAdapter
+        }
     }
 
     companion object {

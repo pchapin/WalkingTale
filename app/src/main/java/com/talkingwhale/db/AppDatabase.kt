@@ -28,7 +28,7 @@ import com.talkingwhale.pojos.User
 /**
  * Main database description.
  */
-@Database(entities = [(User::class), (Post::class)], version = 3, exportSchema = false)
+@Database(entities = [(User::class), (Post::class)], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao

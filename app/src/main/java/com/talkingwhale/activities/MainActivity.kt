@@ -234,16 +234,13 @@ class MainActivity :
         // Get the LatLngBounds
         val bounds = builder.build()
 
-        // Show a special marker if the bounds has not changed and
+        // Show overflow if the bounds has not changed and
         // the markers are still clustered
         if (bounds.center == lastClusterCenter) {
 
             if (!insideRadius(bounds.center)) return true
 
-            db.postDao().deleteAll()
-            val stuff = cluster.items.toTypedArray()
             db.postDao().insertPosts(cluster.items.toList())
-            val items = db.postDao().loadPosts(cluster.items.map { it.postId })
             val intent = Intent(this, OverflowActivity::class.java)
             intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
             startActivity(intent)

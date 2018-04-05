@@ -9,11 +9,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.maps.android.clustering.ClusterItem
 import com.talkingwhale.R
+import com.talkingwhale.activities.MainActivity
 import com.talkingwhale.db.AppTypeConverters
 
 
 @DynamoDBTable(tableName = "mappost-mobilehub-452475001-Posts")
-@Entity(indices = [(Index("userId"))], primaryKeys = ["userId"])
+@Entity(indices = [(Index("postId"))], primaryKeys = ["postId"])
 @TypeConverters(AppTypeConverters::class)
 data class Post(
         @get:DynamoDBHashKey(attributeName = "userId")
@@ -60,7 +61,7 @@ data class Post(
      * Do not use this constructor!
      * Just to make DDB mapper happy
      * */
-    constructor() : this("", "", "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", mutableListOf())
+    constructor() : this(MainActivity.getRandomPostId(), MainActivity.getRandomPostId(), "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", mutableListOf())
 }
 
 class PostTypeMarshaller : DynamoDBMarshaller<PostType> {
