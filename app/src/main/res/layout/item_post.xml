@@ -32,14 +32,12 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/white"
         app:cardUseCompatPadding="true">
 
         <ImageView
             visibleGone="@{post.type != postType.TEXT}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
             android:scaleType="centerCrop"
             app:imageType="@{post}"
             app:imageUrl="@{post}"
