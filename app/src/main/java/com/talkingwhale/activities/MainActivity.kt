@@ -87,7 +87,6 @@ class MainActivity :
     private lateinit var binding: ActivityMainBinding
     private var linkMode = LinkMode.NOT_LINKING
     private var linkedPosts = mutableListOf<Post>()
-    private var polyLines = mutableListOf<Polyline>()
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastClusterCenter = LatLng(0.0, 0.0)
     /** Used to get new posts if camera moves too far */
@@ -200,7 +199,6 @@ class MainActivity :
                     override fun onCameraIdle() {
                         super.onCameraIdle()
                         possiblyGetNewPosts()
-                        if (postList != null) drawLinks()
                     }
                 }
                 mClusterManager = CustomClusterManager()
@@ -412,15 +410,6 @@ class MainActivity :
                 iconThread.start()
             }
         })
-    }
-
-    private fun drawLinks() {
-        for (post in postList!!) {
-            val linkedPosts = postList!!.filter { it.postId in post.linkedPosts }.map { LatLng(it.latitude, it.longitude) }
-            for (lng in linkedPosts) {
-                polyLines.add(mMap.addPolyline(PolylineOptions().add(lng).add(LatLng(post.latitude, post.longitude))))
-            }
-        }
     }
 
     private fun textButton() {
