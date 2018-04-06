@@ -44,7 +44,7 @@
             app:imageType="@{post}"
             app:imageUrl="@{post}"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:src="@drawable/ic_arrow_back_black_24dp" />
+            tools:src="@drawable/ic_camera_alt_black_24dp" />
 
         <TextView
             visibleGone="@{post.type == postType.TEXT}"

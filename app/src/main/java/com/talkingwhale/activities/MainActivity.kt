@@ -131,8 +131,8 @@ class MainActivity :
             }
 
     private fun navigationDrawer() {
-        nav_view.setNavigationItemSelectedListener { item: MenuItem ->
-            when (item.itemId) {
+        nav_view.setNavigationItemSelectedListener {
+            when (it.itemId) {
                 R.id.action_help -> {
                     startActivity(Intent(this, HelpActivity::class.java))
                 }
