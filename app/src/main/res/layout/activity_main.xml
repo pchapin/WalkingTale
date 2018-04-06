@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/fab_bottom"
-                    android:src="@drawable/ic_audiotrack_black_24dp"
+                    android:src="@drawable/ic_mic_black_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/camera_button"
                     app:layout_constraintStart_toStartOf="parent" />

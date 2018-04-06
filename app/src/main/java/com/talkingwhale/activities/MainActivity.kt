@@ -593,13 +593,14 @@ class MainActivity :
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
-        mUiSettings.isZoomControlsEnabled = true
+        mUiSettings.isZoomControlsEnabled = false
         mUiSettings.isScrollGesturesEnabled = true
         mUiSettings.isZoomGesturesEnabled = true
         mUiSettings.isTiltGesturesEnabled = false
         mUiSettings.isRotateGesturesEnabled = false
         mUiSettings.isCompassEnabled = false
         mUiSettings.isMyLocationButtonEnabled = false
+        mUiSettings.isIndoorLevelPickerEnabled = false
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

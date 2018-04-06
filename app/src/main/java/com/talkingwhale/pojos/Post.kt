@@ -81,7 +81,7 @@ enum class PostType {
 fun getDrawableForPost(post: Post): Int {
     return when (post.type) {
         PostType.TEXT -> R.drawable.ic_textsms_black_24dp
-        PostType.AUDIO -> R.drawable.ic_audiotrack_black_24dp
+        PostType.AUDIO -> R.drawable.ic_mic_black_24dp
         PostType.PICTURE -> R.drawable.ic_camera_alt_black_24dp
         PostType.VIDEO -> R.drawable.ic_videocam_black_24dp
     }

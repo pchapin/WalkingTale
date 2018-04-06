@@ -4,16 +4,16 @@
     <item
         android:id="@+id/action_help"
         android:icon="@drawable/ic_help_black_24dp"
-        android:title="help"
+        android:title="Help"
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_about"
         android:icon="@drawable/ic_directions_walk_black_24dp"
-        android:title="about"
+        android:title="About"
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_black_24dp"
-        android:title="settings"
+        android:title="Settings"
         app:showAsAction="ifRoom|withText" />
 </menu>
