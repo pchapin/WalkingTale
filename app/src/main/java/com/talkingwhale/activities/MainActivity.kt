@@ -134,8 +134,10 @@ class MainActivity :
         nav_view.setNavigationItemSelectedListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.action_help -> {
+                    startActivity(Intent(this, HelpActivity::class.java))
                 }
                 R.id.action_about -> {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://toddcooke.github.io/walking-tale-site/")))
                 }
                 R.id.action_settings -> {
                 }

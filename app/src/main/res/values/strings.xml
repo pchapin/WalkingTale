@@ -65,4 +65,7 @@
 
     <!--Overflow activity-->
     <string name="title_activity_overflow">Posts</string>
+
+    <!--Help Activity-->
+    <string name="title_activity_help">Help</string>
 </resources>
