@@ -11,6 +11,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.media.MediaMetadataRetriever
@@ -20,7 +22,10 @@ import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -37,6 +42,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.PolyUtil
 import com.google.maps.android.SphericalUtil
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
@@ -100,6 +106,8 @@ class MainActivity :
     private var postList: List<Post>? = null
     private lateinit var currentUser: User
     private lateinit var db: AppDatabase
+    private var polyLinePoints = mutableListOf<LatLng>()
+    private var polygon: Polygon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -196,6 +204,7 @@ class MainActivity :
                 linkButton()
                 filterButton()
                 iconThread()
+                dragListener()
 
                 class CustomClusterManager : ClusterManager<Post>(this, mMap) {
                     override fun onCameraIdle() {
@@ -456,17 +465,70 @@ class MainActivity :
         })
     }
 
+    private fun dragListener() {
+        // from https://stackoverflow.com/a/20916931/3569329
+        drag_map.setOnTouchListener({ _: View?, event: MotionEvent? ->
+
+            if (linkMode == LinkMode.NOT_LINKING) return@setOnTouchListener false
+
+            val x = Math.round(event!!.x)
+            val y = Math.round(event.y)
+
+            val latLng = mMap.projection.fromScreenLocation(Point(x, y))
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    polyLinePoints.add(latLng)
+                    drawMap()
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    polyLinePoints.add(latLng)
+                    drawMap()
+                }
+            }
+            return@setOnTouchListener true
+        })
+    }
+
+    private fun drawMap() {
+        if (polygon == null) {
+            polygon = mMap.addPolygon(
+                    PolygonOptions()
+                            .addAll(polyLinePoints)
+                            .strokeColor(Color.BLUE)
+                            .fillColor(Color.BLUE)
+                            .strokeWidth(7f)
+            )
+        }
+        polygon?.points = polygon?.points.also {
+            it?.addAll(polyLinePoints)
+        }
+    }
+
     private fun linkButton() {
         link_button.setOnClickListener({
             if (linkMode == LinkMode.NOT_LINKING) {
-                Toast.makeText(this, "Touch a post then another to make a link.", Toast.LENGTH_SHORT).show()
                 linkMode = LinkMode.NONE_PRESSED
                 link_button.size = FloatingActionButton.SIZE_MINI
                 showOnlyUsersPosts()
             } else {
                 linkMode = LinkMode.NOT_LINKING
-                Toast.makeText(this, "Link mode off.", Toast.LENGTH_SHORT).show()
                 link_button.size = FloatingActionButton.SIZE_NORMAL
+
+                if (polygon != null) {
+                    // For each visible post
+                    for (post in mClusterManager.algorithm.items) {
+                        // if polygon contains post
+                        if (PolyUtil.containsLocation(LatLng(post.latitude, post.longitude), polygon!!.points, false)) {
+                            // todo: add to collection
+                            Log.i(tag, post.content)
+                        }
+                    }
+                    polygon?.remove()
+                    polygon = null
+                    polyLinePoints.clear()
+                }
+
                 showAllPosts()
             }
         })
