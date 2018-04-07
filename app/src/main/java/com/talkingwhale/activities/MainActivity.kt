@@ -91,8 +91,7 @@ class MainActivity :
     private val rcLocation = 5
     private val minPostDistanceMeters = 30
     private lateinit var binding: ActivityMainBinding
-    private var linkMode = LinkMode.NOT_LINKING
-    private var linkedPosts = mutableListOf<Post>()
+    private var isLinking = false
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastClusterCenter = LatLng(0.0, 0.0)
     /** Used to get new posts if camera moves too far */
@@ -278,35 +277,6 @@ class MainActivity :
         val post = marker!!
         if (!insideRadius(post.position)) return true
         binding.post = post
-
-        // Handle linking
-        if (linkMode == LinkMode.NONE_PRESSED) {
-            linkedPosts.add(post)
-            linkMode = LinkMode.ONE_PRESSED
-            Toast.makeText(this, "Touch another to finish the link.", Toast.LENGTH_SHORT).show()
-            return true
-        } else if (linkMode == LinkMode.ONE_PRESSED) {
-            if (post == linkedPosts[0]) {
-                Toast.makeText(this, "Cannot link a post to itself!", Toast.LENGTH_SHORT).show()
-                return true
-            }
-            linkedPosts.add(post)
-            val p = linkedPosts[0]
-            if (!p.linkedPosts.contains(linkedPosts[1].postId)) {
-                p.linkedPosts.add(linkedPosts[1].postId)
-            }
-            mainViewModel.putPost(p).observe(this, Observer {
-                if (it != null && it.status == Status.SUCCESS) {
-                    Toast.makeText(this, "Link created.", Toast.LENGTH_SHORT).show()
-                    mainViewModel.setPostBounds(lastCornerLatLng)
-                }
-            })
-            link_button.size = FloatingActionButton.SIZE_NORMAL
-            linkMode = LinkMode.NOT_LINKING
-            linkedPosts.clear()
-            return true
-        }
-
         db.postDao().insert(post)
         val intent = Intent(this, PostViewActivity::class.java)
         intent.putExtra(POST_KEY, post.postId)
@@ -469,7 +439,7 @@ class MainActivity :
         // from https://stackoverflow.com/a/20916931/3569329
         drag_map.setOnTouchListener({ _: View?, event: MotionEvent? ->
 
-            if (linkMode == LinkMode.NOT_LINKING) return@setOnTouchListener false
+            if (!isLinking) return@setOnTouchListener false
 
             val x = Math.round(event!!.x)
             val y = Math.round(event.y)
@@ -507,12 +477,12 @@ class MainActivity :
 
     private fun linkButton() {
         link_button.setOnClickListener({
-            if (linkMode == LinkMode.NOT_LINKING) {
-                linkMode = LinkMode.NONE_PRESSED
+            if (!isLinking) {
+                isLinking = !isLinking
                 link_button.size = FloatingActionButton.SIZE_MINI
                 showOnlyUsersPosts()
             } else {
-                linkMode = LinkMode.NOT_LINKING
+                isLinking = !isLinking
                 link_button.size = FloatingActionButton.SIZE_NORMAL
 
                 if (polygon != null) {
@@ -734,15 +704,6 @@ class MainActivity :
                 })
             }
         })
-    }
-
-    private enum class LinkMode {
-        // Before the user clicks the link button
-        NOT_LINKING,
-        // After they click it once, but before they click a post
-        NONE_PRESSED,
-        // After they click it once, and after they click a post
-        ONE_PRESSED
     }
 
     companion object {
