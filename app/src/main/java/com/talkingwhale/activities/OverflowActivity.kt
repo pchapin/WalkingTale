@@ -34,6 +34,7 @@ class OverflowActivity : AppCompatActivity() {
             override fun onClick(post: Post) {
                 val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
                 intent.putExtra(PostViewActivity.POST_KEY, post.postId)
+                intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
                 startActivity(intent)
             }
         })

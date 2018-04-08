@@ -39,10 +39,8 @@ data class Post(
         var type: PostType,
         @get:DynamoDBAttribute(attributeName = "content")
         var content: String,
-        @get:DynamoDBAttribute(attributeName = "linkedPosts")
-        var linkedPosts: MutableList<String>,
         @get:DynamoDBAttribute(attributeName = "groupId")
-        var groupId: String
+        var groupId: String? = null
 ) : ClusterItem {
     @DynamoDBIgnore
     override fun getSnippet(): String {
@@ -63,7 +61,7 @@ data class Post(
      * Do not use this constructor!
      * Just to make DDB mapper happy
      * */
-    constructor() : this(MainActivity.getRandomUUID(), MainActivity.getRandomUUID(), "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", mutableListOf(), "none")
+    constructor() : this(MainActivity.getRandomUUID(), MainActivity.getRandomUUID(), "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", null)
 }
 
 class PostTypeMarshaller : DynamoDBMarshaller<PostType> {

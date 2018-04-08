@@ -279,6 +279,7 @@ class MainActivity :
         db.postDao().insert(post)
         val intent = Intent(this, PostViewActivity::class.java)
         intent.putExtra(POST_KEY, post.postId)
+        intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
         startActivity(intent)
         return true
     }
@@ -372,9 +373,9 @@ class MainActivity :
         mClusterManager.cluster()
     }
 
-    private fun showOnlyUsersPosts() {
+    private fun showOnlyUsersPosts(userId: String) {
         mClusterManager.clearItems()
-        val usersPosts = postList!!.filter { it.userId == cognitoId }
+        val usersPosts = postList!!.filter { it.userId == userId }
         mClusterManager.addItems(usersPosts)
         mClusterManager.cluster()
     }
@@ -479,7 +480,7 @@ class MainActivity :
             if (!isLinking) {
                 isLinking = !isLinking
                 link_button.size = FloatingActionButton.SIZE_MINI
-                showOnlyUsersPosts()
+                showOnlyUsersPosts(cognitoId)
             } else {
                 isLinking = !isLinking
                 link_button.size = FloatingActionButton.SIZE_NORMAL
@@ -696,8 +697,7 @@ class MainActivity :
                 mutableListOf(),
                 postType!!,
                 content!!,
-                mutableListOf(),
-                "none"
+                null
         )
 
         // Put the file in S3
@@ -748,5 +748,6 @@ class MainActivity :
                 val username = jwt.getClaim("cognito:username").asString()
                 return username ?: jwt.getClaim("given_name").asString()!!
             }
+        const val GROUP_POST_KEY = "GROUP_POST_KEY"
     }
 }

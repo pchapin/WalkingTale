@@ -37,6 +37,9 @@ class PostViewActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_post_view, menu)
+        if (intent.getStringExtra(POST_GROUP_KEY) == null) {
+            menu?.removeItem(R.id.action_see_group)
+        }
         return true
     }
 
@@ -44,6 +47,8 @@ class PostViewActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> finish()
             R.id.action_see_group -> {
+                setResult(RC_GROUP_POST)
+                finish()
             }
         }
         return true
@@ -121,5 +126,7 @@ class PostViewActivity : AppCompatActivity() {
 
     companion object {
         const val POST_KEY = "POST_KEY"
+        const val POST_GROUP_KEY = "POST_GROUP_KEY"
+        const val RC_GROUP_POST = 99
     }
 }
