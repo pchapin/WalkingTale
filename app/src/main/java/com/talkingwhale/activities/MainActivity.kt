@@ -22,7 +22,6 @@ import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -486,14 +485,31 @@ class MainActivity :
                 link_button.size = FloatingActionButton.SIZE_NORMAL
 
                 if (polygon != null) {
-                    // For each visible post
-                    for (post in mClusterManager.algorithm.items) {
-                        // if polygon contains post
-                        if (PolyUtil.containsLocation(LatLng(post.latitude, post.longitude), polygon!!.points, false)) {
-                            // todo: add to collection
-                            Log.i(tag, post.content)
-                        }
+
+                    val postsInGroup = mClusterManager.algorithm.items.filter {
+                        PolyUtil.containsLocation(LatLng(it.latitude, it.longitude), polygon!!.points, false)
                     }
+
+                    val postGroup = PostGroup(cognitoId, getRandomUUID(), postsInGroup.map { it.postId } as MutableList<String>)
+
+                    postsInGroup.map { it.groupId = postGroup.id }
+                    if (postsInGroup.isNotEmpty()) {
+                        mainViewModel.putPostGroup(postGroup).observe(this, Observer {
+                            if (it != null && it.status == Status.SUCCESS) {
+                                mainViewModel.putPosts(postsInGroup).observe(this, Observer {
+                                    if (it != null && it.status == Status.SUCCESS) {
+                                        currentUser.postGroupIds.add(postGroup.id)
+                                        mainViewModel.putUser(currentUser).observe(this, Observer {
+                                            if (it != null && it.status == Status.SUCCESS) {
+                                                Toast.makeText(this, "Post group created!", Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    }
+
                     polygon?.remove()
                     polygon = null
                     polyLinePoints.clear()
@@ -570,7 +586,7 @@ class MainActivity :
     }
 
     private fun createNewUser() {
-        val user = User(cognitoId, cognitoUsername, mutableListOf(), "none", mutableListOf())
+        val user = User(cognitoId, cognitoUsername, mutableListOf(), "none", mutableListOf(), mutableListOf())
         mainViewModel.putUser(user).observe(this, Observer {
             if (it != null) {
                 when (it.status) {
@@ -673,14 +689,15 @@ class MainActivity :
         }
         val post = Post(
                 cognitoId,
-                getRandomPostId(),
+                getRandomUUID(),
                 getDate(),
                 location.latitude,
                 location.longitude,
                 mutableListOf(),
                 postType!!,
                 content!!,
-                mutableListOf()
+                mutableListOf(),
+                "none"
         )
 
         // Put the file in S3
@@ -712,7 +729,7 @@ class MainActivity :
             return Date().time.toString()
         }
 
-        fun getRandomPostId(): String {
+        fun getRandomUUID(): String {
             return UUID.randomUUID().toString()
         }
 

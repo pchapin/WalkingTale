@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.MediaController
@@ -34,12 +35,18 @@ class PostViewActivity : AppCompatActivity() {
         videoView()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_post_view, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
-            onBackPressed()
-            return true
+        when (item?.itemId) {
+            android.R.id.home -> finish()
+            R.id.action_see_group -> {
+            }
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     private fun postObserver() {
@@ -90,21 +97,25 @@ class PostViewActivity : AppCompatActivity() {
         }
     }
 
-//    private fun deletePostButton() {
-//        delete_post_button.setOnClickListener({
-//            mainViewModel.deletePost(binding.post!!).observe(this, Observer {
-//                if (it != null && it.status == Status.SUCCESS) {
-//                    currentUser.createdPosts.remove(binding.post!!.postId)
-//                    mainViewModel.putUser(currentUser).observe(this, Observer {
-//                        if (it != null && it.status == Status.SUCCESS) {
-//                            onBackPressed()
-//                            Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
-//                            mainViewModel.setPostBounds(lastCornerLatLng)
-//                            mClusterManager.cluster()
-//                        }
-//                    })
-//                }
-//            })
+//    private fun deletePost() {
+//        mainViewModel.setUserId(MainActivity.cognitoId)
+//        mainViewModel.currentUser.observe(this, Observer {
+//            var user: User? = null
+//            if (it != null && it.status == Status.SUCCESS) {
+//                user = it.data
+//                mainViewModel.deletePost(binding.post!!).observe(this, Observer {
+//                    if (it != null && it.status == Status.SUCCESS) {
+//                        user!!.createdPosts.remove(binding.post!!.postId)
+//                        mainViewModel.putUser(user).observe(this, Observer {
+//                            if (it != null && it.status == Status.SUCCESS) {
+//                                Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
+//                                setResult()
+//                                finish()
+//                            }
+//                        })
+//                    }
+//                })
+//            }
 //        })
 //    }
 

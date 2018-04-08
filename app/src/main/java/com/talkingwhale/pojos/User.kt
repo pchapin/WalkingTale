@@ -26,11 +26,13 @@ data class User(
         @get:DynamoDBAttribute(attributeName = "userImage")
         var userImage: String,
         @get:DynamoDBAttribute(attributeName = "viewedPosts")
-        var viewedPosts: MutableList<String>
+        var viewedPosts: MutableList<String>,
+        @get:DynamoDBAttribute(attributeName = "postGroupIds")
+        var postGroupIds: MutableList<String>
 ) {
     /**
      * Do not use this constructor!
      * Just to make DDB mapper happy
      * */
-    constructor() : this("none", "none", mutableListOf(), "none", mutableListOf())
+    constructor() : this("none", "none", mutableListOf(), "none", mutableListOf(), mutableListOf())
 }

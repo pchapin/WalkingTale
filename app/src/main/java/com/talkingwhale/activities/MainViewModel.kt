@@ -6,7 +6,9 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
 import com.talkingwhale.pojos.*
+import com.talkingwhale.repository.PostGroupRepository
 import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.repository.UserRepository
 
@@ -15,6 +17,7 @@ class MainViewModel : ViewModel() {
 
     private val postRepository = PostRepository
     private val userRepository = UserRepository
+    private val postGroupRepository = PostGroupRepository
     var currentUser: LiveData<Resource<User>> = MutableLiveData()
     var localPosts: LiveData<Resource<List<Post>>> = MutableLiveData()
     private var postBounds: MutableLiveData<PostRepository.CornerLatLng> = MutableLiveData()
@@ -41,6 +44,10 @@ class MainViewModel : ViewModel() {
         return postRepository.addPost(post)
     }
 
+    fun putPosts(posts: List<Post>): LiveData<Resource<List<DynamoDBMapper.FailedBatch>>> {
+        return postRepository.putPosts(posts)
+    }
+
     fun putFile(pair: Pair<Post, Context>): LiveData<Resource<Post>> {
         if (pair.first.type == PostType.TEXT) {
             val result: MutableLiveData<Resource<Post>> = MutableLiveData()
@@ -56,5 +63,9 @@ class MainViewModel : ViewModel() {
 
     fun deletePost(post: Post): LiveData<Resource<Unit>> {
         return postRepository.deletePost(post)
+    }
+
+    fun putPostGroup(postGroup: PostGroup): LiveData<Resource<Unit>> {
+        return postGroupRepository.putPostGroup(postGroup)
     }
 }
