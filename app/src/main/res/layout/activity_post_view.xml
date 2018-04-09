@@ -70,7 +70,6 @@
                 style="@android:style/Widget.Material.Light.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="50dp"
                 android:contentDescription="play/stop button"
                 android:src="@drawable/ic_play_arrow_black_24dp"
                 app:visibleGone="@{post.type == postType.AUDIO}" />
