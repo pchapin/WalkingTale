@@ -1,5 +1,7 @@
 package com.talkingwhale.activities
 
+import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -18,11 +20,13 @@ class OverflowActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var db: AppDatabase
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_overflow)
         db = AppDatabase.getAppDatabase(this)
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         recyclerView()
@@ -35,12 +39,21 @@ class OverflowActivity : AppCompatActivity() {
                 val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
                 intent.putExtra(PostViewActivity.POST_KEY, post.postId)
                 intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
-                startActivity(intent)
+                startActivityForResult(intent, PostViewActivity.RC_GROUP_POST)
             }
         })
         recyclerView = my_recycler_view.apply {
             layoutManager = GridLayoutManager(this@OverflowActivity, 2)
             adapter = viewAdapter
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == PostViewActivity.RC_GROUP_POST) {
+            val i = Intent()
+            i.putExtra(PostViewActivity.POST_GROUP_GROUPID_KEY, data?.getStringExtra(PostViewActivity.POST_GROUP_GROUPID_KEY))
+            setResult(Activity.RESULT_OK, i)
+            finish()
         }
     }
 

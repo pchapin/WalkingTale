@@ -22,6 +22,7 @@ class MainViewModel : ViewModel() {
     var localPosts: LiveData<Resource<List<Post>>> = MutableLiveData()
     private var postBounds: MutableLiveData<PostRepository.CornerLatLng> = MutableLiveData()
     private var userId: MutableLiveData<String> = MutableLiveData()
+    var userIdToDisplay: String? = null
 
     init {
         localPosts = Transformations.switchMap(postBounds, Function {

@@ -20,6 +20,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -124,6 +125,12 @@ class MainActivity :
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
+    }
+
+    override fun onBackPressed() {
+        if (nav_view.visibility == View.VISIBLE) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -251,7 +258,7 @@ class MainActivity :
             db.postDao().insertPosts(cluster.items.toList())
             val intent = Intent(this, OverflowActivity::class.java)
             intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
-            startActivity(intent)
+            startActivityForResult(intent, PostViewActivity.RC_GROUP_POST)
         }
 
         // Animate camera to the bounds
@@ -280,7 +287,7 @@ class MainActivity :
         val intent = Intent(this, PostViewActivity::class.java)
         intent.putExtra(POST_KEY, post.postId)
         intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
-        startActivity(intent)
+        startActivityForResult(intent, PostViewActivity.RC_GROUP_POST)
         return true
     }
 
@@ -376,6 +383,13 @@ class MainActivity :
     private fun showOnlyUsersPosts(userId: String) {
         mClusterManager.clearItems()
         val usersPosts = postList!!.filter { it.userId == userId }
+        mClusterManager.addItems(usersPosts)
+        mClusterManager.cluster()
+    }
+
+    private fun showOnlyGroupPosts(groupId: String) {
+        mClusterManager.clearItems()
+        val usersPosts = postList!!.filter { it.groupId == groupId }
         mClusterManager.addItems(usersPosts)
         mClusterManager.cluster()
     }
@@ -652,6 +666,30 @@ class MainActivity :
         mUiSettings.isIndoorLevelPickerEnabled = false
     }
 
+    fun doneButton(v: View) {
+        fabDisplay(true)
+        showAllPosts()
+    }
+
+    private fun fabDisplay(show: Boolean) {
+        for (i in 0..top_level_constraint_layout.childCount) {
+            try {
+                val fab = top_level_constraint_layout.getChildAt(i) as FloatingActionButton
+                if (show) {
+                    fab.show()
+                } else {
+                    fab.hide()
+                }
+            } catch (e: ClassCastException) {
+            }
+        }
+        if (show) {
+            done_button.hide()
+        } else {
+            done_button.show()
+        }
+    }
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
 
@@ -686,6 +724,15 @@ class MainActivity :
             rcText -> {
                 content = data!!.getStringExtra(TextInputActivity.TEXT_KEY)
                 postType = TEXT
+            }
+            PostViewActivity.RC_GROUP_POST -> {
+                val idToDisplay = data?.getStringExtra(PostViewActivity.POST_GROUP_GROUPID_KEY)
+                if (idToDisplay != null) {
+                    showOnlyGroupPosts(idToDisplay)
+                    Snackbar.make(top_level_constraint_layout, "Showing group posts", Snackbar.LENGTH_LONG).show()
+                    fabDisplay(false)
+                }
+                return
             }
         }
         val post = Post(

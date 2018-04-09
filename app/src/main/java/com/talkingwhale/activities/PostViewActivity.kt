@@ -1,6 +1,8 @@
 package com.talkingwhale.activities
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -47,7 +49,9 @@ class PostViewActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> finish()
             R.id.action_see_group -> {
-                setResult(RC_GROUP_POST)
+                val i = Intent()
+                i.putExtra(POST_GROUP_GROUPID_KEY, binding.post?.groupId)
+                setResult(Activity.RESULT_OK, i)
                 finish()
             }
         }
@@ -127,6 +131,7 @@ class PostViewActivity : AppCompatActivity() {
     companion object {
         const val POST_KEY = "POST_KEY"
         const val POST_GROUP_KEY = "POST_GROUP_KEY"
+        const val POST_GROUP_GROUPID_KEY = "POST_GROUP_GROUPID_KEY"
         const val RC_GROUP_POST = 99
     }
 }
