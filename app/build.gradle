@@ -49,9 +49,8 @@ android {
         // we could knock the min version down a few
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 4
-        versionName "4.0"
-        multiDexEnabled true
+        versionCode 5
+        versionName "5.0"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         signingConfig signingConfigs.config
     }
@@ -76,11 +75,6 @@ android {
         androidTest.java.srcDirs += "src/test-common/java"
         test.java.srcDirs += "src/test-common/java"
     }
-    lintOptions {
-        lintConfig rootProject.file('lint.xml')
-    }
-    productFlavors {
-    }
 }
 
 jacoco {
@@ -104,15 +98,13 @@ dependencies {
     // Extensions = ViewModel + LiveData
     implementation "android.arch.lifecycle:extensions:1.1.1"
     kapt "android.arch.lifecycle:compiler:1.1.1"
+
     // Room
     implementation "android.arch.persistence.room:runtime:1.0.0"
     kapt "android.arch.persistence.room:compiler:1.0.0"
 
-    // Circle Image view
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
-
     //Image Compressor
-    compile 'id.zelory:compressor:2.1.0'
+    implementation 'id.zelory:compressor:2.1.0'
 
     // Javascript Web Token
     implementation 'com.auth0.android:jwtdecode:1.1.1'
@@ -122,15 +114,15 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$gms_version"
 
     // Amazon Web Services
-    compile "com.amazonaws:aws-android-sdk-core:$aws_version"
-    compile 'com.amazonaws:aws-android-sdk-auth-core:2.6.16'
-    compile 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.16'
-    compile "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
-    compile "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
-    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    compile("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    compile("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
-    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
+    implementation "com.amazonaws:aws-android-sdk-core:$aws_version"
+    implementation 'com.amazonaws:aws-android-sdk-auth-core:2.6.16'
+    implementation 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.16'
+    implementation "com.amazonaws:aws-android-sdk-cognitoidentityprovider:$aws_version"
+    implementation "com.amazonaws:aws-android-sdk-pinpoint:$aws_version"
+    implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
+    implementation("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
+    implementation("com.amazonaws:aws-android-sdk-auth-ui:$aws_version") { transitive = true }
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.15'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -142,10 +134,10 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
         transitive = true
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'
