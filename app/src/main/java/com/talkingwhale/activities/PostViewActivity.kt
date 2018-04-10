@@ -106,28 +106,6 @@ class PostViewActivity : AppCompatActivity() {
         }
     }
 
-//    private fun deletePost() {
-//        mainViewModel.setCurrentUserId(MainActivity.cognitoId)
-//        mainViewModel.currentUser.observe(this, Observer {
-//            var user: User? = null
-//            if (it != null && it.status == Status.SUCCESS) {
-//                user = it.data
-//                mainViewModel.deletePost(binding.post!!).observe(this, Observer {
-//                    if (it != null && it.status == Status.SUCCESS) {
-//                        user!!.createdPosts.remove(binding.post!!.postId)
-//                        mainViewModel.putUser(user).observe(this, Observer {
-//                            if (it != null && it.status == Status.SUCCESS) {
-//                                Toast.makeText(this, "Post deleted.", Toast.LENGTH_SHORT).show()
-//                                setResult()
-//                                finish()
-//                            }
-//                        })
-//                    }
-//                })
-//            }
-//        })
-//    }
-
     companion object {
         const val POST_KEY = "POST_KEY"
         const val POST_GROUP_KEY = "POST_GROUP_KEY"

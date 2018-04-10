@@ -3,6 +3,7 @@ package com.talkingwhale.ui
 import android.databinding.DataBindingComponent
 import android.databinding.DataBindingUtil
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.talkingwhale.R
 import com.talkingwhale.databinding.ItemPostBinding
@@ -12,19 +13,30 @@ import java.util.*
 
 class PostAdapter(
         private var dataBindingComponent: DataBindingComponent,
-        private val callback: PostClickCallback) :
+        private val callback: PostClickCallback,
+        private val longClickCallback: PostLongClickCallback? = null) :
         DataBoundListAdapter<Post, ItemPostBinding>() {
 
     override fun createBinding(parent: ViewGroup?): ItemPostBinding {
-        val binding: ItemPostBinding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent!!.context),
-                        R.layout.item_post, parent, false,
-                        dataBindingComponent)
+        val binding: ItemPostBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent!!.context),
+                R.layout.item_post,
+                parent,
+                false,
+                dataBindingComponent)
         binding.root.setOnClickListener {
             val note = binding.post
             if (note != null) {
                 callback.onClick(note)
             }
+        }
+        binding.root.setOnLongClickListener {
+            val note = binding.post
+            if (note != null && longClickCallback != null) {
+                longClickCallback.onClick(note, binding.root)
+                return@setOnLongClickListener true
+            }
+            return@setOnLongClickListener false
         }
         return binding
     }
@@ -43,5 +55,9 @@ class PostAdapter(
 
     interface PostClickCallback {
         fun onClick(post: Post)
+    }
+
+    interface PostLongClickCallback {
+        fun onClick(post: Post, view: View)
     }
 }

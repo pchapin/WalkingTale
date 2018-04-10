@@ -84,6 +84,7 @@ class MainActivity :
     private val rcVideo = 3
     private val rcText = 4
     private val rcLocation = 5
+    private val rcMyPosts = 6
     private lateinit var binding: ActivityMainBinding
     private var isLinking = false
     private lateinit var mClusterManager: ClusterManager<Post>
@@ -147,7 +148,7 @@ class MainActivity :
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://toddcooke.github.io/walking-tale-site/")))
                 }
                 R.id.action_my_posts -> {
-                    startActivity(Intent(this, MyPostsActivity::class.java))
+                    startActivityForResult(Intent(this, MyPostsActivity::class.java), rcMyPosts)
                 }
                 R.id.action_settings -> {
                 }
@@ -735,7 +736,13 @@ class MainActivity :
                 }
                 return
             }
+            rcMyPosts -> {
+                // User may have deleted some posts in MyPosts activity, so fetch again
+                mainViewModel.setPostBounds(lastCornerLatLng)
+                return
+            }
         }
+
         val post = Post(
                 cognitoId,
                 getRandomUUID(),
