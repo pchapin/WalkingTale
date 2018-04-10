@@ -107,7 +107,7 @@ class PostViewActivity : AppCompatActivity() {
     }
 
 //    private fun deletePost() {
-//        mainViewModel.setUserId(MainActivity.cognitoId)
+//        mainViewModel.setCurrentUserId(MainActivity.cognitoId)
 //        mainViewModel.currentUser.observe(this, Observer {
 //            var user: User? = null
 //            if (it != null && it.status == Status.SUCCESS) {

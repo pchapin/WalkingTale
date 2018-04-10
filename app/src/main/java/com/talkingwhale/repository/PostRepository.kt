@@ -21,6 +21,7 @@ import android.content.Context
 import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
@@ -122,6 +123,20 @@ object PostRepository {
         val result = object : AbstractTask<List<Post>, List<DynamoDBMapper.FailedBatch>>(posts) {
             override fun run() {
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.batchSave(posts), ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
+    }
+
+    fun getPostsForUser(userId: String): LiveData<Resource<List<Post>>> {
+        val result = object : AbstractTask<String, List<Post>>(userId) {
+            override fun run() {
+
+                val queryExpression = DynamoDBQueryExpression<Post>()
+                        .withHashKeyValues(Post().copy(userId = userId))
+
+                result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.query(Post::class.java, queryExpression), ""))
             }
         }
         appExecutors.networkIO().execute(result)

@@ -8,8 +8,13 @@
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_about"
-        android:icon="@drawable/ic_directions_walk_black_24dp"
+        android:icon="@drawable/ic_landscape_black_24dp"
         android:title="About"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_my_posts"
+        android:icon="@drawable/ic_directions_walk_black_24dp"
+        android:title="My posts"
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_settings"

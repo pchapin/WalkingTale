@@ -146,6 +146,9 @@ class MainActivity :
                 R.id.action_about -> {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://toddcooke.github.io/walking-tale-site/")))
                 }
+                R.id.action_my_posts -> {
+                    startActivity(Intent(this, MyPostsActivity::class.java))
+                }
                 R.id.action_settings -> {
                 }
             }
@@ -593,7 +596,7 @@ class MainActivity :
                 }
             }
         })
-        mainViewModel.setUserId(cognitoId)
+        mainViewModel.setCurrentUserId(cognitoId)
     }
 
     private fun createNewUser() {
@@ -603,7 +606,7 @@ class MainActivity :
                 when (it.status) {
                     Status.SUCCESS -> {
                         Analytics.logEvent(Analytics.EventType.CreatedUser, tag)
-                        mainViewModel.setUserId(cognitoId)
+                        mainViewModel.setCurrentUserId(cognitoId)
                     }
                     Status.ERROR -> {
                     }

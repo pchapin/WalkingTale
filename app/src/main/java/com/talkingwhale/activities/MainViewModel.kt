@@ -20,21 +20,24 @@ class MainViewModel : ViewModel() {
     private val postGroupRepository = PostGroupRepository
     var currentUser: LiveData<Resource<User>> = MutableLiveData()
     var localPosts: LiveData<Resource<List<Post>>> = MutableLiveData()
+    var usersPosts: LiveData<Resource<List<Post>>> = MutableLiveData()
     private var postBounds: MutableLiveData<PostRepository.CornerLatLng> = MutableLiveData()
-    private var userId: MutableLiveData<String> = MutableLiveData()
-    var userIdToDisplay: String? = null
+    private var currentUserId: MutableLiveData<String> = MutableLiveData()
 
     init {
         localPosts = Transformations.switchMap(postBounds, Function {
             return@Function postRepository.getNearbyPosts(it)
         })
-        currentUser = Transformations.switchMap(userId, Function {
+        currentUser = Transformations.switchMap(currentUserId, Function {
             return@Function userRepository.loadUser(it)
+        })
+        usersPosts = Transformations.switchMap(currentUserId, Function {
+            return@Function postRepository.getPostsForUser(it)
         })
     }
 
-    fun setUserId(userId: String) {
-        this.userId.value = userId
+    fun setCurrentUserId(userId: String) {
+        this.currentUserId.value = userId
     }
 
     fun putUser(user: User): LiveData<Resource<Unit>> {

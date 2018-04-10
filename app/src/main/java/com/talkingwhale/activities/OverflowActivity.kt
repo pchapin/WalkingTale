@@ -3,6 +3,7 @@ package com.talkingwhale.activities
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.databinding.DataBindingComponent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -15,12 +16,13 @@ import com.talkingwhale.pojos.Post
 import com.talkingwhale.ui.PostAdapter
 import kotlinx.android.synthetic.main.activity_overflow.*
 
-class OverflowActivity : AppCompatActivity() {
+class OverflowActivity : AppCompatActivity(), DataBindingComponent {
     private lateinit var binding: ActivityOverflowBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var db: AppDatabase
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var adapter: PostAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +35,7 @@ class OverflowActivity : AppCompatActivity() {
     }
 
     private fun recyclerView() {
-        val posts = db.postDao().loadPosts(intent.getStringArrayExtra(POST_LIST_KEY).toList())
-        viewAdapter = PostAdapter(posts.toTypedArray(), object : PostAdapter.PostCallback {
+        adapter = PostAdapter(this, object : PostAdapter.PostDeleteCallback {
             override fun onClick(post: Post) {
                 val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
                 intent.putExtra(PostViewActivity.POST_KEY, post.postId)
@@ -44,8 +45,11 @@ class OverflowActivity : AppCompatActivity() {
         })
         recyclerView = my_recycler_view.apply {
             layoutManager = GridLayoutManager(this@OverflowActivity, 2)
-            adapter = viewAdapter
+            adapter = this@OverflowActivity.adapter
         }
+
+        val posts = db.postDao().loadPosts(intent.getStringArrayExtra(POST_LIST_KEY).toList())
+        adapter.replace(posts)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
