@@ -132,10 +132,8 @@ object PostRepository {
     fun getPostsForUser(userId: String): LiveData<Resource<List<Post>>> {
         val result = object : AbstractTask<String, List<Post>>(userId) {
             override fun run() {
-
                 val queryExpression = DynamoDBQueryExpression<Post>()
                         .withHashKeyValues(Post().copy(userId = userId))
-
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.query(Post::class.java, queryExpression), ""))
             }
         }

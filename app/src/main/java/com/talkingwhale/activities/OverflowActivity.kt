@@ -35,7 +35,7 @@ class OverflowActivity : AppCompatActivity(), DataBindingComponent {
     }
 
     private fun recyclerView() {
-        adapter = PostAdapter(this, object : PostAdapter.PostDeleteCallback {
+        adapter = PostAdapter(this, object : PostAdapter.PostClickCallback {
             override fun onClick(post: Post) {
                 val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
                 intent.putExtra(PostViewActivity.POST_KEY, post.postId)

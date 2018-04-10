@@ -98,7 +98,8 @@
         <activity
             android:name=".activities.MyPostsActivity"
             android:label="@string/title_activity_my_posts"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

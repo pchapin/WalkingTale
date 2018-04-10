@@ -69,5 +69,7 @@
     <string name="record_a_video_post">Record a video post</string>
     <string name="write_a_text_post">Write a text post</string>
     <string name="moves_camera_to_your_current_position">Moves camera to your current position</string>
-    <string name="title_activity_my_posts">MyPostsActivity</string>
+
+    <!--My Posts Activity-->
+    <string name="title_activity_my_posts">My Posts</string>
 </resources>

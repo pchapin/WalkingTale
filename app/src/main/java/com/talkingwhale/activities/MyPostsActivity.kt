@@ -2,6 +2,7 @@ package com.talkingwhale.activities
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.databinding.DataBindingComponent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -37,9 +38,12 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
     }
 
     private fun setupRecyclerView() {
-        adapter = PostAdapter(this, object : PostAdapter.PostDeleteCallback {
+        adapter = PostAdapter(this, object : PostAdapter.PostClickCallback {
             override fun onClick(post: Post) {
-                //todo add ability to delete post
+                db.postDao().insert(post)
+                val intent = Intent(this@MyPostsActivity, PostViewActivity::class.java)
+                intent.putExtra(PostViewActivity.POST_KEY, post.postId)
+                startActivity(intent)
             }
         })
         recyclerView = my_post_list.apply {

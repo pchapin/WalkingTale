@@ -12,7 +12,7 @@ import java.util.*
 
 class PostAdapter(
         private var dataBindingComponent: DataBindingComponent,
-        private val callback: PostDeleteCallback) :
+        private val callback: PostClickCallback) :
         DataBoundListAdapter<Post, ItemPostBinding>() {
 
     override fun createBinding(parent: ViewGroup?): ItemPostBinding {
@@ -41,7 +41,7 @@ class PostAdapter(
         return Objects.equals(oldItem?.content, newItem?.content)
     }
 
-    interface PostDeleteCallback {
+    interface PostClickCallback {
         fun onClick(post: Post)
     }
 }
