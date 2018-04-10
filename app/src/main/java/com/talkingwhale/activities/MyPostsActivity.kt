@@ -43,8 +43,7 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupRecyclerView()
         postListObserver()
-        val i = Intent()
-        setResult(Activity.RESULT_OK, i)
+        setResult(Activity.RESULT_OK, Intent())
     }
 
     private fun setupRecyclerView() {

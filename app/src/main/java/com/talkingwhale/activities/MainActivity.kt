@@ -509,7 +509,8 @@ class MainActivity :
 
                     postsInGroup.map { it.groupId = postGroup.id }
                     if (postsInGroup.isNotEmpty()) {
-                        mainViewModel.putPostGroup(postGroup).observe(this, Observer {
+                        val liveData = mainViewModel.putPostGroup(postGroup)
+                        liveData.observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
                                 mainViewModel.putPosts(postsInGroup).observe(this, Observer {
                                     if (it != null && it.status == Status.SUCCESS) {
@@ -517,6 +518,7 @@ class MainActivity :
                                         mainViewModel.putUser(currentUser).observe(this, Observer {
                                             if (it != null && it.status == Status.SUCCESS) {
                                                 Toast.makeText(this, "Post group created!", Toast.LENGTH_SHORT).show()
+                                                liveData.removeObservers(this)
                                             }
                                         })
                                     }
@@ -602,12 +604,14 @@ class MainActivity :
 
     private fun createNewUser() {
         val user = User(cognitoId, cognitoUsername, mutableListOf(), "none", mutableListOf(), mutableListOf())
-        mainViewModel.putUser(user).observe(this, Observer {
+        val liveData = mainViewModel.putUser(user)
+        liveData.observe(this, Observer {
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {
                         Analytics.logEvent(Analytics.EventType.CreatedUser, tag)
                         mainViewModel.setCurrentUserId(cognitoId)
+                        liveData.removeObservers(this)
                     }
                     Status.ERROR -> {
                     }
@@ -756,7 +760,8 @@ class MainActivity :
         )
 
         // Put the file in S3
-        mainViewModel.putFile(Pair(post, this)).observe(this, Observer {
+        val liveData = mainViewModel.putFile(Pair(post, this))
+        liveData.observe(this, Observer {
             if (it != null && it.status == Status.SUCCESS) {
                 val newPost = it.data!!
                 // Add the post to DDB
@@ -770,6 +775,7 @@ class MainActivity :
                             if (it != null && it.status == Status.SUCCESS) {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
                                 mainViewModel.setPostBounds(lastCornerLatLng)
+                                liveData.removeObservers(this)
                             }
                         })
                     }
