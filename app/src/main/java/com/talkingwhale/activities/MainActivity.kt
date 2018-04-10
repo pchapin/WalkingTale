@@ -11,7 +11,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.location.Location
@@ -51,8 +50,6 @@ import com.google.maps.android.ui.IconGenerator
 import com.talkingwhale.R
 import com.talkingwhale.activities.OverflowActivity.Companion.POST_LIST_KEY
 import com.talkingwhale.activities.PostViewActivity.Companion.POST_KEY
-import com.talkingwhale.activities.TextInputActivity.Companion.LATITUDE_KEY
-import com.talkingwhale.activities.TextInputActivity.Companion.LONGITUDE_KEY
 import com.talkingwhale.databinding.ActivityMainBinding
 import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.pojos.*
@@ -81,15 +78,12 @@ class MainActivity :
     /**The users current location*/
     private lateinit var location: LatLng
     private var file: File? = null
-    private val markerWidth = 200
-    private val markerHeight = 200
     private var cameraOnUserOnce = false
     private val rcAudio = 1
     private val rcPicture = 2
     private val rcVideo = 3
     private val rcText = 4
     private val rcLocation = 5
-    private val minPostDistanceMeters = 30
     private lateinit var binding: ActivityMainBinding
     private var isLinking = false
     private lateinit var mClusterManager: ClusterManager<Post>
@@ -176,7 +170,7 @@ class MainActivity :
                                 .asBitmap()
                                 .load(resources.getString(R.string.s3_hostname) + post.content)
                                 .apply(RequestOptions().centerCrop())
-                                .into(object : SimpleTarget<Bitmap>(markerWidth, markerHeight) {
+                                .into(object : SimpleTarget<Bitmap>(200, 200) {
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
                                         val imageView = ImageView(this@MainActivity)
                                         imageView.setImageBitmap(resource)
@@ -207,6 +201,7 @@ class MainActivity :
                 videoButton()
                 audioButton()
                 linkButton()
+                doneButton()
                 filterButton()
                 iconThread()
                 dragListener()
@@ -232,6 +227,8 @@ class MainActivity :
 
     private fun possiblyGetNewPosts() {
         if (lastCameraCenter == null) return
+        if (isLinking) return
+        if (done_button.visibility == View.VISIBLE) return
         // If camera has moved too far, get new posts
         if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 250) {
             lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
@@ -271,6 +268,7 @@ class MainActivity :
     }
 
     private fun insideRadius(latLng: LatLng): Boolean {
+        val minPostDistanceMeters = 30
         val distanceFromPost = SphericalUtil.computeDistanceBetween(location, latLng)
         if (distanceFromPost > minPostDistanceMeters) {
             Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
@@ -410,8 +408,6 @@ class MainActivity :
     private fun textButton() {
         text_button.setOnClickListener({
             val intent = Intent(this, TextInputActivity::class.java)
-            intent.putExtra(LATITUDE_KEY, location.latitude)
-            intent.putExtra(LONGITUDE_KEY, location.longitude)
             startActivityForResult(intent, rcText)
         })
     }
@@ -479,8 +475,8 @@ class MainActivity :
             polygon = mMap.addPolygon(
                     PolygonOptions()
                             .addAll(polyLinePoints)
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.BLUE)
+                            .strokeColor(resources.getColor(R.color.map_polyline_color, theme))
+                            .fillColor(resources.getColor(R.color.map_polyline_color, theme))
                             .strokeWidth(7f)
             )
         }
@@ -666,9 +662,11 @@ class MainActivity :
         mUiSettings.isIndoorLevelPickerEnabled = false
     }
 
-    fun doneButton(v: View) {
-        fabDisplay(true)
-        showAllPosts()
+    private fun doneButton() {
+        done_button.setOnClickListener {
+            fabDisplay(true)
+            showAllPosts()
+        }
     }
 
     private fun fabDisplay(show: Boolean) {
@@ -784,7 +782,7 @@ class MainActivity :
             return LatLng(location.latitude, location.longitude)
         }
 
-        const val DEFAULT_ZOOM = 18f
+        private const val DEFAULT_ZOOM = 18f
         val cognitoId: String
             get() = IdentityManager.getDefaultIdentityManager().cachedUserID
 
@@ -795,6 +793,5 @@ class MainActivity :
                 val username = jwt.getClaim("cognito:username").asString()
                 return username ?: jwt.getClaim("given_name").asString()!!
             }
-        const val GROUP_POST_KEY = "GROUP_POST_KEY"
     }
 }

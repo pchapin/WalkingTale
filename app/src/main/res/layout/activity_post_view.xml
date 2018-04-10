@@ -43,7 +43,7 @@
                 imageUrl="@{post}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="post image"
+                android:contentDescription="@string/post_image"
                 android:scaleType="centerCrop"
                 app:visibleGone="@{post.type == postType.PICTURE}"
                 tools:src="@drawable/ic_camera_alt_black_24dp" />
@@ -70,7 +70,7 @@
                 style="@android:style/Widget.Material.Light.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="play/stop button"
+                android:contentDescription="@string/play_stop_button"
                 android:src="@drawable/ic_play_arrow_black_24dp"
                 app:visibleGone="@{post.type == postType.AUDIO}" />
 

@@ -14,7 +14,7 @@ Walking Tale was made by four seniors at
 On the backend, several AWS services are used. A DynamoDb table stores the posts,
 an S3 bucket stores the media, and a Cognito user pool authenticates users.
 
-On the frontend android side, multiple android architecture components are used.
+On the android side, multiple android architecture components are used.
 Room stores posts in a local db, Viewmodels hold on to data that should survive
 lifecycle changes, and Livedata is used to observe data as it changes.
 

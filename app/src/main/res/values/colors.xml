@@ -18,6 +18,5 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#f70e5e</color>
-    <color name="black_overlay">#66000000</color>
-    <color name="black">#000</color>
+    <color name="map_polyline_color">#5f6ffd</color>
 </resources>

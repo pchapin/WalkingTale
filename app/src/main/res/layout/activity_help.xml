@@ -27,7 +27,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_my_location_black_24dp"
         android:padding="16dp"
-        android:text="Moves camera to your current position" />
+        android:text="@string/moves_camera_to_your_current_position" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_timeline_black_24dp"
         android:padding="16dp"
-        android:text="Create a group of posts" />
+        android:text="@string/create_a_group_of_posts" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_filter_list_black_24dp"
         android:padding="16dp"
-        android:text="Filters the visible posts" />
+        android:text="@string/filters_the_visible_posts" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_mic_black_24dp"
         android:padding="16dp"
-        android:text="Record an audio post" />
+        android:text="@string/record_an_audio_post" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_camera_alt_black_24dp"
         android:padding="16dp"
-        android:text="Take a picture post" />
+        android:text="@string/take_a_picture_post" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -67,7 +67,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_videocam_black_24dp"
         android:padding="16dp"
-        android:text="Record a video post" />
+        android:text="@string/record_a_video_post" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -75,5 +75,5 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_textsms_black_24dp"
         android:padding="16dp"
-        android:text="Write a text post" />
+        android:text="@string/write_a_text_post" />
 </LinearLayout>

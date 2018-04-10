@@ -41,8 +41,6 @@ class TextInputActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val LATITUDE_KEY = "LATITUDE_KEY"
-        const val LONGITUDE_KEY = "LONGITUDE_KEY"
         const val TEXT_KEY = "TEXT_KEY"
     }
 }

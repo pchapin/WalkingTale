@@ -19,8 +19,7 @@
 
     <!--Permissions-->
     <string name="permission_rationale">Location permission is needed for core functionality</string>
-    <string name="permission_denied_explanation">Permission was denied, but is needed for core
-        functionality.</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
     <string name="settings">Settings</string>
 
     <!--Location-->
@@ -48,16 +47,26 @@
     <string name="stop_playing">Stop playing</string>
     <string name="title_activity_audio_record">Audio Post</string>
 
-
     <!--Text input activity-->
     <string name="title_activity_text_input">Text Post</string>
+    <string name="enter_text_for_post">Enter text for post</string>
+    <string name="post_this">Post this.</string>
 
-    <!--Note View Activity-->
+    <!--Post View Activity-->
     <string name="title_activity_note_view">Post</string>
+    <string name="post_image">post image</string>
+    <string name="play_stop_button">play/stop button</string>
 
     <!--Overflow activity-->
     <string name="title_activity_overflow">Posts</string>
 
     <!--Help Activity-->
     <string name="title_activity_help">Help</string>
+    <string name="create_a_group_of_posts">Create a group of posts</string>
+    <string name="filters_the_visible_posts">Filters the visible posts</string>
+    <string name="record_an_audio_post">Record an audio post</string>
+    <string name="take_a_picture_post">Take a picture post</string>
+    <string name="record_a_video_post">Record a video post</string>
+    <string name="write_a_text_post">Write a text post</string>
+    <string name="moves_camera_to_your_current_position">Moves camera to your current position</string>
 </resources>
