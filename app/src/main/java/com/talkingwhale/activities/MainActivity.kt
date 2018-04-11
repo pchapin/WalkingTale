@@ -19,6 +19,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.FloatingActionButton.SIZE_MINI
+import android.support.design.widget.FloatingActionButton.SIZE_NORMAL
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
@@ -538,24 +540,24 @@ class MainActivity :
     }
 
     private fun filterButton() {
-        filter_button.setOnClickListener({
+        val filterItems = arrayOf("My Posts", "All Posts", "Recent Posts")
+        filter_button.setOnClickListener {
+            if (filter_button.size == SIZE_MINI) {
+                filter_button.size = SIZE_NORMAL
+                return@setOnClickListener
+            }
             AlertDialog.Builder(this)
                     .setTitle("Filter posts")
-                    .setMultiChoiceItems(
-                            R.array.genre_array,
-                            selectedFilterItemsBoolean,
-                            { _, which, isChecked ->
-                                if (isChecked) {
-                                    selectedFilterItems.add(which)
-                                } else if (selectedFilterItems.contains(which)) {
-                                    selectedFilterItems.remove(which)
-                                }
-                            }).setPositiveButton("ok") { _, _ ->
-                        run {
+                    .setItems(filterItems, { dialog, which ->
+                        when (which) {
+                            0 -> showOnlyUsersPosts(cognitoId)
+                            1 -> showAllPosts()
+                            2 -> Unit
                         }
-                    }
+                        filter_button.size = SIZE_MINI
+                    })
                     .show()
-        })
+        }
     }
 
     private fun locationListener() {
