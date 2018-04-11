@@ -654,6 +654,7 @@ class MainActivity :
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
+        mMap.isMyLocationEnabled = true
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
