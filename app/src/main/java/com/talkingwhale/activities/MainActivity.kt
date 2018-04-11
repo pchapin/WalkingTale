@@ -95,7 +95,6 @@ class MainActivity :
     private var lastCameraCenter: LatLng? = null
     /** Needed to filter ddb results */
     private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
-    private var selectedFilterItems = mutableListOf<Int>()
     private lateinit var selectedFilterItemsBoolean: BooleanArray
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
@@ -462,15 +461,9 @@ class MainActivity :
 
             val latLng = mMap.projection.fromScreenLocation(Point(x, y))
 
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    polyLinePoints.add(latLng)
-                    drawMap()
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    polyLinePoints.add(latLng)
-                    drawMap()
-                }
+            if (event.action == MotionEvent.ACTION_MOVE) {
+                polyLinePoints.add(latLng)
+                drawMap()
             }
             return@setOnTouchListener true
         })
@@ -482,17 +475,17 @@ class MainActivity :
                     PolygonOptions()
                             .addAll(polyLinePoints)
                             .strokeColor(resources.getColor(R.color.map_polyline_color, theme))
-                            .fillColor(resources.getColor(R.color.map_polyline_color, theme))
                             .strokeWidth(7f)
             )
         }
         polygon?.points = polygon?.points.also {
+            it?.clear()
             it?.addAll(polyLinePoints)
         }
     }
 
     private fun linkButton() {
-        link_button.setOnClickListener({
+        link_button.setOnClickListener {
             if (!isLinking) {
                 isLinking = !isLinking
                 link_button.size = FloatingActionButton.SIZE_MINI
@@ -527,6 +520,8 @@ class MainActivity :
                                 })
                             }
                         })
+                    } else {
+                        toast("No posts in group.")
                     }
 
                     polygon?.remove()
@@ -536,7 +531,7 @@ class MainActivity :
 
                 showAllPosts()
             }
-        })
+        }
     }
 
     private fun filterButton() {
@@ -548,7 +543,7 @@ class MainActivity :
             }
             AlertDialog.Builder(this)
                     .setTitle("Filter posts")
-                    .setItems(filterItems, { dialog, which ->
+                    .setItems(filterItems, { _, which ->
                         when (which) {
                             0 -> showOnlyUsersPosts(cognitoId)
                             1 -> showAllPosts()
