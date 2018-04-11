@@ -222,6 +222,7 @@ class MainActivity :
                 mMap.setOnCameraIdleListener(mClusterManager)
                 mMap.setOnMarkerClickListener(mClusterManager)
                 mMap.setOnInfoWindowClickListener(mClusterManager)
+                mMap.isMyLocationEnabled = true
                 mClusterManager.setOnClusterClickListener(this)
                 mClusterManager.setOnClusterInfoWindowClickListener(this)
                 mClusterManager.setOnClusterItemClickListener(this)
@@ -654,7 +655,6 @@ class MainActivity :
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
-        mMap.isMyLocationEnabled = true
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
