@@ -95,7 +95,6 @@ class MainActivity :
     private var lastCameraCenter: LatLng? = null
     /** Needed to filter ddb results */
     private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
-    private lateinit var selectedFilterItemsBoolean: BooleanArray
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
     private var postList: List<Post>? = null
@@ -113,7 +112,6 @@ class MainActivity :
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        selectedFilterItemsBoolean = BooleanArray(resources.getStringArray(R.array.genre_array).size)
         iconGenerator = IconGenerator(this)
         Analytics.init(this)
         navigationDrawer()
@@ -205,7 +203,7 @@ class MainActivity :
                 nearbyPosts()
                 videoButton()
                 audioButton()
-                linkButton()
+                groupButton()
                 doneButton()
                 filterButton()
                 iconThread()
@@ -485,15 +483,18 @@ class MainActivity :
         }
     }
 
-    private fun linkButton() {
-        link_button.setOnClickListener {
+    private fun groupButton() {
+        group_button.setOnClickListener {
             if (!isLinking) {
                 isLinking = !isLinking
-                link_button.size = FloatingActionButton.SIZE_MINI
+//                group_button.size = FloatingActionButton.SIZE_MINI
                 showOnlyUsersPosts(cognitoId)
+                fabDisplay(false)
+
             } else {
                 isLinking = !isLinking
-                link_button.size = FloatingActionButton.SIZE_NORMAL
+//                group_button.size = FloatingActionButton.SIZE_NORMAL
+                fabDisplay(true)
 
                 if (polygon != null) {
 
@@ -672,6 +673,7 @@ class MainActivity :
         done_button.setOnClickListener {
             fabDisplay(true)
             showAllPosts()
+            if (isLinking) group_button.performClick()
         }
     }
 

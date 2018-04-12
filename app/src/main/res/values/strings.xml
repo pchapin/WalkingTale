@@ -20,21 +20,11 @@
     <!--Permissions-->
     <string name="permission_rationale">Location permission is needed for core functionality</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
-    <string name="settings">Settings</string>
 
     <!--Location-->
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>
     <string name="last_update_time_label">Last location update time</string>
-
-    <!--Story Genres-->
-    <string-array name="genre_array">
-        <item>Horror</item>
-        <item>Comedy</item>
-        <item>Romance</item>
-        <item>Family</item>
-        <item>Mystery</item>
-    </string-array>
 
     <!--For testing long bits of text-->
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</string>
