@@ -18,7 +18,22 @@ On the android side, multiple android architecture components are used.
 Room stores posts in a local db, Viewmodels hold on to data that should survive
 lifecycle changes, and Livedata is used to observe data as it changes.
 
+We also took advantage of the following open source code:
+
+[Google map marker clustering utility](https://developers.google.com/maps/documentation/android-api/utility/marker-clustering)
+
+This was a great solution to the problem: "I have too many things to display on a map at once."
+We didn't change much at all.
+
+[Github browser sample](https://github.com/googlesamples/android-architecture-components/tree/master/GithubBrowserSample)
+
+This was used as a template to start the project from. It was quite handy because it
+already had a repository class set up to make http requests. Walking tale at first used an AWS api gateway
+which retrofit would make calls to, but eventually we moved to the Dynamodb mapper sdk, which 
+is way more concise.
+
 ## Authors
+
 [Todd Cooke](https://toddcooke.github.io/)
 
 Jonathan Broadfoot
