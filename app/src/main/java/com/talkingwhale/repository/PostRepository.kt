@@ -43,7 +43,6 @@ import java.lang.Exception
 
 object PostRepository {
 
-    private val tag = PostRepository.javaClass.simpleName
     private val appExecutors: AppExecutors = AppExecutors
 
     data class CornerLatLng(val northEast: LatLng, val southWest: LatLng)

@@ -92,7 +92,7 @@ class MainActivity :
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastClusterCenter = LatLng(0.0, 0.0)
     /** Used to get new posts if camera moves too far */
-    private var lastCameraCenter: LatLng? = null
+    private var lastCameraNorthEast: LatLng? = null
     /** Needed to filter ddb results */
     private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
     private lateinit var iconGenerator: IconGenerator
@@ -221,6 +221,7 @@ class MainActivity :
                 mMap.setOnMarkerClickListener(mClusterManager)
                 mMap.setOnInfoWindowClickListener(mClusterManager)
                 mMap.isMyLocationEnabled = true
+                mMap.setMinZoomPreference(15f)
                 mClusterManager.setOnClusterClickListener(this)
                 mClusterManager.setOnClusterInfoWindowClickListener(this)
                 mClusterManager.setOnClusterItemClickListener(this)
@@ -230,12 +231,13 @@ class MainActivity :
     }
 
     private fun possiblyGetNewPosts() {
-        if (lastCameraCenter == null) return
+        if (lastCameraNorthEast == null) return
         if (isLinking) return
         if (done_button.visibility == View.VISIBLE) return
+
         // If camera has moved too far, get new posts
-        if (SphericalUtil.computeDistanceBetween(lastCameraCenter, mMap.projection.visibleRegion.latLngBounds.center) > 250) {
-            lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
+        if (SphericalUtil.computeDistanceBetween(lastCameraNorthEast, mMap.projection.visibleRegion.latLngBounds.northeast) > 200) {
+            lastCameraNorthEast = mMap.projection.visibleRegion.latLngBounds.center
             mainViewModel.setPostBounds(lastCornerLatLng)
         }
     }
@@ -567,7 +569,7 @@ class MainActivity :
                             mMap.projection.visibleRegion.latLngBounds.northeast,
                             mMap.projection.visibleRegion.latLngBounds.southwest
                     )
-                    lastCameraCenter = mMap.projection.visibleRegion.latLngBounds.center
+                    lastCameraNorthEast = mMap.projection.visibleRegion.latLngBounds.northeast
                     mainViewModel.setPostBounds(lastCornerLatLng)
                 }
                 location = locationToLatLng(it)
