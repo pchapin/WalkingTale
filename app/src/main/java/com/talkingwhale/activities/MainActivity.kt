@@ -439,6 +439,7 @@ class MainActivity :
         video_button.setOnClickListener({
             if (PermissionManager.checkLocationPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, rcVideo, "Storage", "Give permission to access storage?")) {
                 val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 6)
                 if (takeVideoIntent.resolveActivity(packageManager) != null) {
                     startActivityForResult(takeVideoIntent, rcVideo)
                 }
@@ -740,7 +741,7 @@ class MainActivity :
                 val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                 retriever.release()
                 val timeMilliseconds = time.toLong()
-                if (timeMilliseconds > 6000) {
+                if (timeMilliseconds > 7000) {
                     Toast.makeText(this, "Videos must be at most 6 seconds.", Toast.LENGTH_SHORT).show()
                     return
                 }
