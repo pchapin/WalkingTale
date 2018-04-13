@@ -52,7 +52,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="@{post.content}"
-            android:textSize="16sp" />
+            android:textSize="@dimen/medium_text" />
 
     </android.support.v7.widget.CardView>
 

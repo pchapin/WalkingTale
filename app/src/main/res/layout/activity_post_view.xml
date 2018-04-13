@@ -54,7 +54,7 @@
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="@{post.content}"
-                android:textSize="24sp"
+                android:textSize="@dimen/large_text"
                 app:visibleGone="@{post.type == postType.TEXT}"
                 tools:text="@string/lorem_ipsum" />
 

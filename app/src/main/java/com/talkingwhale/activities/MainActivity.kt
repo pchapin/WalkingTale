@@ -102,6 +102,9 @@ class MainActivity :
     private lateinit var db: AppDatabase
     private var polyLinePoints = mutableListOf<LatLng>()
     private var polygon: Polygon? = null
+    private var outerCircle: Circle? = null
+    private var innerCircle: Circle? = null
+    private val minPostDistanceMeters = 30
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -220,7 +223,6 @@ class MainActivity :
                 mMap.setOnCameraIdleListener(mClusterManager)
                 mMap.setOnMarkerClickListener(mClusterManager)
                 mMap.setOnInfoWindowClickListener(mClusterManager)
-                mMap.isMyLocationEnabled = true
                 mMap.setMinZoomPreference(15f)
                 mClusterManager.setOnClusterClickListener(this)
                 mClusterManager.setOnClusterInfoWindowClickListener(this)
@@ -274,7 +276,6 @@ class MainActivity :
     }
 
     private fun insideRadius(latLng: LatLng): Boolean {
-        val minPostDistanceMeters = 30
         val distanceFromPost = SphericalUtil.computeDistanceBetween(location, latLng)
         if (distanceFromPost > minPostDistanceMeters) {
             Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
@@ -577,6 +578,21 @@ class MainActivity :
                         mMap.projection.visibleRegion.latLngBounds.northeast,
                         mMap.projection.visibleRegion.latLngBounds.southwest
                 )
+                outerCircle?.remove()
+                outerCircle = mMap.addCircle(
+                        CircleOptions()
+                                .center(location)
+                                .radius(minPostDistanceMeters.toDouble())
+                                .strokeWidth(5f)
+                                .strokeColor(resources.getColor(R.color.map_polyline_color, theme)))
+
+                innerCircle?.remove()
+                innerCircle = mMap.addCircle(
+                        CircleOptions()
+                                .center(location)
+                                .radius(.4)
+                                .fillColor(resources.getColor(R.color.map_polyline_color, theme))
+                                .strokeColor(resources.getColor(R.color.map_polyline_color, theme)))
             }
         })
     }
