@@ -136,7 +136,7 @@ class AudioRecordActivity : AppCompatActivity() {
             if (mStartPlaying) {
                 button_audio_play.text = getString(R.string.stop_playing)
             } else {
-                button_audio_play.text = getString(R.string.start_recording)
+                button_audio_play.text = getString(R.string.start_playing)
             }
             mStartPlaying = !mStartPlaying
         }
