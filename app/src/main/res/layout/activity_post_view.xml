@@ -65,14 +65,26 @@
                 android:layout_gravity="center"
                 app:visibleGone="@{post.type == postType.VIDEO}" />
 
-            <ImageButton
-                android:id="@+id/post_audio_button"
-                style="@android:style/Widget.Material.Light.Button.Borderless"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/play_stop_button"
-                android:src="@drawable/ic_play_arrow_black_24dp"
-                app:visibleGone="@{post.type == postType.AUDIO}" />
+                android:background="@color/primaryColor"
+                app:visibleGone="@{post.type == postType.AUDIO}">
+
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center">
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/post_audio_button"
+                        style="@android:style/Widget.Material.Light.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_play_arrow_black_24dp" />
+                </FrameLayout>
+            </RelativeLayout>
 
         </android.support.constraint.ConstraintLayout>
 
