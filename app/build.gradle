@@ -113,6 +113,9 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     implementation "com.google.android.gms:play-services-maps:$gms_version"
 
+    // Wave view
+    implementation 'com.narayanacharya:WaveView:0.9.2'
+
     // Amazon Web Services
     implementation "com.amazonaws:aws-android-sdk-core:$aws_version"
     implementation 'com.amazonaws:aws-android-sdk-auth-core:2.6.16'

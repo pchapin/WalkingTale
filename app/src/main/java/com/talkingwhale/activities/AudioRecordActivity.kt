@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import com.talkingwhale.R
 import com.talkingwhale.util.createFile
 import kotlinx.android.synthetic.main.activity_audio_record.*
@@ -31,12 +33,36 @@ class AudioRecordActivity : AppCompatActivity() {
     private var mStartRecording = true
     private var mStartPlaying = true
 
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_audio_record)
+        audioFile = createFile(this)
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        recordButton()
+        playButton()
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
             permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
         if (!permissionToRecordAccepted) finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_audio_record, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.action_finish_audio) {
+            finishAudio()
+            return true
+        }
+        return false
     }
 
     private fun onRecord(start: Boolean) {
@@ -53,6 +79,7 @@ class AudioRecordActivity : AppCompatActivity() {
         } else {
             stopPlaying()
         }
+        mStartPlaying = !mStartPlaying
     }
 
     private fun startPlaying() {
@@ -61,14 +88,19 @@ class AudioRecordActivity : AppCompatActivity() {
             mPlayer!!.setDataSource(audioFile.absolutePath)
             mPlayer!!.prepare()
             mPlayer!!.start()
+            button_audio_play.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
         } catch (e: IOException) {
             Log.e(LOG_TAG, "prepare() failed")
+        }
+        mPlayer?.setOnCompletionListener {
+            onPlay(false)
         }
     }
 
     private fun stopPlaying() {
-        mPlayer!!.release()
+        mPlayer?.release()
         mPlayer = null
+        button_audio_play.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
     }
 
     private fun startRecording() {
@@ -85,24 +117,14 @@ class AudioRecordActivity : AppCompatActivity() {
         }
 
         mRecorder!!.start()
+        button_audio_record.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
     }
 
     private fun stopRecording() {
         mRecorder!!.stop()
         mRecorder!!.release()
         mRecorder = null
-    }
-
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_audio_record)
-        audioFile = createFile(this)
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        recordButton()
-        playButton()
-        finishButton()
+        button_audio_record.setImageDrawable(resources.getDrawable(R.drawable.ic_mic_black_24dp, theme))
     }
 
     public override fun onStop() {
@@ -121,11 +143,6 @@ class AudioRecordActivity : AppCompatActivity() {
     private fun recordButton() {
         button_audio_record.setOnClickListener {
             onRecord(mStartRecording)
-            if (mStartRecording) {
-                button_audio_record.text = getString(R.string.stop_recording)
-            } else {
-                button_audio_record.text = getString(R.string.start_recording)
-            }
             mStartRecording = !mStartRecording
         }
     }
@@ -133,34 +150,26 @@ class AudioRecordActivity : AppCompatActivity() {
     private fun playButton() {
         button_audio_play.setOnClickListener {
             onPlay(mStartPlaying)
-            if (mStartPlaying) {
-                button_audio_play.text = getString(R.string.stop_playing)
-            } else {
-                button_audio_play.text = getString(R.string.start_playing)
-            }
-            mStartPlaying = !mStartPlaying
         }
     }
 
-    private fun finishButton() {
-        button_audio_finish.setOnClickListener {
-            val result = Intent()
-            var resultData: Uri? = null
-            try {
-                resultData = Uri.fromFile(audioFile)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-            Log.i("uri", resultData!!.toString())
-            result.data = resultData
-            setResult(Activity.RESULT_OK, result)
-            finish()
+    private fun finishAudio() {
+        val result = Intent()
+        var resultData: Uri? = null
+        try {
+            resultData = Uri.fromFile(audioFile)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
+
+        Log.i("uri", resultData!!.toString())
+        result.data = resultData
+        setResult(Activity.RESULT_OK, result)
+        finish()
     }
 
     companion object {
-        private val LOG_TAG = "AudioRecordActivity"
+        private const val LOG_TAG = "AudioRecordActivity"
         private val REQUEST_RECORD_AUDIO_PERMISSION = 200
     }
 }

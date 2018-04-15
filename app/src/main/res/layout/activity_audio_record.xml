@@ -4,15 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
+            android:id="@+id/app_bar_layout"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_constraintTop_toTopOf="parent">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -23,33 +25,55 @@
 
         </android.support.design.widget.AppBarLayout>
 
-
-        <Button
-            android:id="@+id/button_audio_record"
-            style="@android:style/Widget.Material.Light.Button.Borderless"
+        <com.narayanacharya.waveview.WaveView
+            android:id="@+id/waveView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/start_recording"
-            android:textSize="@dimen/medium_text" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:waveAmplitude="10.25"
+            app:waveBackgroundColor="@color/primaryColor"
+            app:waveColor="@color/secondaryColor"
+            app:waveDensity="5.0"
+            app:waveFrequency="2.0"
+            app:waveNumberOfWaves="3"
+            app:wavePhaseShift="-0.05"
+            app:wavePrimaryLineWidth="3.0"
+            app:waveSecondaryLineWidth="1.0"
+            app:waveXAxisPositionMultiplier="0.5" />
 
-        <Button
-            android:id="@+id/button_audio_play"
-            style="@android:style/Widget.Material.Light.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/start_playing"
-            android:textSize="@dimen/medium_text" />
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
 
-        <Button
-            android:id="@+id/button_audio_finish"
-            style="@android:style/Widget.Material.Light.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/done"
-            android:textSize="@dimen/medium_text" />
-    </LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/button_audio_record"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/ic_mic_black_24dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/button_audio_play"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/ic_play_arrow_black_24dp" />
+        </FrameLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
