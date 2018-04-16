@@ -42,6 +42,7 @@
             app:waveXAxisPositionMultiplier="0.5" />
 
         <FrameLayout
+            android:id="@+id/frame"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_margin="50dp"
@@ -73,6 +74,19 @@
                 android:src="@drawable/ic_play_arrow_black_24dp" />
         </FrameLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginTop="350dp">
+
+            <ImageView
+                android:layout_width="275dp"
+                android:layout_height="275dp"
+                android:src="@drawable/whale1_no_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frame"/>
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

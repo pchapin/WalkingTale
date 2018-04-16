@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".activities.TextInputActivity">
+        tools:context=".activities.TextInputActivity"
+        android:background="@color/primaryColor">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -25,10 +26,17 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="75dp"
+            android:src="@drawable/whale1_no_bg"/>
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_margin="16dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/post_text_edit_text"
