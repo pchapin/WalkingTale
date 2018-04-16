@@ -83,7 +83,7 @@
             <ImageView
                 android:layout_width="275dp"
                 android:layout_height="275dp"
-                android:src="@drawable/whale1_no_bg"
+                android:src="@drawable/talking_whale"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/frame"/>
         </LinearLayout>
