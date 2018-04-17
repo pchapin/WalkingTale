@@ -203,7 +203,6 @@ class MainActivity :
                 cameraButton()
                 textButton()
                 myLocationButton()
-                nearbyPosts()
                 videoButton()
                 audioButton()
                 groupButton()
@@ -224,10 +223,12 @@ class MainActivity :
                 mMap.setOnMarkerClickListener(mClusterManager)
                 mMap.setOnInfoWindowClickListener(mClusterManager)
                 mMap.setMinZoomPreference(15f)
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_night))
                 mClusterManager.setOnClusterClickListener(this)
                 mClusterManager.setOnClusterInfoWindowClickListener(this)
                 mClusterManager.setOnClusterItemClickListener(this)
                 mClusterManager.setOnClusterItemInfoWindowClickListener(this)
+                nearbyPosts()
             }
         })
     }
@@ -477,7 +478,7 @@ class MainActivity :
             polygon = mMap.addPolygon(
                     PolygonOptions()
                             .addAll(polyLinePoints)
-                            .strokeColor(resources.getColor(R.color.map_polyline_color, theme))
+                            .strokeColor(resources.getColor(R.color.secondaryColor, theme))
                             .strokeWidth(7f)
             )
         }
@@ -585,15 +586,15 @@ class MainActivity :
                                 .center(location)
                                 .radius(minPostDistanceMeters.toDouble())
                                 .strokeWidth(5f)
-                                .strokeColor(resources.getColor(R.color.map_polyline_color, theme)))
+                                .strokeColor(resources.getColor(R.color.secondaryColor, theme)))
 
                 innerCircle?.remove()
                 innerCircle = mMap.addCircle(
                         CircleOptions()
                                 .center(location)
                                 .radius(.4)
-                                .fillColor(resources.getColor(R.color.map_polyline_color, theme))
-                                .strokeColor(resources.getColor(R.color.map_polyline_color, theme)))
+                                .fillColor(resources.getColor(R.color.secondaryColor, theme))
+                                .strokeColor(resources.getColor(R.color.secondaryColor, theme)))
             }
         })
     }
@@ -675,7 +676,6 @@ class MainActivity :
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
         val mUiSettings = mMap.uiSettings
         mUiSettings.isMapToolbarEnabled = false
         mUiSettings.isZoomControlsEnabled = false

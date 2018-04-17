@@ -15,8 +15,6 @@
   -->
 
 <resources>
-    <color name="map_polyline_color">#5f6ffd</color>
-
     <color name="primaryColor">#607d8b</color>
     <color name="primaryLightColor">#8eacbb</color>
     <color name="primaryDarkColor">#34515e</color>
