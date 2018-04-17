@@ -24,6 +24,7 @@ import android.support.design.widget.FloatingActionButton.SIZE_NORMAL
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -91,10 +92,10 @@ class MainActivity :
     private var isLinking = false
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastClusterCenter = LatLng(0.0, 0.0)
-    /** Used to get new posts if camera moves too far */
-    private var lastCameraNorthEast: LatLng? = null
+    /** Used to get new posts if camera moves too far. Is larger than currentCornerLatLng */
+    private var cameraBounds: PostRepository.CornerLatLng? = null
     /** Needed to filter ddb results */
-    private lateinit var lastCornerLatLng: PostRepository.CornerLatLng
+    private lateinit var currentCornerLatLng: PostRepository.CornerLatLng
     private lateinit var iconGenerator: IconGenerator
     private lateinit var iconThread: Thread
     private var postList: List<Post>? = null
@@ -105,6 +106,7 @@ class MainActivity :
     private var outerCircle: Circle? = null
     private var innerCircle: Circle? = null
     private val minPostDistanceMeters = 30
+    private val cameraDiff = .1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -233,15 +235,23 @@ class MainActivity :
         })
     }
 
+    /**
+     * If camera has moved too far, fetch new posts
+     * */
     private fun possiblyGetNewPosts() {
-        if (lastCameraNorthEast == null) return
+        if (cameraBounds == null) return
         if (isLinking) return
         if (done_button.visibility == View.VISIBLE) return
 
-        // If camera has moved too far, get new posts
-        if (SphericalUtil.computeDistanceBetween(lastCameraNorthEast, mMap.projection.visibleRegion.latLngBounds.northeast) > 200) {
-            lastCameraNorthEast = mMap.projection.visibleRegion.latLngBounds.center
-            mainViewModel.setPostBounds(lastCornerLatLng)
+        if (
+                currentCornerLatLng.northEast.latitude > cameraBounds!!.northEast.latitude ||
+                currentCornerLatLng.northEast.longitude > cameraBounds!!.northEast.longitude ||
+                currentCornerLatLng.southWest.latitude < cameraBounds!!.southWest.latitude ||
+                currentCornerLatLng.southWest.longitude < cameraBounds!!.southWest.longitude
+        ) {
+            Log.i(tag, "Fetching new posts")
+            cameraBounds = Companion.newExpandedBounds(currentCornerLatLng, cameraDiff)
+            mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
         }
     }
 
@@ -492,13 +502,11 @@ class MainActivity :
         group_button.setOnClickListener {
             if (!isLinking) {
                 isLinking = !isLinking
-//                group_button.size = FloatingActionButton.SIZE_MINI
                 showOnlyUsersPosts(cognitoId)
                 fabDisplay(false)
 
             } else {
                 isLinking = !isLinking
-//                group_button.size = FloatingActionButton.SIZE_NORMAL
                 fabDisplay(true)
 
                 if (polygon != null) {
@@ -565,18 +573,18 @@ class MainActivity :
     private fun locationListener() {
         LocationLiveData(this).observe(this, Observer {
             if (it != null) {
+                location = locationToLatLng(it)
                 if (!cameraOnUserOnce) {
                     mMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().zoom(DEFAULT_ZOOM).target(location).build()))
                     cameraOnUserOnce = true
-                    lastCornerLatLng = PostRepository.CornerLatLng(
+                    currentCornerLatLng = PostRepository.CornerLatLng(
                             mMap.projection.visibleRegion.latLngBounds.northeast,
                             mMap.projection.visibleRegion.latLngBounds.southwest
                     )
-                    lastCameraNorthEast = mMap.projection.visibleRegion.latLngBounds.northeast
-                    mainViewModel.setPostBounds(lastCornerLatLng)
+                    cameraBounds = Companion.newExpandedBounds(currentCornerLatLng, cameraDiff)
+                    mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
                 }
-                location = locationToLatLng(it)
-                lastCornerLatLng = PostRepository.CornerLatLng(
+                currentCornerLatLng = PostRepository.CornerLatLng(
                         mMap.projection.visibleRegion.latLngBounds.northeast,
                         mMap.projection.visibleRegion.latLngBounds.southwest
                 )
@@ -761,7 +769,7 @@ class MainActivity :
             }
             rcMyPosts -> {
                 // User may have deleted some posts in MyPosts activity, so fetch again
-                mainViewModel.setPostBounds(lastCornerLatLng)
+                mainViewModel.setPostBounds(cameraBounds!!)
                 return
             }
         }
@@ -793,7 +801,7 @@ class MainActivity :
                         mainViewModel.putUser(currentUser).observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.setPostBounds(lastCornerLatLng)
+                                mainViewModel.setPostBounds(cameraBounds!!)
                                 liveData.removeObservers(this)
                             }
                         })
@@ -828,5 +836,13 @@ class MainActivity :
                 val username = jwt.getClaim("cognito:username").asString()
                 return username ?: jwt.getClaim("given_name").asString()!!
             }
+
+        private fun newExpandedBounds(cornerLatLng: PostRepository.CornerLatLng, cameraDiff: Double): PostRepository.CornerLatLng {
+            val newNeLat = cornerLatLng.northEast.latitude + cameraDiff
+            val newNeLong = cornerLatLng.northEast.longitude + cameraDiff
+            val newSwLat = cornerLatLng.southWest.latitude - cameraDiff
+            val newSwLong = cornerLatLng.southWest.longitude - cameraDiff
+            return PostRepository.CornerLatLng(LatLng(newNeLat, newNeLong), LatLng(newSwLat, newSwLong))
+        }
     }
 }
