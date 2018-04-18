@@ -123,17 +123,6 @@
                     app:layout_constraintTop_toBottomOf="@id/my_location_button" />
 
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/filter_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginTop="16dp"
-                    app:fabSize="mini"
-                    android:src="@drawable/ic_filter_list_black_24dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/group_button" />
-
-                <android.support.design.widget.FloatingActionButton
                     android:id="@+id/done_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -152,6 +141,6 @@
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header"
-            app:menu="@menu/menu_main" />
+            app:menu="@menu/menu_nav_drawer" />
     </android.support.v4.widget.DrawerLayout>
 </layout>

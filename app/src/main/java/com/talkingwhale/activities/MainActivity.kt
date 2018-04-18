@@ -23,10 +23,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -124,6 +121,11 @@ class MainActivity :
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
     override fun onBackPressed() {
         if (nav_view.visibility == View.VISIBLE) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -135,6 +137,10 @@ class MainActivity :
                 android.R.id.home -> {
                     // Open the navigation drawer when the home icon is selected from the toolbar.
                     drawer_layout.openDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.action_filter -> {
+                    filterButton()
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
@@ -207,7 +213,6 @@ class MainActivity :
                 audioButton()
                 groupButton()
                 doneButton()
-                filterButton()
                 iconThread()
                 dragListener()
 
@@ -558,18 +563,16 @@ class MainActivity :
 
     private fun filterButton() {
         val filterItems = arrayOf("My Posts", "All Posts", "Recent Posts")
-        filter_button.setOnClickListener {
-            AlertDialog.Builder(this)
-                    .setTitle("Filter posts")
-                    .setItems(filterItems, { _, which ->
-                        when (which) {
-                            0 -> showOnlyUsersPosts(cognitoId)
-                            1 -> showAllPosts()
-                            2 -> showRecentPosts()
-                        }
-                    })
-                    .show()
-        }
+        AlertDialog.Builder(this)
+                .setTitle("Filter posts")
+                .setItems(filterItems, { _, which ->
+                    when (which) {
+                        0 -> showOnlyUsersPosts(cognitoId)
+                        1 -> showAllPosts()
+                        2 -> showRecentPosts()
+                    }
+                })
+                .show()
     }
 
     private fun locationListener() {
