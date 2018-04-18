@@ -104,11 +104,17 @@ class AudioRecordActivity : AppCompatActivity() {
     }
 
     private fun startRecording() {
+        // From https://stackoverflow.com/questions/5010145/very-poor-quality-of-audio-recorded-on-my-droidx-using-mediarecorder-why
+        val bitDepth = 16
+        val sampleRate = 44100
+        val bitRate = sampleRate * bitDepth
         mRecorder = MediaRecorder()
         mRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
         mRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        mRecorder!!.setAudioEncodingBitRate(bitRate)
+        mRecorder!!.setAudioSamplingRate(sampleRate)
         mRecorder!!.setOutputFile(audioFile.absolutePath)
-        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
 
         try {
             mRecorder!!.prepare()
