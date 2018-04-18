@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_timeline_white_24dp"
         android:title="See post group"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_users_posts"
+        android:icon="@drawable/ic_person_white_24dp"
+        android:title="See users posts"
+        app:showAsAction="ifRoom|withText" />
 </menu>

@@ -17,6 +17,11 @@
         android:title="My posts"
         app:showAsAction="ifRoom|withText" />
     <item
+        android:id="@+id/action_sign_out"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="Sign out"
+        app:showAsAction="ifRoom|withText" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="Settings"

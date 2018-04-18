@@ -158,6 +158,10 @@ class MainActivity :
                 R.id.action_my_posts -> {
                     startActivityForResult(Intent(this, MyPostsActivity::class.java), rcMyPosts)
                 }
+                R.id.action_sign_out -> {
+                    IdentityManager.getDefaultIdentityManager().signOut()
+                    finish()
+                }
                 R.id.action_settings -> {
                 }
             }
@@ -277,7 +281,7 @@ class MainActivity :
             db.postDao().insertPosts(cluster.items.toList())
             val intent = Intent(this, OverflowActivity::class.java)
             intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
-            startActivityForResult(intent, PostViewActivity.RC_GROUP_POST)
+            startActivityForResult(intent, PostViewActivity.RC_POST_VIEW)
         }
 
         // Animate camera to the bounds
@@ -306,7 +310,7 @@ class MainActivity :
         val intent = Intent(this, PostViewActivity::class.java)
         intent.putExtra(POST_KEY, post.postId)
         intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
-        startActivityForResult(intent, PostViewActivity.RC_GROUP_POST)
+        startActivityForResult(intent, PostViewActivity.RC_POST_VIEW)
         return true
     }
 
@@ -523,10 +527,11 @@ class MainActivity :
 
                 if (polygon != null) {
 
-                    val postsInGroup = mClusterManager.algorithm.items.filter {
-                        PolyUtil.containsLocation(LatLng(it.latitude, it.longitude), polygon!!.points, false)
-                    }
-
+                    val postsInGroup = mClusterManager.algorithm.items
+                            .filter {
+                                it.userId == cognitoId &&
+                                        PolyUtil.containsLocation(LatLng(it.latitude, it.longitude), polygon!!.points, false)
+                            }
                     val postGroup = PostGroup(cognitoId, getRandomUUID(), postsInGroup.map { it.postId } as MutableList<String>)
 
                     postsInGroup.map { it.groupId = postGroup.id }
@@ -763,11 +768,16 @@ class MainActivity :
                 content = data!!.getStringExtra(TextInputActivity.TEXT_KEY)
                 postType = TEXT
             }
-            PostViewActivity.RC_GROUP_POST -> {
-                val idToDisplay = data?.getStringExtra(PostViewActivity.POST_GROUP_GROUPID_KEY)
-                if (idToDisplay != null) {
-                    showOnlyGroupPosts(idToDisplay)
+            PostViewActivity.RC_POST_VIEW -> {
+                val groupId = data?.getStringExtra(PostViewActivity.POST_GROUP_GROUPID_KEY)
+                val userId = data?.getStringExtra(PostViewActivity.POST_USERID_KEY)
+                if (groupId != null) {
+                    showOnlyGroupPosts(groupId)
                     Snackbar.make(top_level_constraint_layout, "Showing group posts", Snackbar.LENGTH_LONG).show()
+                    fabDisplay(false)
+                } else if (userId != null) {
+                    showOnlyUsersPosts(userId)
+                    Snackbar.make(top_level_constraint_layout, "Showing users posts", Snackbar.LENGTH_LONG).show()
                     fabDisplay(false)
                 }
                 return

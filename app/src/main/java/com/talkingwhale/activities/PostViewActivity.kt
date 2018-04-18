@@ -54,6 +54,12 @@ class PostViewActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_OK, i)
                 finish()
             }
+            R.id.action_users_posts -> {
+                val i = Intent()
+                i.putExtra(POST_USERID_KEY, binding.post?.userId)
+                setResult(Activity.RESULT_OK, i)
+                finish()
+            }
         }
         return true
     }
@@ -110,6 +116,7 @@ class PostViewActivity : AppCompatActivity() {
         const val POST_KEY = "POST_KEY"
         const val POST_GROUP_KEY = "POST_GROUP_KEY"
         const val POST_GROUP_GROUPID_KEY = "POST_GROUP_GROUPID_KEY"
-        const val RC_GROUP_POST = 99
+        const val POST_USERID_KEY = "POST_USERID_KEY"
+        const val RC_POST_VIEW = 99
     }
 }
