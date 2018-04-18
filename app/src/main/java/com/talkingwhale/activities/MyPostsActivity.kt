@@ -32,7 +32,6 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
     private lateinit var recyclerView: RecyclerView
     private lateinit var mainViewModel: MainViewModel
     private val displayList = mutableListOf<Post>()
-    private var visibleSnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,12 +71,12 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
                         val itemIndex = viewHolder.adapterPosition
                         val toBeDeleted: Post = displayList[itemIndex]
                         displayList.removeAt(itemIndex)
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemRemoved(itemIndex)
 
                         Snackbar.make(binding.root, "Deleting post...", Snackbar.LENGTH_LONG)
                                 .setAction("undo", {
                                     displayList.add(itemIndex, toBeDeleted)
-                                    adapter.notifyDataSetChanged()
+                                    adapter.notifyItemInserted(itemIndex)
                                 }).addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar?>() {
                                     override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                                         if (event in arrayOf(DISMISS_EVENT_TIMEOUT, DISMISS_EVENT_CONSECUTIVE, DISMISS_EVENT_MANUAL)) {
