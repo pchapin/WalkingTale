@@ -56,6 +56,7 @@ import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.ui.MultiDrawable
 import com.talkingwhale.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_header.*
 import java.io.File
 import java.util.*
 import kotlin.concurrent.thread
@@ -160,6 +161,7 @@ class MainActivity :
                 }
                 R.id.action_sign_out -> {
                     IdentityManager.getDefaultIdentityManager().signOut()
+                    startActivity(Intent(this, AuthenticatorActivity::class.java))
                     finish()
                 }
                 R.id.action_settings -> {
@@ -630,6 +632,7 @@ class MainActivity :
                     }
                     Status.SUCCESS -> {
                         binding.user = it.data
+                        nav_view_username.text = it.data?.userName
                         currentUser = it.data!!
                         Analytics.logEvent(Analytics.EventType.UserLogin, tag)
                     }

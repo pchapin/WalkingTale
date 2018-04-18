@@ -14,9 +14,10 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="192dp"
+    android:layout_height="wrap_content"
     android:background="?attr/colorPrimaryDark"
     android:gravity="bottom"
     android:orientation="vertical"
@@ -24,9 +25,22 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:src="@drawable/talking_whale" />
-</RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Signed in as:"
+        android:textSize="@dimen/medium_text" />
+
+    <TextView
+        android:id="@+id/nav_view_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/medium_text"
+        tools:text="username" />
+</LinearLayout>
