@@ -19,8 +19,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.FloatingActionButton.SIZE_MINI
-import android.support.design.widget.FloatingActionButton.SIZE_NORMAL
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
@@ -390,6 +388,15 @@ class MainActivity :
         }
     }
 
+    private fun showRecentPosts() {
+        mClusterManager.clearItems()
+        val recentItems = postList!!.filter {
+            Date().time - it.dateTime.toLong() < 1000 * 60 * 60 * 24
+        }
+        mClusterManager.addItems(recentItems)
+        mClusterManager.cluster()
+    }
+
     private fun showAllPosts() {
         mClusterManager.clearItems()
         mClusterManager.addItems(postList)
@@ -552,19 +559,14 @@ class MainActivity :
     private fun filterButton() {
         val filterItems = arrayOf("My Posts", "All Posts", "Recent Posts")
         filter_button.setOnClickListener {
-            if (filter_button.size == SIZE_MINI) {
-                filter_button.size = SIZE_NORMAL
-                return@setOnClickListener
-            }
             AlertDialog.Builder(this)
                     .setTitle("Filter posts")
                     .setItems(filterItems, { _, which ->
                         when (which) {
                             0 -> showOnlyUsersPosts(cognitoId)
                             1 -> showAllPosts()
-                            2 -> Unit
+                            2 -> showRecentPosts()
                         }
-                        filter_button.size = SIZE_MINI
                     })
                     .show()
         }
