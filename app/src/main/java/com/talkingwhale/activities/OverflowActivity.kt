@@ -55,9 +55,13 @@ class OverflowActivity : AppCompatActivity(), DataBindingComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && requestCode == PostViewActivity.RC_POST_VIEW) {
             val i = Intent()
-            val userid = data?.getStringExtra(PostViewActivity.POST_USERID_KEY)
+            val userId = data?.getStringExtra(PostViewActivity.POST_USERID_KEY)
             val groupId = data?.getStringExtra(PostViewActivity.POST_GROUP_GROUPID_KEY)
-            i.putExtra(PostViewActivity.POST_GROUP_GROUPID_KEY, if (userid == null) groupId else userid)
+            if (userId != null) {
+                i.putExtra(PostViewActivity.POST_USERID_KEY, userId)
+            } else if (groupId != null) {
+                i.putExtra(PostViewActivity.POST_GROUP_GROUPID_KEY, groupId)
+            }
             setResult(Activity.RESULT_OK, i)
             finish()
         }

@@ -106,6 +106,7 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        authOrExit()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -691,16 +692,19 @@ class MainActivity :
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun authOrExit() {
         if (IdentityManager.getDefaultIdentityManager() == null) {
             val intent = Intent(this, AuthenticatorActivity::class.java)
             startActivity(intent)
             finish()
-        } else {
-            if (::mMap.isInitialized) setMapStyle()
-            checkPlayServices()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        authOrExit()
+        if (::mMap.isInitialized) setMapStyle()
+        checkPlayServices()
     }
 
     @SuppressLint("MissingPermission")
