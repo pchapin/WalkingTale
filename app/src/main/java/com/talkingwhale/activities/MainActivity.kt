@@ -165,6 +165,7 @@ class MainActivity :
                     finish()
                 }
                 R.id.action_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
                 }
             }
             return@setNavigationItemSelectedListener true
@@ -234,7 +235,7 @@ class MainActivity :
                 mMap.setOnMarkerClickListener(mClusterManager)
                 mMap.setOnInfoWindowClickListener(mClusterManager)
                 mMap.setMinZoomPreference(15f)
-                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_night))
+                setMapStyle()
                 mClusterManager.setOnClusterClickListener(this)
                 mClusterManager.setOnClusterInfoWindowClickListener(this)
                 mClusterManager.setOnClusterItemClickListener(this)
@@ -242,6 +243,13 @@ class MainActivity :
                 nearbyPosts()
             }
         })
+    }
+
+    private fun setMapStyle() {
+        val sp = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        val nightModeOff = sp.getBoolean(resources.getString(R.string.pref_key_map_mode), false)
+        val mapStyle = if (nightModeOff) R.raw.map_style else R.raw.mapstyle_night
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, mapStyle))
     }
 
     /**
@@ -690,6 +698,7 @@ class MainActivity :
             startActivity(intent)
             finish()
         } else {
+            if (::mMap.isInitialized) setMapStyle()
             checkPlayServices()
         }
     }

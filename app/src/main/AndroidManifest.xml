@@ -100,6 +100,10 @@
             android:label="@string/title_activity_my_posts"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".activities.MainActivity" />
     </application>
 
 </manifest>

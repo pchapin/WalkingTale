@@ -62,4 +62,7 @@
 
     <!--My Posts Activity-->
     <string name="title_activity_my_posts">My Posts</string>
+
+    <!--Preferences-->
+    <string name="pref_key_map_mode">MAP_MODE</string>
 </resources>
