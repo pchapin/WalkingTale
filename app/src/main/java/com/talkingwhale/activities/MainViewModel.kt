@@ -72,4 +72,16 @@ class MainViewModel : ViewModel() {
     fun putPostGroup(postGroup: PostGroup): LiveData<Resource<Unit>> {
         return postGroupRepository.putPostGroup(postGroup)
     }
+
+    fun deleteUserS3Content(context: Context, user: User): LiveData<Resource<Unit>> {
+        return postRepository.deleteUserS3Content(context, user)
+    }
+
+    fun deleteUsersPosts(user: User): LiveData<Resource<Unit>> {
+        return postRepository.deleteUsersPosts(user)
+    }
+
+    fun deleteUser(user: User): LiveData<Resource<Unit>> {
+        return userRepository.deleteUser(user)
+    }
 }

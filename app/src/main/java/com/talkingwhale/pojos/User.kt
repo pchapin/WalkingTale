@@ -8,6 +8,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribut
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable
+import com.talkingwhale.activities.MainActivity
 import com.talkingwhale.db.AppTypeConverters
 
 @DynamoDBTable(tableName = "mappost-mobilehub-452475001-Users")
@@ -34,5 +35,5 @@ data class User(
      * Do not use this constructor!
      * Just to make DDB mapper happy
      * */
-    constructor() : this("none", "none", mutableListOf(), "none", mutableListOf(), mutableListOf())
+    constructor() : this(MainActivity.getRandomUUID(), MainActivity.getRandomUUID(), mutableListOf(), "none", mutableListOf(), mutableListOf())
 }

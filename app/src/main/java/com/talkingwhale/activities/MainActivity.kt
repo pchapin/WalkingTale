@@ -84,6 +84,7 @@ class MainActivity :
     private val rcText = 4
     private val rcLocation = 5
     private val rcMyPosts = 6
+    private val rcSettings = 7
     private lateinit var binding: ActivityMainBinding
     private var isLinking = false
     private lateinit var mClusterManager: ClusterManager<Post>
@@ -166,9 +167,10 @@ class MainActivity :
                     finish()
                 }
                 R.id.action_settings -> {
-                    startActivity(Intent(this, SettingsActivity::class.java))
+                    startActivityForResult(Intent(this, SettingsActivity::class.java), rcSettings)
                 }
             }
+            drawer_layout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
     }
@@ -801,6 +803,14 @@ class MainActivity :
             rcMyPosts -> {
                 // User may have deleted some posts in MyPosts activity, so fetch again
                 mainViewModel.setPostBounds(cameraBounds!!)
+                return
+            }
+            rcSettings -> {
+                if (data?.getBooleanExtra(SettingsActivity.DELETED_POST_KEY, false) == true) {
+                    toast("Account deleted.")
+                    startActivity(Intent(this, AuthenticatorActivity::class.java))
+                    finish()
+                }
                 return
             }
         }

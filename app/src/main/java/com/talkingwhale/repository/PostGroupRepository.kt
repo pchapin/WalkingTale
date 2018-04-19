@@ -23,13 +23,12 @@ import com.talkingwhale.pojos.Status
 import com.talkingwhale.util.AppExecutors
 
 /**
- * Repository that handles User objects.
  */
 object PostGroupRepository {
     private val appExecutors: AppExecutors = AppExecutors
 
     fun putPostGroup(postGroup: PostGroup): LiveData<Resource<Unit>> {
-        val result = object : AbstractTask<PostGroup, Unit>(postGroup) {
+        val result = object : AbstractTask<Unit>() {
             override fun run() {
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.save(postGroup), ""))
             }

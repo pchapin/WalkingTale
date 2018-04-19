@@ -30,7 +30,7 @@ object UserRepository {
     private val appExecutors: AppExecutors = AppExecutors
 
     fun loadUser(userId: String): LiveData<Resource<User>> {
-        val result = object : AbstractTask<String, User>(userId) {
+        val result = object : AbstractTask<User>() {
             override fun run() {
                 try {
                     val user = User()
@@ -48,9 +48,20 @@ object UserRepository {
     }
 
     fun putUser(user: User): LiveData<Resource<Unit>> {
-        val result = object : AbstractTask<String, Unit>("") {
+        val result = object : AbstractTask<Unit>() {
             override fun run() {
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.save(user), ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
+    }
+
+    fun deleteUser(user: User): LiveData<Resource<Unit>> {
+        val result = object : AbstractTask<Unit>() {
+            override fun run() {
+                dynamoDBMapper.delete(user)
+                result.postValue(Resource(Status.SUCCESS, Unit, ""))
             }
         }
         appExecutors.networkIO().execute(result)

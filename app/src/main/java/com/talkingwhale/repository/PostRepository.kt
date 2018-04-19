@@ -19,6 +19,7 @@ package com.talkingwhale.repository
 import android.arch.lifecycle.LiveData
 import android.content.Context
 import android.util.Log
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression
@@ -29,12 +30,10 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.S3ClientOptions
+import com.amazonaws.services.s3.model.DeleteObjectsRequest
 import com.google.android.gms.maps.model.LatLng
 import com.talkingwhale.R
-import com.talkingwhale.pojos.Post
-import com.talkingwhale.pojos.PostType
-import com.talkingwhale.pojos.Resource
-import com.talkingwhale.pojos.Status
+import com.talkingwhale.pojos.*
 import com.talkingwhale.util.AppExecutors
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -48,7 +47,7 @@ object PostRepository {
     data class CornerLatLng(val northEast: LatLng, val southWest: LatLng)
 
     fun getNearbyPosts(cornerLatLng: CornerLatLng): LiveData<Resource<List<Post>>> {
-        val result = object : AbstractTask<String, List<Post>>("") {
+        val result = object : AbstractTask<List<Post>>() {
             override fun run() {
 
                 val expressionAttributeValues = HashMap<String, AttributeValue>()
@@ -68,7 +67,7 @@ object PostRepository {
     }
 
     fun addPost(post: Post): LiveData<Resource<Unit>> {
-        val result = object : AbstractTask<Post, Unit>(post) {
+        val result = object : AbstractTask<Unit>() {
             override fun run() {
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.save(post), ""))
             }
@@ -78,7 +77,7 @@ object PostRepository {
     }
 
     fun putFile(pair: Pair<Post, Context>): LiveData<Resource<Post>> {
-        val result = object : AbstractTask<Pair<Post, Context>, Post>(pair) {
+        val result = object : AbstractTask<Post>() {
             override fun run() {
                 val post = pair.first
                 var file = File(pair.first.content)
@@ -109,7 +108,7 @@ object PostRepository {
     }
 
     fun deletePost(post: Post): LiveData<Resource<Unit>> {
-        val result = object : AbstractTask<Post, Unit>(post) {
+        val result = object : AbstractTask<Unit>() {
             override fun run() {
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.delete(post), ""))
             }
@@ -119,7 +118,7 @@ object PostRepository {
     }
 
     fun putPosts(posts: List<Post>): LiveData<Resource<List<DynamoDBMapper.FailedBatch>>> {
-        val result = object : AbstractTask<List<Post>, List<DynamoDBMapper.FailedBatch>>(posts) {
+        val result = object : AbstractTask<List<DynamoDBMapper.FailedBatch>>() {
             override fun run() {
                 result.postValue(Resource(Status.SUCCESS, dynamoDBMapper.batchSave(posts), ""))
             }
@@ -129,7 +128,7 @@ object PostRepository {
     }
 
     fun getPostsForUser(userId: String): LiveData<Resource<List<Post>>> {
-        val result = object : AbstractTask<String, List<Post>>(userId) {
+        val result = object : AbstractTask<List<Post>>() {
             override fun run() {
                 val queryExpression = DynamoDBQueryExpression<Post>()
                         .withHashKeyValues(Post().copy(userId = userId))
@@ -149,5 +148,37 @@ object PostRepository {
                 .s3Client(amazonS3)
                 .context(context)
                 .build()
+    }
+
+    fun deleteUserS3Content(context: Context, user: User): LiveData<Resource<Unit>> {
+        val result = object : AbstractTask<Unit>() {
+            override fun run() {
+                if (user.createdPosts.isEmpty()) {
+                    result.postValue(Resource(Status.SUCCESS, Unit, ""))
+                    return
+                }
+
+                val s3Client = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider.credentials)
+                val deleteObjectsRequest = DeleteObjectsRequest(context.resources.getString(R.string.s3_bucket))
+
+                deleteObjectsRequest.withKeys(*user.createdPosts.toTypedArray())
+                s3Client.deleteObjects(deleteObjectsRequest)
+
+                result.postValue(Resource(Status.SUCCESS, Unit, ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
+    }
+
+    fun deleteUsersPosts(user: User): LiveData<Resource<Unit>> {
+        val result = object : AbstractTask<Unit>() {
+            override fun run() {
+                dynamoDBMapper.batchDelete(user.createdPosts.map { Post().copy(postId = it) })
+                result.postValue(Resource(Status.SUCCESS, Unit, ""))
+            }
+        }
+        appExecutors.networkIO().execute(result)
+        return result.getResult()
     }
 }

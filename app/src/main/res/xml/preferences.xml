@@ -6,4 +6,11 @@
         android:key="@string/pref_key_map_mode"
         android:summary="Make the map lighter"
         android:title="Map Light Mode" />
+    <Preference
+        android:defaultValue="Default value"
+        android:key="@string/pref_key_delete_account"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="Delete account and all data"
+        android:title="Delete account" />
 </PreferenceScreen>

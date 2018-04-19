@@ -10,7 +10,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.talkingwhale.pojos.Resource
 
-abstract class AbstractTask<out INPUT, OUTPUT>(val input: INPUT) : Runnable {
+abstract class AbstractTask<OUTPUT> : Runnable {
 
     val tag: String = this.javaClass.simpleName
     val result = MutableLiveData<Resource<OUTPUT>>()

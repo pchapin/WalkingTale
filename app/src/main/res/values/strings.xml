@@ -65,4 +65,5 @@
 
     <!--Preferences-->
     <string name="pref_key_map_mode">MAP_MODE</string>
+    <string name="pref_key_delete_account">DELETE_ACCOUNT</string>
 </resources>
