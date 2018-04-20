@@ -163,7 +163,7 @@ class MainActivity :
                 }
                 R.id.action_sign_out -> {
                     IdentityManager.getDefaultIdentityManager().signOut()
-                    startActivity(Intent(this, AuthenticatorActivity::class.java))
+                    startActivity(Intent(this, LoginActivity::class.java))
                     finish()
                 }
                 R.id.action_settings -> {
@@ -270,7 +270,7 @@ class MainActivity :
                 currentCornerLatLng.southWest.longitude < cameraBounds!!.southWest.longitude
         ) {
             Log.i(tag, "Fetching new posts")
-            cameraBounds = Companion.newExpandedBounds(currentCornerLatLng, cameraDiff)
+            cameraBounds = newExpandedBounds(currentCornerLatLng, cameraDiff)
             mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
         }
     }
@@ -613,7 +613,7 @@ class MainActivity :
                             mMap.projection.visibleRegion.latLngBounds.northeast,
                             mMap.projection.visibleRegion.latLngBounds.southwest
                     )
-                    cameraBounds = Companion.newExpandedBounds(currentCornerLatLng, cameraDiff)
+                    cameraBounds = newExpandedBounds(currentCornerLatLng, cameraDiff)
                     mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
                 }
                 currentCornerLatLng = PostRepository.CornerLatLng(
