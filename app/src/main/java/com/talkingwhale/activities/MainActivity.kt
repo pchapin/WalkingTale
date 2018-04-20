@@ -585,9 +585,18 @@ class MainActivity :
                 .setTitle("Filter posts")
                 .setItems(filterItems, { _, which ->
                     when (which) {
-                        0 -> showOnlyUsersPosts(cognitoId)
-                        1 -> showAllPosts()
-                        2 -> showRecentPosts()
+                        0 -> {
+                            snackbar("Showing only your posts")
+                            showOnlyUsersPosts(cognitoId)
+                        }
+                        1 -> {
+                            snackbar("Showing all posts")
+                            showAllPosts()
+                        }
+                        2 -> {
+                            snackbar("Showing posts under 1 day old")
+                            showRecentPosts()
+                        }
                     }
                 })
                 .show()
