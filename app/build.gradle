@@ -49,8 +49,8 @@ android {
         // we could knock the min version down a few
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 8
-        versionName "8.0"
+        versionCode 9
+        versionName "9.0"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         signingConfig signingConfigs.config
     }

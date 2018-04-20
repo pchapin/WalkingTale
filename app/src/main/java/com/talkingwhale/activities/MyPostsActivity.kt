@@ -53,6 +53,7 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
                         db.postDao().insert(post)
                         val intent = Intent(this@MyPostsActivity, PostViewActivity::class.java)
                         intent.putExtra(PostViewActivity.POST_KEY, post.postId)
+                        intent.putExtra(PostViewActivity.HIDE_USER_BTN_KEY, true)
                         startActivity(intent)
                     }
                 })
