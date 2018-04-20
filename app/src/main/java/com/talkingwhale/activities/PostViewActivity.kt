@@ -42,6 +42,9 @@ class PostViewActivity : AppCompatActivity() {
         if (intent.getStringExtra(POST_GROUP_KEY) == null) {
             menu?.removeItem(R.id.action_see_group)
         }
+        if (intent.getBooleanExtra(HIDE_USER_BTN_KEY, false)) {
+            menu?.removeItem(R.id.action_users_posts)
+        }
         return true
     }
 
@@ -117,6 +120,7 @@ class PostViewActivity : AppCompatActivity() {
         const val POST_GROUP_KEY = "POST_GROUP_KEY"
         const val POST_GROUP_GROUPID_KEY = "POST_GROUP_GROUPID_KEY"
         const val POST_USERID_KEY = "POST_USERID_KEY"
+        const val HIDE_USER_BTN_KEY = "HIDE_USER_BTN_KEY"
         const val RC_POST_VIEW = 99
     }
 }

@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_overflow.*
 class OverflowActivity : AppCompatActivity(), DataBindingComponent {
     private lateinit var binding: ActivityOverflowBinding
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var db: AppDatabase
     private lateinit var mainViewModel: MainViewModel
     private lateinit var adapter: PostAdapter
