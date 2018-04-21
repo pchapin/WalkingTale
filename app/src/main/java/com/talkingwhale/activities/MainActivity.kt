@@ -209,6 +209,9 @@ class MainActivity :
 
     @SuppressLint("MissingPermission")
     private fun initLocation() {
+
+        authOrExit()
+
         val lld = LocationLiveData(this)
         lld.observe(this, Observer {
             if (it != null) {
@@ -704,7 +707,7 @@ class MainActivity :
     }
 
     private fun authOrExit() {
-        if (IdentityManager.getDefaultIdentityManager() == null) {
+        if (IdentityManager.getDefaultIdentityManager()?.cachedUserID == null) {
             val intent = Intent(this, AuthenticatorActivity::class.java)
             startActivity(intent)
             finish()

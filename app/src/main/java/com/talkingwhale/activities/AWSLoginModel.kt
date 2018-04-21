@@ -11,14 +11,22 @@
 package com.talkingwhale.activities
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.LiveData
 import android.content.Context
+import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.*
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.*
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.*
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.cognitoidentityprovider.model.*
+import com.talkingwhale.R
+import com.talkingwhale.pojos.Resource
+import com.talkingwhale.pojos.Status
+import com.talkingwhale.repository.AbstractTask
+import com.talkingwhale.util.AppExecutors
 import org.json.JSONException
+
 
 /**
  * This represents a model for login operations on AWS Mobile Hub. It manages login operations
@@ -98,14 +106,11 @@ class AWSLoginModel
 
         override fun onFailure(exception: Exception) {
             userPassword = ""
-            if (exception is UserNotConfirmedException) {
-                mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_MUST_CONFIRM_FIRST, "User not confirmed.")
-            } else if (exception is UserNotFoundException) {
-                mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_USER_NOT_FOUND, MESSAGE_USER_NOT_FOUND)
-            } else if (exception is NotAuthorizedException) {
-                mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_INCORRECT_PASSWORD, "Incorrect username or password.")
-            } else {
-                mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_UNKNOWN, MESSAGE_UNKNOWN_ERROR)
+            when (exception) {
+                is UserNotConfirmedException -> mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_MUST_CONFIRM_FIRST, "User not confirmed.")
+                is UserNotFoundException -> mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_USER_NOT_FOUND, MESSAGE_USER_NOT_FOUND)
+                is NotAuthorizedException -> mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_INCORRECT_PASSWORD, "Incorrect username or password.")
+                else -> mCallback.onFailure(PROCESS_SIGN_IN, exception, CAUSE_UNKNOWN, MESSAGE_UNKNOWN_ERROR)
             }
         }
     }
@@ -122,14 +127,11 @@ class AWSLoginModel
         }
 
         override fun onFailure(exception: Exception) {
-            if (exception is LimitExceededException) {
-                mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_LIMIT_EXCEEDED, "Limit exceeded. Wait to try again")
-            } else if (exception is UserNotFoundException) {
-                mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_USER_NOT_FOUND, MESSAGE_USER_NOT_FOUND)
-            } else if (exception is InvalidParameterException) {
-                mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_INVALID_PARAMETERS, "User not confirmed. Cannot send e-mail.")
-            } else {
-                mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_UNKNOWN, MESSAGE_UNKNOWN_ERROR)
+            when (exception) {
+                is LimitExceededException -> mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_LIMIT_EXCEEDED, "Limit exceeded. Wait to try again")
+                is UserNotFoundException -> mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_USER_NOT_FOUND, MESSAGE_USER_NOT_FOUND)
+                is InvalidParameterException -> mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_INVALID_PARAMETERS, "User not confirmed. Cannot send e-mail.")
+                else -> mCallback.onFailure(currentProcessInResetPassword, exception, CAUSE_UNKNOWN, MESSAGE_UNKNOWN_ERROR)
             }
         }
     }
@@ -172,12 +174,10 @@ class AWSLoginModel
             }
 
             override fun onFailure(exception: Exception) {
-                if (exception is UsernameExistsException) {
-                    mCallback.onFailure(PROCESS_REGISTER, exception, CAUSE_USER_ALREADY_EXISTS, "Username or e-mail already exists.")
-                } else if (exception is InvalidParameterException) {
-                    mCallback.onFailure(PROCESS_REGISTER, exception, CAUSE_INVALID_PARAMETERS, "Invalid parameters.")
-                } else {
-                    mCallback.onFailure(PROCESS_REGISTER, exception, CAUSE_UNKNOWN, MESSAGE_UNKNOWN_ERROR)
+                when (exception) {
+                    is UsernameExistsException -> mCallback.onFailure(PROCESS_REGISTER, exception, CAUSE_USER_ALREADY_EXISTS, "Username or e-mail already exists.")
+                    is InvalidParameterException -> mCallback.onFailure(PROCESS_REGISTER, exception, CAUSE_INVALID_PARAMETERS, "Invalid parameters.")
+                    else -> mCallback.onFailure(PROCESS_REGISTER, exception, CAUSE_UNKNOWN, MESSAGE_UNKNOWN_ERROR)
                 }
             }
         }
@@ -317,6 +317,22 @@ class AWSLoginModel
             val savedValues = context.getSharedPreferences(SHARED_PREFERENCE, Context.MODE_PRIVATE)
             return savedValues.getString(PREFERENCE_USER_EMAIL, "")
         }
-    }
 
+        fun getUserId(context: Context): LiveData<Resource<String>> {
+            val task = object : AbstractTask<String>() {
+                override fun run() {
+
+                    val credentialsProvider = CognitoCachingCredentialsProvider(
+                            context, // Context
+                            context.resources.getString(R.string.id_pool_name), // Identity Pool ID
+                            Regions.US_EAST_1 // Region
+                    )
+
+                    result.postValue(Resource(Status.SUCCESS, credentialsProvider.cachedIdentityId, ""))
+                }
+            }
+            AppExecutors.networkIO().execute(task)
+            return task.result
+        }
+    }
 }

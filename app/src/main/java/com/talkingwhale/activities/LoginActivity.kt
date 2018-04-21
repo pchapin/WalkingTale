@@ -1,5 +1,6 @@
 package com.talkingwhale.activities
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -7,6 +8,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.talkingwhale.R
+import com.talkingwhale.pojos.Status
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler {
 
@@ -68,7 +70,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
     }
 
     override fun onSignInSuccess() {
-        this@LoginActivity.startActivity(Intent(this@LoginActivity, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        AWSLoginModel.getUserId(this).observe(this, Observer {
+            if (it?.status == Status.SUCCESS) {
+                this@LoginActivity.startActivity(Intent(this@LoginActivity, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }
+        })
     }
 
     override fun onResendConfirmationCodeSuccess(medium: String) {
