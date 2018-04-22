@@ -75,6 +75,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
         AWSLoginModel.getUserId(this).observe(this, Observer {
             if (it?.status == Status.SUCCESS) {
                 this@LoginActivity.startActivity(Intent(this@LoginActivity, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                finish()
             }
         })
     }

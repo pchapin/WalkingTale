@@ -14,6 +14,7 @@ import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GenericHandler
 import com.talkingwhale.R
+import com.talkingwhale.pojos.Status
 import java.lang.Exception
 import kotlin.concurrent.thread
 
@@ -56,14 +57,14 @@ class SettingsActivity : AppCompatActivity() {
 
         private fun deleteAccount() {
             mainViewModel.currentUser.observe(this, Observer {
-                if (it?.data != null) {
+                if (it?.data != null && it.status == Status.SUCCESS) {
                     val user = it.data
                     mainViewModel.deleteUsersPosts(it.data).observe(this, Observer {
-                        if (it?.data != null) {
+                        if (it?.data != null && it.status == Status.SUCCESS) {
                             mainViewModel.deleteUserS3Content(context!!, user).observe(this, Observer {
-                                if (it?.data != null) {
+                                if (it?.data != null && it.status == Status.SUCCESS) {
                                     mainViewModel.deleteUser(user).observe(this, Observer {
-                                        if (it?.data != null) {
+                                        if (it?.data != null && it.status == Status.SUCCESS) {
 
                                             thread(start = true) {
                                                 CognitoUserPool(context, IdentityManager.getDefaultIdentityManager().configuration)

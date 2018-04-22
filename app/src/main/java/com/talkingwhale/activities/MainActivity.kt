@@ -708,7 +708,7 @@ class MainActivity :
 
     private fun authOrExit() {
         if (IdentityManager.getDefaultIdentityManager()?.cachedUserID == null) {
-            val intent = Intent(this, AuthenticatorActivity::class.java)
+            val intent = Intent(this, SplashActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -820,7 +820,7 @@ class MainActivity :
             rcSettings -> {
                 if (data?.getBooleanExtra(SettingsActivity.DELETED_POST_KEY, false) == true) {
                     toast("Account deleted.")
-                    startActivity(Intent(this, AuthenticatorActivity::class.java))
+                    startActivity(Intent(this, SplashActivity::class.java))
                     finish()
                 }
                 return
