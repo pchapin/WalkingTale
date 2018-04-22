@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import com.talkingwhale.R
 import com.talkingwhale.pojos.Status
+import com.talkingwhale.util.toast
+import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler {
 
@@ -129,6 +131,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
     }
 
     private fun loginAction() {
+        if (loginUser.text.isBlank()) {
+            toast("Username cannot be blank")
+            return
+        }
         // do sign in and handles on interface
         awsLoginModel.signInUser(userLoginEditText!!.text.toString(), passwordLoginEditText!!.text.toString())
     }
