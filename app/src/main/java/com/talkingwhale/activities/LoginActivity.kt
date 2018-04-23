@@ -3,9 +3,9 @@ package com.talkingwhale.activities
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import com.talkingwhale.R
 import com.talkingwhale.pojos.Status
@@ -18,17 +18,17 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
 
     // UI variables
     // login
-    private var userLoginEditText: EditText? = null
-    private var passwordLoginEditText: EditText? = null
+    private var userLoginEditText: TextInputEditText? = null
+    private var passwordLoginEditText: TextInputEditText? = null
     // register
-    private var userNameRegisterEditText: EditText? = null
-    private var userEmailRegisterEditText: EditText? = null
-    private var passwordRegisterEditText: EditText? = null
+    private var userNameRegisterEditText: TextInputEditText? = null
+    private var userEmailRegisterEditText: TextInputEditText? = null
+    private var passwordRegisterEditText: TextInputEditText? = null
     // confirm registration
-    private var confirmationCodeEditText: EditText? = null
+    private var confirmationCodeEditText: TextInputEditText? = null
     // reset / forgot
-    private var resetCodeEditText: EditText? = null
-    private var newPasswordEditText: EditText? = null
+    private var resetCodeEditText: TextInputEditText? = null
+    private var newPasswordEditText: TextInputEditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

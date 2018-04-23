@@ -162,9 +162,7 @@ class MainActivity :
                     startActivityForResult(Intent(this, MyPostsActivity::class.java), rcMyPosts)
                 }
                 R.id.action_sign_out -> {
-                    IdentityManager.getDefaultIdentityManager().signOut()
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
+                    logout()
                 }
                 R.id.action_settings -> {
                     startActivityForResult(Intent(this, SettingsActivity::class.java), rcSettings)
@@ -708,10 +706,15 @@ class MainActivity :
 
     private fun authOrExit() {
         if (IdentityManager.getDefaultIdentityManager()?.cachedUserID == null) {
-            val intent = Intent(this, SplashActivity::class.java)
-            startActivity(intent)
-            finish()
+            logout()
         }
+    }
+
+    private fun logout() {
+        IdentityManager.getDefaultIdentityManager().signOut()
+        val intent = Intent(this, SplashActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onResume() {
@@ -820,8 +823,7 @@ class MainActivity :
             rcSettings -> {
                 if (data?.getBooleanExtra(SettingsActivity.DELETED_POST_KEY, false) == true) {
                     toast("Account deleted.")
-                    startActivity(Intent(this, SplashActivity::class.java))
-                    finish()
+                    logout()
                 }
                 return
             }

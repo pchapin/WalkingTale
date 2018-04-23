@@ -15,23 +15,21 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        AWSMobileClient.getInstance().initialize(this@SplashActivity) {
+        AWSMobileClient.getInstance().initialize(this) {
             val identityManager = IdentityManager.getDefaultIdentityManager()
-            identityManager.resumeSession(this@SplashActivity, { authResults ->
+            identityManager.resumeSession(this, { authResults ->
                 if (authResults.isUserSignedIn) {
                     AWSLoginModel.getUserId(this).observe(this, Observer {
                         if (it?.status == Status.SUCCESS) {
-                            startActivity(Intent(this@SplashActivity, MainActivity::class.java)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK))
+                            startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
                     })
                 } else {
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK))
+                    startActivity(Intent(this, LoginActivity::class.java))
                     finish()
                 }
-            }, 2000)
+            }, 1000)
         }.execute()
     }
 }
