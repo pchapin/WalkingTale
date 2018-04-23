@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".activities.SplashActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="89dp"
+        android:text="@string/app_name"
+        android:textSize="@dimen/large_text" />
+
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

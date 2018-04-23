@@ -20,7 +20,6 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.*
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.*
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.cognitoidentityprovider.model.*
-import com.talkingwhale.R
 import com.talkingwhale.pojos.Resource
 import com.talkingwhale.pojos.Status
 import com.talkingwhale.repository.AbstractTask
@@ -321,13 +320,7 @@ class AWSLoginModel
         fun getUserId(context: Context): LiveData<Resource<String>> {
             val task = object : AbstractTask<String>() {
                 override fun run() {
-
-                    val credentialsProvider = CognitoCachingCredentialsProvider(
-                            context, // Context
-                            context.resources.getString(R.string.id_pool_name), // Identity Pool ID
-                            Regions.US_EAST_1 // Region
-                    )
-
+                    val credentialsProvider = CognitoCachingCredentialsProvider(context, IdentityManager.getDefaultIdentityManager().configuration)
                     result.postValue(Resource(Status.SUCCESS, credentialsProvider.cachedIdentityId, ""))
                 }
             }
