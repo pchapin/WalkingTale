@@ -20,13 +20,14 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.auth0.android.jwt.JWT
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -63,14 +64,13 @@ import kotlin.concurrent.thread
 
 
 class MainActivity :
-        AppCompatActivity(),
+        Fragment(),
         OnMapReadyCallback,
         ClusterManager.OnClusterClickListener<Post>,
         ClusterManager.OnClusterInfoWindowClickListener<Post>,
         ClusterManager.OnClusterItemClickListener<Post>,
         ClusterManager.OnClusterItemInfoWindowClickListener<Post> {
 
-    private val tag = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
     private var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
@@ -105,34 +105,30 @@ class MainActivity :
     private val minPostDistanceMeters = 30
     private val cameraDiff = .1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        authOrExit()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_main, container, false)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        initialize()
+        return binding.root
+    }
+
+
+    private fun initialize() {
+        authOrExit()
+//        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+//        setSupportActionBar(toolbar)
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
+
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        iconGenerator = IconGenerator(this)
-        Analytics.init(this)
+        iconGenerator = IconGenerator(context)
+        Analytics.init(context!!)
         navigationDrawer()
-        db = AppDatabase.getAppDatabase(this)
-        if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
+        db = AppDatabase.getAppDatabase(context!!)
+        if (PermissionManager.checkLocationPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onBackPressed() {
-        if (nav_view.visibility == View.VISIBLE) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -150,22 +146,23 @@ class MainActivity :
             }
 
     private fun navigationDrawer() {
-        nav_view.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_help -> {
-                    startActivity(Intent(this, HelpActivity::class.java))
+//                    startActivity(Intent(this, HelpActivity::class.java))
+                    navigateToFragment(activity, HelpActivity())
                 }
                 R.id.action_about -> {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://toddcooke.github.io/walking-tale-site/")))
                 }
                 R.id.action_my_posts -> {
-                    startActivityForResult(Intent(this, MyPostsActivity::class.java), rcMyPosts)
+                    startActivityForResult(Intent(context, MyPostsActivity::class.java), rcMyPosts)
                 }
                 R.id.action_sign_out -> {
                     logout()
                 }
                 R.id.action_settings -> {
-                    startActivityForResult(Intent(this, SettingsActivity::class.java), rcSettings)
+                    startActivityForResult(Intent(context, SettingsActivity::class.java), rcSettings)
                 }
             }
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -186,13 +183,13 @@ class MainActivity :
                         } catch (e: NoSuchElementException) {
                             continue
                         }
-                        Glide.with(applicationContext)
+                        Glide.with(context)
                                 .asBitmap()
                                 .load(resources.getString(R.string.s3_hostname) + post.content)
                                 .apply(RequestOptions().centerCrop())
                                 .into(object : SimpleTarget<Bitmap>(200, 200) {
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>) {
-                                        val imageView = ImageView(this@MainActivity)
+                                        val imageView = ImageView(context)
                                         imageView.setImageBitmap(resource)
                                         iconGenerator.setContentView(imageView)
                                         marker.setIcon(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).icon)
@@ -210,7 +207,7 @@ class MainActivity :
 
         authOrExit()
 
-        val lld = LocationLiveData(this)
+        val lld = LocationLiveData(context!!)
         lld.observe(this, Observer {
             if (it != null) {
                 lld.removeObservers(this)
@@ -227,7 +224,7 @@ class MainActivity :
                 iconThread()
                 dragListener()
 
-                class CustomClusterManager : ClusterManager<Post>(this, mMap) {
+                class CustomClusterManager : ClusterManager<Post>(context, mMap) {
                     override fun onCameraIdle() {
                         super.onCameraIdle()
                         possiblyGetNewPosts()
@@ -250,10 +247,10 @@ class MainActivity :
     }
 
     private fun setMapStyle() {
-        val sp = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        val sp = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context)
         val nightModeOff = sp.getBoolean(resources.getString(R.string.pref_key_map_mode), false)
         val mapStyle = if (nightModeOff) R.raw.map_style else R.raw.mapstyle_night
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, mapStyle))
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, mapStyle))
     }
 
     /**
@@ -270,7 +267,7 @@ class MainActivity :
                 currentCornerLatLng.southWest.latitude < cameraBounds!!.southWest.latitude ||
                 currentCornerLatLng.southWest.longitude < cameraBounds!!.southWest.longitude
         ) {
-            Log.i(tag, "Fetching new posts")
+            Log.i(TAG, "Fetching new posts")
             cameraBounds = newExpandedBounds(currentCornerLatLng, cameraDiff)
             mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
         }
@@ -293,7 +290,7 @@ class MainActivity :
             if (!insideRadius(bounds.center)) return true
 
             db.postDao().insertPosts(cluster.items.toList())
-            val intent = Intent(this, OverflowActivity::class.java)
+            val intent = Intent(context, OverflowActivity::class.java)
             intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
             startActivityForResult(intent, PostViewActivity.RC_POST_VIEW)
         }
@@ -310,7 +307,7 @@ class MainActivity :
     private fun insideRadius(latLng: LatLng): Boolean {
         val distanceFromPost = SphericalUtil.computeDistanceBetween(location, latLng)
         if (distanceFromPost > minPostDistanceMeters) {
-            Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
             return false
         }
         return true
@@ -321,7 +318,7 @@ class MainActivity :
         if (!insideRadius(post.position)) return true
         binding.post = post
         db.postDao().insert(post)
-        val intent = Intent(this, PostViewActivity::class.java)
+        val intent = Intent(context, PostViewActivity::class.java)
         intent.putExtra(POST_KEY, post.postId)
         intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
         startActivityForResult(intent, PostViewActivity.RC_POST_VIEW)
@@ -331,9 +328,9 @@ class MainActivity :
     override fun onClusterItemInfoWindowClick(p0: Post?) {
     }
 
-    private inner class PostRenderer : DefaultClusterRenderer<Post>(applicationContext, mMap, mClusterManager) {
-        private val iconGenerator = IconGenerator(applicationContext)
-        private val mClusterIconGenerator = IconGenerator(applicationContext)
+    private inner class PostRenderer : DefaultClusterRenderer<Post>(context, mMap, mClusterManager) {
+        private val iconGenerator = IconGenerator(context)
+        private val mClusterIconGenerator = IconGenerator(context)
         private val imageView: ImageView
         private val mClusterImageView: ImageView
         private val mDimension: Int
@@ -343,7 +340,7 @@ class MainActivity :
             val multiProfile = layoutInflater.inflate(R.layout.multi_profile, null)
             mClusterIconGenerator.setContentView(multiProfile)
             mClusterImageView = multiProfile.findViewById(R.id.image)
-            imageView = ImageView(applicationContext)
+            imageView = ImageView(context)
             mDimension = resources.getDimension(R.dimen.custom_profile_image).toInt()
             imageView.layoutParams = ViewGroup.LayoutParams(mDimension, mDimension)
             val padding = resources.getDimension(R.dimen.custom_profile_padding).toInt()
@@ -369,7 +366,7 @@ class MainActivity :
             for (p in cluster.items) {
                 // Draw 4 at most.
                 if (profilePhotos.size == 4) break
-                val drawable = resources.getDrawable(getDrawableForPost(p), theme)
+                val drawable = resources.getDrawable(getDrawableForPost(p), activity?.theme)
                 drawable.setBounds(0, 0, width, height)
                 profilePhotos.add(drawable)
             }
@@ -394,8 +391,8 @@ class MainActivity :
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     initLocation()
                 } else {
-                    Toast.makeText(this, "Please enable location permissions for this app.", Toast.LENGTH_SHORT).show()
-                    finish()
+                    Toast.makeText(context, "Please enable location permissions for this app.", Toast.LENGTH_SHORT).show()
+                    activity?.finish()
                 }
             }
             rcAudio -> {
@@ -455,15 +452,15 @@ class MainActivity :
 
     private fun textButton() {
         text_button.setOnClickListener({
-            val intent = Intent(this, TextInputActivity::class.java)
+            val intent = Intent(context, TextInputActivity::class.java)
             startActivityForResult(intent, rcText)
         })
     }
 
     private fun audioButton() {
         audio_button.setOnClickListener({
-            if (PermissionManager.checkLocationPermission(this, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
-                val intent = Intent(this, AudioRecordActivity::class.java)
+            if (PermissionManager.checkLocationPermission(activity!!, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
+                val intent = Intent(context, AudioRecordActivity::class.java)
                 intent.type = "audio/mpeg4-generic"
                 startActivityForResult(intent, rcAudio)
             }
@@ -472,16 +469,16 @@ class MainActivity :
 
     private fun cameraButton() {
         camera_button.setOnClickListener({
-            file = dispatchTakePictureIntent(rcPicture, this, file)
+            file = dispatchTakePictureIntent(rcPicture, activity!!, file)
         })
     }
 
     private fun videoButton() {
         video_button.setOnClickListener({
-            if (PermissionManager.checkLocationPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, rcVideo, "Storage", "Give permission to access storage?")) {
+            if (PermissionManager.checkLocationPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE, rcVideo, "Storage", "Give permission to access storage?")) {
                 val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
                 takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 6)
-                if (takeVideoIntent.resolveActivity(packageManager) != null) {
+                if (takeVideoIntent.resolveActivity(activity?.packageManager) != null) {
                     startActivityForResult(takeVideoIntent, rcVideo)
                 }
             }
@@ -518,7 +515,7 @@ class MainActivity :
             polygon = mMap.addPolygon(
                     PolygonOptions()
                             .addAll(polyLinePoints)
-                            .strokeColor(resources.getColor(R.color.secondaryColor, theme))
+                            .strokeColor(resources.getColor(R.color.secondaryColor, activity?.theme))
                             .strokeWidth(7f)
             )
         }
@@ -558,7 +555,7 @@ class MainActivity :
                                         currentUser.postGroupIds.add(postGroup.id)
                                         mainViewModel.putUser(currentUser).observe(this, Observer {
                                             if (it != null && it.status == Status.SUCCESS) {
-                                                Toast.makeText(this, "Post group created!", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Post group created!", Toast.LENGTH_SHORT).show()
                                                 liveData.removeObservers(this)
                                             }
                                         })
@@ -582,7 +579,7 @@ class MainActivity :
 
     private fun filterButton() {
         val filterItems = arrayOf("My Posts", "All Posts", "Recent Posts")
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(context)
                 .setTitle("Filter posts")
                 .setItems(filterItems, { _, which ->
                     when (which) {
@@ -604,7 +601,7 @@ class MainActivity :
     }
 
     private fun locationListener() {
-        LocationLiveData(this).observe(this, Observer {
+        LocationLiveData(context!!).observe(this, Observer {
             if (it != null) {
                 location = locationToLatLng(it)
                 if (!cameraOnUserOnce) {
@@ -627,15 +624,15 @@ class MainActivity :
                                 .center(location)
                                 .radius(minPostDistanceMeters.toDouble())
                                 .strokeWidth(5f)
-                                .strokeColor(resources.getColor(R.color.secondaryColor, theme)))
+                                .strokeColor(resources.getColor(R.color.secondaryColor, activity?.theme)))
 
                 innerCircle?.remove()
                 innerCircle = mMap.addCircle(
                         CircleOptions()
                                 .center(location)
                                 .radius(.4)
-                                .fillColor(resources.getColor(R.color.secondaryColor, theme))
-                                .strokeColor(resources.getColor(R.color.secondaryColor, theme)))
+                                .fillColor(resources.getColor(R.color.secondaryColor, activity?.theme))
+                                .strokeColor(resources.getColor(R.color.secondaryColor, activity?.theme)))
             }
         })
     }
@@ -655,7 +652,7 @@ class MainActivity :
                         binding.user = it.data
                         nav_view_username.text = it.data?.userName
                         currentUser = it.data!!
-                        Analytics.logEvent(Analytics.EventType.UserLogin, tag)
+                        Analytics.logEvent(Analytics.EventType.UserLogin, TAG)
                     }
                 }
             }
@@ -670,7 +667,7 @@ class MainActivity :
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {
-                        Analytics.logEvent(Analytics.EventType.CreatedUser, tag)
+                        Analytics.logEvent(Analytics.EventType.CreatedUser, TAG)
                         mainViewModel.setCurrentUserId(cognitoId)
                         liveData.removeObservers(this)
                     }
@@ -689,12 +686,12 @@ class MainActivity :
      */
     private fun checkPlayServices() {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
-        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(this)
+        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
 
         if (resultCode != ConnectionResult.SUCCESS) {
             if (googleApiAvailability.isUserResolvableError(resultCode)) {
                 if (playServicesErrorDialog == null) {
-                    playServicesErrorDialog = googleApiAvailability.getErrorDialog(this, resultCode, 2404)
+                    playServicesErrorDialog = googleApiAvailability.getErrorDialog(activity, resultCode, 2404)
                     playServicesErrorDialog!!.setCancelable(false)
                 }
 
@@ -712,9 +709,9 @@ class MainActivity :
 
     private fun logout() {
         IdentityManager.getDefaultIdentityManager().signOut()
-        val intent = Intent(this, SplashActivity::class.java)
+        val intent = Intent(context, SplashActivity::class.java)
         startActivity(intent)
-        finish()
+//        finish()
     }
 
     override fun onResume() {
@@ -766,7 +763,7 @@ class MainActivity :
         }
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
 
         var postType: PostType? = null
@@ -782,18 +779,18 @@ class MainActivity :
             }
             rcVideo -> {
                 val videoUri = data!!.data
-                val videoFile = File(UriUtil.getPath(this, videoUri))
+                val videoFile = File(UriUtil.getPath(context, videoUri))
                 content = videoFile.absolutePath
                 postType = VIDEO
 
                 val retriever = MediaMetadataRetriever()
                 // use one of overloaded setDataSource() functions to set your data source
-                retriever.setDataSource(this, Uri.fromFile(videoFile))
+                retriever.setDataSource(context, Uri.fromFile(videoFile))
                 val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                 retriever.release()
                 val timeMilliseconds = time.toLong()
                 if (timeMilliseconds > 7000) {
-                    Toast.makeText(this, "Videos must be at most 6 seconds.", Toast.LENGTH_SHORT).show()
+                    toast("Videos must be at most 6 seconds.")
                     return
                 }
             }
@@ -842,7 +839,7 @@ class MainActivity :
         )
 
         // Put the file in S3
-        val liveData = mainViewModel.putFile(Pair(post, this))
+        val liveData = mainViewModel.putFile(Pair(post, context!!))
         liveData.observe(this, Observer {
             if (it != null && it.status == Status.SUCCESS) {
                 val newPost = it.data!!
@@ -855,7 +852,7 @@ class MainActivity :
                         // Update the users set of created posts
                         mainViewModel.putUser(currentUser).observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
-                                Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
+                                toast("Post created!")
                                 mainViewModel.setPostBounds(cameraBounds!!)
                                 liveData.removeObservers(this)
                             }
@@ -899,5 +896,7 @@ class MainActivity :
             val newSwLong = cornerLatLng.southWest.longitude - cameraDiff
             return PostRepository.CornerLatLng(LatLng(newNeLat, newNeLong), LatLng(newSwLat, newSwLong))
         }
+
+        private val TAG = MainActivity::class.java.simpleName
     }
 }

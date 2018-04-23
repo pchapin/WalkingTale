@@ -1,60 +1,45 @@
 package com.talkingwhale.activities
 
 import android.arch.lifecycle.Observer
-import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.talkingwhale.R
+import com.talkingwhale.databinding.ActivityLoginBinding
 import com.talkingwhale.pojos.Status
+import com.talkingwhale.util.navigateToFragment
 import com.talkingwhale.util.toast
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler {
+class LoginActivity : Fragment(), View.OnClickListener, AWSLoginHandler {
 
     private lateinit var awsLoginModel: AWSLoginModel
+    private lateinit var binding: ActivityLoginBinding
 
-    // UI variables
-    // login
-    private var userLoginEditText: TextInputEditText? = null
-    private var passwordLoginEditText: TextInputEditText? = null
-    // register
-    private var userNameRegisterEditText: TextInputEditText? = null
-    private var userEmailRegisterEditText: TextInputEditText? = null
-    private var passwordRegisterEditText: TextInputEditText? = null
-    // confirm registration
-    private var confirmationCodeEditText: TextInputEditText? = null
-    // reset / forgot
-    private var resetCodeEditText: TextInputEditText? = null
-    private var newPasswordEditText: TextInputEditText? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_login, container, false)
+        return binding.root
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+//        setContentView(R.layout.activity_login)
 
-        awsLoginModel = AWSLoginModel(this, this)
-
-        // assigning UI variables
-        userLoginEditText = findViewById(R.id.loginUser)
-        passwordLoginEditText = findViewById(R.id.loginPassword)
-        userNameRegisterEditText = findViewById(R.id.registerUsername)
-        userEmailRegisterEditText = findViewById(R.id.registerEmail)
-        passwordRegisterEditText = findViewById(R.id.registerPassword)
-        confirmationCodeEditText = findViewById(R.id.confirmationCode)
-        resetCodeEditText = findViewById(R.id.resetCode)
-        newPasswordEditText = findViewById(R.id.newPassword)
+        awsLoginModel = AWSLoginModel(context!!, this)
 
         // setting listeners
-        findViewById<View>(R.id.registerButton).setOnClickListener(this)
-        findViewById<View>(R.id.loginButton).setOnClickListener(this)
-        findViewById<View>(R.id.confirmButton).setOnClickListener(this)
-        findViewById<View>(R.id.resendConfirmationButton).setOnClickListener(this)
-        findViewById<View>(R.id.resetButton).setOnClickListener(this)
-        findViewById<View>(R.id.forgotButton).setOnClickListener(this)
-        findViewById<View>(R.id.showLoginButton).setOnClickListener(this)
-        findViewById<View>(R.id.showRegisterButton).setOnClickListener(this)
+        registerButton.setOnClickListener(this)
+        loginButton.setOnClickListener(this)
+        confirmButton.setOnClickListener(this)
+        resendConfirmationButton.setOnClickListener(this)
+        resetButton.setOnClickListener(this)
+        forgotButton.setOnClickListener(this)
+        showLoginButton.setOnClickListener(this)
+        showRegisterButton.setOnClickListener(this)
 
         registerContainer.visibility = View.GONE
         confirmContainer.visibility = View.GONE
@@ -63,43 +48,44 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
 
     override fun onRegisterSuccess(mustConfirmToComplete: Boolean) {
         if (mustConfirmToComplete) {
-            Toast.makeText(this@LoginActivity, "Almost done! Confirm code to complete registration", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Almost done! Confirm code to complete registration", Toast.LENGTH_LONG).show()
             showConfirm(true)
         } else {
-            Toast.makeText(this@LoginActivity, "Registered! Login Now!", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Registered! Login Now!", Toast.LENGTH_LONG).show()
         }
     }
 
     override fun onRegisterConfirmed() {
-        Toast.makeText(this@LoginActivity, "Registered! Login Now!", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Registered! Login Now!", Toast.LENGTH_LONG).show()
         showLoginAction(true)
     }
 
     override fun onSignInSuccess() {
-        AWSLoginModel.getUserId(this).observe(this, Observer {
+        AWSLoginModel.getUserId(context!!).observe(this, Observer {
             if (it?.status == Status.SUCCESS) {
-                this@LoginActivity.startActivity(Intent(this@LoginActivity, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                finish()
+//                this@LoginActivity.startActivity(Intent(this@LoginActivity, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                navigateToFragment(activity, MainActivity())
+//                finish()
             }
         })
     }
 
     override fun onResendConfirmationCodeSuccess(medium: String) {
-        Toast.makeText(this@LoginActivity, "Confirmation code sent! Destination:$medium", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Confirmation code sent! Destination:$medium", Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestResetUserPasswordSuccess(medium: String) {
-        Toast.makeText(this@LoginActivity, "Reset code sent! Destination:$medium", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Reset code sent! Destination:$medium", Toast.LENGTH_LONG).show()
         showForgotAction(true)
     }
 
     override fun onResetUserPasswordSuccess() {
-        Toast.makeText(this@LoginActivity, "Password reset! Login Now!", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Password reset! Login Now!", Toast.LENGTH_LONG).show()
         showLoginAction(true)
     }
 
     override fun onFailure(process: Int, exception: Exception, cause: Int, message: String) {
-        Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         if (cause != AWSLoginModel.CAUSE_MUST_CONFIRM_FIRST) {
             exception.printStackTrace()
         } else {
@@ -122,12 +108,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
 
     private fun registerAction() {
         // do register and handles on interface
-        awsLoginModel.registerUser(userNameRegisterEditText!!.text.toString(), userEmailRegisterEditText!!.text.toString(), passwordRegisterEditText!!.text.toString())
+        awsLoginModel.registerUser(registerUsername!!.text.toString(), registerEmail!!.text.toString(), registerPassword!!.text.toString())
     }
 
     private fun confirmAction() {
         // do confirmation and handles on interface
-        awsLoginModel.confirmRegistration(confirmationCodeEditText!!.text.toString())
+        awsLoginModel.confirmRegistration(confirmationCode!!.text.toString())
     }
 
     private fun resendConfirmationAction() {
@@ -141,20 +127,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
             return
         }
         // do sign in and handles on interface
-        awsLoginModel.signInUser(userLoginEditText!!.text.toString(), passwordLoginEditText!!.text.toString())
+        awsLoginModel.signInUser(loginUser!!.text.toString(), loginPassword!!.text.toString())
     }
 
     private fun forgotPasswordAction() {
-        if (userLoginEditText!!.text.toString().isEmpty()) {
-            Toast.makeText(this@LoginActivity, "Username required.", Toast.LENGTH_LONG).show()
+        if (loginUser!!.text.toString().isEmpty()) {
+            Toast.makeText(context, "Username required.", Toast.LENGTH_LONG).show()
         } else {
-            awsLoginModel.requestResetUserPassword(userLoginEditText!!.text.toString())
+            awsLoginModel.requestResetUserPassword(loginUser!!.text.toString())
         }
     }
 
     private fun resetAction() {
         // request reset password and handles on interface
-        awsLoginModel.resetUserPasswordWithCode(resetCodeEditText!!.text.toString(), newPasswordEditText!!.text.toString())
+        awsLoginModel.resetUserPasswordWithCode(resetCode!!.text.toString(), newPassword!!.text.toString())
     }
 
     private fun showLoginAction(show: Boolean) {
@@ -162,13 +148,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
             showRegisterAction(false)
             showConfirm(false)
             showForgotAction(false)
-            findViewById<View>(R.id.loginContainer).visibility = View.VISIBLE
-            findViewById<View>(R.id.showRegisterButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.showLoginButton).visibility = View.GONE
+            loginContainer.visibility = View.VISIBLE
+            showRegisterButton.visibility = View.VISIBLE
+            showLoginButton.visibility = View.GONE
         } else {
-            findViewById<View>(R.id.loginContainer).visibility = View.GONE
-            userLoginEditText!!.setText("")
-            passwordLoginEditText!!.setText("")
+            loginContainer.visibility = View.GONE
+            loginUser!!.setText("")
+            loginPassword!!.setText("")
         }
     }
 
@@ -177,14 +163,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
             showLoginAction(false)
             showConfirm(false)
             showForgotAction(false)
-            findViewById<View>(R.id.registerContainer).visibility = View.VISIBLE
-            findViewById<View>(R.id.showRegisterButton).visibility = View.GONE
-            findViewById<View>(R.id.showLoginButton).visibility = View.VISIBLE
+            registerContainer.visibility = View.VISIBLE
+            showRegisterButton.visibility = View.GONE
+            showLoginButton.visibility = View.VISIBLE
         } else {
-            findViewById<View>(R.id.registerContainer).visibility = View.GONE
-            userNameRegisterEditText!!.setText("")
-            userEmailRegisterEditText!!.setText("")
-            passwordRegisterEditText!!.setText("")
+            registerContainer.visibility = View.GONE
+            registerUsername!!.setText("")
+            registerEmail!!.setText("")
+            registerPassword!!.setText("")
         }
     }
 
@@ -193,12 +179,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
             showLoginAction(false)
             showRegisterAction(false)
             showForgotAction(false)
-            findViewById<View>(R.id.confirmContainer).visibility = View.VISIBLE
-            findViewById<View>(R.id.showRegisterButton).visibility = View.GONE
-            findViewById<View>(R.id.showLoginButton).visibility = View.VISIBLE
+            confirmContainer.visibility = View.VISIBLE
+            showRegisterButton.visibility = View.GONE
+            showLoginButton.visibility = View.VISIBLE
         } else {
-            findViewById<View>(R.id.confirmContainer).visibility = View.GONE
-            confirmationCodeEditText!!.setText("")
+            confirmContainer.visibility = View.GONE
+            confirmationCode!!.setText("")
         }
     }
 
@@ -207,13 +193,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
             showLoginAction(false)
             showRegisterAction(false)
             showConfirm(false)
-            findViewById<View>(R.id.forgotContainer).visibility = View.VISIBLE
-            findViewById<View>(R.id.showRegisterButton).visibility = View.GONE
-            findViewById<View>(R.id.showLoginButton).visibility = View.VISIBLE
+            forgotContainer.visibility = View.VISIBLE
+            showRegisterButton.visibility = View.GONE
+            showLoginButton.visibility = View.VISIBLE
         } else {
-            findViewById<View>(R.id.forgotContainer).visibility = View.GONE
-            resetCodeEditText!!.setText("")
-            newPasswordEditText!!.setText("")
+            forgotContainer.visibility = View.GONE
+            resetCode!!.setText("")
+            newPassword!!.setText("")
         }
     }
 
