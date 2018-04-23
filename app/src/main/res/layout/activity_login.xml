@@ -1,271 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.LoginActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="25dp"
-        android:text="This is the Login Screen" />
-
-    <TableLayout
-        android:id="@+id/registerContainer"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:visibility="gone">
+        android:orientation="vertical">
 
-        <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="25dp"
+            android:text="@string/app_name"
+            android:textSize="@dimen/large_text" />
+
+        <LinearLayout
+            android:id="@+id/registerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username:" />
+                android:text="@string/username" />
 
             <EditText
                 android:id="@+id/registerUsername"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="text"
                 android:lines="1" />
 
-        </TableRow>
-
-        <TableRow>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="E-mail:" />
+                android:text="@string/e_mail" />
 
             <EditText
                 android:id="@+id/registerEmail"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textWebEmailAddress"
                 android:lines="1" />
-
-        </TableRow>
-
-        <TableRow>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password:" />
+                android:text="@string/password" />
 
             <EditText
                 android:id="@+id/registerPassword"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPassword"
                 android:lines="1" />
 
-        </TableRow>
-
-        <TableRow>
-
             <Button
                 android:id="@+id/registerButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Register" />
+                android:text="@string/register" />
 
-        </TableRow>
+        </LinearLayout>
 
-    </TableLayout>
-
-    <TableLayout
-        android:id="@+id/confirmContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:visibility="gone">
-
-        <TableRow>
+        <LinearLayout
+            android:id="@+id/confirmContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Confirm your registration"
+                android:text="@string/confirm_your_registration"
                 android:textAlignment="center" />
-
-        </TableRow>
-
-        <TableRow>
 
             <EditText
                 android:id="@+id/confirmationCode"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:inputType="numberDecimal" />
 
             <Button
                 android:id="@+id/confirmButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="confirm" />
-
-        </TableRow>
-
-        <TableRow>
+                android:text="@string/confirm" />
 
             <Button
                 android:id="@+id/resendConfirmationButton"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Resend Confirmation Code" />
+                android:text="@string/resend_confirmation_code" />
 
-        </TableRow>
+        </LinearLayout>
 
-    </TableLayout>
-
-    <TableLayout
-        android:id="@+id/loginContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp">
-
-        <TableRow>
+        <LinearLayout
+            android:id="@+id/loginContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username:" />
+                android:text="@string/username" />
 
             <EditText
                 android:id="@+id/loginUser"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:ems="10"
                 android:inputType="text"
                 android:lines="1" />
 
-        </TableRow>
-
-        <TableRow>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password:" />
+                android:text="@string/password" />
 
             <EditText
                 android:id="@+id/loginPassword"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPassword"
                 android:lines="1" />
-
-        </TableRow>
-
-        <TableRow>
 
             <Button
                 android:id="@+id/forgotButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Forgot" />
+                android:text="@string/forgot" />
 
             <Button
                 android:id="@+id/loginButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:text="Login" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/login" />
+        </LinearLayout>
 
-        </TableRow>
-
-    </TableLayout>
-
-    <TableLayout
-        android:id="@+id/forgotContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:visibility="gone">
-
-        <TableRow>
+        <LinearLayout
+            android:id="@+id/forgotContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Reset Password"
+                android:text="@string/reset_password"
                 android:textAlignment="center" />
-
-        </TableRow>
-
-        <TableRow>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reset Code:" />
+                android:text="@string/reset_code" />
 
             <EditText
                 android:id="@+id/resetCode"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-        </TableRow>
-
-        <TableRow>
+                android:inputType="number" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Password:" />
+                android:text="@string/new_password" />
 
             <EditText
                 android:id="@+id/newPassword"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-        </TableRow>
-
-        <TableRow>
+                android:inputType="textPassword" />
 
             <Button
                 android:id="@+id/resetButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="reset" />
+                android:text="@string/reset" />
 
-        </TableRow>
+        </LinearLayout>
 
+        <Button
+            android:id="@+id/showRegisterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/sign_up" />
 
-    </TableLayout>
+        <Button
+            android:id="@+id/showLoginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/sign_in"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/showRegisterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Sign Up" />
-
-    <Button
-        android:id="@+id/showLoginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Sign In"
-        android:visibility="gone" />
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

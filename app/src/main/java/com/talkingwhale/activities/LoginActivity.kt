@@ -55,6 +55,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, AWSLoginHandler
         findViewById<View>(R.id.forgotButton).setOnClickListener(this)
         findViewById<View>(R.id.showLoginButton).setOnClickListener(this)
         findViewById<View>(R.id.showRegisterButton).setOnClickListener(this)
+
+        registerContainer.visibility = View.GONE
+        confirmContainer.visibility = View.GONE
+        forgotContainer.visibility = View.GONE
     }
 
     override fun onRegisterSuccess(mustConfirmToComplete: Boolean) {

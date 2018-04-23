@@ -66,4 +66,21 @@
     <!--Preferences-->
     <string name="pref_key_map_mode">MAP_MODE</string>
     <string name="pref_key_delete_account">DELETE_ACCOUNT</string>
+
+    <!--Login Activity-->
+    <string name="reset">reset</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="e_mail">E-mail:</string>
+    <string name="register">Register</string>
+    <string name="confirm_your_registration">Confirm your registration</string>
+    <string name="confirm">confirm</string>
+    <string name="resend_confirmation_code">Resend Confirmation Code</string>
+    <string name="username">Username:</string>
+    <string name="password">Password:</string>
+    <string name="forgot">Forgot</string>
+    <string name="login">Login</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="reset_code">Reset Code:</string>
+    <string name="new_password">New Password:</string>
 </resources>
