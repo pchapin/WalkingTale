@@ -33,12 +33,12 @@ class SplashActivity : Fragment() {
                 if (authResults.isUserSignedIn) {
                     AWSLoginModel.getUserId(context!!).observe(this, Observer {
                         if (it?.status == Status.SUCCESS) {
-                            navigateToFragment(activity!!, MainActivity())
+                            activity?.navigateToFragment(MainActivity())
                         }
                     })
                 } else {
 
-                    navigateToFragment(activity!!, LoginActivity())
+                    activity?.navigateToFragment(LoginActivity())
                 }
             }, 1000)
         }.execute()

@@ -1,6 +1,5 @@
 package com.talkingwhale.activities
 
-import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -9,11 +8,14 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.BaseTransientBottomBar
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.talkingwhale.R
 import com.talkingwhale.databinding.ActivityMyPostsBinding
 import com.talkingwhale.db.AppDatabase
@@ -24,26 +26,26 @@ import com.talkingwhale.ui.PostAdapter
 import kotlinx.android.synthetic.main.activity_my_posts.*
 
 
-class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
+class MyPostsActivity : Fragment(), DataBindingComponent {
 
-    lateinit var binding: ActivityMyPostsBinding
     lateinit var db: AppDatabase
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var mainViewModel: MainViewModel
     private val displayList = mutableListOf<Post>()
+    private lateinit var binding: ActivityMyPostsBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_my_posts)
-        db = AppDatabase.getAppDatabase(this)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_my_posts, container, false)
+        setup()
+        return binding.root
+    }
+
+    private fun setup() {
+        db = AppDatabase.getAppDatabase(context!!)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupRecyclerView()
         postListObserver()
-        setResult(Activity.RESULT_OK, Intent())
     }
 
     private fun setupRecyclerView() {
@@ -51,14 +53,14 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
                 object : PostAdapter.PostClickCallback {
                     override fun onClick(post: Post) {
                         db.postDao().insert(post)
-                        val intent = Intent(this@MyPostsActivity, PostViewActivity::class.java)
+                        val intent = Intent(context, PostViewActivity::class.java)
                         intent.putExtra(PostViewActivity.POST_KEY, post.postId)
                         intent.putExtra(PostViewActivity.HIDE_USER_BTN_KEY, true)
                         startActivity(intent)
                     }
                 })
         recyclerView = my_post_list.apply {
-            layoutManager = LinearLayoutManager(this@MyPostsActivity)
+            layoutManager = LinearLayoutManager(this@MyPostsActivity.context)
             adapter = this@MyPostsActivity.adapter
         }
 

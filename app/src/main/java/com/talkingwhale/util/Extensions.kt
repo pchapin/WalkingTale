@@ -23,8 +23,8 @@ fun Fragment.snackbar(text: String) {
     Snackbar.make(activity!!.window.decorView.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show()
 }
 
-fun Fragment.navigateToFragment(activity: FragmentActivity?, fragment: Fragment?) {
-    activity?.supportFragmentManager?.beginTransaction()
+fun FragmentActivity.navigateToFragment(fragment: Fragment?) {
+    this.supportFragmentManager?.beginTransaction()
             ?.add(R.id.container, fragment)
             ?.commit()
 }

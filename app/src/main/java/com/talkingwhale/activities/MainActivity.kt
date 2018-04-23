@@ -21,9 +21,11 @@ import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.view.GravityCompat
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -57,7 +59,6 @@ import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.ui.MultiDrawable
 import com.talkingwhale.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.nav_header.*
 import java.io.File
 import java.util.*
 import kotlin.concurrent.thread
@@ -116,59 +117,16 @@ class MainActivity :
 
     private fun initialize() {
         authOrExit()
-//        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-//        setSupportActionBar(toolbar)
-//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-//        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
-
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         iconGenerator = IconGenerator(context)
         Analytics.init(context!!)
-        navigationDrawer()
         db = AppDatabase.getAppDatabase(context!!)
         if (PermissionManager.checkLocationPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
             initLocation()
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) =
-            when (item.itemId) {
-                android.R.id.home -> {
-                    // Open the navigation drawer when the home icon is selected from the toolbar.
-                    drawer_layout.openDrawer(GravityCompat.START)
-                    true
-                }
-                R.id.action_filter -> {
-                    filterButton()
-                    true
-                }
-                else -> super.onOptionsItemSelected(item)
-            }
 
-    private fun navigationDrawer() {
-        binding.navView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.action_help -> {
-//                    startActivity(Intent(this, HelpActivity::class.java))
-                    navigateToFragment(activity, HelpActivity())
-                }
-                R.id.action_about -> {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://toddcooke.github.io/walking-tale-site/")))
-                }
-                R.id.action_my_posts -> {
-                    startActivityForResult(Intent(context, MyPostsActivity::class.java), rcMyPosts)
-                }
-                R.id.action_sign_out -> {
-                    logout()
-                }
-                R.id.action_settings -> {
-                    startActivityForResult(Intent(context, SettingsActivity::class.java), rcSettings)
-                }
-            }
-            drawer_layout.closeDrawer(GravityCompat.START)
-            return@setNavigationItemSelectedListener true
-        }
-    }
 
     private fun iconThread() {
         // Update marker icons after they have been placed
@@ -650,7 +608,6 @@ class MainActivity :
                     }
                     Status.SUCCESS -> {
                         binding.user = it.data
-                        nav_view_username.text = it.data?.userName
                         currentUser = it.data!!
                         Analytics.logEvent(Analytics.EventType.UserLogin, TAG)
                     }

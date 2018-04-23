@@ -29,6 +29,7 @@
         android:layout_height="180dp"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
+        android:contentDescription="@string/main_logo"
         android:src="@drawable/talking_whale" />
 
     <TextView
