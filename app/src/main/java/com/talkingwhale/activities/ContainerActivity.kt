@@ -21,12 +21,12 @@ class ContainerActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        navigateToFragment(SplashActivity())
+        navigateToFragment(SplashFragment())
         navigationDrawer()
     }
 
     private fun isOnlyFragmentMain(): Boolean {
-        return supportFragmentManager.fragments.map { it::class.java }.last() == MainActivity::class.java
+        return supportFragmentManager.fragments.map { it::class.java }.last() == MainFragment::class.java
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -51,19 +51,19 @@ class ContainerActivity : AppCompatActivity() {
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_help -> {
-                    navigateToFragment(HelpActivity())
+                    navigateToFragment(HelpFragment())
                 }
                 R.id.action_about -> {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://toddcooke.github.io/walking-tale-site/")))
                 }
                 R.id.action_my_posts -> {
-                    navigateToFragment(MyPostsActivity())
+                    navigateToFragment(MyPostsFragment())
                 }
                 R.id.action_sign_out -> {
 //                    logout()
                 }
                 R.id.action_settings -> {
-                    navigateToFragment(SettingsActivity())
+                    navigateToFragment(SettingsFragment())
                 }
             }
             drawer_layout.closeDrawer(GravityCompat.START)

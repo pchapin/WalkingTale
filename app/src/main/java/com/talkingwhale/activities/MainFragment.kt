@@ -50,22 +50,22 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
 import com.talkingwhale.R
-import com.talkingwhale.activities.OverflowActivity.Companion.POST_LIST_KEY
+import com.talkingwhale.activities.OverflowFragment.Companion.POST_LIST_KEY
 import com.talkingwhale.activities.PostViewActivity.Companion.POST_KEY
-import com.talkingwhale.databinding.ActivityMainBinding
+import com.talkingwhale.databinding.FragmentMainBinding
 import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.pojos.*
 import com.talkingwhale.pojos.PostType.*
 import com.talkingwhale.repository.PostRepository
 import com.talkingwhale.ui.MultiDrawable
 import com.talkingwhale.util.*
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.File
 import java.util.*
 import kotlin.concurrent.thread
 
 
-class MainActivity :
+class MainFragment :
         Fragment(),
         OnMapReadyCallback,
         ClusterManager.OnClusterClickListener<Post>,
@@ -87,7 +87,7 @@ class MainActivity :
     private val rcLocation = 5
     private val rcMyPosts = 6
     private val rcSettings = 7
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: FragmentMainBinding
     private var isLinking = false
     private lateinit var mClusterManager: ClusterManager<Post>
     private var lastClusterCenter = LatLng(0.0, 0.0)
@@ -108,7 +108,7 @@ class MainActivity :
     private val cameraDiff = .1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_main, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         return binding.root
@@ -246,7 +246,7 @@ class MainActivity :
             if (!insideRadius(bounds.center)) return true
 
             db.postDao().insertPosts(cluster.items.toList())
-            val intent = Intent(context, OverflowActivity::class.java)
+            val intent = Intent(context, OverflowFragment::class.java)
             intent.putExtra(POST_LIST_KEY, cluster.items.map { it.postId }.toTypedArray())
             startActivityForResult(intent, PostViewActivity.RC_POST_VIEW)
         }
@@ -416,7 +416,7 @@ class MainActivity :
     private fun audioButton() {
         audio_button.setOnClickListener({
             if (PermissionManager.checkLocationPermission(activity!!, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
-                (activity as AppCompatActivity).navigateToFragment(AudioRecordActivity())
+                (activity as AppCompatActivity).navigateToFragment(AudioRecordFragment())
             }
         })
     }
@@ -764,7 +764,7 @@ class MainActivity :
                 return
             }
             rcSettings -> {
-                if (data?.getBooleanExtra(SettingsActivity.DELETED_POST_KEY, false) == true) {
+                if (data?.getBooleanExtra(SettingsFragment.DELETED_POST_KEY, false) == true) {
                     toast("Account deleted.")
                     popBackStack()
                 }
@@ -824,6 +824,6 @@ class MainActivity :
             return PostRepository.CornerLatLng(LatLng(newNeLat, newNeLong), LatLng(newSwLat, newSwLong))
         }
 
-        private val TAG = MainActivity::class.java.simpleName
+        private val TAG = MainFragment::class.java.simpleName
     }
 }

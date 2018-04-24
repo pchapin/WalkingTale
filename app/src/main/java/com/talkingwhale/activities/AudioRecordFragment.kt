@@ -16,17 +16,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.talkingwhale.R
-import com.talkingwhale.databinding.ActivityAudioRecordBinding
+import com.talkingwhale.databinding.FragmentAudioRecordBinding
 import com.talkingwhale.util.createFile
 import com.talkingwhale.util.popBackStack
-import kotlinx.android.synthetic.main.activity_audio_record.*
+import kotlinx.android.synthetic.main.fragment_audio_record.*
 import java.io.File
 import java.io.IOException
 
 /**
  * Records an audio clip
  */
-class AudioRecordActivity : Fragment() {
+class AudioRecordFragment : Fragment() {
 
     private var mRecorder: MediaRecorder? = null
     private var mPlayer: MediaPlayer? = null
@@ -36,12 +36,12 @@ class AudioRecordActivity : Fragment() {
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
     private var mStartRecording = true
     private var mStartPlaying = true
-    private lateinit var binding: ActivityAudioRecordBinding
+    private lateinit var binding: FragmentAudioRecordBinding
     private lateinit var mainViewModel: MainViewModel
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_audio_record, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_audio_record, container, false)
         return binding.root
     }
 
@@ -179,7 +179,7 @@ class AudioRecordActivity : Fragment() {
     }
 
     companion object {
-        private const val LOG_TAG = "AudioRecordActivity"
+        private const val LOG_TAG = "AudioRecordFragment"
         private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
     }
 }

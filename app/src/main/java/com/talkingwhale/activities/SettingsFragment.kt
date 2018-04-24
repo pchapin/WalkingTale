@@ -18,30 +18,30 @@ import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GenericHandler
 import com.talkingwhale.R
-import com.talkingwhale.databinding.ActivitySettingsBinding
+import com.talkingwhale.databinding.FragmentSettingsBinding
 import com.talkingwhale.pojos.Status
 import java.lang.Exception
 import kotlin.concurrent.thread
 
 
-class SettingsActivity : Fragment() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var binding: FragmentSettingsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_settings, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false)
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         childFragmentManager.beginTransaction()
-                ?.replace(android.R.id.content, SettingsFragment())
+                ?.replace(android.R.id.content, InnerSettingsFragment())
                 ?.commit()
         PreferenceManager.setDefaultValues(context, R.xml.preferences, false)
     }
 
-    internal class SettingsFragment : PreferenceFragmentCompat() {
+    internal class InnerSettingsFragment : PreferenceFragmentCompat() {
 
         private lateinit var mainViewModel: MainViewModel
 
@@ -88,7 +88,7 @@ class SettingsActivity : Fragment() {
                                                     }
 
                                                     override fun onFailure(exception: Exception?) {
-                                                        Log.i(SettingsActivity::class.java.simpleName, "" + exception)
+                                                        Log.i(SettingsFragment::class.java.simpleName, "" + exception)
                                                     }
                                                 })
                                             }
@@ -100,7 +100,7 @@ class SettingsActivity : Fragment() {
                     })
                 }
             })
-            mainViewModel.setCurrentUserId(MainActivity.cognitoId)
+            mainViewModel.setCurrentUserId(MainFragment.cognitoId)
         }
     }
 

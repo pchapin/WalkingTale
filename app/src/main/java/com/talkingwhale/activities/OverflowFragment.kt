@@ -10,14 +10,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.talkingwhale.R
-import com.talkingwhale.databinding.ActivityOverflowBinding
+import com.talkingwhale.databinding.FragmentOverflowBinding
 import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.pojos.Post
 import com.talkingwhale.ui.PostAdapter
-import kotlinx.android.synthetic.main.activity_overflow.*
+import kotlinx.android.synthetic.main.fragment_overflow.*
 
-class OverflowActivity : AppCompatActivity(), DataBindingComponent {
-    private lateinit var binding: ActivityOverflowBinding
+class OverflowFragment : AppCompatActivity(), DataBindingComponent {
+    private lateinit var binding: FragmentOverflowBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var db: AppDatabase
     private lateinit var mainViewModel: MainViewModel
@@ -25,7 +25,7 @@ class OverflowActivity : AppCompatActivity(), DataBindingComponent {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_overflow)
+        binding = DataBindingUtil.setContentView(this, R.layout.fragment_overflow)
         db = AppDatabase.getAppDatabase(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         setSupportActionBar(toolbar)
@@ -36,15 +36,15 @@ class OverflowActivity : AppCompatActivity(), DataBindingComponent {
     private fun recyclerView() {
         adapter = PostAdapter(this, object : PostAdapter.PostClickCallback {
             override fun onClick(post: Post) {
-                val intent = Intent(this@OverflowActivity, PostViewActivity::class.java)
+                val intent = Intent(this@OverflowFragment, PostViewActivity::class.java)
                 intent.putExtra(PostViewActivity.POST_KEY, post.postId)
                 intent.putExtra(PostViewActivity.POST_GROUP_KEY, post.groupId)
                 startActivityForResult(intent, PostViewActivity.RC_POST_VIEW)
             }
         })
         recyclerView = my_recycler_view.apply {
-            layoutManager = GridLayoutManager(this@OverflowActivity, 2)
-            adapter = this@OverflowActivity.adapter
+            layoutManager = GridLayoutManager(this@OverflowFragment, 2)
+            adapter = this@OverflowFragment.adapter
         }
 
         val posts = db.postDao().loadPosts(intent.getStringArrayExtra(POST_LIST_KEY).toList())

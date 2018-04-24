@@ -10,19 +10,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.talkingwhale.R
-import com.talkingwhale.databinding.ActivityLoginBinding
+import com.talkingwhale.databinding.FragmentLoginBinding
 import com.talkingwhale.pojos.Status
 import com.talkingwhale.util.navigateToFragment
 import com.talkingwhale.util.toast
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_login.*
 
-class LoginActivity : Fragment(), View.OnClickListener, AWSLoginHandler {
+class LoginFragment : Fragment(), View.OnClickListener, AWSLoginHandler {
 
     private lateinit var awsLoginModel: AWSLoginModel
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: FragmentLoginBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_login, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         return binding.root
     }
 
@@ -63,7 +63,7 @@ class LoginActivity : Fragment(), View.OnClickListener, AWSLoginHandler {
     override fun onSignInSuccess() {
         AWSLoginModel.getUserId(context!!).observe(this, Observer {
             if (it?.status == Status.SUCCESS) {
-                (activity as AppCompatActivity).navigateToFragment(MainActivity(), true)
+                (activity as AppCompatActivity).navigateToFragment(MainFragment(), true)
             }
         })
     }

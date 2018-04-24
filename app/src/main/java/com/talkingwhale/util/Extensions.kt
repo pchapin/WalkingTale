@@ -6,10 +6,10 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.talkingwhale.R
-import com.talkingwhale.activities.AudioRecordActivity
-import com.talkingwhale.activities.MainActivity
-import com.talkingwhale.activities.MyPostsActivity
-import com.talkingwhale.activities.SettingsActivity
+import com.talkingwhale.activities.AudioRecordFragment
+import com.talkingwhale.activities.MainFragment
+import com.talkingwhale.activities.MyPostsFragment
+import com.talkingwhale.activities.SettingsFragment
 
 fun Activity.toast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
@@ -29,7 +29,7 @@ fun Fragment.snackbar(text: String) {
 
 fun AppCompatActivity.navigateToFragment(fragment: Fragment?, replace: Boolean = true) {
 
-    if (fragment?.javaClass == MainActivity::class.java) {
+    if (fragment?.javaClass == MainFragment::class.java) {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
         title = resources.getString(R.string.app_name)
     } else {
@@ -37,12 +37,12 @@ fun AppCompatActivity.navigateToFragment(fragment: Fragment?, replace: Boolean =
     }
 
     when (fragment?.javaClass) {
-        MyPostsActivity::class.java -> {
+        MyPostsFragment::class.java -> {
             title = resources.getString(R.string.title_activity_my_posts)
         }
-        SettingsActivity::class.java -> {
+        SettingsFragment::class.java -> {
         }
-        AudioRecordActivity::class.java -> {
+        AudioRecordFragment::class.java -> {
         }
     }
 

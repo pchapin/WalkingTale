@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.maps.android.clustering.ClusterItem
 import com.talkingwhale.R
-import com.talkingwhale.activities.MainActivity
+import com.talkingwhale.activities.MainFragment
 import com.talkingwhale.db.AppTypeConverters
 
 
@@ -61,7 +61,7 @@ data class Post(
      * Do not use this constructor!
      * Just to make DDB mapper happy
      * */
-    constructor() : this(MainActivity.getRandomUUID(), MainActivity.getRandomUUID(), "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", null)
+    constructor() : this(MainFragment.getRandomUUID(), MainFragment.getRandomUUID(), "", 0.0, 0.0, mutableListOf(), PostType.TEXT, "", null)
 }
 
 class PostTypeMarshaller : DynamoDBMarshaller<PostType> {

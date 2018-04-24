@@ -67,7 +67,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name=".activities.OverflowActivity"
+            android:name=".activities.OverflowFragment"
             android:label="@string/title_activity_overflow"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

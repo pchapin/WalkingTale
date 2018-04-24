@@ -17,26 +17,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.talkingwhale.R
-import com.talkingwhale.databinding.ActivityMyPostsBinding
+import com.talkingwhale.databinding.FragmentMyPostsBinding
 import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.pojos.Post
 import com.talkingwhale.pojos.Status
 import com.talkingwhale.pojos.User
 import com.talkingwhale.ui.PostAdapter
-import kotlinx.android.synthetic.main.activity_my_posts.*
+import kotlinx.android.synthetic.main.fragment_my_posts.*
 
 
-class MyPostsActivity : Fragment(), DataBindingComponent {
+class MyPostsFragment : Fragment(), DataBindingComponent {
 
     lateinit var db: AppDatabase
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var mainViewModel: MainViewModel
     private val displayList = mutableListOf<Post>()
-    private lateinit var binding: ActivityMyPostsBinding
+    private lateinit var binding: FragmentMyPostsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_my_posts, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_posts, container, false)
         return binding.root
     }
 
@@ -65,8 +65,8 @@ class MyPostsActivity : Fragment(), DataBindingComponent {
                 })
 
         recyclerView = my_post_list.apply {
-            layoutManager = LinearLayoutManager(this@MyPostsActivity.context)
-            adapter = this@MyPostsActivity.adapter
+            layoutManager = LinearLayoutManager(this@MyPostsFragment.context)
+            adapter = this@MyPostsFragment.adapter
         }
 
         val itemTouchHelper = ItemTouchHelper(
@@ -107,7 +107,7 @@ class MyPostsActivity : Fragment(), DataBindingComponent {
                 adapter.notifyDataSetChanged()
             }
         })
-        mainViewModel.setCurrentUserId(MainActivity.cognitoId)
+        mainViewModel.setCurrentUserId(MainFragment.cognitoId)
     }
 
     private fun deletePost(post: Post) {
@@ -122,7 +122,7 @@ class MyPostsActivity : Fragment(), DataBindingComponent {
                         mainViewModel.putUser(user).observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
                                 liveData.removeObservers(this)
-                                mainViewModel.setCurrentUserId(MainActivity.cognitoId)
+                                mainViewModel.setCurrentUserId(MainFragment.cognitoId)
                                 Snackbar.make(binding.root, "Post deleted", Snackbar.LENGTH_SHORT).show()
                             }
                         })
