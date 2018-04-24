@@ -44,9 +44,6 @@ android {
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.talkingwhale"
-        // Note the only reason we are using such a high minSdkVersion is that
-        // the aws auth ui requires it, if we used a different sign in solution
-        // we could knock the min version down a few
         minSdkVersion 23
         targetSdkVersion 27
         versionCode 9
@@ -129,7 +126,6 @@ dependencies {
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    kapt 'com.android.databinding:compiler:3.1.1'
 
     // Google Firebase
     implementation "com.google.firebase:firebase-crash:$gms_version"
