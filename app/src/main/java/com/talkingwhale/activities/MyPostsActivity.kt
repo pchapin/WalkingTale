@@ -37,8 +37,12 @@ class MyPostsActivity : Fragment(), DataBindingComponent {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_my_posts, container, false)
-        setup()
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setup()
     }
 
     private fun setup() {
@@ -59,6 +63,7 @@ class MyPostsActivity : Fragment(), DataBindingComponent {
                         startActivity(intent)
                     }
                 })
+
         recyclerView = my_post_list.apply {
             layoutManager = LinearLayoutManager(this@MyPostsActivity.context)
             adapter = this@MyPostsActivity.adapter

@@ -76,13 +76,6 @@
             android:label="@string/title_activity_overflow"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.MyPostsActivity"
-            android:label="@string/title_activity_my_posts"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:label="Settings" />
-        <activity
             android:name=".activities.ContainerActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +26,6 @@ class SplashActivity : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_splash)
 
         AWSMobileClient.getInstance().initialize(context) {
             val identityManager = IdentityManager.getDefaultIdentityManager()
@@ -33,12 +33,11 @@ class SplashActivity : Fragment() {
                 if (authResults.isUserSignedIn) {
                     AWSLoginModel.getUserId(context!!).observe(this, Observer {
                         if (it?.status == Status.SUCCESS) {
-                            activity?.navigateToFragment(MainActivity())
+                            (activity as AppCompatActivity).navigateToFragment(MainActivity(), true)
                         }
                     })
                 } else {
-
-                    activity?.navigateToFragment(LoginActivity())
+                    (activity as AppCompatActivity).navigateToFragment(LoginActivity(), true)
                 }
             }, 1000)
         }.execute()
