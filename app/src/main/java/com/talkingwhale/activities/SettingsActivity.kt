@@ -33,7 +33,6 @@ class SettingsActivity : Fragment() {
         return binding.root
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         childFragmentManager.beginTransaction()
@@ -49,7 +48,7 @@ class SettingsActivity : Fragment() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
             deleteAccountListener()
-            mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+            mainViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
         }
 
         private fun deleteAccountListener() {

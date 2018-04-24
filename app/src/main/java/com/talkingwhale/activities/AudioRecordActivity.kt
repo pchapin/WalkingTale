@@ -1,20 +1,24 @@
 package com.talkingwhale.activities
 
 import android.Manifest
-import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.databinding.DataBindingUtil
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.talkingwhale.R
+import com.talkingwhale.databinding.ActivityAudioRecordBinding
 import com.talkingwhale.util.createFile
+import com.talkingwhale.util.popBackStack
 import kotlinx.android.synthetic.main.activity_audio_record.*
 import java.io.File
 import java.io.IOException
@@ -22,7 +26,7 @@ import java.io.IOException
 /**
  * Records an audio clip
  */
-class AudioRecordActivity : AppCompatActivity() {
+class AudioRecordActivity : Fragment() {
 
     private var mRecorder: MediaRecorder? = null
     private var mPlayer: MediaPlayer? = null
@@ -32,16 +36,23 @@ class AudioRecordActivity : AppCompatActivity() {
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
     private var mStartRecording = true
     private var mStartPlaying = true
+    private lateinit var binding: ActivityAudioRecordBinding
+    private lateinit var mainViewModel: MainViewModel
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_audio_record)
-        audioFile = createFile(this)
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_audio_record, container, false)
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        audioFile = createFile(activity!!)
+        mainViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        ActivityCompat.requestPermissions(activity!!, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
         recordButton()
         playButton()
+        finishButton()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -49,20 +60,13 @@ class AudioRecordActivity : AppCompatActivity() {
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
             permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
-        if (!permissionToRecordAccepted) finish()
+        if (!permissionToRecordAccepted) popBackStack()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_audio_record, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.action_finish_audio) {
+    private fun finishButton() {
+        button_finish_audio.setOnClickListener {
             finishAudio()
-            return true
         }
-        return false
     }
 
     private fun onRecord(start: Boolean) {
@@ -88,7 +92,7 @@ class AudioRecordActivity : AppCompatActivity() {
             mPlayer!!.setDataSource(audioFile.absolutePath)
             mPlayer!!.prepare()
             mPlayer!!.start()
-            button_audio_play.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
+            button_audio_play.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, activity?.theme))
         } catch (e: IOException) {
             Log.e(LOG_TAG, "prepare() failed")
         }
@@ -100,7 +104,7 @@ class AudioRecordActivity : AppCompatActivity() {
     private fun stopPlaying() {
         mPlayer?.release()
         mPlayer = null
-        button_audio_play.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, theme))
+        button_audio_play.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, activity?.theme))
     }
 
     private fun startRecording() {
@@ -123,17 +127,17 @@ class AudioRecordActivity : AppCompatActivity() {
         }
 
         mRecorder!!.start()
-        button_audio_record.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, theme))
+        button_audio_record.setImageDrawable(resources.getDrawable(R.drawable.ic_stop_black_24dp, activity?.theme))
     }
 
     private fun stopRecording() {
         mRecorder!!.stop()
         mRecorder!!.release()
         mRecorder = null
-        button_audio_record.setImageDrawable(resources.getDrawable(R.drawable.ic_mic_black_24dp, theme))
+        button_audio_record.setImageDrawable(resources.getDrawable(R.drawable.ic_mic_black_24dp, activity?.theme))
     }
 
-    public override fun onStop() {
+    override fun onStop() {
         super.onStop()
         if (mRecorder != null) {
             mRecorder!!.release()
@@ -170,12 +174,12 @@ class AudioRecordActivity : AppCompatActivity() {
 
         Log.i("uri", resultData!!.toString())
         result.data = resultData
-        setResult(Activity.RESULT_OK, result)
-        finish()
+        popBackStack()
+
     }
 
     companion object {
         private const val LOG_TAG = "AudioRecordActivity"
-        private val REQUEST_RECORD_AUDIO_PERMISSION = 200
+        private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
     }
 }

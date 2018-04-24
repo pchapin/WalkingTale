@@ -1,10 +1,7 @@
 package com.talkingwhale.activities
 
 import android.arch.core.util.Function
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.*
 import android.content.Context
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
 import com.talkingwhale.pojos.*
@@ -83,5 +80,34 @@ class MainViewModel : ViewModel() {
 
     fun deleteUser(user: User): LiveData<Resource<Unit>> {
         return userRepository.deleteUser(user)
+    }
+
+    fun createPost(
+            post: Post,
+            context: Context,
+            lifecycleOwner: LifecycleOwner,
+            callback: () -> Unit
+    ) {
+        currentUser.observe(lifecycleOwner, Observer {
+            if (it?.data != null) {
+                val user = it.data
+                putFile(Pair(post, context)).observe(lifecycleOwner, Observer {
+                    if (it != null && it.status == Status.SUCCESS) {
+                        val newPost = it.data!!
+                        putPost(newPost).observe(lifecycleOwner, Observer {
+                            if (it != null && it.status == Status.SUCCESS) {
+                                user.createdPosts.add(newPost.content)
+                                putUser(user).observe(lifecycleOwner, Observer {
+                                    if (it != null && it.status == Status.SUCCESS) {
+                                        callback()
+                                        currentUser.removeObservers(lifecycleOwner)
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        })
     }
 }

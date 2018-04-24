@@ -21,6 +21,7 @@ import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -110,14 +111,13 @@ class MainActivity :
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_main, container, false)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        initialize()
         return binding.root
     }
 
-
-    private fun initialize() {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         authOrExit()
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
         iconGenerator = IconGenerator(context)
         Analytics.init(context!!)
         db = AppDatabase.getAppDatabase(context!!)
@@ -125,8 +125,6 @@ class MainActivity :
             initLocation()
         }
     }
-
-
 
     private fun iconThread() {
         // Update marker icons after they have been placed
@@ -418,9 +416,7 @@ class MainActivity :
     private fun audioButton() {
         audio_button.setOnClickListener({
             if (PermissionManager.checkLocationPermission(activity!!, Manifest.permission.RECORD_AUDIO, rcAudio, "Audio", "Give permission to record audio?")) {
-                val intent = Intent(context, AudioRecordActivity::class.java)
-                intent.type = "audio/mpeg4-generic"
-                startActivityForResult(intent, rcAudio)
+                (activity as AppCompatActivity).navigateToFragment(AudioRecordActivity())
             }
         })
     }
@@ -660,15 +656,8 @@ class MainActivity :
 
     private fun authOrExit() {
         if (IdentityManager.getDefaultIdentityManager()?.cachedUserID == null) {
-            logout()
+            popBackStack()
         }
-    }
-
-    private fun logout() {
-        IdentityManager.getDefaultIdentityManager().signOut()
-        val intent = Intent(context, SplashActivity::class.java)
-        startActivity(intent)
-//        finish()
     }
 
     override fun onResume() {
@@ -777,7 +766,7 @@ class MainActivity :
             rcSettings -> {
                 if (data?.getBooleanExtra(SettingsActivity.DELETED_POST_KEY, false) == true) {
                     toast("Account deleted.")
-                    logout()
+                    popBackStack()
                 }
                 return
             }
@@ -794,29 +783,10 @@ class MainActivity :
                 content!!,
                 null
         )
-
-        // Put the file in S3
-        val liveData = mainViewModel.putFile(Pair(post, context!!))
-        liveData.observe(this, Observer {
-            if (it != null && it.status == Status.SUCCESS) {
-                val newPost = it.data!!
-                // Add the post to DDB
-                mainViewModel.putPost(newPost).observe(this, Observer {
-                    if (it != null && it.status == Status.SUCCESS) {
-                        if (!currentUser.createdPosts.contains(newPost.content)) {
-                            currentUser.createdPosts.add(newPost.content)
-                        }
-                        // Update the users set of created posts
-                        mainViewModel.putUser(currentUser).observe(this, Observer {
-                            if (it != null && it.status == Status.SUCCESS) {
-                                toast("Post created!")
-                                mainViewModel.setPostBounds(cameraBounds!!)
-                                liveData.removeObservers(this)
-                            }
-                        })
-                    }
-                })
-            }
+        mainViewModel.createPost(post, context!!, this, {
+            toast("Post created!")
+            mClusterManager.addItem(post)
+            mClusterManager.cluster()
         })
     }
 

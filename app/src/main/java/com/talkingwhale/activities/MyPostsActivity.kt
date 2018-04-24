@@ -47,7 +47,7 @@ class MyPostsActivity : Fragment(), DataBindingComponent {
 
     private fun setup() {
         db = AppDatabase.getAppDatabase(context!!)
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
         setupRecyclerView()
         postListObserver()
     }

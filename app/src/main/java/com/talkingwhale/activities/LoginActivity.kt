@@ -26,8 +26,8 @@ class LoginActivity : Fragment(), View.OnClickListener, AWSLoginHandler {
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         awsLoginModel = AWSLoginModel(context!!, this)
 

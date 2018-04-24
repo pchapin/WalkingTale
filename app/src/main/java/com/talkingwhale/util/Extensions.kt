@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.talkingwhale.R
+import com.talkingwhale.activities.AudioRecordActivity
 import com.talkingwhale.activities.MainActivity
 import com.talkingwhale.activities.MyPostsActivity
 import com.talkingwhale.activities.SettingsActivity
@@ -26,7 +27,7 @@ fun Fragment.snackbar(text: String) {
     Snackbar.make(activity!!.window.decorView.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show()
 }
 
-fun AppCompatActivity.navigateToFragment(fragment: Fragment?, replace: Boolean = false) {
+fun AppCompatActivity.navigateToFragment(fragment: Fragment?, replace: Boolean = true) {
 
     if (fragment?.javaClass == MainActivity::class.java) {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
@@ -40,7 +41,8 @@ fun AppCompatActivity.navigateToFragment(fragment: Fragment?, replace: Boolean =
             title = resources.getString(R.string.title_activity_my_posts)
         }
         SettingsActivity::class.java -> {
-//            title = resources.getString(R.string.)
+        }
+        AudioRecordActivity::class.java -> {
         }
     }
 
@@ -55,4 +57,8 @@ fun AppCompatActivity.navigateToFragment(fragment: Fragment?, replace: Boolean =
                 ?.addToBackStack(null)
                 ?.commit()
     }
+}
+
+fun Fragment.popBackStack() {
+    activity?.supportFragmentManager?.popBackStack()
 }
