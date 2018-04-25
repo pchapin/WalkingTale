@@ -65,6 +65,8 @@
 
     <!--Preferences-->
     <string name="pref_key_map_mode">MAP_MODE</string>
+    <string name="pref_key_date_display">DATE_DISPLAY</string>
+    <string name="pref_key_user_display">USER_DISPLAY</string>
     <string name="pref_key_delete_account">DELETE_ACCOUNT</string>
 
     <!--Login Activity-->

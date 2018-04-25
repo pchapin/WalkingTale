@@ -20,15 +20,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="@{post.userName}"
-            android:textSize="@dimen/medium_text"
+            android:textSize="@dimen/small_text"
+            app:userName="@{post}"
             tools:text="username" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:textSize="@dimen/medium_text"
+            android:textSize="@dimen/small_text"
             app:dateTime="@{post}"
             tools:text="date" />
     </LinearLayout>

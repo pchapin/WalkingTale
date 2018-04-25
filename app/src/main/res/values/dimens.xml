@@ -21,6 +21,7 @@
     <dimen name="fab_bottom">32dp</dimen>
     <dimen name="large_text">24sp</dimen>
     <dimen name="medium_text">16sp</dimen>
+    <dimen name="small_text">12sp</dimen>
 
     <!--multi profile-->
     <dimen name="custom_profile_image">50dp</dimen>

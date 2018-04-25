@@ -6,6 +6,16 @@
         android:key="@string/pref_key_map_mode"
         android:summary="Make the map lighter"
         android:title="Map Light Mode" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_key_date_display"
+        android:summary="Display the date on each post"
+        android:title="Date display" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/pref_key_user_display"
+        android:summary="Display the users name on each post"
+        android:title="Name display" />
     <Preference
         android:defaultValue="Default value"
         android:key="@string/pref_key_delete_account"

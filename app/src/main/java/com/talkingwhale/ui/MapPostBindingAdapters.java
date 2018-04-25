@@ -1,7 +1,9 @@
 package com.talkingwhale.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.BindingAdapter;
+import android.support.v7.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,7 +44,27 @@ public class MapPostBindingAdapters {
     @BindingAdapter("dateTime")
     public static void setDateTime(TextView textView, Post post) {
         if (post == null) return;
-        Date date = new Date(Long.parseLong(post.getDateTime()));
-        textView.setText(new SimpleDateFormat("MMM d", Locale.US).format(date));
+        Context context = textView.getContext();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean displayDate = sp.getBoolean(context.getResources().getString(R.string.pref_key_date_display), false);
+        if (displayDate) {
+            Date date = new Date(Long.parseLong(post.getDateTime()));
+            textView.setText(new SimpleDateFormat("MMM d", Locale.US).format(date));
+        } else {
+            textView.setText("");
+        }
+    }
+
+    @BindingAdapter("userName")
+    public static void setUserName(TextView textView, Post post) {
+        if (post == null) return;
+        Context context = textView.getContext();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean displayUsername = sp.getBoolean(context.getResources().getString(R.string.pref_key_user_display), true);
+        if (displayUsername) {
+            textView.setText(post.getUserName());
+        } else {
+            textView.setText("");
+        }
     }
 }
