@@ -17,6 +17,7 @@ import com.talkingwhale.R
 import com.talkingwhale.databinding.ActivityPostViewBinding
 import com.talkingwhale.db.AppDatabase
 import com.talkingwhale.pojos.PostType
+import com.talkingwhale.util.toast
 import kotlinx.android.synthetic.main.activity_post_view.*
 
 class PostViewActivity : AppCompatActivity() {
@@ -55,12 +56,14 @@ class PostViewActivity : AppCompatActivity() {
                 val i = Intent()
                 i.putExtra(POST_GROUP_GROUPID_KEY, binding.post?.groupId)
                 setResult(Activity.RESULT_OK, i)
+                toast("Showing group by ${binding.post?.userName}")
                 finish()
             }
             R.id.action_users_posts -> {
                 val i = Intent()
                 i.putExtra(POST_USERID_KEY, binding.post?.userId)
                 setResult(Activity.RESULT_OK, i)
+                toast("Showing posts of ${binding.post?.userName}")
                 finish()
             }
         }

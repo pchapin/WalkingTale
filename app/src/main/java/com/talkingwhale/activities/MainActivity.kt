@@ -19,7 +19,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -711,7 +710,7 @@ class MainActivity :
     }
 
     private fun logout() {
-        IdentityManager.getDefaultIdentityManager().signOut()
+        IdentityManager.getDefaultIdentityManager()?.signOut()
         val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
         finish()
@@ -806,11 +805,9 @@ class MainActivity :
                 val userId = data?.getStringExtra(PostViewActivity.POST_USERID_KEY)
                 if (groupId != null) {
                     showOnlyGroupPosts(groupId)
-                    Snackbar.make(top_level_constraint_layout, "Showing group posts", Snackbar.LENGTH_LONG).show()
                     fabDisplay(false)
                 } else if (userId != null) {
                     showOnlyUsersPosts(userId)
-                    Snackbar.make(top_level_constraint_layout, "Showing users posts", Snackbar.LENGTH_LONG).show()
                     fabDisplay(false)
                 }
                 return
@@ -838,7 +835,8 @@ class MainActivity :
                 mutableListOf(),
                 postType!!,
                 content!!,
-                null
+                null,
+                currentUser.userName
         )
 
         // Put the file in S3

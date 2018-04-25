@@ -54,6 +54,10 @@
             android:text="@{post.content}"
             android:textSize="@dimen/medium_text" />
 
+        <include
+            layout="@layout/name_date"
+            app:post="@{post}" />
+
     </android.support.v7.widget.CardView>
 
 </layout>

@@ -14,9 +14,10 @@
             type="com.talkingwhale.pojos.PostType" />
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".activities.PostViewActivity">
 
         <android.support.design.widget.AppBarLayout
@@ -33,10 +34,9 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/post_image_view"
@@ -86,8 +86,13 @@
                 </FrameLayout>
             </RelativeLayout>
 
-        </android.support.constraint.ConstraintLayout>
-
-    </android.support.design.widget.CoordinatorLayout>
-
+            <include
+                layout="@layout/name_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                app:post="@{post}" />
+        </RelativeLayout>
+    </LinearLayout>
 </layout>
