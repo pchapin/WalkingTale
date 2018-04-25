@@ -43,6 +43,6 @@ public class MapPostBindingAdapters {
     public static void setDateTime(TextView textView, Post post) {
         if (post == null) return;
         Date date = new Date(Long.parseLong(post.getDateTime()));
-        textView.setText(new SimpleDateFormat("mm/dd/yy", Locale.US).format(date));
+        textView.setText(new SimpleDateFormat("MMM d", Locale.US).format(date));
     }
 }
