@@ -4,66 +4,40 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData
 import android.content.Context
 import android.location.Location
-import android.os.Bundle
-
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationResult
 
-class LocationLiveData(context: Context) : LiveData<Location>(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(context, this, this)
-            .addApi(LocationServices.API)
-            .build()
+class LocationLiveData(context: Context) : LiveData<Location>() {
+
+    @SuppressLint("MissingPermission")
+    private val fusedLocationClient = FusedLocationProviderClient(context)
+    private val locationRequest = LocationRequest().setInterval(10).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(p0: LocationResult?) {
+            if (p0 != null)
+                value = p0.lastLocation
+        }
+    }
 
     override fun onActive() {
-        // Wait for the GoogleApiClient to be connected
-        googleApiClient.connect()
+        startLocationUpdates()
     }
 
     override fun onInactive() {
-        if (googleApiClient.isConnected) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(
-                    googleApiClient, this)
-        }
-        googleApiClient.disconnect()
+        stopLocationUpdates()
     }
 
     @SuppressLint("MissingPermission")
-    override fun onConnected(connectionHint: Bundle?) {
-        // Try to immediately find a location
-        val lastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(googleApiClient)
-        if (lastLocation != null) {
-            value = lastLocation
-        }
-        // Request updates if there’s someone observing
-        if (hasActiveObservers()) {
-            val FASTEST_INTERVAL: Long = 10
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    googleApiClient,
-                    LocationRequest()
-                            .setInterval(FASTEST_INTERVAL)
-                            .setFastestInterval(FASTEST_INTERVAL),
-                    this)
-        }
+    private fun startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                null)
     }
 
-    override fun onLocationChanged(location: Location) {
-        // Deliver the location changes
-        value = location
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
-
-
-    override fun onConnectionSuspended(cause: Int) {
-        // Cry softly, hope it comes back on its own
-    }
-
-    override fun onConnectionFailed(
-            connectionResult: ConnectionResult) {
-        // Consider exposing this state as described here:
-        // https://d.android.com/topic/libraries/architecture/guide.html#addendum
-    }
-
 }
