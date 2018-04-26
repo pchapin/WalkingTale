@@ -31,6 +31,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.S3ClientOptions
 import com.amazonaws.services.s3.model.DeleteObjectsRequest
+import com.amazonaws.services.s3.model.MultiObjectDeleteException
 import com.google.android.gms.maps.model.LatLng
 import com.talkingwhale.R
 import com.talkingwhale.pojos.*
@@ -160,22 +161,26 @@ object PostRepository {
 
                 val s3Client = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider.credentials)
                 val deleteObjectsRequest = DeleteObjectsRequest(context.resources.getString(R.string.s3_bucket))
+                        .withKeys(*user.createdPosts.toTypedArray())
 
-                deleteObjectsRequest.withKeys(*user.createdPosts.toTypedArray())
-                s3Client.deleteObjects(deleteObjectsRequest)
-
-                result.postValue(Resource(Status.SUCCESS, Unit, ""))
+                try {
+                    s3Client.deleteObjects(deleteObjectsRequest)
+                    result.postValue(Resource(Status.SUCCESS, Unit, ""))
+                } catch (e: MultiObjectDeleteException) {
+                    result.postValue(Resource(Status.ERROR, Unit, ""))
+                }
             }
         }
         appExecutors.networkIO().execute(result)
         return result.getResult()
     }
 
-    fun deleteUsersPosts(user: User): LiveData<Resource<Unit>> {
+    fun deleteUsersPosts(user: User, posts: List<Post>): LiveData<Resource<Unit>> {
         val result = object : AbstractTask<Unit>() {
             override fun run() {
-                dynamoDBMapper.batchDelete(user.createdPosts.map { Post().copy(postId = it) })
-                result.postValue(Resource(Status.SUCCESS, Unit, ""))
+                val failed = dynamoDBMapper.batchDelete(posts)
+                Log.i(tag, "failed to delete posts: " + failed.map { it.exception })
+                result.postValue(Resource(if (failed.isEmpty()) Status.SUCCESS else Status.ERROR, Unit, ""))
             }
         }
         appExecutors.networkIO().execute(result)

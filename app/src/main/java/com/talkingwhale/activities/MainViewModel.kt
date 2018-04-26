@@ -77,8 +77,8 @@ class MainViewModel : ViewModel() {
         return postRepository.deleteUserS3Content(context, user)
     }
 
-    fun deleteUsersPosts(user: User): LiveData<Resource<Unit>> {
-        return postRepository.deleteUsersPosts(user)
+    fun deleteUsersPosts(user: User, posts: List<Post>): LiveData<Resource<Unit>> {
+        return postRepository.deleteUsersPosts(user, posts)
     }
 
     fun deleteUser(user: User): LiveData<Resource<Unit>> {

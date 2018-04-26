@@ -56,41 +56,49 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun deleteAccount() {
-            mainViewModel.currentUser.observe(this, Observer {
+
+            val liveData = mainViewModel.currentUser
+            liveData.observe(this, Observer {
                 if (it?.data != null && it.status == Status.SUCCESS) {
                     val user = it.data
-                    mainViewModel.deleteUsersPosts(it.data).observe(this, Observer {
-                        if (it?.data != null && it.status == Status.SUCCESS) {
-                            mainViewModel.deleteUserS3Content(context!!, user).observe(this, Observer {
-                                if (it?.data != null && it.status == Status.SUCCESS) {
-                                    mainViewModel.deleteUser(user).observe(this, Observer {
-                                        if (it?.data != null && it.status == Status.SUCCESS) {
-
-                                            thread(start = true) {
-                                                CognitoUserPool(context, IdentityManager.getDefaultIdentityManager().configuration)
-                                                        .currentUser.deleteUser(object : GenericHandler {
-                                                    override fun onSuccess() {
-                                                        IdentityManager.getDefaultIdentityManager().signOut()
-                                                        val intent = Intent()
-                                                        intent.putExtra(DELETED_POST_KEY, true)
-                                                        activity?.setResult(Activity.RESULT_OK, intent)
-                                                        activity?.finish()
-                                                    }
-
-                                                    override fun onFailure(exception: Exception?) {
-                                                        Log.i(SettingsActivity::class.java.simpleName, "" + exception)
-                                                    }
-                                                })
-                                            }
+                    mainViewModel.usersPosts.observe(this, Observer {
+                        if (it?.data != null)
+                            mainViewModel.deleteUsersPosts(user, it.data).observe(this, Observer {
+                                if (it?.status == Status.SUCCESS) {
+                                    mainViewModel.deleteUserS3Content(context!!, user).observe(this, Observer {
+                                        if (it?.status == Status.SUCCESS) {
+                                            mainViewModel.deleteUser(user).observe(this, Observer {
+                                                if (it?.status == Status.SUCCESS) {
+                                                    liveData.removeObservers(this)
+                                                    deleteCognitoAccount()
+                                                }
+                                            })
                                         }
                                     })
                                 }
                             })
-                        }
                     })
                 }
             })
             mainViewModel.setCurrentUserId(MainActivity.cognitoId)
+        }
+
+        private fun deleteCognitoAccount() {
+            thread {
+                CognitoUserPool(context, IdentityManager.getDefaultIdentityManager().configuration)
+                        .currentUser.deleteUser(object : GenericHandler {
+                    override fun onSuccess() {
+                        val intent = Intent()
+                        intent.putExtra(DELETED_POST_KEY, true)
+                        activity?.setResult(Activity.RESULT_OK, intent)
+                        activity?.finish()
+                    }
+
+                    override fun onFailure(exception: Exception?) {
+                        Log.i(SettingsActivity::class.java.simpleName, "" + exception)
+                    }
+                })
+            }
         }
     }
 
