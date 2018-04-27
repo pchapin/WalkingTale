@@ -11,4 +11,9 @@
         android:icon="@drawable/ic_person_white_24dp"
         android:title="See users posts"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_report_post"
+        android:icon="@drawable/ic_flag_white_24dp"
+        android:title="Report post"
+        app:showAsAction="never" />
 </menu>
