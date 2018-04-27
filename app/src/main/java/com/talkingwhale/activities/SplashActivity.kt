@@ -8,6 +8,7 @@ import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.talkingwhale.R
 import com.talkingwhale.pojos.Status
+import kotlin.concurrent.thread
 
 class SplashActivity : AppCompatActivity() {
 
@@ -31,5 +32,11 @@ class SplashActivity : AppCompatActivity() {
                 }
             }, 1000)
         }.execute()
+
+        // Handle case where splash screen hangs
+        thread {
+            Thread.sleep(5000)
+            finish()
+        }
     }
 }

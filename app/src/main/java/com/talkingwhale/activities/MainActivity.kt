@@ -723,7 +723,6 @@ class MainActivity :
         checkPlayServices()
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
         val mUiSettings = mMap.uiSettings

@@ -13,7 +13,6 @@ import com.talkingwhale.R
 
 class LocationLiveData(val context: Context) : LiveData<Location>() {
 
-    @SuppressLint("MissingPermission")
     private val fusedLocationClient = FusedLocationProviderClient(context)
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(p0: LocationResult?) {
@@ -23,7 +22,11 @@ class LocationLiveData(val context: Context) : LiveData<Location>() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onActive() {
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            value = it
+        }
         startLocationUpdates()
     }
 
