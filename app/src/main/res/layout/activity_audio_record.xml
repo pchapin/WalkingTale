@@ -54,7 +54,6 @@
                 style="@android:style/Widget.Material.Light.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:src="@drawable/ic_mic_black_24dp" />
         </FrameLayout>
 
@@ -70,7 +69,6 @@
                 style="@android:style/Widget.Material.Light.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:src="@drawable/ic_play_arrow_black_24dp" />
         </FrameLayout>
 
@@ -81,8 +79,9 @@
             android:layout_marginTop="350dp">
 
             <ImageView
-                android:layout_width="275dp"
-                android:layout_height="275dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/talking_whale"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/frame"/>
