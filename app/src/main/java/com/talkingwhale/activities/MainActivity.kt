@@ -812,12 +812,15 @@ class MainActivity :
                 return
             }
             rcMyPosts -> {
-                // User may have deleted some posts in MyPosts activity, so fetch again
-                mainViewModel.setPostBounds(cameraBounds!!)
+                val deletedPostIds = data?.getStringArrayExtra(MyPostsActivity.DELETED_POST_KEY)
+                if (deletedPostIds != null) {
+                    postList = postList?.filterNot { it.postId in deletedPostIds }
+                    showAllPosts()
+                }
                 return
             }
             rcSettings -> {
-                if (data?.getBooleanExtra(SettingsActivity.DELETED_POST_KEY, false) == true) {
+                if (data?.getBooleanExtra(SettingsActivity.DELETED_ACCOUNT_KEY, false) == true) {
                     toast("Account deleted.")
                     logout()
                 }

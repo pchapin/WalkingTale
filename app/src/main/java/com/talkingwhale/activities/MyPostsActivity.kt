@@ -32,6 +32,7 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
     private lateinit var recyclerView: RecyclerView
     private lateinit var mainViewModel: MainViewModel
     private val displayList = mutableListOf<Post>()
+    private var deletedPostIds = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,6 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupRecyclerView()
         postListObserver()
-        setResult(Activity.RESULT_OK, Intent())
     }
 
     private fun setupRecyclerView() {
@@ -117,11 +117,19 @@ class MyPostsActivity : AppCompatActivity(), DataBindingComponent {
                                 liveData.removeObservers(this)
                                 mainViewModel.setCurrentUserId(MainActivity.cognitoId)
                                 Snackbar.make(binding.root, "Post deleted", Snackbar.LENGTH_SHORT).show()
+                                deletedPostIds.add(post.postId)
+                                val i = Intent()
+                                i.putExtra(DELETED_POST_KEY, deletedPostIds.toTypedArray())
+                                setResult(Activity.RESULT_OK, i)
                             }
                         })
                     }
                 })
             }
         })
+    }
+
+    companion object {
+        const val DELETED_POST_KEY = "DELETED_ACCOUNT_KEY"
     }
 }

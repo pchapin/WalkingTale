@@ -89,7 +89,7 @@ class SettingsActivity : AppCompatActivity() {
                         .currentUser.deleteUser(object : GenericHandler {
                     override fun onSuccess() {
                         val intent = Intent()
-                        intent.putExtra(DELETED_POST_KEY, true)
+                        intent.putExtra(DELETED_ACCOUNT_KEY, true)
                         activity?.setResult(Activity.RESULT_OK, intent)
                         activity?.finish()
                     }
@@ -103,6 +103,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val DELETED_POST_KEY = "DELETED_POST_KEY"
+        const val DELETED_ACCOUNT_KEY = "DELETED_ACCOUNT_KEY"
     }
 }
