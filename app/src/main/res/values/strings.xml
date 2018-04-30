@@ -72,7 +72,7 @@
 
     <!--Login Activity-->
     <string name="reset">reset</string>
-    <string name="sign_up">Sign Up</string>
+    <string name="create_account">Create account</string>
     <string name="sign_in">Sign In</string>
     <string name="e_mail">E-mail:</string>
     <string name="register">Register</string>
