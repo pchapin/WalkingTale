@@ -8,7 +8,6 @@ import android.graphics.Canvas
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
-import android.util.Log
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -38,7 +37,6 @@ fun dispatchTakePictureIntent(requestCode: Int, activity: Activity, photoFile: F
         try {
             file = createFile(activity)
         } catch (e: IOException) {
-            Log.i(TAG, "" + e)
         }
 
         // Continue only if the File was successfully created

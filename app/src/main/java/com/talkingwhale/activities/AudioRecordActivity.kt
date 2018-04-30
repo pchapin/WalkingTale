@@ -168,7 +168,6 @@ class AudioRecordActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        Log.i("uri", resultData!!.toString())
         result.data = resultData
         setResult(Activity.RESULT_OK, result)
         finish()

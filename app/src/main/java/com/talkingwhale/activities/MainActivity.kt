@@ -21,7 +21,6 @@ import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
@@ -143,6 +142,10 @@ class MainActivity :
                 }
                 R.id.action_filter -> {
                     filterButton()
+                    true
+                }
+                R.id.action_refresh -> {
+                    mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
@@ -269,7 +272,6 @@ class MainActivity :
                 currentCornerLatLng.southWest.latitude < cameraBounds!!.southWest.latitude ||
                 currentCornerLatLng.southWest.longitude < cameraBounds!!.southWest.longitude
         ) {
-            Log.i(tag, "Fetching new posts")
             cameraBounds = newExpandedBounds(currentCornerLatLng, cameraDiff)
             mainViewModel.setPostBounds(cameraBounds as PostRepository.CornerLatLng)
         }
@@ -856,7 +858,11 @@ class MainActivity :
                         mainViewModel.putUser(currentUser).observe(this, Observer {
                             if (it != null && it.status == Status.SUCCESS) {
                                 Toast.makeText(this, "Post created!", Toast.LENGTH_SHORT).show()
-                                mainViewModel.setPostBounds(cameraBounds!!)
+                                val newList = mutableListOf(*postList!!.toTypedArray())
+                                newList.add(post)
+                                db.postDao().insert(post)
+                                postList = newList
+                                showAllPosts()
                                 liveData.removeObservers(this)
                             }
                         })

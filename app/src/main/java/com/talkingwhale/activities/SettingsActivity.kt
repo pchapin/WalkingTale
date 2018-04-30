@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.PreferenceManager
-import android.util.Log
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GenericHandler
@@ -95,7 +94,6 @@ class SettingsActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(exception: Exception?) {
-                        Log.i(SettingsActivity::class.java.simpleName, "" + exception)
                     }
                 })
             }

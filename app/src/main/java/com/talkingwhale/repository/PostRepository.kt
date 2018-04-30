@@ -18,7 +18,6 @@ package com.talkingwhale.repository
 
 import android.arch.lifecycle.LiveData
 import android.content.Context
-import android.util.Log
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
@@ -89,15 +88,12 @@ object PostRepository {
                 val s3Path = post.postId
                 transferUtility.upload(s3Path, file).setTransferListener(object : TransferListener {
                     override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
-                        Log.i(tag, "" + bytesCurrent)
                     }
 
                     override fun onStateChanged(id: Int, state: TransferState?) {
-                        Log.i(tag, "" + state)
                     }
 
                     override fun onError(id: Int, ex: Exception?) {
-                        Log.i(tag, "" + ex)
                     }
                 })
                 post.content = s3Path
@@ -179,7 +175,6 @@ object PostRepository {
         val result = object : AbstractTask<Unit>() {
             override fun run() {
                 val failed = dynamoDBMapper.batchDelete(posts)
-                Log.i(tag, "failed to delete posts: " + failed.map { it.exception })
                 result.postValue(Resource(if (failed.isEmpty()) Status.SUCCESS else Status.ERROR, Unit, ""))
             }
         }
