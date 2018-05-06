@@ -114,7 +114,6 @@ class MainActivity :
         mapFragment.getMapAsync(this)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         iconGenerator = IconGenerator(this)
-        Analytics.init(this)
         navigationDrawer()
         db = AppDatabase.getAppDatabase(this)
         if (PermissionManager.checkLocationPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, rcLocation, "Location", "Give permission to access location?")) {
@@ -656,7 +655,6 @@ class MainActivity :
                         binding.user = it.data
                         nav_view_username.text = it.data?.userName
                         currentUser = it.data!!
-                        Analytics.logEvent(Analytics.EventType.UserLogin, tag)
                     }
                 }
             }
@@ -671,7 +669,6 @@ class MainActivity :
             if (it != null) {
                 when (it.status) {
                     Status.SUCCESS -> {
-                        Analytics.logEvent(Analytics.EventType.CreatedUser, tag)
                         mainViewModel.setCurrentUserId(cognitoId)
                         liveData.removeObservers(this)
                     }
