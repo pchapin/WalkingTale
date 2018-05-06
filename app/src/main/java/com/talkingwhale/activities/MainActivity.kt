@@ -19,6 +19,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.*
@@ -68,7 +69,6 @@ class MainActivity :
         ClusterManager.OnClusterItemClickListener<Post>,
         ClusterManager.OnClusterItemInfoWindowClickListener<Post> {
 
-    private val tag = this.javaClass.simpleName
     private lateinit var mMap: GoogleMap
     private var playServicesErrorDialog: Dialog? = null
     private lateinit var mainViewModel: MainViewModel
@@ -290,7 +290,7 @@ class MainActivity :
         // the markers are still clustered
         if (bounds.center == lastClusterCenter) {
 
-            if (!insideRadius(bounds.center)) return true
+            if (!insideRadius(cluster.items.toList())) return true
 
             db.postDao().insertPosts(cluster.items.toList())
             val intent = Intent(this, OverflowActivity::class.java)
@@ -307,18 +307,23 @@ class MainActivity :
     override fun onClusterInfoWindowClick(p0: Cluster<Post>?) {
     }
 
-    private fun insideRadius(latLng: LatLng): Boolean {
-        val distanceFromPost = SphericalUtil.computeDistanceBetween(location, latLng)
-        if (distanceFromPost > minPostDistanceMeters) {
-            Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
-            return false
+    private fun insideRadius(posts: List<Post>): Boolean {
+        for (post in posts) {
+            // Users can always access their own posts
+            if (post.userId == cognitoId) continue
+
+            val distanceFromPost = SphericalUtil.computeDistanceBetween(location, LatLng(post.latitude, post.longitude))
+            if (distanceFromPost > minPostDistanceMeters) {
+                Toast.makeText(this, "You must be ${(distanceFromPost - minPostDistanceMeters).toInt()} meters closer to this post to access it.", Toast.LENGTH_SHORT).show()
+                return false
+            }
         }
         return true
     }
 
     override fun onClusterItemClick(marker: Post?): Boolean {
         val post = marker!!
-        if (!insideRadius(post.position)) return true
+        if (!insideRadius(listOf(post))) return true
         binding.post = post
         db.postDao().insert(post)
         val intent = Intent(this, PostViewActivity::class.java)
@@ -369,8 +374,8 @@ class MainActivity :
             for (p in cluster.items) {
                 // Draw 4 at most.
                 if (profilePhotos.size == 4) break
-                val drawable = resources.getDrawable(getDrawableForPost(p), theme)
-                drawable.setBounds(0, 0, width, height)
+                val drawable = ContextCompat.getDrawable(this@MainActivity, getDrawableForPost(p))
+                drawable!!.setBounds(0, 0, width, height)
                 profilePhotos.add(drawable)
             }
             val multiDrawable = MultiDrawable(profilePhotos)
@@ -518,7 +523,7 @@ class MainActivity :
             polygon = mMap.addPolygon(
                     PolygonOptions()
                             .addAll(polyLinePoints)
-                            .strokeColor(resources.getColor(R.color.secondaryColor, theme))
+                            .strokeColor(ContextCompat.getColor(this, R.color.secondaryColor))
                             .strokeWidth(7f)
             )
         }
@@ -627,15 +632,15 @@ class MainActivity :
                                 .center(location)
                                 .radius(minPostDistanceMeters.toDouble())
                                 .strokeWidth(5f)
-                                .strokeColor(resources.getColor(R.color.secondaryColor, theme)))
+                                .strokeColor(ContextCompat.getColor(this, R.color.secondaryColor)))
 
                 innerCircle?.remove()
                 innerCircle = mMap.addCircle(
                         CircleOptions()
                                 .center(location)
                                 .radius(.4)
-                                .fillColor(resources.getColor(R.color.secondaryColor, theme))
-                                .strokeColor(resources.getColor(R.color.secondaryColor, theme)))
+                                .fillColor(ContextCompat.getColor(this, R.color.secondaryColor))
+                                .strokeColor(ContextCompat.getColor(this, R.color.secondaryColor)))
             }
         })
     }
