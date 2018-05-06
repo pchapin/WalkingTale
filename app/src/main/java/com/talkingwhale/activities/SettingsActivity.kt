@@ -62,7 +62,7 @@ class SettingsActivity : AppCompatActivity() {
                     val user = it.data
                     mainViewModel.usersPosts.observe(this, Observer {
                         if (it?.data != null)
-                            mainViewModel.deleteUsersPosts(user, it.data).observe(this, Observer {
+                            mainViewModel.deleteUsersPosts(it.data).observe(this, Observer {
                                 if (it?.status == Status.SUCCESS) {
                                     mainViewModel.deleteUserS3Content(context!!, user).observe(this, Observer {
                                         if (it?.status == Status.SUCCESS) {

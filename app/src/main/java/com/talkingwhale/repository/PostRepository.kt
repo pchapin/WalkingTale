@@ -171,7 +171,7 @@ object PostRepository {
         return result.getResult()
     }
 
-    fun deleteUsersPosts(user: User, posts: List<Post>): LiveData<Resource<Unit>> {
+    fun deleteUsersPosts(posts: List<Post>): LiveData<Resource<Unit>> {
         val result = object : AbstractTask<Unit>() {
             override fun run() {
                 val failed = dynamoDBMapper.batchDelete(posts)
